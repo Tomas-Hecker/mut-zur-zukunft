@@ -1,0 +1,1227 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Steuerrechner Mut zur Zukunft</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Rechner zum einheitlichen Steuersystem aus dem Buch „Mut zur Zukunft“: Was ändert sich für meinen Haushalt, und rechnet sich das für den Staat?">
+<style>
+/* Layout: dunkelgrünes Kopfband wie das Buchlogo, darunter ruhige Abschnitte auf Papierton; Rechner zweispaltig (Eingaben | Ergebnis), am Handy einspaltig. */
+:root {
+  --bg: #fbf8f1;          /* Papier, aus dem Logo */
+  --surface: #ffffff;
+  --sunk: #f1ede2;
+  --line: #ddd6c6;
+  --fg: #16261f;
+  --muted: #56645c;
+  --brand: #12372a;       /* Logo-Grün */
+  --brand-fg: #fbf8f1;
+  --accent: #b97a06;      /* Logo-Bernstein, für Text abgedunkelt */
+  --accent-fill: #f2b33d;
+  --mint: #9fd8b0;
+  --good: #1d7a46;
+  --good-bg: #e3f3e8;
+  --bad: #b3322c;
+  --bad-bg: #f8e4e1;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4;
+  --grid: #e6e0d2;
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-num: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1f18; --surface: #132a21; --sunk: #0a1913; --line: #2a4337;
+    --fg: #eef0e9; --muted: #a9b8ae; --brand: #0a1913; --brand-fg: #fbf8f1;
+    --accent: #f2b33d; --accent-fill: #f2b33d; --mint: #9fd8b0;
+    --good: #7fd39c; --good-bg: #173a29; --bad: #f08a80; --bad-bg: #3d1d1b;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181;
+    --grid: #233a30; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1f18; --surface: #132a21; --sunk: #0a1913; --line: #2a4337;
+  --fg: #eef0e9; --muted: #a9b8ae; --brand: #0a1913; --brand-fg: #fbf8f1;
+  --accent: #f2b33d; --accent-fill: #f2b33d; --mint: #9fd8b0;
+  --good: #7fd39c; --good-bg: #173a29; --bad: #f08a80; --bad-bg: #3d1d1b;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181;
+  --grid: #233a30; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.55; margin: 0; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.2; margin: 0; }
+h2 { font-size: clamp(1.6rem, 3.2vw, 2.1rem); font-weight: 700; }
+h3 { font-size: 1.15rem; font-weight: 700; }
+p { margin: 0; }
+.lead { color: var(--muted); max-width: 64ch; font-size: 1.05rem; }
+.eyebrow { font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+.num { font-variant-numeric: tabular-nums; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--accent-fill); outline-offset: 2px; border-radius: 4px; }
+
+/* Kopf */
+header.top { background: var(--brand); color: var(--brand-fg); }
+header.top .wrap { padding-block: 28px 36px; display: grid; gap: 18px; }
+.logo { height: 52px; width: auto; display: block; }
+header.top h1 { font-size: clamp(1.9rem, 4.6vw, 3rem); font-weight: 700; max-width: 22ch; }
+header.top h1 em { font-style: normal; color: var(--accent-fill); }
+header.top p { max-width: 62ch; color: #d9e4dc; font-size: 1.08rem; }
+.jump { display: flex; flex-wrap: wrap; gap: 10px; }
+.jump a { text-decoration: none; padding: 8px 14px; border-radius: 999px; border: 1px solid #3f6a58; color: var(--brand-fg); font-weight: 600; font-size: .95rem; }
+.jump a:hover { background: #1d4a39; }
+.jump a.primary { background: var(--accent-fill); border-color: var(--accent-fill); color: #12372a; }
+
+section.block { padding-block: 48px; border-bottom: 1px solid var(--line); }
+section.block > .wrap { display: grid; gap: 22px; }
+section.block > .wrap > * { min-width: 0; }
+
+/* Grundgedanke */
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; counter-reset: r; }
+.rule { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 6px; align-content: start; }
+.rule b { font-family: var(--font-display); font-size: 1.12rem; }
+.rule b::before { counter-increment: r; content: counter(r) " "; color: var(--accent); font-family: var(--font-num); font-size: .9rem; margin-right: 4px; }
+.rule span { color: var(--muted); font-size: .95rem; }
+.flow { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: stretch; }
+.flow .box { border-radius: var(--r); padding: 14px 16px; display: grid; gap: 4px; align-content: start; }
+.flow .free { background: var(--good-bg); }
+.flow .taxed { background: var(--sunk); border: 1px solid var(--line); }
+.flow .src { grid-column: 1 / -1; text-align: center; background: var(--brand); color: var(--brand-fg); border-radius: var(--r); padding: 12px; font-weight: 600; }
+.flow .arrow { align-self: center; color: var(--muted); font-size: .85rem; text-align: center; }
+.flow small { color: var(--muted); }
+
+/* Rechner */
+.calc { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 860px) { .calc { grid-template-columns: minmax(0, 1fr); } .flow { grid-template-columns: 1fr; } .flow .arrow { display: none; } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 16px; min-width: 0; }
+.presets { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: inherit; font-size: .88rem; padding: 6px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: var(--brand); color: var(--brand-fg); border-color: var(--brand); }
+:root[data-theme="dark"] .chip[aria-pressed="true"] { background: var(--accent-fill); color: #12372a; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .chip[aria-pressed="true"] { background: var(--accent-fill); color: #12372a; border-color: var(--accent-fill); } }
+.preset-note { font-size: .9rem; color: var(--muted); min-height: 1.4em; }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
+.field { display: grid; gap: 3px; min-width: 0; }
+.field.wide { grid-column: 1 / -1; }
+.field label { font-size: .85rem; font-weight: 600; }
+.fields > .field > label:first-child { min-height: 2.7em; display: flex; align-items: flex-end; }
+@media (max-width: 340px) { .fields > .field > label:first-child { min-height: 0; } }
+.field .hint { font-size: .78rem; color: var(--muted); }
+.field input[type="number"], .field select { font: inherit; font-variant-numeric: tabular-nums; width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); }
+.check { display: flex; gap: 8px; align-items: flex-start; font-size: .92rem; }
+.check input { margin-top: 4px; accent-color: var(--brand); }
+details.more { border-top: 1px solid var(--line); padding-top: 12px; }
+details.more summary { cursor: pointer; font-weight: 600; font-size: .95rem; color: var(--accent); }
+details.more[open] summary { margin-bottom: 12px; }
+
+.verdict { border-radius: var(--r); padding: 18px 20px; display: grid; gap: 4px; }
+.verdict.good { background: var(--good-bg); }
+.verdict.bad { background: var(--bad-bg); }
+.verdict.neutral { background: var(--sunk); }
+.verdict .big { font-family: var(--font-display); font-size: clamp(1.7rem, 4vw, 2.4rem); font-weight: 700; line-height: 1.1; }
+.verdict.good .big { color: var(--good); }
+.verdict.bad .big { color: var(--bad); }
+.verdict p { color: var(--fg); }
+
+.bars { display: grid; gap: 12px; }
+.barrow { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px; align-items: center; }
+.barrow .lbl { font-weight: 600; font-size: .92rem; }
+.barrow .lbl small { display: block; font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+.track { position: relative; height: 30px; display: flex; gap: 2px; }
+.seg { height: 100%; min-width: 0; }
+.seg:first-child { border-radius: 4px 0 0 4px; }
+.seg:last-child { border-radius: 0 4px 4px 0; }
+.seg:only-child { border-radius: 4px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .85rem; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.tip { position: fixed; z-index: 20; pointer-events: none; background: var(--fg); color: var(--bg); font-size: .82rem; padding: 6px 9px; border-radius: 6px; max-width: 260px; font-variant-numeric: tabular-nums; }
+
+.tbl-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+th, td { padding: 7px 8px; text-align: right; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; white-space: normal; }
+thead th { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700; }
+tr.sum td { font-weight: 700; border-bottom: 2px solid var(--fg); }
+tr.group td { font-weight: 700; color: var(--accent); border-bottom: none; padding-top: 14px; font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; }
+td.pos { color: var(--good); } td.neg { color: var(--bad); }
+
+.steps { display: grid; gap: 10px; counter-reset: s; margin: 0; padding: 0; list-style: none; }
+.steps li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; }
+.steps li::before { counter-increment: s; content: counter(s); width: 26px; height: 26px; border-radius: 50%; background: var(--sunk); border: 1px solid var(--line); display: grid; place-items: center; font-size: .8rem; font-weight: 700; color: var(--accent); }
+.steps li div { min-width: 0; }
+.steps .why { color: var(--muted); font-size: .9rem; }
+.stufen { display: grid; gap: 4px; margin-top: 6px; }
+.stufe { display: grid; grid-template-columns: 120px minmax(0, 1fr) 90px; gap: 8px; align-items: center; font-size: .88rem; }
+.stufe .meter { height: 10px; background: var(--sunk); border-radius: 3px; overflow: hidden; }
+.stufe .meter span { display: block; height: 100%; background: var(--s5); border-radius: 0 3px 3px 0; }
+.stufe b { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Gesamtrechnung */
+.knobs { display: grid; gap: 18px; }
+.knobs fieldset { border: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.knobs legend { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; padding: 0; }
+.slider { display: grid; gap: 2px; }
+.slider .row { display: flex; justify-content: space-between; gap: 10px; font-size: .9rem; }
+.slider .row output { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.slider .sub { font-size: .78rem; color: var(--muted); }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+.btn { font: inherit; font-weight: 600; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--sunk); color: var(--fg); cursor: pointer; justify-self: start; }
+.btn:hover { border-color: var(--accent); }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.tile { border-radius: var(--r); padding: 14px 16px; background: var(--sunk); display: grid; gap: 2px; }
+.tile .k { font-size: .8rem; color: var(--muted); font-weight: 600; }
+.tile .v { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.tile .s { font-size: .8rem; color: var(--muted); }
+.tile.good .v { color: var(--good); } .tile.bad .v { color: var(--bad); }
+.chart { width: 100%; height: auto; display: block; overflow: visible; }
+.chart text { fill: var(--muted); font-family: var(--font-body); font-size: 12px; }
+.chart .gridl { stroke: var(--grid); stroke-width: 1; }
+.chart .ref { stroke: var(--muted); stroke-dasharray: 4 4; stroke-width: 1; }
+.chart .ln { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.chart .hair { stroke: var(--fg); stroke-width: 1; opacity: .35; }
+
+/* Fragen */
+.faq { display: grid; gap: 10px; max-width: 820px; }
+.faq details { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 18px; }
+.faq summary { cursor: pointer; font-weight: 700; font-family: var(--font-display); font-size: 1.08rem; }
+.faq details > div { margin-top: 10px; display: grid; gap: 10px; color: var(--fg); max-width: 68ch; }
+footer { padding-block: 32px 48px; color: var(--muted); font-size: .88rem; }
+footer .wrap { display: grid; gap: 8px; }
+.qfilter { display: flex; flex-wrap: wrap; gap: 8px; }
+.qgroups { display: grid; gap: 10px; }
+.qgroups > details { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 18px; }
+.qgroups summary { cursor: pointer; font-weight: 700; font-family: var(--font-display); font-size: 1.08rem; }
+.qgroups summary small { font-family: var(--font-body); font-weight: 400; color: var(--muted); font-size: .85rem; margin-left: 6px; }
+.qgroups details > p { margin: 8px 0 10px; color: var(--muted); font-size: .92rem; max-width: 70ch; }
+table.q td, table.q th { white-space: normal; vertical-align: top; }
+table.q td:nth-child(2) { white-space: nowrap; font-weight: 600; }
+table.q td:nth-child(4) { text-align: left; color: var(--muted); font-size: .86rem; min-width: 220px; }
+table.q th:nth-child(3), table.q td:nth-child(3), table.q th:nth-child(4) { text-align: left; }
+.typ { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 600; white-space: nowrap; }
+.typ::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--dot); }
+.typ.Recht { --dot: var(--s1); } .typ.Statistik { --dot: var(--s3); } .typ.Annahme { --dot: var(--s4); } .typ.Vorschlag { --dot: var(--s5); }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 12px; }
+.fact { background: var(--sunk); border-radius: var(--r); padding: 14px 16px; display: grid; gap: 4px; align-content: start; }
+.fact b { font-family: var(--font-display); font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+.fact span { font-size: .9rem; }
+.fact small { color: var(--muted); font-size: .8rem; }
+.lit { display: grid; gap: 8px; max-width: 80ch; font-size: .92rem; padding-left: 18px; margin: 0; }
+.howto { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0; padding: 0; list-style: none; counter-reset: h; font-weight: 600; }
+.howto li { display: flex; align-items: center; gap: 8px; }
+.howto li::before { counter-increment: h; content: counter(h); width: 24px; height: 24px; border-radius: 50%; background: var(--brand); color: var(--brand-fg); display: grid; place-items: center; font-size: .8rem; }
+.unit { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.unit label { padding: 6px 14px; cursor: pointer; font-size: .9rem; font-weight: 600; }
+.unit input { position: absolute; opacity: 0; pointer-events: none; }
+.unit input:checked + span { color: var(--brand-fg); }
+.unit label:has(input:checked) { background: var(--brand); color: var(--brand-fg); }
+.unit label:has(input:focus-visible) { outline: 3px solid var(--accent-fill); outline-offset: -3px; }
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.duo > div { border-radius: var(--r); padding: 14px 16px; border: 1px solid var(--line); display: grid; gap: 2px; align-content: start; }
+.duo .k { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.duo .v { font-family: var(--font-display); font-size: clamp(1.4rem, 3.4vw, 1.9rem); font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.duo .s { font-size: .85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.duo .neu { background: var(--sunk); }
+.tweak { border: 1px dashed var(--line); border-radius: var(--r); padding: 14px 16px; display: grid; gap: 12px; }
+.tweak h3 { font-size: 1.05rem; }
+.tweak .row2 { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; font-size: .88rem; }
+.tag { font-size: .75rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--good-bg); color: var(--good); }
+.tag.mod { background: var(--bad-bg); color: var(--bad); }
+.mbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 15; background: var(--brand); color: var(--brand-fg); padding-top: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; justify-content: space-between; gap: 10px; font-size: .9rem; font-variant-numeric: tabular-nums; border: 0; width: 100%; font-family: inherit; cursor: pointer; text-align: left; }
+.mbar b { color: var(--accent-fill); }
+@media (min-width: 861px) { .mbar { display: none; } }
+.note { font-size: .88rem; color: var(--muted); max-width: 70ch; }
+@media (prefers-reduced-motion: no-preference) { .seg, .stufe .meter span { transition: width .35s ease; } }
+@media (max-width: 340px) { .fields { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .stufe { grid-template-columns: 96px minmax(0,1fr) 76px; } }
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="wrap">
+    <svg class="logo" viewBox="0 0 360 100" role="img" aria-label="Mut zur Zukunft"><g transform="translate(4,4) scale(0.92)"><circle cx="50" cy="50" r="44" fill="none" stroke="#f2b33d" stroke-width="1.6"/><line x1="27.5" y1="51.0" x2="21.4" y2="47.5" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="37.0" y1="41.5" x2="33.5" y2="35.4" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="63.0" y1="41.5" x2="66.5" y2="35.4" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="72.5" y1="51.0" x2="78.6" y2="47.5" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><path d="M30,64 A20,20 0 0 1 70,64 Z" fill="#f2b33d"/><path d="M50,64 L50,33" stroke="#fbf8f1" stroke-width="3.2" stroke-linecap="round"/><path d="M50,47 C41,46 33,39 31,28 C41,29 48,36 50,47 Z" fill="#9fd8b0"/><path d="M50,40 C57,37 65,30 68,19 C58,20 51,28 50,40 Z" fill="#9fd8b0"/><line x1="17" y1="64" x2="83" y2="64" stroke="#fbf8f1" stroke-width="2.4" stroke-linecap="round"/><line x1="28" y1="71" x2="72" y2="71" stroke="#fbf8f1" stroke-width="1.6" stroke-linecap="round" opacity="0.6"/><line x1="38" y1="77" x2="62" y2="77" stroke="#fbf8f1" stroke-width="1.2" stroke-linecap="round" opacity="0.35"/></g><text x="110" y="50" font-family="system-ui, sans-serif" font-weight="800" font-size="30" letter-spacing="1.5" fill="#fbf8f1">MUT ZUR</text><text x="110" y="80" font-family="system-ui, sans-serif" font-weight="800" font-size="30" letter-spacing="1.5" fill="#f2b33d">ZUKUNFT</text></svg>
+    <h1>Es ist egal, woher ein Einkommen kommt. <em>Entscheidend ist, was damit geschieht.</em></h1>
+    <p>Dieser Rechner zeigt, wie das einheitliche Steuersystem aus dem Buch „Mut zur Zukunft“ wirkt: für Ihren eigenen Haushalt und für den Staat als Ganzes. Alles läuft direkt im Browser. Es wird nichts gespeichert und nichts übertragen.</p>
+    <nav class="jump" aria-label="Abschnitte">
+      <a class="primary" href="#haushalt">Meinen Haushalt rechnen</a>
+      <a href="#idee">Die Idee</a>
+      <a href="#staat">Rechnet sich das?</a>
+      <a href="#co2">CO₂-Abgabe</a>
+      <a href="#fragen">Fragen und Antworten</a>
+      <a href="#quellen">Annahmen und Quellen</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="block" id="idee">
+  <div class="wrap">
+    <div class="eyebrow">Die Idee</div>
+    <h2>Vier Regeln statt tausend Ausnahmen</h2>
+    <div class="flow" aria-label="Schema: Was mit einem Einkommen geschieht">
+      <div class="src">Jedes Einkommen: Lohn, Gewinn, Zinsen, Dividende, Miete, Kursgewinn, Erbe</div>
+      <div class="box free"><b>Bleibt im Kreislauf</b><small>investiert, im Betrieb, angelegt, verliehen</small><span>keine Steuer</span></div>
+      <div class="arrow">oder</div>
+      <div class="box taxed"><b>Fließt ins Private</b><small>Konsum, Entnahme, privat genutzte Güter</small><span>wird besteuert, oberhalb des Existenzminimums</span></div>
+    </div>
+    <div class="rules">
+      <div class="rule"><b>Alle Einkommen gleich</b><span>Lohn, Gewinn, Zinsen, Dividenden, Mieten, Kursgewinne und Erbschaften folgen denselben Regeln und demselben Tarif. Keine Sonderrechte für bestimmte Einkunftsarten.</span></div>
+      <div class="rule"><b>Besteuert wird, was ins Private fließt</b><span>Was investiert bleibt und für die Wirtschaft arbeitet, bleibt vorerst steuerfrei. Erst der private Verbrauch wird besteuert.</span></div>
+      <div class="rule"><b>Beim Tod wird abgerechnet</b><span>Was bis zum Lebensende unversteuert investiert blieb, gehört zu 50 % der Gemeinschaft, ohne Sonderfreibeträge. Die Erben verwalten diesen Anteil, solange er investiert bleibt.</span></div>
+      <div class="rule"><b>Das Existenzminimum ist immer frei</b><span>Bis zum Existenzminimum fallen keine Steuer und keine Sozialabgaben an, der Grundbedarf ist frei von Mehrwertsteuer. Das gilt für jedes Einkommen, auch für ein Erbe.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="haushalt">
+  <div class="wrap">
+    <div class="eyebrow">Ihr Haushalt</div>
+    <h2>Was ändert sich für mich?</h2>
+    <p class="lead">Wählen Sie ein Beispiel aus dem Buch oder tragen Sie Ihre eigenen Zahlen ein. Verglichen werden alle Steuern und Abgaben, die ein Haushalt heute zahlt, mit denen im Vorschlag. Damit der Vergleich fair ist, gibt der Haushalt in beiden Fällen gleich viel aus.</p>
+    <ol class="howto"><li>Beispiel wählen oder eigene Zahlen eintragen</li><li>Ergebnis ablesen: heute und im Vorschlag</li><li>Vorschlag verändern und vergleichen</li></ol>
+    <div class="calc">
+      <form class="panel" id="hhForm" autocomplete="off">
+        <div class="field wide">
+          <label>Beispiel aus dem Buch</label>
+          <div class="presets" id="presets"></div>
+          <div class="preset-note" id="presetNote"></div>
+        </div>
+        <div class="field wide"><span style="font-size:.85rem;font-weight:600">Beträge eingeben</span>
+          <div class="unit" role="radiogroup" aria-label="Beträge eingeben"><label><input type="radio" name="einheit" id="einM" value="12" checked><span>pro Monat</span></label><label><input type="radio" name="einheit" id="einJ" value="1"><span>pro Jahr</span></label></div>
+        </div>
+        <div class="fields">
+          <div class="field"><label for="erw">Erwachsene im Haushalt</label><select id="erw"><option value="1">1</option><option value="2">2 (Paar)</option></select></div>
+          <div class="field"><label for="kinder">Kinder unter 18</label><input id="kinder" type="number" min="0" max="10" step="1"></div>
+          <div class="field"><label for="vollj">Kinder ab 18 in Studium oder Ausbildung</label><input id="vollj" type="number" min="0" max="10" step="1"><span class="hint">auch wenn sie woanders wohnen</span></div>
+          <div class="field"><label for="unterhalt">Unterhalt je Kind im Monat</label><input id="unterhalt" type="number" min="0" step="10"><span class="hint">was Sie selbst zahlen, ohne Kindergeld</span></div>
+          <div class="field"><label for="lohn1">Bruttolohn Person 1</label><input id="lohn1" type="number" min="0" step="100"></div>
+          <div class="field"><label for="std1">Wochenstunden Person 1</label><input id="std1" type="number" min="0" max="80" step="0.5"></div>
+          <div class="field p2"><label for="lohn2">Bruttolohn Person 2</label><input id="lohn2" type="number" min="0" step="100"></div>
+          <div class="field p2"><label for="std2">Wochenstunden Person 2</label><input id="std2" type="number" min="0" max="80" step="0.5"></div>
+          <div class="field"><label for="rente">Gesetzliche Rente, brutto</label><input id="rente" type="number" min="0" step="100"></div>
+          <div class="field"><label for="kap">Zinsen, Dividenden, Kursgewinne</label><input id="kap" type="number" min="0" step="100"><span class="hint">privat</span></div>
+          <div class="field"><label for="miet">Mietwert der eigenen Wohnung</label><input id="miet" type="number" min="0" step="100"><span class="hint">was sie vermietet einbrächte; 0 bei Mietern</span></div>
+          <div class="field"><label for="spar">Sparquote</label><select id="spar"></select><span class="hint">Anteil des Nettoeinkommens, der gespart wird</span></div>
+        </div>
+        <details class="more" id="moreBox">
+          <summary>Weitere Angaben: Selbständige, Unternehmen, Rente, Vermögen</summary>
+          <div class="fields">
+            <div class="field"><label for="mini">Minijob-Lohn</label><input id="mini" type="number" min="0" step="100"><span class="hint">bis 603 € im Monat</span></div>
+            <div class="field"><label for="gewinn">Gewinn als Selbständige(r)</label><input id="gewinn" type="number" min="0" step="1000"></div>
+            <div class="field"><label for="pkv">Private Kranken- und Pflegeversicherung</label><input id="pkv" type="number" min="0" step="100"></div>
+            <div class="field"><label for="vorsorge">Private Altersvorsorge, steuerlich abziehbar</label><input id="vorsorge" type="number" min="0" step="100"></div>
+            <div class="field"><label for="gmbh">Gewinn der eigenen GmbH</label><input id="gmbh" type="number" min="0" step="1000"></div>
+            <div class="field"><label for="aus">Ausschüttung aus der GmbH</label><input id="aus" type="number" min="0" step="1000"></div>
+            <div class="field"><label for="transfer">Bürgergeld und andere steuerfreie Leistungen</label><input id="transfer" type="number" min="0" step="100"></div>
+            <div class="field"><label for="verm">Verbrauch aus vorhandenem Vermögen</label><input id="verm" type="number" min="0" step="1000"><span class="hint">zusätzlich zum laufenden Einkommen</span></div>
+            <label class="check field wide"><input id="kinderlos" type="checkbox"> Kinderlos (keine eigenen Kinder, auch keine erwachsenen; höherer Pflegebeitrag)</label>
+            <label class="check field wide"><input id="allein" type="checkbox"> Alleinerziehend</label>
+            <label class="check field wide"><input id="rentner" type="checkbox"> Im Rentenalter</label>
+          </div>
+        </details>
+        <p class="note">Alle Beträge in Euro, Rechtsstand 2026. Die Ergebnisse stehen pro Jahr und pro Monat.</p>
+      </form>
+
+      <div class="panel" aria-live="polite">
+        <div class="duo" id="duo"></div>
+        <div class="verdict" id="verdict"></div>
+        <div id="zukunft"></div>
+        <div class="bars" id="bars"></div>
+        <div class="legend" id="legend"></div>
+        <div class="tweak" id="tweak">
+          <div class="row2"><h3>Vorschlag verändern</h3><span class="tag" id="tweakTag"></span></div>
+          <div class="slider"><div class="row"><label for="h_Satz1">Stufe 1, auf die ersten <span id="h_g1"></span></label><output id="ho_Satz1"></output></div><input type="range" id="h_Satz1" min="0.1" max="0.6" step="0.01"></div>
+          <div class="slider"><div class="row"><label for="h_Satz2">Stufe 2, auf die nächsten <span id="h_g2"></span></label><output id="ho_Satz2"></output></div><input type="range" id="h_Satz2" min="0.1" max="0.8" step="0.01"></div>
+          <div class="slider"><div class="row"><label for="h_Satz3">Stufe 3, auf alles darüber</label><output id="ho_Satz3"></output></div><input type="range" id="h_Satz3" min="0.1" max="1.2" step="0.01"></div>
+          <label class="check"><input type="checkbox" id="h_Sicherheit"> Mit Sicherheitsbeitrag für Verteidigung</label>
+          <div class="row2"><button type="button" class="btn" id="h_reset">Werte aus dem Buch</button><a href="#staat">Alle Stellschrauben und die Folgen für den Staat</a></div>
+        </div>
+        <div class="tbl-wrap"><table id="hhTable"></table></div>
+        <div>
+          <h3>So rechnet der Vorschlag</h3>
+          <ol class="steps" id="steps"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="staat">
+  <div class="wrap">
+    <div class="eyebrow">Der Staat</div>
+    <h2>Rechnet sich das?</h2>
+    <p class="lead">Sieben Steuern fallen weg, neue Leistungen kommen dazu. Dafür gibt es die Steuer auf das, was ins Private fließt, und den Staatsanteil an Erbschaften. Drehen Sie an den Stellschrauben und sehen Sie, ob die Rechnung aufgeht. Die Änderungen wirken auch oben auf Ihren Haushalt.</p>
+    <div class="calc">
+      <div class="panel knobs" id="knobs"></div>
+      <div class="panel">
+        <div class="tiles" id="tiles"></div>
+        <div>
+          <h3>Prognose: Staatsschulden in % der Wirtschaftsleistung bis 2070</h3>
+          <p class="note" id="chartNote"></p>
+        </div>
+        <div class="presets" id="szenarien" role="group" aria-label="Szenario wählen"></div>
+        <div>
+        </div>
+        <div id="chartBox"></div>
+        <div class="legend" id="chartLegend"></div>
+        <details class="more">
+          <summary>Die ganze Gesamtrechnung in Milliarden Euro</summary>
+          <div class="tbl-wrap"><table id="grTable"></table></div>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="co2">
+  <div class="wrap">
+    <div class="eyebrow">CO₂-Abgabe auf Produkte</div>
+    <h2>Was CO₂ ohne Preis kostet, und wer es zurückbekommt</h2>
+    <p class="lead">Die Abgabe besteuert das CO₂, das in einem Produkt steckt und noch keinen Preis hat. Hersteller und Importeure zahlen einmal beim ersten Verkauf in Deutschland. Ein Teil geht als Klimageld zu gleichen Teilen an alle zurück, der Rest als Bonus an Hersteller, die besser sind als der Bestwert ihrer Gruppe. Weil das Geld vollständig zurückfließt, steht die Abgabe nicht im Saldo des Staates. Die erste Stufe gilt für Lebensmittel.</p>
+    <div class="calc">
+      <div class="panel knobs" id="co2knobs">
+        <fieldset><legend>Stellschrauben</legend>
+          <div class="slider"><div class="row"><label for="c_Preis">CO₂-Preis</label><output id="co_Preis"></output></div><input type="range" id="c_Preis" min="20" max="200" step="5"><div class="sub">2026 kostet CO₂ beim Heizen und Tanken 55 bis 65 € je Tonne</div></div>
+          <div class="slider"><div class="row"><label for="c_Menge">CO₂ ohne Preis bei Lebensmitteln</label><output id="co_Menge"></output></div><input type="range" id="c_Menge" min="0" max="1" step="0.05"><div class="sub">von 32,1 Mio. t (Methan aus der Tierhaltung) bis 53,3 Mio. t (Landwirtschaft ohne Energie), Umweltbundesamt</div></div>
+          <div class="slider"><div class="row"><label for="c_Rueck">Davon als Klimageld zurück</label><output id="co_Rueck"></output></div><input type="range" id="c_Rueck" min="0.5" max="1" step="0.05"><div class="sub">der Rest geht als Bonus an bessere Hersteller</div></div>
+          <div class="slider"><div class="row"><label for="c_Personen">Personen in Ihrem Haushalt</label><output id="co_Personen"></output></div><input type="range" id="c_Personen" min="1" max="8" step="1"></div>
+        </fieldset>
+      </div>
+      <div class="panel">
+        <div class="tiles" id="co2tiles"></div>
+        <div><h3>Was die Abgabe je Kilogramm ausmacht</h3><p class="note">Fußabdruck an der Supermarktkasse nach ifeu (2020). Lebensmittel mit hohem Fußabdruck sind in der ersten Stufe; vereinfacht ist ihr ganzer Fußabdruck belegt.</p></div>
+        <div class="tbl-wrap"><table id="co2tbl"></table></div>
+        <p class="note">Noch offen ist die Rechnung für Kleidung, Heimtextilien und Schuhe (Stufe 1) und für Elektronik, Möbel und Autos (Stufe 2 ab 2030). Dafür fehlen belastbare Mengen, die eine Studie des Umweltbundesamts vor dem Start liefern sollte.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="fragen">
+  <div class="wrap">
+    <div class="eyebrow">Fragen und Antworten</div>
+    <h2>Die Zusammenhänge erklärt</h2>
+    <div class="faq">
+      <details open><summary>Warum wird der Verbrauch besteuert und nicht das Einkommen?</summary><div>
+        <p>Heute zahlt ein Arbeitnehmer auf jeden verdienten Euro Lohnsteuer und Sozialabgaben, auch auf das, was er spart. Kapitalerträge werden pauschal mit 25 % besteuert, Gewinne in einer GmbH mit rund 30 %. Wer sein Geld über eine Firma verdient, steht oft besser da als jemand mit gleichem Lohn.</p>
+        <p>Im Vorschlag zählt nur noch, was jemand für sich verbraucht. Wer viel verdient und viel ausgibt, zahlt viel. Wer verdient und investiert, schafft Arbeitsplätze und zahlt erst, wenn er das Geld privat nutzt, spätestens beim Erbgang.</p>
+      </div></details>
+      <details><summary>Wie hoch ist der Steuersatz?</summary><div>
+        <p>Der Tarif gilt je Erwachsenem für die Ausgaben über dem Existenzminimum (12.348 € je Erwachsenem und 6.828 € je Kind). Gerechnet wird als Aufschlag auf die Ausgaben: 30 % auf die ersten 10.000 €, 45 % auf die nächsten 10.000 €, 65 % auf alles darüber.</p>
+        <p>Bezogen auf das, was insgesamt ins Private fließt (Ausgaben plus Steuer), sind das 23,1 %, 31,0 % und 39,4 %. Beides ist rechnerisch dasselbe. Bei Paaren werden die Ausgaben wie beim Ehegattensplitting auf beide verteilt.</p>
+      </div></details>
+      <details><summary>Was passiert beim Erben?</summary><div>
+        <p>Was bis zum Lebensende investiert blieb und deshalb nie besteuert wurde, gehört beim Erbgang zur Hälfte der Gemeinschaft, ohne Sonderfreibeträge. Für den Wertzuwachs des Bodens sind es 75 %.</p>
+        <p>Die Erben dürfen den Staatsanteil selbst verwalten, solange er investiert bleibt. Ein Betrieb muss also nicht verkauft werden. Fällig wird der Anteil erst, wenn Geld daraus ins Private fließt. Wer in Not gerät, kann auch aus einem Erbe sein Existenzminimum steuerfrei entnehmen.</p>
+      </div></details>
+      <details><summary>Warum zählt der Mietwert der eigenen Wohnung mit?</summary><div>
+        <p>Ein Mieter bezahlt seine Miete aus versteuertem Geld. Ein Eigentümer wohnt mietfrei und spart diese Ausgabe. Damit beide gleich behandelt werden, zählt der Mietwert der eigenen Wohnung zu den privaten Ausgaben. Eigentümer mit wenig Bargeld können die Steuer darauf bis zum Verkauf oder Erbfall stunden.</p>
+      </div></details>
+      <details><summary>Was ist mit Kindern in Studium oder Ausbildung und mit Unterhalt?</summary><div>
+        <p>Heute bekommen nur rund 443.000 der 2,9 Millionen Studierenden BAföG, weil das Einkommen der Eltern angerechnet wird. Meist zahlen die Eltern den Unterhalt selbst, zum Beispiel 990 € im Monat für ein Kind mit eigener Wohnung nach der Düsseldorfer Tabelle, abzüglich des Kindergelds. Steuerlich absetzen können sie den Unterhalt für eigene Kinder nicht, nur einen Ausbildungsfreibetrag von 1.200 € im Jahr, wenn das Kind auswärts wohnt. Das gilt auch für getrennt lebende Eltern.</p>
+        <p>Im Vorschlag bekommt jeder, der studiert, eine Ausbildung macht oder sich in Vollzeit weiterbildet, das Existenzminimum von 1.029 € im Monat selbst, unabhängig vom Einkommen der Eltern. BAföG und Kindergeld für Volljährige gehen darin auf, ein Nebenjob wird nicht angerechnet. Der Unterhalt der Eltern entfällt damit bis zu dieser Höhe. Tragen Sie oben Ihre Kinder ab 18 und den Unterhalt ein, den Sie selbst zahlen, ohne das Kindergeld.</p>
+      </div></details>
+      <details><summary>Was gilt für Erspartes, das heute schon versteuert ist?</summary><div>
+        <p>Wer aus Vermögen lebt, das er schon unter dem alten Recht versteuert hat, soll nicht doppelt zahlen. In einer Übergangsphase bleiben deshalb Entnahmen aus diesem Altvermögen bis 30.000 € je Erwachsenem im Jahr steuerfrei. Der Rechner zeigt diesen Fall gesondert an, wenn Sie „Verbrauch aus vorhandenem Vermögen“ eintragen.</p>
+      </div></details>
+      <details><summary>Was sind die Bausteine?</summary><div>
+        <p>Zum Grundsystem kommen einzeln schaltbare Ideen aus dem Buch: Lebensmittel, Wasser und Nahverkehr ohne Mehrwertsteuer, keine Sozialabgaben auf das Existenzminimum bei niedrigen Löhnen, das Existenzminimum für Studium, Ausbildung und Weiterbildung, ein Bürgerjob mit Recht auf Arbeit, ein Berufscoach für alle, steuerfreie Arbeit im Rentenalter und steuerfreie Mehrarbeit (Kindererziehung zählt als Arbeitszeit).</p>
+        <p>Gegenfinanziert werden sie unter anderem durch eine Luxusstufe der Mehrwertsteuer und eine schlankere, KI-taugliche Verwaltung. Ein um 3 Punkte höherer Normalsatz der Mehrwertsteuer geht vollständig an Rente und Krankenversicherung und senkt dort die Beiträge.</p>
+      </div></details>
+      <details><summary>Wo liegen die Grenzen dieser Rechnung?</summary><div>
+        <p>Das Modell ist statisch: Es unterstellt, dass Menschen gleich viel arbeiten, sparen und ausgeben wie heute. Wachstum durch mehr Investitionen, Bildung und weniger Bürokratie ist nicht eingerechnet. Ebenso wenig die steigenden Kosten durch die Alterung der Gesellschaft. Höhere Verteidigungsausgaben lassen sich oben mit dem Schalter „Mit Sicherheitsbeitrag“ einrechnen, weitere Kosten als zusätzliche Ausgaben.</p>
+        <p>Die Verteilung der Ausgaben ist vereinfacht angenommen. Am unsichersten sind, wie viel vom Staatsanteil an Erbschaften tatsächlich fällig wird, die Kosten der Übergangsregel, der Mietwert der eigenen Wohnungen und einige Bausteine. Sozialversicherung und Gewerbesteuer bleiben in ihrer Grundstruktur bestehen.</p>
+      </div></details>
+    </div>
+  </div>
+</section>
+<section class="block" id="quellen">
+  <div class="wrap">
+    <div class="eyebrow">Annahmen und Quellen</div>
+    <h2>Woher die Zahlen kommen</h2>
+    <p class="lead">Hier steht jede Zahl, mit der der Rechner arbeitet, mit ihrer Quelle. Die Werte entsprechen dem Rechenmodell zum Buch (Steuermodell.xlsx, Version 2.1, Blatt „Annahmen“). Wenn Sie oben an den Stellschrauben drehen, ändern sich die Werte hier mit.</p>
+    <div class="facts">
+      <div class="fact"><b>464,5 Mrd. €</b><span>bringen heute die sieben Steuern auf Einkommen, Gewinne und Erbschaften, die im Vorschlag wegfallen.</span><small>Steuerschätzung 2025, sozialpolitik-aktuell.de, Tabelle II.8</small></div>
+      <div class="fact"><b>2.350 Mrd. €</b><span>geben die privaten Haushalte im Jahr für ihren Konsum aus. Das ist die Grundlage der neuen Steuer.</span><small>Destatis, VGR: 2.283 Mrd. € im Jahr 2024, für 2025 fortgeschrieben</small></div>
+      <div class="fact"><b>300 bis 400 Mrd. €</b><span>werden in Deutschland jedes Jahr vererbt oder verschenkt. Das Modell rechnet mit 350 Mrd. €.</span><small>DIW Berlin</small></div>
+      <div class="fact"><b>106.600 €</b><span>Nettovermögen hat der mittlere Haushalt. Bei Mietern sind es nur 16.200 €.</span><small>Deutsche Bundesbank (2023): Vermögensbefragung 2021, Monatsbericht April 2023, Median</small></div>
+      <div class="fact"><b>6,8 Billionen €</b><span>war der Boden in privater Hand 2024 wert, 2010 waren es 2,6 Billionen €.</span><small>Deutsche Bundesbank und Destatis, Vermögensbilanzen</small></div>
+      <div class="fact"><b>Gini rund 0,30</b><span>Die Ausgaben sind gleicher verteilt als die Einkommen. Das Modell nimmt an, dass die oberen 10 % rund 23 % des Konsums ausgeben.</span><small>Forum New Economy (2020), Basic Papers 02/2020; Einkommens- und Verbrauchsstichprobe</small></div>
+    </div>
+    <div class="qfilter" id="qfilter" role="group" aria-label="Nach Art der Zahl filtern"></div>
+    <div class="qgroups" id="qgroups"></div>
+    <div>
+      <h3>Weitere Quellen der Rechnung</h3>
+    </div>
+    <ul class="lit">
+      <li>Statistisches Bundesamt: Volkswirtschaftliche Gesamtrechnungen, Konsumausgaben der privaten Haushalte 2024; Bevölkerungsstand.</li>
+      <li>Arbeitskreis Steuerschätzungen: Steuereinnahmen 2025 (Schätzung), zusammengestellt bei sozialpolitik-aktuell.de, Tabelle II.8.</li>
+      <li>Rechtsstand 2026: Einkommensteuertarif nach § 32a EStG, Solidaritätszuschlaggesetz, Beitragssätze und Beitragsbemessungsgrenzen der Sozialversicherung, Regelbedarf 563 €, Kindergeld 259 €, Mindestlohn 13,90 €.</li>
+      <li>Deutsche Bundesbank (2023): Vermögen und Finanzen privater Haushalte in Deutschland. Ergebnisse der Vermögensbefragung 2021, Monatsbericht April 2023.</li>
+      <li>Forum New Economy (2020): Income, Consumption and Wealth Inequality in Germany: Three Concepts, Three Stories? Basic Papers 02/2020.</li>
+      <li>Bundesministerium der Finanzen (2024): Sechster Bericht zur Tragfähigkeit der öffentlichen Finanzen, BT-Drucksache 20/11235.</li>
+      <li>Altig, D., Auerbach, A. J., Kotlikoff, L. J., Smetters, K. A. und Walliser, J. (2001): Simulating Fundamental Tax Reform in the United States. American Economic Review 91 (3).</li>
+      <li>Düsseldorfer Tabelle, Stand 01.01.2026 (Bedarf eines studierenden Kindes mit eigenem Haushalt: 990 € im Monat); § 33a Abs. 2 EStG (Ausbildungsfreibetrag).</li>
+    </ul>
+    <p class="note">Das vollständige Rechenmodell mit allen Formeln und das Quellenverzeichnis stehen im Buch „Mut zur Zukunft“, Anhang C und „Quellen und Hinweise zu den Daten“.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Grundlage: Rechenmodell 2.1 zum Buch „Mut zur Zukunft“. Rechtsstand 2026, Steueraufkommen 2025 (Schätzung). Alle Angaben ohne Gewähr; der Rechner zeigt Größenordnungen, keine Steuerberatung.</p>
+    <p>Datenschutz: Der Rechner lädt keine fremden Inhalte und speichert keine Eingaben.</p>
+    <p><a href="../">Startseite</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p>
+  </div>
+</footer>
+
+<div class="tip" id="tip" hidden></div>
+<button type="button" class="mbar" id="mbar" hidden></button>
+
+<script>
+/* =====================================================================
+   ANNAHMEN – hier lassen sich alle Zahlen des Modells anpassen.
+   Werte wie im Blatt „Annahmen“ der Datei Steuermodell.xlsx.
+   Prozentwerte als Dezimalzahl (0.3 = 30 %), Mrd. = Milliarden Euro.
+   ===================================================================== */
+const ANNAHMEN = {
+  // Recht heute (Einkommensteuertarif 2026, § 32a EStG)
+  GFB: 12348, GrenzeZone2: 17799, GrenzeZone3: 69878, GrenzeZone5: 277826,
+  KoefA2: 914.51, KoefB2: 1400, KoefA3: 173.1, KoefB3: 2397, KoefC3: 1034.87,
+  Abzug42: 11135.63, Abzug45: 19470.38,
+  SoliFG: 20350, AbgSt: 0.26375, SPB: 1000, KStS: 0.15825,
+  WKP: 1230, WKR: 102, BestAnteil: 0.83, EntlAE: 4260,
+  KindergeldMonat: 259, KIDA: 6828,
+  AusbFB: 1200,             // Ausbildungsfreibetrag § 33a Abs. 2 EStG je volljährigem Kind in Ausbildung, auswärts untergebracht
+  // Sozialversicherung (Arbeitnehmeranteile 2026)
+  KVAN: 0.0875, PVAN: 0.018, PVK: 0.006, PVR: 0.036, RVAN: 0.093, AVAN: 0.013,
+  BBGKV: 69750, BBGRV: 101400, Mini: 603, Midi: 2000,
+  // Neues System: Ausgabensteuer je Erwachsenem, Satz auf die Ausgaben über dem Existenzminimum
+  Satz1: 0.30, Grenze1: 10000, Satz2: 0.45, Grenze2: 20000, Satz3: 0.65,
+  TaperEnd: 36000,          // Sozialversicherungs-Freibetrag läuft bis zu diesem Bruttolohn aus
+  MwStQ: 0.10,              // Mehrwertsteuer-Anteil an den Konsumausgaben heute
+  RBE: 563, RBK: 400, MwStRB: 0.12,
+  // Gesamtwirtschaft
+  Konsum: 2350, Miete: 200, Nutzwert: 200, Erw: 70.5, Kinder: 13.9, KGKinder: 17.4,
+  Sigma: 0.55, BIP: 4400, Schuld: 0.63, ZinsAlt: 0.025,
+  // Wegfallende Steuern (Mrd. €, 2025)
+  LSt: 262.1, vESt: 79.4, nvSt: 31.9, AbgStA: 24.2, KSt: 39, Soli: 13, ErbSt: 14.9,
+  // Neue Ausgaben (Mrd. €)
+  SVKost: 20, Gruend: 3, AltUeb: 12, AltCap: 30000,
+  // Erbschaft
+  ErbVol: 350, ErbAnteil: 0.5, ErbBasis: 1, RealStart: 0.25, RealLang: 0.5,
+  // Kredit und Übergang
+  Zins: 0.027, Jahre: 15, Wachstum: 0.025,
+  // Zusätzliche Ausgaben, die das Buchmodell nicht enthält (z. B. Verteidigung), Mrd. € pro Jahr
+  Extra: 0,
+  // Variante „Sicherheitsbeitrag“ aus dem Buch (Anhang C): an = 1 schaltet sie ein
+  Sicherheit: 0,
+  SicherheitWerte: {
+    Verteidigung: 66,       // 1,5 % des BIP mehr für Verteidigung, Mrd. € pro Jahr
+    SubvAbbau: 8,           // Abbau klimaschädlicher Subventionen: Diesel 7, Kerosin Inland 0,6, Agrardiesel 0,4
+    // Sätze so, dass der Beitrag netto 58 Mrd. € bringt, auch nach den höheren Kosten für steuerfreie Mehrarbeit und Rentnerarbeit (Faktor 1,0986)
+    Satz1: 0.30 * 1.0986,   // 24,8 % von dem, was ins Private fließt
+    Satz2: 0.45 * 1.0986,   // 33,1 %
+    Satz3: 0.65 * 1.0986,   // 41,7 %
+  },
+  Verteidigung: 0, SubvAbbau: 0,
+  // Prognose bis 2070 (Blatt „Schulden bis 2070“, Nachbildung des Tragfähigkeitsberichts BMF 2024)
+  Prognose: {
+    Start: 2023, Ende: 2070, ReformStart: 2028, Infl: 0.02,
+    TBZins0: 0.015, TBLaufzeit: 7,
+    WachsG: [[2023, -0.003], [2024, -0.002], [2025, 0.003], [2027, 0.012], [2030, 0.014], [2040, 0.015], [2070, 0.016]], // reales Wachstum, günstig (T+)
+    WachsU: [[2023, -0.003], [2024, -0.002], [2025, 0.002], [2027, 0.006], [2040, 0.006], [2070, 0.004]],                // reales Wachstum, ungünstig (T−)
+    Altern: [[2022, 0], [2030, 0.3], [2035, 0.5], [2040, 0.65], [2050, 0.8], [2060, 0.9], [2070, 1]],                     // Anteil am Anstieg der Kosten des Alterns
+    ZinsNeu: [[2023, 0.027], [2035, 0.04], [2070, 0.04]],
+    DemoG: 0.035, DemoU: 0.088,                                   // Anstieg der Kosten des Alterns bis 2070 in % des BIP
+    PBG: 0.00726328195794531, PBU: 0.0118883641417124,           // Primärsaldo ohne Alterung, kalibriert auf 140 % und 365 % im Jahr 2070
+    WachsJahre: 20,
+    // Szenarien aus Anhang C6: Grundszenario (1 günstig, 2 ungünstig, 3 mittel), mehr Wachstum durch Anreize nach 20 Jahren, mehr Primärsaldo
+    vorsichtig:     { grund: 2, wachs: 0.0127935616638501, pbx: 0.001 },
+    mittel:         { grund: 3, wachs: 0.0356136177875297, pbx: 0.0025 },
+    zuversichtlich: { grund: 1, wachs: 0.0726450991766513, pbx: 0.005 },
+    DefMehr: 0.015, DefStart: 2026, DefJahre: 4,
+  },
+  RenditeReal: 0.03,
+  // CO₂-Abgabe auf Produkte, Stufe 1 Lebensmittel (Kapitel 6, Anhang B7, Blatt „CO₂-Abgabe“)
+  CO2: {
+    Preis: 60,               // €/t, etwa der CO₂-Preis fürs Heizen und Tanken 2026
+    Lo: 32.1, Hi: 53.3,      // Mio. t CO₂e ohne Preis: Methan aus der Tierhaltung bzw. Landwirtschaft ohne Energie (UBA, 2025)
+    Menge: 0,                // 0 = untere Grenze, 1 = obere Grenze (Werte dazwischen möglich)
+    Rueck: 0.8,              // Anteil, der als Klimageld zurückfließt; der Rest geht in den Bonustopf
+    Personen: 4,
+    KSVMax: 2.8, KSVJahre: 15, // Klimaschutzverträge des Bundes zum Vergleich
+    Einw: 83.5,
+    Lebensmittel: [["Rindfleisch", 13.6, 1], ["Butter", 9, 1], ["Käse", 5.7, 1], ["Hähnchen", 5.5, 1], ["Schweinefleisch", 4.6, 1], ["Reis", 3.1, 1], ["Eier", 3, 1], ["Milch (Liter)", 1.4, 1], ["Tofu", 1, 0], ["Tomaten", 0.8, 0], ["Brot", 0.6, 0], ["Kartoffeln", 0.2, 0]],
+  },        // reale Rendite für die 30-Jahres-Rechnung im Haushalt
+  // Bausteine: Wohnen und Mehrwertsteuer
+  Stundung: 0.2, GBAn: 1, GBE: 280, GBK: 180, ErstAn: 0, LuxAn: 1, LuxErtrag: 9,
+  NormPkt: 3, NormJePkt: 11.4, SVjePkt: 18, NormAnteil: 0.577,
+  // Bausteine: Bildung und Arbeit
+  BildAn: 1, Stud: 2.3, BAfoeg: 2.6, KG18: 4.7, Azubi: 0.7, WBTn: 0.6, WBheute: 2.4,
+  BJAn: 1, BJTn: 2, BJKV: 1800, BJAnl: 3500, BJheuteTn: 1.5, BJheute: 14200, BJVerw: 2, BJAnr: 4,
+  CoachAn: 1, CoachN: 70000, CoachK: 85000,
+  RentAn: 1, RentN: 1.3, RentKonsum: 23000, RentVerd: 9000, RentDyn: 0.6,
+  MehrAn: 1, MehrStd: 40, MehrKind: 5, MehrDeckel: 0,
+  // Verwaltung
+  VerwAn: 1, VerwZiel: 25, VerwIT: 3,
+  // Zuckerabgabe (zweckgebunden)
+  ZuckAn: 1, ZuckSatz: 5, ZuckMenge: 2.54, ZuckRueck: 0.25, ZuckBonus: 9,
+  // Steuerfreie Mehrarbeit: Gruppen (Mio. Haushalte, Lohn/Stunden je Person, Kinder, Ausgaben über dem Existenzminimum, Erwachsene)
+  MehrGruppen: [
+    { n: 4,   l1: 58000, h1: 41.5, l2: 22000, h2: 24,   k: 1.65, ue: 22092, e: 2 },
+    { n: 1.7, l1: 58000, h1: 41.5, l2: 46000, h2: 39.5, k: 1.65, ue: 34607, e: 2 },
+    { n: 0.8, l1: 58000, h1: 41.5, l2: 0,     h2: 0,    k: 1.65, ue: 6674,  e: 2 },
+    { n: 0.4, l1: 40000, h1: 39,   l2: 0,     h2: 0,    k: 1,    ue: 9657,  e: 1 },
+    { n: 4,   l1: 65000, h1: 47,   l2: 0,     h2: 0,    k: 0,    ue: 24513, e: 1 },
+  ],
+};
+
+const QUELLEN = [{"t": "Bevölkerung und Wirtschaft", "i": "Die Größen, auf denen die Gesamtrechnung aufbaut.", "r": [["Einw", "Einwohner", "mio", "Statistik", "Destatis, gerundet", 83.5], ["Erw", "Erwachsene", "mio", "Statistik", "Destatis, gerundet", 70.5], ["Kinder", "Kinder unter 18 Jahren", "mio", "Statistik", "Destatis, gerundet", 13.9], ["KGKinder", "Kinder mit Kindergeldanspruch", "mio", "Statistik", "inkl. volljährige Kinder in Ausbildung; gerundet", 17.4], ["Konsum", "Konsumausgaben der privaten Haushalte", "mrd", "Statistik", "2024: 2.283 Mrd. € (Statistische Ämter); 2025 fortgeschrieben", 2350], ["Miete", "davon Mietwert selbst genutzter Wohnungen (unterstellte Mieten)", "mrd", "Annahme", "Annahme, rund 8,5 % der Konsumausgaben (VGR: unterstellte Mieten)", 200], ["Sigma", "Ungleichheit der Konsumausgaben (Streuung)", "num", "Annahme", "Lognormal-Annahme, entspricht Gini rund 0,30 und einem Konsumanteil der oberen 10 % von rund 23 %. Die EVS zeigt Konsum etwas gleicher verteilt als Einkommen (Gini rund 0,28), erfasst aber keine sehr hohen Einkommen.", 0.55], ["BIP", "Bruttoinlandsprodukt", "mrd", "Statistik", "2024: rund 4.300 Mrd. €; 2025 fortgeschrieben", 4400], ["Schuld", "Staatsschulden (Maastricht)", "pct", "Statistik", "2024 rund 63 %", 0.63], ["ZinsAlt", "Durchschnittszins der bestehenden Staatsschulden", "pct", "Annahme", "Annahme: steigt mit der Umschuldung Richtung Marktzins", 0.025], ["Zins", "Zins für Bundesanleihen (10 Jahre)", "pct", "Annahme", "Annahme, Stand 2025/26", 0.027], ["Wachstum", "Nominales Wachstum des BIP", "pct", "Annahme", "Annahme", 0.025], ["Jahre", "Dauer der Übergangsphase", "jahre", "Annahme", "Annahme", 15]]}, {"t": "Steuern heute nach Einkommensart", "i": "Was die Steuern einbringen, die im Vorschlag wegfallen. Daran sieht man, wie Lohn, Gewinne, Dividenden, Zinsen und Erbschaften heute jeweils besteuert werden.", "r": [["LSt", "Lohnsteuer (nach Abzug des Kindergelds)", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 262.1], ["vESt", "Veranlagte Einkommensteuer", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 79.4], ["nvSt", "Nicht veranlagte Steuern vom Ertrag (Dividenden)", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 31.9], ["AbgStA", "Abgeltungsteuer auf Zinsen und Kursgewinne", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 24.2], ["KSt", "Körperschaftsteuer", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 39], ["Soli", "Solidaritätszuschlag", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 13], ["ErbSt", "Erbschaft- und Schenkungsteuer (alt)", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 14.9]]}, {"t": "Erbschaften und Vermögen", "i": "Wie viel jedes Jahr vererbt wird und wie viel davon im Vorschlag fällig wird.", "r": [["ErbVol", "Erbschaften und Schenkungen pro Jahr", "mrd", "Statistik", "DIW: 300–400 Mrd. €", 350], ["ErbAnteil", "Staatsanteil beim Erbgang", "pct", "Vorschlag", "Vorschlag: gleiche Regeln wie für jedes Einkommen, keine Sonderfreibeträge; Entnahmen in Höhe des Existenzminimums bleiben frei, soweit es nicht schon durch andere Einkommen gedeckt ist", 0.5], ["ErbBasis", "Anteil des vererbten Vermögens, auf den der Staatsanteil greift", "pct", "Vorschlag", "1 = keine Sonderfreibeträge (Vorschlag). Mit Freibeträgen wie heute (400.000 € je Kind) grob 0,3 bis 0,4, eigene Schätzung", 1], ["RealStart", "davon jährlich realisiert: Startphase", "pct", "Annahme", "Annahme: nur Entnahmen ins Private werden fällig", 0.25], ["RealLang", "davon jährlich realisiert: langfristig", "pct", "Annahme", "Annahme", 0.5], ["AltCap", "Obergrenze steuerfreier Entnahmen aus Altvermögen je Erwachsenem", "eur", "Vorschlag", "Vorschlag für die Übergangsregel (Blatt Haushalte)", 30000], ["AltUeb", "Übergangsregel Altvermögen: Steuerausfall in der Startphase", "mrd", "Annahme", "grobe Schätzung: rund 40 Mrd. € Konsum von Ruheständlern aus versteuertem Ersparten, Steuersatz rund 30 %; läuft über die Übergangsphase aus", 12]]}, {"t": "Recht heute (2026)", "i": "Gesetzliche Werte für den Vergleich mit heute.", "r": [["GFB", "Grundfreibetrag Einkommensteuer 2026", "eur", "Recht", "§ 32a EStG, Tarif 2026", 12348], ["GrenzeZone2", "Ende Tarifzone 2", "eur", "Recht", "§ 32a EStG 2026", 17799], ["GrenzeZone3", "Ende Tarifzone 3", "eur", "Recht", "§ 32a EStG 2026", 69878], ["GrenzeZone5", "Beginn Reichensteuer", "eur", "Recht", "§ 32a EStG 2026", 277826], ["SoliFG", "Freigrenze Solidaritätszuschlag (Einzelveranlagung)", "eur", "Recht", "SolZG, Wert 2026", 20350], ["AbgSt", "Abgeltungsteuer inkl. Soli", "pct", "Recht", "25 % + 5,5 % Soli", 0.26375], ["SPB", "Sparerpauschbetrag je Person", "eur", "Recht", "§ 20 Abs. 9 EStG", 1000], ["KStS", "Körperschaftsteuer inkl. Soli", "pct", "Recht", "15 % + 5,5 % Soli; Gewerbesteuer bleibt in beiden Systemen und ist nicht berücksichtigt", 0.15825], ["WKP", "Arbeitnehmer-Pauschbetrag", "eur", "Recht", "§ 9a EStG", 1230], ["WKR", "Werbungskostenpauschale Rente", "eur", "Recht", "§ 9a EStG", 102], ["BestAnteil", "Besteuerungsanteil der Rente", "pct", "Annahme", "Annahme: Rentenbeginn 2024", 0.83], ["EntlAE", "Entlastungsbetrag Alleinerziehende", "eur", "Recht", "§ 24b EStG", 4260], ["KindergeldMonat", "Kindergeld je Kind", "eurm", "Recht", "Wert 2026", 259], ["KIDA", "Existenzminimum Kind (sächlich)", "eur", "Recht", "Kinderfreibetrag 2026, 2 × 3.414 €", 6828], ["KVAN", "Krankenversicherung Arbeitnehmeranteil inkl. halber Zusatzbeitrag", "pct", "Recht", "7,3 % + 1,45 % (Ø Zusatzbeitrag 2026: 2,9 %)", 0.0875], ["PVAN", "Pflegeversicherung Arbeitnehmeranteil", "pct", "Recht", "3,6 % hälftig (Sachsen abweichend)", 0.018], ["PVK", "Kinderlosenzuschlag Pflege", "pct", "Recht", "nur Arbeitnehmer/Rentner", 0.006], ["PVR", "Pflegeversicherung Rentner (voll)", "pct", "Recht", "Rentner zahlen PV allein", 0.036], ["RVAN", "Rentenversicherung Arbeitnehmeranteil", "pct", "Recht", "18,6 % hälftig", 0.093], ["AVAN", "Arbeitslosenversicherung Arbeitnehmeranteil", "pct", "Recht", "2,6 % hälftig", 0.013], ["BBGKV", "Beitragsbemessungsgrenze Kranken-/Pflegeversicherung", "eur", "Recht", "Wert 2026", 69750], ["BBGRV", "Beitragsbemessungsgrenze Renten-/Arbeitslosenversicherung", "eur", "Recht", "Wert 2026", 101400], ["Mini", "Minijob-Grenze", "eurm", "Recht", "Wert 2026", 603], ["Midi", "Obergrenze Übergangsbereich (Midijob)", "eurm", "Recht", "Wert 2026", 2000], ["RBE", "Regelbedarf Erwachsene", "eurm", "Recht", "Wert 2026", 563]]}, {"t": "Das neue System", "i": "Tarif und Mehrwertsteuer im Vorschlag.", "r": [["Satz1", "Ausgabensteuer Stufe 1", "pct", "Vorschlag", "Satz auf Ausgaben oberhalb des Existenzminimums, Stufe 1", 0.3], ["Grenze1", "Ende Stufe 1 (über dem Existenzminimum)", "eur", "Vorschlag", "je Erwachsenem; bei Paaren werden die Ausgaben des Haushalts wie beim Splitting auf beide verteilt", 10000], ["Satz2", "Ausgabensteuer Stufe 2", "pct", "Vorschlag", "", 0.45], ["Grenze2", "Ende Stufe 2 (über dem Existenzminimum)", "eur", "Vorschlag", "Kalibriert: Die Schulden der Übergangsphase sind innerhalb einer Generation getilgt (Blatt Kredit)", 20000], ["Satz3", "Ausgabensteuer Stufe 3", "pct", "Vorschlag", "", 0.65], ["TaperEnd", "SV-Freibetrag läuft aus bei Bruttolohn von", "eur", "Vorschlag", "Freibetrag in Höhe des Existenzminimums, linear abschmelzend", 36000], ["MwStQ", "Mehrwertsteuer-Anteil an den Konsumausgaben", "pct", "Annahme", "Annahme (Mieten sind steuerfrei, Lebensmittel 7 %)", 0.1], ["Nutzwert", "Mietwert selbst genutzter Wohnungen in der Ausgabensteuer", "mrd", "Vorschlag", "Vorschlag: voll einbezogen, damit Mieter und Eigentümer gleich behandelt werden. 0 = nicht besteuert", 200], ["Stundung", "Mietwert: Anteil der Steuer, der in der Startphase gestundet wird", "pct", "Annahme", "Eigentümer mit wenig Bargeld stunden bis Verkauf oder Erbfall; langfristig gleichen Rückzahlungen aus Nachlässen neue Stundungen aus", 0.2], ["NormPkt", "Anhebung des Normalsatzes der Mehrwertsteuer", "pkt", "Vorschlag", "Vorschlag: 22 % statt 19 %; der Erlös geht vollständig an Renten- und Krankenversicherung", 3], ["NormJePkt", "Mehreinnahmen je Punkt Normalsatz", "mrd", "Annahme", "grobe Schätzung nach Abzug der Mehrkosten des Staates", 11.4], ["SVjePkt", "Wert eines Beitragspunkts Rente und Krankenversicherung (Arbeitnehmer und Arbeitgeber)", "mrd", "Annahme", "rund 17 bis 19 Mrd. € je Punkt", 18], ["NormAnteil", "Anteil des Konsums zum Normalsatz", "pct", "Annahme", "abgeleitet: 10 % Mehrwertsteuer-Anteil bei 12 % Lebensmitteln zu 7 %", 0.577], ["GBE", "Grundbedarf je Erwachsenem (Lebensmittel, Wasser, Nahverkehr)", "eurm", "Vorschlag", "VGR 2024: 225,6 Mrd. € für Nahrungsmittel; dazu Wasser und Nahverkehr", 280], ["GBK", "Grundbedarf je Kind", "eurm", "Annahme", "Annahme", 180], ["LuxErtrag", "Mehreinnahmen der Luxusstufe", "mrd", "Annahme", "grobe Schätzung: 0,96 Mio. private Neuwagen im Jahr zu Ø 37.000 € netto, 50 % auf den Teil über 10.000 €, Nachfrage −15 %: +4,3 Mrd. €; weitere Luxusgüter (Wohnmobile, Boote, Uhren, Schmuck): +4,5 Mrd. €", 9], ["SVKost", "Kosten SV-Freibetrag (Bundeszuschuss an die Sozialkassen)", "mrd", "Annahme", "grobe Schätzung: rund 11 Mio. Beschäftigte unter 36.000 €", 20], ["Gruend", "Gründungszuschuss 50 % auf Stammkapital", "mrd", "Annahme", "grobe Schätzung", 3]]}, {"t": "Sicherheit und Verteidigung", "i": "Grundlage des Schalters „Mit Sicherheitsbeitrag“.", "r": [["DefMehr", "Mehrausgaben für Verteidigung", "pct", "Recht", "3,5 % statt 2 % nach dem Beschluss der NATO in Den Haag (25.06.2025)", 0.015], ["SubvDiesel", "Abbau des Dieselprivilegs", "mrd", "Statistik", "Bundesrechnungshof, Bericht zum 30. Subventionsbericht (Januar 2026)", 7], ["SubvKerosin", "Kerosin für Inlandsflüge besteuern", "mrd", "Annahme", "Schätzung des Finanzministeriums, nach Ariadne-Kurzdossier (April 2024)", 0.6], ["SubvAgrar", "Abbau des Agrardiesels", "mrd", "Statistik", "Bundesrechnungshof (Januar 2026)", 0.4]]}, {"t": "Bausteine: Bildung, Arbeit, Verwaltung, Gesundheit", "i": "Grobe Schätzungen für die einzelnen Ideen aus dem Buch.", "r": [["Stud", "Vollzeit-Studierende mit Anspruch", "mio", "Statistik", "2,88 Mio. Studierende im WS 2025/26; ohne Teilzeit- und Langzeitstudium", 2.3], ["BAfoeg", "heutiges BAföG für Studierende (entfällt)", "mrd", "Statistik", "Destatis: 3,0 Mrd. € BAföG 2025 für 443.100 Studierende und 126.900 Schüler", 2.6], ["KG18", "Kindergeld für Volljährige in Ausbildung (entfällt)", "mrd", "Annahme", "rund 1,5 Mio. × 259 € × 12", 4.7], ["Azubi", "Aufstockung der Ausbildungsvergütung bis zum Existenzminimum", "mrd", "Statistik", "1,22 Mio. Auszubildende; tariflich im Schnitt 1.209 € (2025), rund ein Viertel liegt im Schnitt 200 € unter dem Existenzminimum", 0.7], ["WBTn", "Erwachsene in Vollzeit-Weiterbildung", "mio", "Annahme", "Annahme; heute rund 0,2 Mio. in geförderter Weiterbildung der Arbeitsagentur", 0.6], ["WBheute", "heutige Förderung der Weiterbildung (entfällt)", "mrd", "Annahme", "grobe Schätzung", 2.4], ["BJTn", "Teilnehmer am Bürgerjob oder an Bildung", "mio", "Annahme", "Annahme: rund 1,9 Mio. Arbeitslose in der Grundsicherung und neue Teilnehmer", 2], ["BJKV", "Kranken- und Pflegeversicherung je Teilnehmer", "eur", "Annahme", "grobe Schätzung", 1800], ["BJAnl", "Anleitung, Begleitung und Material je Teilnehmer", "eur", "Annahme", "grobe Schätzung", 3500], ["BJheuteTn", "davon heute schon in der Grundsicherung", "mio", "Annahme", "Annahme", 1.5], ["BJheute", "heutige Grundsicherung je Person (Regelbedarf, Wohnung, Versicherung)", "eur", "Statistik", "Regelbedarf 563 €, Wohnkosten rund 470 €, Versicherung rund 150 € im Monat", 14200], ["BJVerw", "Einsparung bei der Verwaltung der Jobcenter", "mrd", "Annahme", "Verwaltungskosten Grundsicherung 2025: rund 8 Mrd. €; Anrechnung und Bedarfsprüfung entfallen weitgehend", 2], ["BJAnr", "Mehrkosten: Zuverdienst wird nicht mehr angerechnet", "mrd", "Annahme", "rund 0,8 Mio. Aufstocker", 4], ["CoachN", "Berufscoaches mit KI-Unterstützung", "int", "Annahme", "rund 1 Coach je 750 Menschen im Erwerbsalter", 70000], ["CoachK", "Kosten je Coach inklusive Arbeitsplatz", "eur", "Annahme", "Annahme", 85000], ["RentN", "Erwerbstätige Rentner", "mio", "Statistik", "Destatis: rund 13 % der 65- bis 74-Jährigen arbeiten", 1.3], ["RentKonsum", "Konsum eines erwerbstätigen Rentners", "eur", "Annahme", "Annahme: Rente rund 16.000 €, Zuverdienst 9.000 €", 23000], ["RentVerd", "Zuverdienst eines erwerbstätigen Rentners", "eur", "Annahme", "Annahme", 9000], ["RentDyn", "Mehreinnahmen, weil mehr Rentner arbeiten", "mrd", "Annahme", "Annahme: 200.000 Rentner mehr im Beruf", 0.6], ["MehrStd", "Steuerfrei ist Arbeit ab Wochenstunden", "std", "Vorschlag", "Vorschlag", 40], ["MehrKind", "Schwelle sinkt je Kind unter 18 um", "std", "Vorschlag", "Vorschlag: Familie mit zwei Kindern ab 30 Stunden", 5], ["MehrDeckel", "Höchstbetrag steuerfreier Lohn je Person (0 = kein Deckel)", "eur", "Vorschlag", "Variante: 6.000 € senkt die Kosten auf rund 34 Mrd. €", 0], ["VerwZiel", "Einsparung nach der Übergangsphase", "mrd", "Annahme", "rund 380.000 Stellen (7 % des öffentlichen Dienstes) zu je rund 66.000 €; Arbeitnehmerentgelt des Staates 2024: 356 Mrd. €; ohne Kündigungen, weil bis Mitte der 2030er rund 40 % der Beschäftigten in Rente gehen", 25], ["VerwIT", "Aufbau der Systeme zu Beginn", "mrd", "Annahme", "läuft über die Übergangsphase aus", 3], ["ZuckSatz", "Zuckerabgabe je kg zugesetztem Zucker", "eurkg", "Annahme", "Größenordnung der direkten Krankheitskosten: 8,6 Mrd. € (2008, Meier u. a. 2015), heute rund 12 Mrd. €, geteilt durch die Verbrauchsmenge", 5], ["ZuckMenge", "Zuckerverbrauch für Lebensmittel", "miot", "Statistik", "BMEL 2023/24: 2,73 Mio. t Inlandsverwendung, davon rund 93 % für Nahrung (30,4 kg je Kopf)", 2.54], ["ZuckRueck", "Rückgang durch Abgabe und neue Rezepturen", "pct", "Annahme", "Annahme; in Großbritannien sank der Zucker in abgabepflichtigen Getränken um rund 46 %", 0.25], ["ZuckBonus", "Gesundheitsbonus der Krankenkassen", "mrd", "Annahme", "im Schnitt 150 € je Erwachsenem, bis 600 € für Vorsorge, Nichtrauchen und Bewegung", 9]]}];
+
+/* Die zehn Haushalte aus dem Buch (Blatt „Haushalte“) */
+const BEISPIELE = [
+  { name: "Grundsicherung", text: "Alleinstehend, Regelbedarf plus Miete und Heizung.", v: { transfer: 12256, kinderlos: 1 } },
+  { name: "Rentnerin mit Minijob", text: "9.600 € Rente, 603 € im Monat als Alltagsbegleiterin.", v: { rente: 9600, mini: 7236, rentner: 1 } },
+  { name: "Alleinerziehende Pflegehelferin", text: "Teilzeit, 1.600 € brutto im Monat, ein Kind.", v: { lohn1: 19200, std1: 30, kinder: 1, allein: 1 } },
+  { name: "Verkäuferin, Mindestlohn", text: "Vollzeit zu 13,90 € pro Stunde, spart 3 %.", v: { lohn1: 28912, std1: 40, kinderlos: 1, spar: 0.03 } },
+  { name: "Facharbeiter", text: "4.000 € brutto im Monat, ledig, Mietwohnung, spart 10 %.", v: { lohn1: 48000, std1: 40, kinderlos: 1, spar: 0.10 } },
+  { name: "Familie, zwei Kinder", text: "Ein Einkommen, 5.000 € brutto im Monat, 40 Stunden, eigenes Haus.", v: { erw: 2, kinder: 2, lohn1: 60000, std1: 40, miet: 12000, spar: 0.08 } },
+  { name: "Familie, Tochter studiert", text: "Beide Eltern Vollzeit, 5.000 € und 4.000 € brutto im Monat, Sohn in der Schule, Tochter studiert in einer anderen Stadt (Buch, Kapitel 7).", v: { erw: 2, kinder: 1, vollj: 1, unterhalt: 731, lohn1: 60000, std1: 40, lohn2: 48000, std2: 40, spar: 0.08 } },
+  { name: "Handwerksmeister", text: "90.000 € Gewinn, investiert in den Betrieb, eigenes Haus.", v: { gewinn: 90000, pkv: 9000, vorsorge: 6000, miet: 12000, kinderlos: 1, spar: 0.15 } },
+  { name: "Führungskraft", text: "160.000 € Gehalt, 45 Stunden, 20.000 € Kapitalerträge, Eigentumswohnung.", v: { lohn1: 160000, std1: 45, kap: 20000, miet: 18000, kinderlos: 1, spar: 0.35 } },
+  { name: "Wohlhabender Ruheständler", text: "30.000 € Rente, 60.000 € Kapitalerträge, lebt auch vom Vermögen, eigenes Haus.", v: { rente: 30000, kap: 60000, verm: 30000, miet: 18000, rentner: 1 } },
+  { name: "Unternehmerin mit GmbH", text: "1 Mio. € Gewinn, 300.000 € Ausschüttung, Villa.", v: { gmbh: 1000000, aus: 300000, miet: 30000, kinderlos: 1 } },
+];
+const DEFAULT_BEISPIEL = 5;
+
+/* ===================== Rechenkern ===================== */
+const A = structuredClone(ANNAHMEN);
+const A0 = structuredClone(ANNAHMEN);
+const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
+
+function tarif(x) { // Ausgabensteuer je Erwachsenem auf Ausgaben x über dem Existenzminimum
+  x = Math.max(0, x);
+  return A.Satz1 * Math.min(x, A.Grenze1) + A.Satz2 * Math.max(0, Math.min(x, A.Grenze2) - A.Grenze1) + A.Satz3 * Math.max(0, x - A.Grenze2);
+}
+function estTarif(z) {
+  if (z <= A.GFB) return 0;
+  if (z <= A.GrenzeZone2) { const y = (z - A.GFB) / 1e4; return (A.KoefA2 * y + A.KoefB2) * y; }
+  if (z <= A.GrenzeZone3) { const y = (z - A.GrenzeZone2) / 1e4; return (A.KoefA3 * y + A.KoefB3) * y + A.KoefC3; }
+  if (z < A.GrenzeZone5) return 0.42 * z - A.Abzug42;
+  return 0.45 * z - A.Abzug45;
+}
+const svSenkAN = () => A.NormPkt * A.NormJePkt / A.SVjePkt / 2 / 100;
+
+function haushalt(h) {
+  const kl = h.kinderlos ? 1 : 0, z = h.erw === 2 ? 1 : 0;
+  const personen = [{ l: h.lohn1, s: h.std1 }];
+  if (h.erw === 2) personen.push({ l: h.lohn2, s: h.std2 });
+  const svSatzKV = A.KVAN + A.PVAN + kl * A.PVK, svSatzRV = A.RVAN + A.AVAN;
+  // --- heute ---
+  let sv = 0, vors = 0, wk = 0;
+  for (const p of personen) {
+    const m = p.l / 12;
+    const bpe = (p.l === 0 || m <= A.Mini) ? 0 : (m <= A.Midi ? A.Midi / (A.Midi - A.Mini) * (m - A.Mini) * 12 : p.l);
+    p.bpe = bpe;
+    sv += Math.min(bpe, A.BBGKV) * svSatzKV + Math.min(bpe, A.BBGRV) * svSatzRV;
+    vors += Math.min(bpe, A.BBGRV) * A.RVAN + Math.min(bpe, A.BBGKV) * (A.KVAN * 0.96 + A.PVAN + kl * A.PVK);
+    if (bpe > 0) wk += A.WKP;
+  }
+  const svRente = h.rente * (A.KVAN + A.PVR + kl * A.PVK);
+  vors += svRente + h.pkv * 0.8 + h.vorsorge;
+  if (h.rente > 0) wk += A.WKR;
+  const lohn = personen.reduce((s, p) => s + p.l, 0);
+  const zvE = Math.max(0, Math.floor(lohn + h.gewinn + h.rente * A.BestAnteil - wk - vors - (h.allein ? A.EntlAE : 0) - h.vollj * A.AusbFB));
+  const zvEp = z ? Math.floor(zvE / 2) : zvE;
+  const est = Math.floor((z ? 2 : 1) * estTarif(zvEp));
+  const soli = est <= A.SoliFG * (1 + z) ? 0 : Math.min(0.055 * est, 0.119 * (est - A.SoliFG * (1 + z)));
+  const abg = Math.max(0, h.kap - A.SPB * (1 + z)) * A.AbgSt;
+  const kst = h.gmbh * A.KStS;
+  const kapest = h.aus * A.AbgSt;
+  const kg = h.kinder * A.KindergeldMonat * 12;
+  const verf = lohn + h.mini + h.rente + h.gewinn + h.kap + h.transfer + kg + h.aus - sv - svRente - h.pkv - est - soli - abg - kapest;
+  // Unterhalt für volljährige Kinder in Ausbildung: heute aus eigener Tasche (das Kindergeld für sie wird weitergereicht und ist hier nicht enthalten)
+  const unterhalt = h.vollj * h.unterhalt * 12;
+  const konsum = Math.max(0, (verf - unterhalt) * (1 - h.spar) + h.verm);
+  // Vorschlag: Das Kind bekommt das Existenzminimum selbst (Baustein Bildung), der Unterhalt entfällt bis zu dieser Höhe
+  const entfall = A.BildAn ? Math.min(unterhalt, h.vollj * A.GFB) : 0;
+  const mwst = konsum * A.MwStQ;
+  const einkommen = lohn + h.mini + h.rente + h.gewinn + h.kap + h.gmbh + h.transfer + kg;
+  const heute = { sv: sv + svRente, est: est + soli, kap: abg + kst + kapest, mwst, ausg: 0 };
+  // --- Vorschlag ---
+  let svNeu = svRente, fbSum = 0, senkSum = 0, mehr = 0;
+  const schwelle = A.MehrStd - A.MehrKind * h.kinder;
+  for (const p of personen) {
+    const m = p.l / 12;
+    if (!(p.l === 0 || m <= A.Mini)) {
+      const sv0 = Math.min(p.l, A.BBGKV) * svSatzKV + Math.min(p.l, A.BBGRV) * svSatzRV;
+      const fb = (svSatzKV + svSatzRV) * Math.min(p.l, A.GFB) * clamp((A.TaperEnd - p.l) / (A.TaperEnd - A.GFB), 0, 1);
+      const senk = Math.min(p.l, A.BBGKV) * svSenkAN();
+      svNeu += sv0 - fb - senk; fbSum += fb; senkSum += senk;
+    }
+    if (A.MehrAn && p.s > 0 && !h.rentner) {
+      let f = p.l * Math.max(0, p.s - schwelle) / p.s;
+      if (A.MehrDeckel > 0) f = Math.min(A.MehrDeckel, f);
+      mehr += f;
+    }
+  }
+  const rentFrei = A.RentAn && h.rentner ? (lohn + h.mini + h.gewinn) : 0;
+  const existenz = h.erw * A.GFB + h.kinder * A.KIDA;
+  const frei = existenz + mehr + rentFrei;
+  const mietw = A.Nutzwert > 0 ? h.miet : 0;
+  const ueber = Math.max(0, konsum + mietw - frei);
+  const ausg = h.erw * tarif(ueber / h.erw);
+  const gb = A.GBAn * (h.erw * A.GBE + h.kinder * A.GBK) * 12 * 0.07 / 1.07;
+  const erst = A.ErstAn * (h.erw * A.RBE + h.kinder * A.RBK) * 12 * A.MwStRB;
+  const p = A.NormPkt / 100;
+  const mwstNeu = konsum * (A.MwStQ + A.NormAnteil * ((0.19 + p) / (1.19 + p) - 0.19 / 1.19)) - gb - erst;
+  const vorschlag = { sv: svNeu, est: 0, kap: 0, mwst: mwstNeu, ausg };
+  // Übergangsphase
+  const alt = Math.min(h.verm, A.AltCap * h.erw);
+  const ueber2 = Math.max(0, konsum + mietw - alt - frei);
+  const ausgUeb = h.erw * tarif(ueber2 / h.erw);
+  const sum = o => o.sv + o.est + o.kap + o.mwst + o.ausg;
+  return { heute, vorschlag, sumH: sum(heute), sumV: sum(vorschlag), einkommen, konsum, verf, existenz, mehr, rentFrei, frei, mietw, ueber, ausg, gb, fbSum, senkSum, mwstNeu, mwst, alt, ausgUeb, kg, sv, svRente, svNeu, unterhalt, entfall };
+}
+
+/* Inverse Standardnormalverteilung (Acklam) */
+function normsinv(p) {
+  const a = [-39.69683028665376, 220.9460984245205, -275.9285104469687, 138.357751867269, -30.66479806614716, 2.506628277459239];
+  const b = [-54.47609879822406, 161.5858368580409, -155.6989798598866, 66.80131188771972, -13.28068155288572];
+  const c = [-0.007784894002430293, -0.3223964580411365, -2.400758277161838, -2.549732539343734, 4.374664141464968, 2.938163982698783];
+  const d = [0.007784695709041462, 0.3224671290700398, 2.445134137142996, 3.754408661907416];
+  const pl = 0.02425; let q, r;
+  if (p < pl) { q = Math.sqrt(-2 * Math.log(p)); return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+  if (p > 1 - pl) { q = Math.sqrt(-2 * Math.log(1 - p)); return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+  q = p - 0.5; r = q * q;
+  return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q / (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+}
+const Z = Array.from({ length: 1000 }, (_, i) => normsinv((i + 0.5) / 1000));
+
+function aufkommen(mitMiete) { // Ausgabensteuer über die Konsumverteilung, Mrd. €
+  const avg = (A.Konsum - A.Miete + (mitMiete ? A.Nutzwert : 0)) * 1e9 / (A.Erw * 1e6);
+  const exm = A.GFB + A.Kinder * A.KIDA / A.Erw;
+  const mu = Math.log(avg) - A.Sigma * A.Sigma / 2;
+  let s = 0;
+  for (const z of Z) s += tarif(Math.exp(mu + A.Sigma * z) - exm);
+  return s / Z.length * A.Erw * 1e6 / 1e9;
+}
+
+function gesamt() {
+  const wegfall = A.LSt + A.vESt + A.nvSt + A.AbgStA + A.KSt + A.Soli + A.ErbSt;
+  const kindergeld = A.KGKinder * A.KindergeldMonat * 12 / 1000;
+  const gb = A.GBAn * (A.Erw * A.GBE + A.Kinder * A.GBK) * 12 * 0.07 / 1.07 / 1000;
+  const erst = A.ErstAn * (A.Erw * A.RBE * 12 * A.MwStRB + A.Kinder * A.RBK * 12 * A.MwStRB) / 1000;
+  const bild = A.BildAn * ((A.Stud * A.GFB / 1000 - A.BAfoeg - A.KG18) + A.Azubi + (A.WBTn * A.GFB / 1000 - A.WBheute));
+  const bj = A.BJAn * (A.BJTn * (A.GFB + A.BJKV + A.BJAnl) / 1000 - A.BJheuteTn * A.BJheute / 1000 - A.BJVerw + A.BJAnr);
+  const coach = A.CoachAn * A.CoachN * A.CoachK / 1e9;
+  const rx = Math.max(0, A.RentKonsum - A.GFB);
+  const rent = A.RentAn * (A.RentN * (tarif(rx) - tarif(Math.max(0, rx - A.RentVerd))) / 1000 - A.RentDyn);
+  let mehrK = 0;
+  for (const g of A.MehrGruppen) {
+    const sch = A.MehrStd - A.MehrKind * g.k;
+    const fr = (l, h) => { if (h <= 0 || l <= 0) return 0; let f = l * Math.max(0, h - sch) / h; return A.MehrDeckel > 0 ? Math.min(A.MehrDeckel, f) : f; };
+    const J = fr(g.l1, g.h1) + fr(g.l2, g.h2);
+    const K = g.e * (tarif(g.ue / g.e) - tarif(Math.max(0, g.ue - J) / g.e));
+    mehrK += g.n * K / 1000;
+  }
+  mehrK *= A.MehrAn;
+  const it = A.VerwAn * A.VerwIT, verwE = A.VerwAn * A.VerwZiel;
+  const ausg0 = aufkommen(false);
+  const mietSt = A.Nutzwert > 0 ? aufkommen(true) - ausg0 : 0;
+  const lux = A.LuxAn * A.LuxErtrag;
+  const erbS = A.ErbVol * A.ErbBasis * A.ErbAnteil * A.RealStart;
+  const erbL = A.ErbVol * A.ErbBasis * A.ErbAnteil * A.RealLang;
+  const ausgaben = [
+    ["Kindergeld, bisher mit der Lohnsteuer verrechnet", kindergeld, kindergeld],
+    ["Grundbedarf ohne Mehrwertsteuer", gb, gb],
+    ["Pauschale Mehrwertsteuer-Erstattung (Modell 1.0)", erst, erst],
+    ["Keine Sozialabgaben auf das Existenzminimum", A.SVKost, A.SVKost],
+    ["Gründungszuschuss auf Stammkapital", A.Gruend, A.Gruend],
+    ["Existenzminimum in der Bildung", bild, bild],
+    ["Bürgerjob: Recht auf Arbeit oder Bildung", bj, bj],
+    ["Berufscoach für alle", coach, coach],
+    ["Arbeit im Rentenalter steuerfrei", rent, rent],
+    ["Mehrarbeit steuerfrei", mehrK, mehrK],
+    ["Aufbau der KI-tauglichen Verwaltung", it, 0],
+    ["Übergangsregel für versteuertes Erspartes", A.AltUeb, 0],
+    ["Mehr für Verteidigung (1,5 % des BIP)", A.Verteidigung, A.Verteidigung],
+    ["Weitere zusätzliche Ausgaben", A.Extra, A.Extra],
+  ];
+  const einnahmen = [
+    ["Steuer auf das, was ins Private fließt", ausg0, ausg0],
+    ["Dieselbe Steuer auf den Mietwert der eigenen Wohnung", mietSt * (1 - A.Stundung), mietSt],
+    ["Staatsanteil an Erbschaften", erbS, erbL],
+    ["Luxusstufe der Mehrwertsteuer", lux, lux],
+    ["Einsparung in der Verwaltung", 0, verwE],
+    ["Abbau klimaschädlicher Subventionen", A.SubvAbbau, A.SubvAbbau],
+  ];
+  const sumCol = (rows, i) => rows.reduce((s, r) => s + r[i], 0);
+  const bedarfS = wegfall + sumCol(ausgaben, 1), bedarfL = wegfall + sumCol(ausgaben, 2);
+  const einS = sumCol(einnahmen, 1), einL = sumCol(einnahmen, 2);
+  const saldoS = einS - bedarfS, saldoL = einL - bedarfL;
+  return { wegfall, ausgaben, einnahmen, bedarfS, bedarfL, einS, einL, saldoS, saldoL, normE: A.NormPkt * A.NormJePkt, svsenk: A.NormPkt * A.NormJePkt / A.SVjePkt };
+}
+
+function kredit(saldoS, saldoL, jahre = 45) {
+  let D = 0, J = 0, peak = 0, peakJ = 0, getilgt = null, altFrei = null;
+  const rows = [];
+  for (let y = 1; y <= jahre; y++) {
+    const B = (y - 1 >= A.Jahre) ? saldoL : saldoS + (saldoL - saldoS) * (y - 1) / A.Jahre;
+    const C = D * A.Zins;
+    const Dn = Math.max(0, D - B + C);
+    const G = Math.max(0, B - C - D);
+    const E = A.BIP * Math.pow(1 + A.Wachstum, y - 1);
+    const I = G * Math.pow(1 + A.Wachstum, y - 1);
+    J = y === 1 ? Math.max(0, A.BIP * A.Schuld * (1 + A.ZinsAlt) - I) : Math.max(0, J * (1 + A.ZinsAlt) - I);
+    if (Dn > peak) { peak = Dn; peakJ = y; }
+    if (getilgt === null && Dn === 0 && peak > 0) getilgt = y;
+    if (altFrei === null && J === 0) altFrei = y;
+    D = Dn;
+    rows.push({ y, jahr: A.Prognose.ReformStart - 1 + y, saldo: B, quote: (J + D) / E, ohne: null });
+  }
+  // Vergleich ohne Reform: heutige Schulden wachsen mit dem Zins, BIP mit dem Wachstum
+  let J0 = A.BIP * A.Schuld;
+  rows.forEach((r, i) => { J0 = J0 * (1 + A.ZinsAlt); r.ohne = J0 / (A.BIP * Math.pow(1 + A.Wachstum, i)); });
+  return { rows, peak, peakJ, getilgt, altFrei, unendlich: D > 0 };
+}
+
+function interp(t, pts) {
+  if (t <= pts[0][0]) return pts[0][1];
+  if (t >= pts[pts.length - 1][0]) return pts[pts.length - 1][1];
+  for (let i = 0; i < pts.length - 1; i++) if (t < pts[i + 1][0]) return pts[i][1] + (pts[i + 1][1] - pts[i][1]) * (t - pts[i][0]) / (pts[i + 1][0] - pts[i][0]);
+  return pts[pts.length - 1][1];
+}
+function prognose(sz, reform, saldoPfad) { // Staatsschulden in % des BIP, 2023 bis 2070
+  const P = A.Prognose, c = P[sz];
+  const PB = [P.PBG, P.PBU, (P.PBG + P.PBU) / 2][c.grund - 1];
+  const Demo = [P.DemoG, P.DemoU, (P.DemoG + P.DemoU) / 2][c.grund - 1];
+  let d = A.Schuld, g = P.TBZins0; const out = [{ jahr: P.Start, v: d }];
+  for (let y = P.Start + 1; y <= P.Ende; y++) {
+    g = g + (interp(y, P.ZinsNeu) - g) / P.TBLaufzeit;
+    const wG = interp(y, P.WachsG), wU = interp(y, P.WachsU);
+    const real = [wG, wU, (wG + wU) / 2][c.grund - 1];
+    const anreiz = (y >= P.ReformStart && y < P.ReformStart + P.WachsJahre) ? c.wachs / P.WachsJahre : 0;
+    const H = y < P.ReformStart ? 0 : (saldoPfad[y - P.ReformStart] ?? saldoPfad[saldoPfad.length - 1]) / A.BIP;
+    const K = clamp((y - P.ReformStart + 1) / P.WachsJahre, 0, 1);
+    const M = A.Sicherheit && y < P.ReformStart ? P.DefMehr * clamp((y - P.DefStart + 1) / P.DefJahre, 0, 1) : 0;
+    d = d * (1 + g) / ((1 + real + reform * anreiz) * (1 + P.Infl)) - (PB - Demo * (interp(y, P.Altern) - interp(P.Start, P.Altern)) + reform * (H + c.pbx * K) - M);
+    out.push({ jahr: y, v: d });
+  }
+  return out;
+}
+
+/* ===================== Darstellung ===================== */
+const fmt = (x, d = 0) => (Math.round(x * 10 ** d) / 10 ** d).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const eur = x => fmt(x) + " €";
+const sign = x => (x > 0.5 ? "+" : x < -0.5 ? "−" : "") + fmt(Math.abs(x));
+const mrd = (x, d = 1) => (x < 0 ? "−" : "") + fmt(Math.abs(x), d);
+const pct = (x, d = 1) => fmt(x * 100, d) + " %";
+const $ = id => document.getElementById(id);
+const tip = $("tip");
+function showTip(e, html) { tip.innerHTML = html; tip.hidden = false; const x = Math.min(e.clientX + 14, window.innerWidth - 270); tip.style.left = x + "px"; tip.style.top = (e.clientY + 14) + "px"; }
+function hideTip() { tip.hidden = true; }
+
+const KAT = [
+  ["sv", "Sozialbeiträge", "--s1"],
+  ["est", "Einkommensteuer und Soli", "--s2"],
+  ["kap", "Steuern auf Kapital und Gewinne", "--s3"],
+  ["mwst", "Mehrwertsteuer", "--s4"],
+  ["ausg", "Ausgabensteuer (neu)", "--s5"],
+];
+const FELDER = ["lohn1", "std1", "lohn2", "std2", "rente", "kap", "miet", "mini", "gewinn", "pkv", "vorsorge", "gmbh", "aus", "transfer", "verm", "kinder", "vollj", "unterhalt"];
+const LEER = { erw: 1, kinder: 0, vollj: 0, unterhalt: 0, lohn1: 0, std1: 0, lohn2: 0, std2: 0, rente: 0, kap: 0, miet: 0, mini: 0, gewinn: 0, pkv: 0, vorsorge: 0, gmbh: 0, aus: 0, transfer: 0, verm: 0, spar: 0, kinderlos: 0, allein: 0, rentner: 0 };
+
+const GELD = ["lohn1", "lohn2", "rente", "kap", "miet", "mini", "gewinn", "pkv", "vorsorge", "gmbh", "aus", "transfer", "verm"];
+let einheit = 12; // 12 = Eingabe pro Monat, 1 = pro Jahr
+GELD.forEach(f => { const sp = document.createElement("span"); sp.className = "hint conv"; sp.id = "c_" + f; $(f).after(sp); });
+function zeigeGeld(f, jahr) { $(f).value = jahr ? +(jahr / einheit).toFixed(2) : 0; }
+document.querySelectorAll('input[name="einheit"]').forEach(r => r.addEventListener("change", e => {
+  const h = readForm(); einheit = +e.target.value; GELD.forEach(f => zeigeGeld(f, h[f])); updateHH();
+}));
+const sparSel = $("spar");
+[0, 0.03, 0.05, 0.08, 0.1, 0.15, 0.2, 0.25, 0.35, 0.5].forEach(v => { const o = document.createElement("option"); o.value = v; o.textContent = fmt(v * 100) + " %"; sparSel.append(o); });
+
+function setForm(v) {
+  const h = { ...LEER, ...v };
+  $("erw").value = h.erw;
+  FELDER.forEach(f => $(f).value = h[f]);
+  GELD.forEach(f => zeigeGeld(f, h[f]));
+  if (![...sparSel.options].some(o => +o.value === h.spar)) { const o = document.createElement("option"); o.value = h.spar; o.textContent = fmt(h.spar * 100) + " %"; sparSel.append(o); }
+  sparSel.value = h.spar;
+  $("kinderlos").checked = !!h.kinderlos; $("allein").checked = !!h.allein; $("rentner").checked = !!h.rentner;
+  const needMore = ["mini", "gewinn", "pkv", "vorsorge", "gmbh", "aus", "transfer", "verm"].some(f => h[f] > 0);
+  if (needMore) $("moreBox").open = true;
+}
+function readForm() {
+  const h = {};
+  FELDER.forEach(f => h[f] = Math.max(0, parseFloat($(f).value) || 0));
+  GELD.forEach(f => h[f] = Math.round(h[f] * einheit * 100) / 100);
+  h.kinder = Math.round(h.kinder); h.vollj = Math.round(h.vollj);
+  h.erw = +$("erw").value; h.spar = +sparSel.value;
+  h.kinderlos = $("kinderlos").checked; h.allein = $("allein").checked; h.rentner = $("rentner").checked;
+  if (h.erw === 1) { h.lohn2 = 0; h.std2 = 0; }
+  return h;
+}
+
+let aktiv = DEFAULT_BEISPIEL;
+const presetBox = $("presets");
+function renderPresets() {
+  presetBox.innerHTML = "";
+  BEISPIELE.forEach((b, i) => {
+    const c = document.createElement("button"); c.type = "button"; c.className = "chip"; c.textContent = b.name;
+    c.setAttribute("aria-pressed", i === aktiv); c.onclick = () => { aktiv = i; setForm(b.v); renderPresets(); updateHH(); };
+    presetBox.append(c);
+  });
+  const c = document.createElement("button"); c.type = "button"; c.className = "chip"; c.textContent = "Eigene Angaben";
+  c.setAttribute("aria-pressed", aktiv === -1);
+  c.onclick = () => { aktiv = -1; setForm({ lohn1: 3500 * 12, std1: 40, spar: 0.1, kinderlos: 1 }); renderPresets(); updateHH(); $("lohn1").focus(); };
+  presetBox.append(c);
+  $("presetNote").textContent = aktiv >= 0 ? BEISPIELE[aktiv].text : "Tragen Sie Ihre Zahlen ein. Das Ergebnis rechnet sofort mit.";
+}
+
+function updateHH() {
+  const h = readForm();
+  document.querySelectorAll(".p2").forEach(el => el.hidden = h.erw !== 2);
+  GELD.forEach(f => { const v = h[f]; $("c_" + f).textContent = v > 0 ? (einheit === 12 ? "im Monat, das sind " + eur(v) + " im Jahr" : "im Jahr, das sind " + eur(v / 12) + " im Monat") : (einheit === 12 ? "im Monat" : "im Jahr"); });
+  const r = haushalt(h);
+  const diff = r.sumV - r.sumH;
+  const entl = r.entfall > 0.5;
+  const H = r.sumH + (entl ? r.unterhalt : 0), V = r.sumV + (entl ? r.unterhalt - r.entfall : 0);
+  const was = entl ? "Steuern, Abgaben und Unterhalt" : "Steuern und Abgaben";
+  $("duo").innerHTML = `<div><span class="k">Heute</span><span class="v">${eur(H)}</span><span class="s">${eur(H / 12)} im Monat</span><span class="s">${was}</span></div><div class="neu"><span class="k">Im Vorschlag</span><span class="v">${eur(V)}</span><span class="s">${eur(V / 12)} im Monat</span><span class="s">${A.Sicherheit ? "mit Sicherheitsbeitrag" : (tarifGeaendert() ? "mit Ihren geänderten Sätzen" : "wie im Buch")}</span></div>`;
+  mbarText = `<span>Heute <b>${eur(H)}</b></span><span>Vorschlag <b>${eur(V)}</b></span><span>${V - H < -0.5 ? "−" + eur(H - V) : V - H > 0.5 ? "+" + eur(V - H) : "±0 €"}</span>`;
+  $("mbar").innerHTML = mbarText;
+  const vd = $("verdict");
+  const wer = aktiv >= 0 ? "Dieser Haushalt zahlt" : "Sie zahlen";
+  if (r.entfall > 0.5) {
+    const plus = r.entfall - diff;
+    vd.className = plus > 0 ? "verdict good" : "verdict bad";
+    vd.innerHTML = `<span class="big num">${eur(Math.abs(plus))} ${plus > 0 ? "mehr" : "weniger"} im Jahr</span><p>${aktiv >= 0 ? "Diesem Haushalt bleiben" : "Ihnen bleiben"} im Vorschlag ${eur(Math.abs(plus) / 12)} im Monat ${plus > 0 ? "mehr" : "weniger"}. Davon ${eur(r.entfall)} weil der Staat das Existenzminimum der Kinder in Studium oder Ausbildung übernimmt und ${diff <= 0 ? eur(-diff) + " aus niedrigeren Steuern und Abgaben" : eur(diff) + " weniger durch höhere Steuern und Abgaben"}.</p>`;
+  } else if (Math.abs(diff) < 50) {
+    vd.className = "verdict neutral";
+    vd.innerHTML = `<span class="big">Kaum Unterschied</span><p>${wer} im Vorschlag etwa gleich viel wie heute.</p>`;
+  } else if (diff < 0) {
+    vd.className = "verdict good";
+    vd.innerHTML = `<span class="big num">${eur(-diff)} weniger im Jahr</span><p>${wer} im Vorschlag ${eur(-diff / 12)} im Monat weniger Steuern und Abgaben. Das sind ${pct(-diff / Math.max(1, r.einkommen))} des Einkommens, die zusätzlich zum Sparen und Investieren bleiben.</p>`;
+  } else {
+    vd.className = "verdict bad";
+    vd.innerHTML = `<span class="big num">${eur(diff)} mehr im Jahr</span><p>${wer} im Vorschlag ${eur(diff / 12)} im Monat mehr, das sind ${pct(diff / Math.max(1, r.einkommen))} des Einkommens. Wer weniger privat ausgibt und mehr investiert, zahlt weniger.</p>`;
+  }
+  if (r.alt > 0) {
+    const d2 = diff - r.ausg + r.ausgUeb;
+    vd.innerHTML += `<p class="note">In der Übergangsphase bleiben Entnahmen aus bereits versteuertem Vermögen bis ${eur(A.AltCap * h.erw)} im Jahr frei. Dann ${d2 < 0 ? "beträgt die Entlastung " + eur(-d2) : "beträgt die Mehrbelastung " + eur(d2)} im Jahr.</p>`;
+  }
+  // 30 Jahre
+  const jahresPlus = H - V, rr = A.RenditeReal;
+  const fv = n => rr ? jahresPlus * (Math.pow(1 + rr, n) - 1) / rr : jahresPlus * n;
+  if (Math.abs(jahresPlus) < 50) $("zukunft").innerHTML = "";
+  else if (jahresPlus > 0) $("zukunft").innerHTML = `<h3>Auf 30 Jahre gerechnet</h3><p class="note">Bleibt alles wie heute, hat dieser Haushalt nach 30 Jahren ${eur(jahresPlus * 30)} mehr, in heutigen Preisen. Wird der Betrag jedes Jahr angelegt, wächst er mit ${pct(rr, 0)} realer Rendite. Im Vorschlag bleibt das steuerfrei, solange es angelegt bleibt.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Nach</th><th>Summe</th><th>Angelegt mit ${pct(rr, 0)}</th></tr></thead><tbody>${[10, 20, 30, 40].map(n => `<tr><td>${n} Jahren</td><td>${eur(jahresPlus * n)}</td><td>${eur(fv(n))}</td></tr>`).join("")}</tbody></table></div>`;
+  else $("zukunft").innerHTML = `<h3>Auf 30 Jahre gerechnet</h3><p class="note">Bleibt alles wie heute, zahlt dieser Haushalt in 30 Jahren ${eur(-jahresPlus * 30)} mehr, in heutigen Preisen. Wer mehr spart und investiert statt auszugeben, zahlt weniger.</p>`;
+  // Balken
+  const max = Math.max(r.sumH, r.sumV, 1);
+  const bars = $("bars"); bars.innerHTML = "";
+  [["Heute", r.heute, r.sumH], ["Vorschlag", r.vorschlag, r.sumV]].forEach(([lbl, o, s]) => {
+    const row = document.createElement("div"); row.className = "barrow";
+    row.innerHTML = `<div class="lbl">${lbl}<small>${eur(s)}</small></div>`;
+    const tr = document.createElement("div"); tr.className = "track"; tr.style.width = (s / max * 100) + "%";
+    tr.setAttribute("role", "img"); tr.setAttribute("aria-label", `${lbl}: ${eur(s)} Steuern und Abgaben im Jahr`);
+    KAT.forEach(([k, name, col]) => {
+      if (o[k] <= 0.5) return;
+      const sg = document.createElement("div"); sg.className = "seg"; sg.style.flex = `${o[k]} 1 0`; sg.style.background = `var(${col})`;
+      sg.onpointermove = e => showTip(e, `<b>${name}</b><br>${lbl}: ${eur(o[k])}`); sg.onpointerleave = hideTip;
+      tr.append(sg);
+    });
+    row.append(tr); bars.append(row);
+  });
+  $("legend").innerHTML = KAT.filter(([k]) => r.heute[k] > 0.5 || r.vorschlag[k] > 0.5).map(([, n, c]) => `<span><i style="background:var(${c})"></i>${n}</span>`).join("");
+  // Tabelle
+  const zeilen = KAT.map(([k, n]) => `<tr><td>${n}</td><td>${eur(r.heute[k])}</td><td>${eur(r.vorschlag[k])}</td><td class="${r.vorschlag[k] - r.heute[k] < -0.5 ? "pos" : r.vorschlag[k] - r.heute[k] > 0.5 ? "neg" : ""}">${sign(r.vorschlag[k] - r.heute[k])} €</td></tr>`).join("");
+  $("hhTable").innerHTML = `<thead><tr><th>Euro pro Jahr</th><th>Heute</th><th>Vorschlag</th><th>Differenz</th></tr></thead><tbody>${zeilen}
+    <tr class="sum"><td>Zusammen</td><td>${eur(r.sumH)}</td><td>${eur(r.sumV)}</td><td class="${diff < -0.5 ? "pos" : diff > 0.5 ? "neg" : ""}">${sign(diff)} €</td></tr>
+    ${r.unterhalt > 0 ? `<tr><td>Unterhalt für Kinder in Studium oder Ausbildung</td><td>${eur(r.unterhalt)}</td><td>${eur(r.unterhalt - r.entfall)}</td><td class="${r.entfall > 0.5 ? "pos" : ""}">${sign(-r.entfall)} €</td></tr>
+    <tr class="sum"><td>Zusammen mit Unterhalt</td><td>${eur(r.sumH + r.unterhalt)}</td><td>${eur(r.sumV + r.unterhalt - r.entfall)}</td><td class="${diff - r.entfall < -0.5 ? "pos" : diff - r.entfall > 0.5 ? "neg" : ""}">${sign(diff - r.entfall)} €</td></tr>` : ""}
+    <tr><td>Einkommen, mit Kindergeld und Leistungen</td><td colspan="3">${eur(r.einkommen)}</td></tr>
+    <tr><td>Belastung in % des Einkommens</td><td>${pct(r.sumH / Math.max(1, r.einkommen))}</td><td>${pct(r.sumV / Math.max(1, r.einkommen))}</td><td></td></tr></tbody>`;
+  // Schritte
+  const st = [];
+  st.push(`<li><div><b>Privater Verbrauch: ${eur(r.konsum)}</b><div class="why">Das ist, was der Haushalt heute nach Steuern${r.unterhalt > 0 ? ", Unterhalt" : ""} und Sparen für sich ausgibt${h.verm > 0 ? ", einschließlich " + eur(h.verm) + " aus Vermögen" : ""}. Im Vergleich gibt er im Vorschlag genauso viel aus.${r.mietw > 0 ? " Dazu kommt der Mietwert der eigenen Wohnung von " + eur(r.mietw) + ", damit Eigentümer und Mieter gleich behandelt werden." : ""}</div></div></li>`);
+  if (r.unterhalt > 0) st.push(`<li><div><b>Unterhalt für Kinder in Studium oder Ausbildung: ${r.entfall > 0.5 ? eur(r.entfall) + " entfallen" : "bleibt"}</b><div class="why">${r.entfall > 0.5 ? `Heute zahlen Sie ${eur(r.unterhalt)} im Jahr selbst, weil es BAföG nur bei geringem Elterneinkommen gibt. Im Vorschlag bekommt jedes Kind in Studium, Ausbildung oder Weiterbildung das Existenzminimum von ${eur(A.GFB / 12)} im Monat vom Staat, unabhängig vom Einkommen der Eltern. BAföG und Kindergeld für Volljährige gehen darin auf. ${r.unterhalt > r.entfall ? "Was Sie darüber hinaus zahlen (" + eur(r.unterhalt - r.entfall) + "), bleibt freiwillig. " : ""}Im Vergleich gibt der Haushalt trotzdem gleich viel für sich aus; der frei gewordene Betrag bleibt zusätzlich.` : "Der Baustein „Existenzminimum in der Bildung“ ist unten ausgeschaltet, deshalb zahlen Sie den Unterhalt weiter."}</div></div></li>`);
+  let freiTxt = `Existenzminimum ${eur(r.existenz)} (${h.erw} × ${eur(A.GFB)}${h.kinder ? " und " + h.kinder + " × " + eur(A.KIDA) + " je Kind" : ""})`;
+  if (r.mehr > 0) freiTxt += `, dazu ${eur(r.mehr)} Lohn für Mehrarbeit über ${fmt(A.MehrStd - A.MehrKind * h.kinder, 1)} Wochenstunden`;
+  if (r.rentFrei > 0) freiTxt += `, dazu ${eur(r.rentFrei)} Arbeitslohn im Rentenalter`;
+  st.push(`<li><div><b>Steuerfrei bleiben ${eur(r.frei)}</b><div class="why">${freiTxt}.${r.mehr > 0 ? " Die Schwelle sinkt je Kind um " + A.MehrKind + " Stunden, weil Kindererziehung als Arbeitszeit zählt." : ""}</div></div></li>`);
+  const proErw = r.ueber / h.erw;
+  const st1 = Math.min(proErw, A.Grenze1), st2 = Math.max(0, Math.min(proErw, A.Grenze2) - A.Grenze1), st3 = Math.max(0, proErw - A.Grenze2);
+  const mStufe = Math.max(A.Grenze1, A.Grenze2 - A.Grenze1, st3, 1);
+  const stufe = (lbl, betrag, satz) => `<div class="stufe"><span>${lbl}</span><span class="meter"><span style="width:${betrag / mStufe * 100}%;opacity:${0.55 + satz * 0.6}"></span></span><b>${eur(betrag * satz * h.erw)}</b></div>`;
+  st.push(`<li><div><b>Ausgabensteuer: ${eur(r.ausg)}</b><div class="why">Auf die ${eur(r.ueber)} über dem Freibetrag${h.erw === 2 ? ", verteilt auf beide Erwachsene (" + eur(proErw) + " je Person)" : ""}, gelten die Stufen je Erwachsenem:</div>
+    <div class="stufen">${stufe(pct(A.Satz1, 0) + " auf " + eur(st1), st1, A.Satz1)}${stufe(pct(A.Satz2, 0) + " auf " + eur(st2), st2, A.Satz2)}${stufe(pct(A.Satz3, 0) + " auf " + eur(st3), st3, A.Satz3)}</div></div></li>`);
+  st.push(`<li><div><b>Mehrwertsteuer: ${eur(r.mwstNeu)}</b><div class="why">Der Normalsatz steigt um ${fmt(A.NormPkt)} Punkte; das Geld geht an Rente und Krankenversicherung.${r.gb > 0 ? " Lebensmittel, Wasser und Nahverkehr sind frei von Mehrwertsteuer, das spart diesem Haushalt " + eur(r.gb) + "." : ""}</div></div></li>`);
+  if (r.svNeu > 0.5) st.push(`<li><div><b>Sozialbeiträge: ${eur(r.svNeu)}</b><div class="why">Die Sozialversicherung bleibt.${r.fbSum > 0.5 ? " Auf das Existenzminimum fallen bei niedrigen Löhnen keine Beiträge an: " + eur(r.fbSum) + " weniger." : ""}${r.senkSum > 0.5 ? " Die höhere Mehrwertsteuer senkt die Beiträge um " + eur(r.senkSum) + "." : ""}</div></div></li>`);
+  st.push(`<li><div><b>Weg fallen ${eur(r.heute.est + r.heute.kap)}</b><div class="why">Einkommensteuer, Soli, Abgeltungsteuer und Körperschaftsteuer gibt es nicht mehr. Was nicht privat ausgegeben wird, bleibt steuerfrei, bis es ins Private fließt oder vererbt wird.</div></div></li>`);
+  $("steps").innerHTML = st.join("");
+}
+
+/* ===================== Stellschrauben ===================== */
+const KNOBS = [
+  { titel: "Tarif der Ausgabensteuer", items: [
+    { k: "Satz1", lbl: "Stufe 1: Satz", min: 0.1, max: 0.6, step: 0.01, f: v => pct(v, Math.abs(v * 100 - Math.round(v * 100)) > 0.05 ? 1 : 0), sub: v => `entspricht ${pct(v / (1 + v))} von dem, was ins Private fließt` },
+    { k: "Grenze1", lbl: "Stufe 1 gilt für die ersten", min: 2000, max: 30000, step: 500, f: eur, sub: () => "Ausgaben je Erwachsenem über dem Existenzminimum" },
+    { k: "Satz2", lbl: "Stufe 2: Satz", min: 0.1, max: 0.8, step: 0.01, f: v => pct(v, Math.abs(v * 100 - Math.round(v * 100)) > 0.05 ? 1 : 0), sub: v => `entspricht ${pct(v / (1 + v))}` },
+    { k: "Grenze2", lbl: "Stufe 2 endet bei", min: 5000, max: 60000, step: 500, f: eur, sub: () => "Stufe 3 gilt für alles darüber" },
+    { k: "Satz3", lbl: "Stufe 3: Satz", min: 0.1, max: 1.2, step: 0.01, f: v => pct(v, Math.abs(v * 100 - Math.round(v * 100)) > 0.05 ? 1 : 0), sub: v => `entspricht ${pct(v / (1 + v))}` },
+  ]},
+  { titel: "Erbschaften", items: [
+    { k: "ErbAnteil", lbl: "Staatsanteil beim Erbgang", min: 0, max: 0.75, step: 0.05, f: v => pct(v, 0), sub: () => "ohne Sonderfreibeträge" },
+    { k: "RealStart", lbl: "Davon jährlich fällig, am Start", min: 0, max: 1, step: 0.05, f: v => pct(v, 0), sub: () => "fällig nur, was ins Private entnommen wird" },
+    { k: "RealLang", lbl: "Davon jährlich fällig, langfristig", min: 0, max: 1, step: 0.05, f: v => pct(v, 0), sub: () => "" },
+  ]},
+  { titel: "Weitere Ausgaben", items: [
+    { k: "Extra", lbl: "Weitere Ausgaben pro Jahr", min: 0, max: 200, step: 5, f: v => fmt(v) + " Mrd. €", sub: v => v > 0 ? `${pct(v / A.BIP)} der Wirtschaftsleistung, auf Kredit` : "z. B. Kosten der Alterung; im Buchmodell nicht enthalten" },
+  ]},
+];
+const SCHALTER = [
+  { k: "Nutzwert", lbl: "Mietwert der eigenen Wohnung besteuern", on: 200 },
+  { k: "GBAn", lbl: "Grundbedarf ohne Mehrwertsteuer" },
+  { k: "LuxAn", lbl: "Luxusstufe der Mehrwertsteuer" },
+  { k: "BildAn", lbl: "Existenzminimum in der Bildung" },
+  { k: "BJAn", lbl: "Bürgerjob: Recht auf Arbeit oder Bildung" },
+  { k: "CoachAn", lbl: "Berufscoach für alle" },
+  { k: "RentAn", lbl: "Arbeit im Rentenalter steuerfrei" },
+  { k: "MehrAn", lbl: "Mehrarbeit steuerfrei" },
+  { k: "VerwAn", lbl: "KI-taugliche Verwaltung" },
+];
+function renderKnobs() {
+  const box = $("knobs"); box.innerHTML = "";
+  const sfs = document.createElement("fieldset");
+  sfs.innerHTML = `<legend>Sicherheit und Verteidigung</legend><label class="check"><input type="checkbox" id="b_Sicherheit" ${A.Sicherheit ? "checked" : ""}> Mit Sicherheitsbeitrag (Variante aus dem Buch)</label><p class="sub note">1,5 % des BIP mehr für Verteidigung, rund 66 Mrd. € im Jahr. Bezahlt mit 8 Mrd. € aus dem Abbau klimaschädlicher Subventionen und einem offen ausgewiesenen Sicherheitsbeitrag von rund 58 Mrd. €, im Schnitt knapp 700 € je Einwohner. Dafür steigen die drei Sätze auf 24,8, 33,1 und 41,7 %.</p>`;
+  sfs.querySelector("input").onchange = e => {
+    const on = e.target.checked, W = A.SicherheitWerte;
+    A.Sicherheit = on ? 1 : 0;
+    A.Verteidigung = on ? W.Verteidigung : 0; A.SubvAbbau = on ? W.SubvAbbau : 0;
+    ["Satz1", "Satz2", "Satz3"].forEach(k => { A[k] = on ? W[k] : A0[k]; $("k_" + k).value = A[k]; });
+    updateAll();
+  };
+  KNOBS.forEach(g => {
+    const fs = document.createElement("fieldset"); fs.innerHTML = `<legend>${g.titel}</legend>`;
+    g.items.forEach(it => {
+      const d = document.createElement("div"); d.className = "slider";
+      d.innerHTML = `<div class="row"><label for="k_${it.k}">${it.lbl}</label><output id="o_${it.k}"></output></div><input type="range" id="k_${it.k}" min="${it.min}" max="${it.max}" step="${it.step}" value="${A[it.k]}"><div class="sub" id="s_${it.k}"></div>`;
+      d.querySelector("input").oninput = e => { A[it.k] = +e.target.value; if (A.Grenze2 < A.Grenze1) { A.Grenze2 = A.Grenze1; $("k_Grenze2").value = A.Grenze2; } updateAll(); };
+      fs.append(d);
+    });
+    box.append(fs);
+  });
+  const fs = document.createElement("fieldset"); fs.innerHTML = `<legend>Bausteine</legend>`;
+  SCHALTER.forEach(s => {
+    const l = document.createElement("label"); l.className = "check";
+    l.innerHTML = `<input type="checkbox" id="b_${s.k}" ${A[s.k] ? "checked" : ""}> ${s.lbl}`;
+    l.querySelector("input").onchange = e => { A[s.k] = e.target.checked ? (s.on ?? 1) : 0; updateAll(); };
+    fs.append(l);
+  });
+  box.append(fs);
+  box.insertBefore(sfs, box.children[2]);
+  const b = document.createElement("button"); b.type = "button"; b.className = "btn"; b.textContent = "Werte aus dem Buch wiederherstellen";
+  b.onclick = () => { Object.assign(A, structuredClone(A0)); sicherheitAnwenden(); renderKnobs(); updateAll(); };
+  box.append(b);
+}
+function syncKnobLabels() {
+  KNOBS.forEach(g => g.items.forEach(it => { $("o_" + it.k).textContent = it.f(A[it.k]); $("s_" + it.k).textContent = it.sub(A[it.k]); }));
+}
+
+let szenario = "mittel";
+function updateGesamt() {
+  const g = gesamt(); const kr = kredit(g.saldoS, g.saldoL);
+  const tile = (k, v, s, cls) => `<div class="tile ${cls}"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
+  const cl = x => x >= 0 ? "good" : "bad";
+  let t = tile("Saldo am Start", mrd(g.saldoS) + " Mrd. €", `${pct(g.saldoS / A.BIP, 2)} des BIP; negativ heißt Lücke`, cl(g.saldoS));
+  t += tile("Saldo langfristig", mrd(g.saldoL) + " Mrd. €", `${pct(g.saldoL / A.BIP, 1)} des BIP, nach ${A.Jahre} Jahren`, cl(g.saldoL));
+  let tilg;
+  if (kr.unendlich) tilg = tile("Übergangsschulden", "nicht getilgt", "Der Überschuss reicht nicht aus. Erhöhen Sie Sätze oder schalten Sie Ausgaben ab.", "bad");
+  else if (kr.peak <= 0.05) tilg = tile("Übergangsschulden", "keine", "Das System trägt sich von Anfang an.", "good");
+  else tilg = tile("Übergangsschulden", `${mrd(kr.peak, 0)} Mrd. €`, `höchstens; getilgt im Jahr ${kr.getilgt}`, kr.getilgt <= 30 ? "good" : "bad");
+  t += tilg;
+  // Mit Sicherheitsbeitrag gilt wie im Buch (Anhang C7): Der Beitrag deckt die Verteidigung ab 2028 jedes Jahr netto voll,
+  // der Saldo bleibt also auf dem Pfad ohne Verteidigung und ohne Beitrag.
+  let pf = kr.rows.map(r => r.saldo);
+  if (A.Sicherheit) {
+    const W = A.SicherheitWerte, sic = { Verteidigung: A.Verteidigung, SubvAbbau: A.SubvAbbau, Satz1: A.Satz1, Satz2: A.Satz2, Satz3: A.Satz3 };
+    const f = W.Satz1 / A0.Satz1;
+    Object.assign(A, { Verteidigung: 0, SubvAbbau: 0, Satz1: A.Satz1 / f, Satz2: A.Satz2 / f, Satz3: A.Satz3 / f });
+    const gB = gesamt(); pf = kredit(gB.saldoS, gB.saldoL).rows.map(r => r.saldo);
+    Object.assign(A, sic);
+  }
+  let reihen;
+  if (szenario === "basis") reihen = kr.rows.filter(r => r.jahr <= 2070).map(r => ({ jahr: r.jahr, quote: r.quote, ohne: r.ohne }));
+  else { const mit = prognose(szenario, 1, pf), ohne = prognose(szenario, 0, pf); reihen = mit.map((r, i) => ({ jahr: r.jahr, quote: r.v, ohne: ohne[i].v })); }
+  const e = reihen[reihen.length - 1];
+  t += tile("Staatsschulden 2070", pct(e.quote, 0), `ohne Reform ${pct(e.ohne, 0)}; heute ${pct(A.Schuld, 0)}`, e.quote < e.ohne ? "good" : "bad");
+  $("tiles").innerHTML = t;
+  const SZ = { vorsichtig: "Vorsichtig", mittel: "Mittel", zuversichtlich: "Zuversichtlich", basis: "Ohne Alterung" };
+  $("szenarien").innerHTML = Object.entries(SZ).map(([k, n]) => `<button type="button" class="chip" data-sz="${k}" aria-pressed="${k === szenario}">${n}</button>`).join("");
+  $("szenarien").querySelectorAll("button").forEach(b => b.onclick = () => { szenario = b.dataset.sz; updateGesamt(); });
+  $("chartNote").textContent = szenario === "basis"
+    ? `Die einfache Rechnung aus Kapitel 7: Der Überschuss tilgt die heutigen Schulden. ${kr.altFrei ? "Schuldenfrei im Jahr " + (A.Prognose.ReformStart - 1 + kr.altFrei) + "." : ""} Nicht eingerechnet sind die steigenden Kosten durch die Alterung und mehr Wachstum durch die Reform.`
+    : `Mit den steigenden Kosten für Rente, Pflege und Gesundheit nach dem Tragfähigkeitsbericht des Finanzministeriums (2024). ${{ vorsichtig: "Vorsichtig: ungünstige Entwicklung, wenig zusätzliches Wachstum durch die Reform.", mittel: "Mittel: zwischen günstiger und ungünstiger Entwicklung, mittleres Wachstum durch die Reform.", zuversichtlich: "Zuversichtlich: günstige Entwicklung, mehr Wachstum durch die Reform." }[szenario]} Die Reform beginnt 2028.${A.Sicherheit ? " Mit Sicherheitsbeitrag; die Verteidigung bis 2027 läuft auf Kredit." : ""}`;
+  drawChart(reihen);
+  // Tabelle
+  const row = (n, s, l, cls = "") => `<tr class="${cls}"><td>${n}</td><td>${mrd(s)}</td><td>${mrd(l)}</td></tr>`;
+  let h = `<thead><tr><th>Mrd. € pro Jahr</th><th>Start</th><th>Langfristig</th></tr></thead><tbody>`;
+  h += `<tr class="group"><td colspan="3">Es fallen weg</td></tr>`;
+  [["Lohn- und Einkommensteuer", A.LSt + A.vESt], ["Steuern auf Dividenden, Zinsen und Kursgewinne", A.nvSt + A.AbgStA], ["Körperschaftsteuer", A.KSt], ["Solidaritätszuschlag", A.Soli], ["Bisherige Erbschaft- und Schenkungsteuer", A.ErbSt]].forEach(([n, v]) => h += row(n, v, v));
+  h += `<tr class="group"><td colspan="3">Neue Leistungen und Bausteine</td></tr>`;
+  g.ausgaben.filter(r => r[1] || r[2]).forEach(r => h += row(r[0], r[1], r[2]));
+  h += row("Zu finanzieren", g.bedarfS, g.bedarfL, "sum");
+  h += `<tr class="group"><td colspan="3">Neue Einnahmen</td></tr>`;
+  g.einnahmen.forEach(r => h += row(r[0], r[1], r[2]));
+  h += row("Einnahmen zusammen", g.einS, g.einL, "sum");
+  h += `<tr class="sum"><td>Saldo</td><td class="${g.saldoS >= 0 ? "pos" : "neg"}">${mrd(g.saldoS)}</td><td class="${g.saldoL >= 0 ? "pos" : "neg"}">${mrd(g.saldoL)}</td></tr>`;
+  h += `<tr><td colspan="3" class="note" style="text-align:left;white-space:normal">Zweckgebunden und nicht im Saldo: Der höhere Normalsatz der Mehrwertsteuer bringt rund ${mrd(g.normE)} Mrd. € für Rente und Krankenversicherung und senkt dort die Beiträge um ${fmt(g.svsenk, 1)} Punkte. Die Zuckerabgabe fließt als Gesundheitsbonus zurück.</td></tr></tbody>`;
+  $("grTable").innerHTML = h;
+}
+
+function drawChart(rows) {
+  const W = 640, H = 280, L = 44, R = 64, T = 14, B = 30;
+  const maxY = Math.max(0.8, ...rows.map(r => Math.max(r.quote, r.ohne))) * 1.05;
+  const y0 = rows[0].jahr, y1 = rows[rows.length - 1].jahr;
+  const x = y => L + (y - y0) / (y1 - y0) * (W - L - R);
+  const yy = v => T + (1 - v / maxY) * (H - T - B);
+  const step = maxY > 1.6 ? 0.5 : maxY > 0.9 ? 0.25 : 0.2;
+  let g = "";
+  for (let v = 0; v <= maxY + 1e-9; v += step) g += `<line class="gridl" x1="${L}" x2="${W - R}" y1="${yy(v)}" y2="${yy(v)}"/><text x="${L - 6}" y="${yy(v) + 4}" text-anchor="end">${fmt(v * 100)} %</text>`;
+  [y0, ...[2030, 2040, 2050, 2060, 2070].filter(y => y > y0 + 3 && y <= y1)].forEach(y => g += `<text x="${x(y)}" y="${H - 8}" text-anchor="middle">${y}</text>`);
+  g += `<line class="ref" x1="${L}" x2="${W - R}" y1="${yy(A.Schuld)}" y2="${yy(A.Schuld)}"/>`;
+  const path = k => rows.map((r, i) => (i ? "L" : "M") + x(r.jahr).toFixed(1) + "," + yy(r[k]).toFixed(1)).join("");
+  g += `<path class="ln" d="${path("ohne")}" style="stroke:var(--muted)" stroke-dasharray="1 0"/>`;
+  g += `<path class="ln" d="${path("quote")}" style="stroke:var(--s3)"/>`;
+  const last = rows[rows.length - 1];
+  const lab = (k, txt, col) => `<circle cx="${x(last.jahr)}" cy="${yy(last[k])}" r="4" style="fill:${col};stroke:var(--surface);stroke-width:2"/><text x="${x(last.jahr) + 8}" y="${yy(last[k]) + 4}" style="fill:var(--fg)">${txt}</text>`;
+  const sep = Math.abs(yy(last.quote) - yy(last.ohne)) < 16;
+  g += lab("ohne", "ohne", "var(--muted)");
+  g += lab("quote", sep ? "" : "mit", "var(--s3)");
+  g += `<line class="hair" id="hair" x1="0" x2="0" y1="${T}" y2="${H - B}" visibility="hidden"/><rect id="hit" x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent"/>`;
+  $("chartBox").innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Staatsschuldenquote bis 2070, mit und ohne Reform">${g}</svg>`;
+  $("chartLegend").innerHTML = `<span><i style="background:var(--s3)"></i>Mit Reform</span><span><i style="background:var(--muted)"></i>Ohne Reform</span><span><i style="background:transparent;border-top:1px dashed var(--muted);height:0;border-radius:0;width:14px"></i>Heute: ${pct(A.Schuld, 0)}</span>`;
+  const svg = $("chartBox").firstChild, hair = $("hair");
+  $("hit").onpointermove = e => {
+    const pt = svg.getBoundingClientRect(); const sx = (e.clientX - pt.left) / pt.width * W;
+    const i = clamp(Math.round((sx - L) / (W - L - R) * (rows.length - 1)), 0, rows.length - 1); const r = rows[i];
+    hair.setAttribute("x1", x(r.jahr)); hair.setAttribute("x2", x(r.jahr)); hair.setAttribute("visibility", "visible");
+    showTip(e, `<b>${r.jahr}</b><br>Mit Reform: ${pct(r.quote, 0)}<br>Ohne Reform: ${pct(r.ohne, 0)}`);
+  };
+  $("hit").onpointerleave = () => { hair.setAttribute("visibility", "hidden"); hideTip(); };
+}
+
+const TYPEN = [["Recht", "Gesetz oder Beschluss"], ["Statistik", "amtliche Statistik oder Studie"], ["Annahme", "Schätzung oder Annahme des Modells"], ["Vorschlag", "Teil des Vorschlags"]];
+let qFilter = "";
+function fmtQ(v, u) {
+  if (typeof v !== "number") return String(v ?? "");
+  switch (u) {
+    case "eur": return eur(v);
+    case "eurm": return eur(v) + " im Monat";
+    case "mrd": return fmt(v, v % 1 ? 1 : 0) + " Mrd. €";
+    case "mio": return fmt(v, v % 1 ? 1 : 0) + " Mio.";
+    case "pct": return pct(v, Math.abs(v * 1000 - Math.round(v * 1000)) > 0.01 ? 2 : (Math.abs(v * 100 - Math.round(v * 100)) > 0.01 ? 1 : 0));
+    case "pkt": return fmt(v) + " Punkte";
+    case "std": return fmt(v, v % 1 ? 1 : 0) + " Std.";
+    case "jahre": return fmt(v) + " Jahre";
+    case "int": return fmt(v);
+    case "eurkg": return fmt(v, 2) + " € je kg";
+    case "miot": return fmt(v, 2) + " Mio. t";
+    default: return fmt(v, 2);
+  }
+}
+function renderQuellen() {
+  const f = $("qfilter");
+  if (!f.childElementCount) {
+    [["", "Alle"], ...TYPEN].forEach(([k, n]) => {
+      const c = document.createElement("button"); c.type = "button"; c.className = "chip"; c.dataset.k = k;
+      c.innerHTML = k ? `<span class="typ ${k}">${k}</span>` : n; c.title = k ? n : "";
+      c.onclick = () => { qFilter = k; renderQuellen(); };
+      f.append(c);
+    });
+  }
+  f.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.k === qFilter));
+  const box = $("qgroups"); const vorher = box.childElementCount > 0; const offen = new Set([...box.querySelectorAll("details[open]")].map(d => d.dataset.g));
+  box.innerHTML = QUELLEN.map((g, gi) => {
+    const rows = g.r.filter(r => !qFilter || r[3] === qFilter);
+    if (!rows.length) return "";
+    const tr = rows.map(([k, lbl, u, typ, src, val]) => `<tr><td>${lbl}</td><td>${fmtQ(k in A ? A[k] : val, u)}</td><td><span class="typ ${typ}">${typ}</span></td><td>${src || "–"}</td></tr>`).join("");
+    const open = vorher ? offen.has(String(gi)) : gi < 2;
+    return `<details data-g="${gi}" ${open || qFilter ? "open" : ""}><summary>${g.t}<small>${rows.length} Werte</small></summary><p>${g.i}</p><div class="tbl-wrap"><table class="q"><thead><tr><th>Größe</th><th>Wert</th><th>Art</th><th>Quelle und Hinweis</th></tr></thead><tbody>${tr}</tbody></table></div></details>`;
+  }).join("");
+  box.querySelectorAll("details").forEach(d => d.addEventListener("toggle", postHeight));
+}
+
+function updateCO2() {
+  const C = A.CO2;
+  $("c_Preis").value = C.Preis; $("c_Menge").value = C.Menge; $("c_Rueck").value = C.Rueck; $("c_Personen").value = C.Personen;
+  const t = C.Lo + (C.Hi - C.Lo) * C.Menge;
+  $("co_Preis").textContent = fmt(C.Preis) + " € je Tonne";
+  $("co_Menge").textContent = fmt(t, 1) + " Mio. t";
+  $("co_Rueck").textContent = pct(C.Rueck, 0);
+  $("co_Personen").textContent = fmt(C.Personen);
+  const auf = t * C.Preis / 1000, kg = auf * C.Rueck, bon = auf - kg, jeEw = kg * 1000 / C.Einw;
+  const tile = (k, v, s) => `<div class="tile"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
+  $("co2tiles").innerHTML = tile("Aufkommen im Jahr", fmt(auf, 1) + " Mrd. €", "wenn sich Exporte und Importe ausgleichen")
+    + tile("Klimageld je Einwohner", eur(jeEw), "im Jahr, für jeden gleich")
+    + tile(`Klimageld für ${C.Personen} ${C.Personen === 1 ? "Person" : "Personen"}`, eur(jeEw * C.Personen), "im Jahr")
+    + tile("Bonustopf für bessere Hersteller", fmt(bon, 2) + " Mrd. €", `${fmt(bon / (C.KSVMax / C.KSVJahre), 1)}-mal so viel wie die Klimaschutzverträge des Bundes im Jahr`);
+  const max = Math.max(...C.Lebensmittel.map(l => l[1]));
+  $("co2tbl").innerHTML = `<thead><tr><th>Lebensmittel</th><th>kg CO₂ je kg</th><th>In Stufe 1</th><th>Abgabe je kg</th></tr></thead><tbody>` + C.Lebensmittel.map(([n, f, st]) =>
+    `<tr><td>${n}</td><td>${fmt(f, 1)}</td><td style="text-align:left">${st ? "ja" : "nein"}</td><td>${fmt(f * C.Preis / 10, 1)} Cent</td></tr>`).join("") + `</tbody>`;
+}
+["Preis", "Menge", "Rueck", "Personen"].forEach(k => $("c_" + k).addEventListener("input", e => { A.CO2[k] = +e.target.value; updateCO2(); }));
+
+let mbarText = "";
+const tarifGeaendert = () => ["Satz1", "Satz2", "Satz3", "Grenze1", "Grenze2"].some(k => Math.abs(A[k] - (A.Sicherheit && A.SicherheitWerte[k] !== undefined ? A.SicherheitWerte[k] : A0[k])) > 1e-9);
+function syncTweak() {
+  ["Satz1", "Satz2", "Satz3"].forEach(k => { $("h_" + k).value = A[k]; $("ho_" + k).textContent = pct(A[k], Math.abs(A[k] * 100 - Math.round(A[k] * 100)) > 0.05 ? 1 : 0); });
+  $("h_g1").textContent = eur(A.Grenze1); $("h_g2").textContent = eur(A.Grenze2 - A.Grenze1);
+  $("h_Sicherheit").checked = !!A.Sicherheit;
+  const buch = !tarifGeaendert() && !A.Sicherheit && !A.Extra;
+  const tag = $("tweakTag"); tag.textContent = buch ? "wie im Buch" : "geändert"; tag.className = buch ? "tag" : "tag mod";
+}
+["Satz1", "Satz2", "Satz3"].forEach(k => $("h_" + k).addEventListener("input", e => { A[k] = +e.target.value; const kn = $("k_" + k); if (kn) kn.value = A[k]; updateAll(); }));
+$("h_Sicherheit").addEventListener("change", e => { const b = $("b_Sicherheit"); if (b) { b.checked = e.target.checked; b.dispatchEvent(new Event("change")); } });
+$("h_reset").addEventListener("click", () => { Object.assign(A, structuredClone(A0)); sicherheitAnwenden(); renderKnobs(); updateAll(); });
+(function () {
+  const mbar = $("mbar"); let imHaushalt = false, duoSichtbar = false;
+  const zeigen = () => { mbar.hidden = !(imHaushalt && !duoSichtbar); };
+  mbar.addEventListener("click", () => $("duo").scrollIntoView({ behavior: "smooth", block: "center" }));
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(es => { imHaushalt = es[0].isIntersecting; zeigen(); }).observe($("hhForm"));
+    new IntersectionObserver(es => { duoSichtbar = es[0].isIntersecting; zeigen(); }).observe($("duo"));
+  }
+})();
+
+function updateAll() { syncTweak(); updateCO2(); renderQuellen(); syncKnobLabels(); updateGesamt(); updateHH(); postHeight(); }
+
+/* Für die Einbindung per iframe: meldet die Höhe an die umgebende Seite */
+function postHeight() { try { if (window.parent !== window) window.parent.postMessage({ typ: "mut-zur-zukunft-rechner", hoehe: document.documentElement.scrollHeight }, "*"); } catch (e) {} }
+window.addEventListener("resize", postHeight);
+
+$("hhForm").addEventListener("input", () => { if (aktiv !== -1) { aktiv = -1; renderPresets(); } updateHH(); postHeight(); });
+$("hhForm").addEventListener("submit", e => e.preventDefault());
+$("moreBox").addEventListener("toggle", postHeight);
+document.querySelectorAll("details").forEach(d => d.addEventListener("toggle", postHeight));
+
+function sicherheitAnwenden() { if (A.Sicherheit) { const W = A.SicherheitWerte; Object.assign(A, { Verteidigung: W.Verteidigung, SubvAbbau: W.SubvAbbau, Satz1: W.Satz1, Satz2: W.Satz2, Satz3: W.Satz3 }); } }
+sicherheitAnwenden();
+setForm(BEISPIELE[DEFAULT_BEISPIEL].v);
+renderPresets();
+renderKnobs();
+updateAll();
+</script>
+
+</body>
+</html>
