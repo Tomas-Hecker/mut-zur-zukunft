@@ -11,6 +11,8 @@
 .about-hero{background:var(--brand);color:var(--brand-fg);padding:44px 0 52px}
 .about-hero .wrap{max-width:860px}
 .about-hero h1{font-size:clamp(2rem,5vw,3rem);margin-bottom:.3em}
+.ahero{display:flex;gap:32px;align-items:center}.foto{width:160px;height:auto;border-radius:12px;border:3px solid var(--accent-fill);flex:none}
+@media (max-width:640px){.ahero{flex-direction:column;align-items:flex-start;gap:20px}.foto{width:130px}}
 .about-hero p{color:#d6e3da;font-size:1.15rem;max-width:60ch;margin:0}
 .about-hero .eyebrow{color:var(--accent-fill)}
 .about{max-width:860px;padding-top:40px;padding-bottom:56px}
@@ -36,11 +38,11 @@
 <body>
 <header class="top"><div class="wrap"><a href="./" aria-label="Zur Startseite"><svg class="logo" viewBox="0 0 360 100" role="img" aria-label="Mut zur Zukunft"><g transform="translate(4,4) scale(0.92)"><circle cx="50" cy="50" r="44" fill="none" stroke="#f2b33d" stroke-width="1.6"/><line x1="27.5" y1="51.0" x2="21.4" y2="47.5" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="37.0" y1="41.5" x2="33.5" y2="35.4" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="63.0" y1="41.5" x2="66.5" y2="35.4" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="72.5" y1="51.0" x2="78.6" y2="47.5" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><path d="M30,64 A20,20 0 0 1 70,64 Z" fill="#f2b33d"/><path d="M50,64 L50,33" stroke="#fbf8f1" stroke-width="3.2" stroke-linecap="round"/><path d="M50,47 C41,46 33,39 31,28 C41,29 48,36 50,47 Z" fill="#9fd8b0"/><path d="M50,40 C57,37 65,30 68,19 C58,20 51,28 50,40 Z" fill="#9fd8b0"/><line x1="17" y1="64" x2="83" y2="64" stroke="#fbf8f1" stroke-width="2.4" stroke-linecap="round"/><line x1="28" y1="71" x2="72" y2="71" stroke="#fbf8f1" stroke-width="1.6" stroke-linecap="round" opacity="0.6"/><line x1="38" y1="77" x2="62" y2="77" stroke="#fbf8f1" stroke-width="1.2" stroke-linecap="round" opacity="0.35"/></g><text x="110" y="50" font-family="system-ui, sans-serif" font-weight="800" font-size="30" letter-spacing="1.5" fill="#fbf8f1">MUT ZUR</text><text x="110" y="80" font-family="system-ui, sans-serif" font-weight="800" font-size="30" letter-spacing="1.5" fill="#f2b33d">ZUKUNFT</text></svg></a><nav aria-label="Hauptmenü"><a href="./">Start</a><a href="steuerrechner/">Steuerrechner</a><a href="buch/">Das Buch</a><a href="ueber-mich.html" aria-current="page">Über mich</a></nav></div></header>
 <main>
-<section class="about-hero"><div class="wrap">
+<section class="about-hero"><div class="wrap ahero"><img class="foto" src="tomas-hecker.jpg" width="244" height="288" alt="Tomas Hecker"><div>
 <p class="eyebrow">Über mich</p>
 <h1>Tomas Hecker</h1>
 <p>Elektriker, Ingenieur, Erfinder und Gründer. Seit über dreißig Jahren entwickle ich Technik, die Gebäude behaglicher und sparsamer macht. In „Mut zur Zukunft“ wende ich denselben Blick auf unser Steuersystem an.</p>
-</div></section>
+</div></div></section>
 <div class="wrap about">
 
 <div class="facts">
@@ -56,7 +58,7 @@
 <div class="brueck">
 <h3>Was mein Weg mit dem Buch zu tun hat</h3>
 <ul>
-<li><strong>Aufstieg durch Bildung:</strong> Ich habe mit der Mittleren Reife und einer Lehre zum Elektroinstallateur angefangen. Später kamen Weiterbildung und ein Studium der Gebäude- und Energietechnik neben dem Beruf dazu. Dass Leistung und Lernen sich lohnen müssen, ist für mich keine Theorie.</li>
+<li><strong>Aufstieg durch Bildung:</strong> Ich habe mit der Mittleren Reife und einer Lehre zum Elektroinstallateur angefangen. Später kamen Weiterbildungen und Studienjahre in Gebäude- und Energietechnik neben dem Beruf dazu. Dass Leistung und Lernen sich lohnen müssen, ist für mich keine Theorie.</li>
 <li><strong>Gründen und Wagen:</strong> Mit Mitte zwanzig habe ich meine erste Firma gegründet und Wärmepumpen entwickelt, gebaut und verkauft. Ich weiß, wie schwer der Anfang ist und wie viel Eigenkapital dabei zählt. Daher kommt der Vorschlag im Buch, Gründern 50&nbsp;% auf ihr Erspartes dazuzugeben.</li>
 <li><strong>Technik als Chance:</strong> Ich habe erlebt, wie Software Arbeit verändert: Eine meiner Entwicklungen erzeugt aus einer Raumsimulation automatisch Zeichnungen, Maschinendaten und Bestellungen. So etwas macht mir keine Angst, sondern Mut, wenn der Gewinn daraus bei allen ankommt.</li>
 </ul>
@@ -64,7 +66,7 @@
 
 <h2>Beruflicher Weg</h2>
 <ol class="tl">
-<li><span class="j">seit 2019</span><span class="w">Senior Consultant, Etanomics Service GmbH</span><span class="d">Energieberatung und Effizienzprojekte für Industrie, Kliniken und Gewerbe, im In- und Ausland. <a href="https://etanomics.com" rel="noopener">etanomics.com</a></span></li>
+<li><span class="j">seit 2019</span><span class="w">Senior Consultant, Etanomics Service GmbH</span><span class="d">Energieberatung und Effizienzprojekte für Industrie und Gewerbe, im In- und Ausland. <a href="https://etanomics.com" rel="noopener">etanomics.com</a></span></li>
 <li><span class="j">seit 2014</span><span class="w">Gründer der HeCoAir GmbH</span><span class="d">Ideen, Prototypen und Konzepte für neue Lüftungstechnik</span></li>
 <li><span class="j">2017 – 2019</span><span class="w">Senior Engineer Gebäudetechnik, ATP architekten ingenieure</span><span class="d">Integrale Planung von Gebäuden</span></li>
 <li><span class="j">2010 – 2017</span><span class="w">Leiter Produktmanagement Kühldecken, Barcol-Air AG (Schweiz), danach Entwicklungsleitung bei TROX HESCO</span><span class="d">Entwicklung eines patentierten Hybrid-Deckenmoduls, das Heizen, Kühlen, Akustik und Lüftung in einem Element vereint, samt Software von der Simulation bis zur Fertigung</span></li>
