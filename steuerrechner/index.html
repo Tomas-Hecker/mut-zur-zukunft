@@ -273,7 +273,7 @@ table.q th:nth-child(3), table.q td:nth-child(3), table.q th:nth-child(4) { text
       <div class="rule"><b>Alle Einkommen gleich</b><span>Lohn, Gewinn, Zinsen, Dividenden, Mieten, Kursgewinne und Erbschaften folgen denselben Regeln und demselben Tarif. Keine Sonderrechte für bestimmte Einkunftsarten.</span></div>
       <div class="rule"><b>Besteuert wird, was ins Private fließt</b><span>Was investiert bleibt und für die Wirtschaft arbeitet, bleibt vorerst steuerfrei. Erst der private Verbrauch wird besteuert.</span></div>
       <div class="rule"><b>Beim Tod wird abgerechnet</b><span>Was bis zum Lebensende unversteuert investiert blieb, gehört zu 50 % der Gemeinschaft, ohne Sonderfreibeträge. Die Erben verwalten diesen Anteil, solange er investiert bleibt.</span></div>
-      <div class="rule"><b>Das Existenzminimum ist immer frei</b><span>Bis zum Existenzminimum fallen keine Steuer und keine Sozialabgaben an, der Grundbedarf ist frei von Mehrwertsteuer. Das gilt für jedes Einkommen, auch für ein Erbe.</span></div>
+      <div class="rule"><b>Das Existenzminimum ist immer frei</b><span>Bis zum Existenzminimum fällt keine Steuer an, auf Lohn bis 2.000 € im Monat keine Beiträge zu Pflege und Rente, der Grundbedarf ist frei von Mehrwertsteuer. Das gilt für jedes Einkommen, auch für ein Erbe.</span></div>
     </div>
   </div>
 </section>
@@ -317,7 +317,7 @@ table.q th:nth-child(3), table.q td:nth-child(3), table.q th:nth-child(4) { text
             <div class="field"><label for="vorsorge">Private Altersvorsorge, steuerlich abziehbar</label><input id="vorsorge" type="number" min="0" step="100"></div>
             <div class="field"><label for="gmbh">Gewinn der eigenen GmbH</label><input id="gmbh" type="number" min="0" step="1000"></div>
             <div class="field"><label for="aus">Ausschüttung aus der GmbH</label><input id="aus" type="number" min="0" step="1000"></div>
-            <div class="field"><label for="transfer">Bürgergeld und andere steuerfreie Leistungen</label><input id="transfer" type="number" min="0" step="100"></div>
+            <div class="field"><label for="transfer">Grundsicherung und andere steuerfreie Leistungen</label><input id="transfer" type="number" min="0" step="100"></div>
             <div class="field"><label for="verm">Verbrauch aus vorhandenem Vermögen</label><input id="verm" type="number" min="0" step="1000"><span class="hint">zusätzlich zum laufenden Einkommen</span></div>
             <label class="check field wide"><input id="kinderlos" type="checkbox"> Kinderlos (keine eigenen Kinder, auch keine erwachsenen; höherer Pflegebeitrag)</label>
             <label class="check field wide"><input id="allein" type="checkbox"> Alleinerziehend</label>
@@ -335,10 +335,10 @@ table.q th:nth-child(3), table.q td:nth-child(3), table.q th:nth-child(4) { text
         <div class="legend" id="legend"></div>
         <div class="tweak" id="tweak">
           <div class="row2"><h3>Vorschlag verändern</h3><span class="tag" id="tweakTag"></span></div>
-          <div class="slider"><div class="row"><label for="h_Satz1">Stufe 1, Ausgaben bis <span id="h_g1"></span> im Monat</label><output id="ho_Satz1"></output></div><input type="range" id="h_Satz1" min="0.1" max="0.6" step="0.01"></div>
-          <div class="slider"><div class="row"><label for="h_Satz2">Stufe 2, Ausgaben bis <span id="h_g2"></span> im Monat</label><output id="ho_Satz2"></output></div><input type="range" id="h_Satz2" min="0.1" max="0.8" step="0.01"></div>
-          <div class="slider"><div class="row"><label for="h_Satz3">Stufe 3, auf alles darüber</label><output id="ho_Satz3"></output></div><input type="range" id="h_Satz3" min="0.1" max="1.2" step="0.01"></div>
-          <div class="slider"><div class="row"><label for="h_SVFB">Lohn frei von Sozialabgaben bis</label><output id="ho_SVFB"></output></div><input type="range" id="h_SVFB" min="0" max="48000" step="600"><div class="sub" id="hs_SVFB"></div></div>
+          <div class="slider"><div class="row"><label for="h_Satz1">Stufe 1, Ausgaben bis <span id="h_g1"></span> im Monat</label><output id="ho_Satz1"></output></div><input type="range" id="h_Satz1" min="0.1" max="1" step="0.01"></div>
+          <div class="slider"><div class="row"><label for="h_Satz2">Stufe 2, Ausgaben bis <span id="h_g2"></span> im Monat</label><output id="ho_Satz2"></output></div><input type="range" id="h_Satz2" min="0.1" max="1.2" step="0.01"></div>
+          <div class="slider"><div class="row"><label for="h_Satz3">Stufe 3, auf alles darüber</label><output id="ho_Satz3"></output></div><input type="range" id="h_Satz3" min="0.1" max="1.5" step="0.01"></div>
+          <div class="slider"><div class="row"><label for="h_SVFB">Lohn frei von Beiträgen zu Pflege und Rente bis</label><output id="ho_SVFB"></output></div><input type="range" id="h_SVFB" min="0" max="48000" step="600"><div class="sub" id="hs_SVFB"></div></div>
           <label class="check"><input type="checkbox" id="h_Sicherheit"> Mit Sicherheitsbeitrag für Verteidigung</label>
           <div class="row2"><button type="button" class="btn" id="h_reset">Werte aus dem Buch</button><a href="#staat">Alle Stellschrauben und die Folgen für den Staat</a></div>
         </div>
@@ -413,8 +413,12 @@ table.q th:nth-child(3), table.q td:nth-child(3), table.q th:nth-child(4) { text
         <p>Im Vorschlag zählt nur noch, was jemand für sich verbraucht. Wer viel verdient und viel ausgibt, zahlt viel. Wer verdient und investiert, schafft Arbeitsplätze und zahlt erst, wenn er das Geld privat nutzt, spätestens beim Erbgang.</p>
       </div></details>
       <details><summary>Wie hoch ist der Steuersatz?</summary><div>
-        <p>Der Tarif gilt je Erwachsenem für die Ausgaben über dem Existenzminimum (12.348 € je Erwachsenem und 6.828 € je Kind). Gerechnet wird als Aufschlag auf die Ausgaben: 30 % auf die ersten 10.000 €, 45 % auf die nächsten 10.000 €, 65 % auf alles darüber.</p>
-        <p>Bezogen auf das, was insgesamt ins Private fließt (Ausgaben plus Steuer), sind das 23,1 %, 31,0 % und 39,4 %. Beides ist rechnerisch dasselbe. Bei Paaren werden die Ausgaben wie beim Ehegattensplitting auf beide verteilt.</p>
+        <p>Bis zum Existenzminimum von 1.029 € im Monat je Erwachsenem (und 569 € je Kind) bleiben alle Ausgaben frei. Darüber wird ein Aufschlag auf die Ausgaben gerechnet: 50 % bis zu Ausgaben von 2.000 € im Monat, 75 % bis 3.000 € und 100 % auf alles darüber.</p>
+        <p>Bezogen auf das, was insgesamt ins Private fließt (Ausgaben plus Steuer), also wie im Preis, sind das 33,3 %, 42,9 % und 50,0 %. Beides ist rechnerisch dasselbe. Bei Paaren werden die Ausgaben wie beim Ehegattensplitting auf beide verteilt. Für Beschäftigte gilt eine Obergrenze: Steuer und Beiträge zusammen höchstens 50 % je Euro Lohn.</p>
+      </div></details>
+      <details><summary>Was ändert sich bei Krankenkasse, Arbeitslosengeld und Rente?</summary><div>
+        <p>Die Krankenkasse bekommt vom Staat eine Pauschale je Versichertem, rund 315 Mrd. € im Jahr. Dazu zahlt jeder Erwachsene eine steuerfreie Prämie von 1.289 € im Jahr, rund 107 € im Monat; Kinder sind frei. Beiträge auf den Lohn gibt es für die Krankenkasse nicht mehr. Der Arbeitgeber zahlt seinen Anteil als Lohn aus, die Rentenversicherung ihren als höhere Rente.</p>
+        <p>Das Arbeitslosengeld zahlt der Staat aus der Steuer, mit den Regeln von heute. Wer damit eine schlechter bezahlte Arbeit annimmt, bekommt 60 % des fehlenden Nettolohns (mit Kindern 67 %), längstens drei Jahre. Niemand ab 67 hat weniger als 1.136 € im Monat. Die Mehrwertsteuer steigt auf 25 %: drei Punkte senken den Rentenbeitrag, drei gehen an den Staatshaushalt. Die Grundsicherung steigt um die Prämie und rund 5,50 € im Monat als Ausgleich.</p>
       </div></details>
       <details><summary>Was passiert beim Erben?</summary><div>
         <p>Was bis zum Lebensende investiert blieb und deshalb nie besteuert wurde, gehört beim Erbgang zur Hälfte der Gemeinschaft, ohne Sonderfreibeträge. Für den Wertzuwachs des Bodens sind es 75 %.</p>
@@ -431,12 +435,12 @@ table.q th:nth-child(3), table.q td:nth-child(3), table.q th:nth-child(4) { text
         <p>Wer aus Vermögen lebt, das er schon unter dem alten Recht versteuert hat, soll nicht doppelt zahlen. In einer Übergangsphase bleiben deshalb Entnahmen aus diesem Altvermögen bis 30.000 € je Erwachsenem im Jahr steuerfrei. Der Rechner zeigt diesen Fall gesondert an, wenn Sie „Verbrauch aus vorhandenem Vermögen“ eintragen.</p>
       </div></details>
       <details><summary>Was sind die Bausteine?</summary><div>
-        <p>Zum Grundsystem kommen einzeln schaltbare Ideen aus dem Buch: Lebensmittel, Wasser und Nahverkehr ohne Mehrwertsteuer, keine Sozialabgaben auf das Existenzminimum bei niedrigen Löhnen, das Existenzminimum für Studium, Ausbildung und Weiterbildung, ein Bürgerjob mit Recht auf Arbeit, ein Berufscoach für alle, steuerfreie Arbeit im Rentenalter und steuerfreie Mehrarbeit (Kindererziehung zählt als Arbeitszeit).</p>
-        <p>Gegenfinanziert werden sie unter anderem durch eine Luxusstufe der Mehrwertsteuer und eine schlankere, KI-taugliche Verwaltung. Ein um 3 Punkte höherer Normalsatz der Mehrwertsteuer geht vollständig an Rente und Krankenversicherung und senkt dort die Beiträge.</p>
+        <p>Zum Grundsystem kommen einzeln schaltbare Ideen aus dem Buch: Lebensmittel, Wasser und Nahverkehr ohne Mehrwertsteuer, keine Beiträge zu Pflege und Rente auf Lohn bis 2.000 € im Monat, das Existenzminimum für Studium, Ausbildung und Weiterbildung, ein Bürgerjob mit Recht auf Arbeit, ein Berufscoach für alle, steuerfreie Arbeit im Rentenalter und steuerfreie Mehrarbeit (Kindererziehung zählt als Arbeitszeit).</p>
+        <p>Gegenfinanziert werden sie unter anderem durch eine Luxusstufe der Mehrwertsteuer und eine schlankere, KI-taugliche Verwaltung. Der Normalsatz der Mehrwertsteuer steigt auf 25 %: drei Punkte gehen an die Rentenversicherung und senken den Beitrag, drei Punkte an den Staatshaushalt. Fachkräfte aus dem Ausland bekommen eine Startprämie von 15.000 € plus 20 % des Gehalts über 30.000 €.</p>
       </div></details>
       <details><summary>Wo liegen die Grenzen dieser Rechnung?</summary><div>
         <p>Das Modell ist statisch: Es unterstellt, dass Menschen gleich viel arbeiten, sparen und ausgeben wie heute. Wachstum durch mehr Investitionen, Bildung und weniger Bürokratie ist nicht eingerechnet. Ebenso wenig die steigenden Kosten durch die Alterung der Gesellschaft. Höhere Verteidigungsausgaben lassen sich oben mit dem Schalter „Mit Sicherheitsbeitrag“ einrechnen, weitere Kosten als zusätzliche Ausgaben.</p>
-        <p>Die Verteilung der Ausgaben ist vereinfacht angenommen. Am unsichersten sind, wie viel vom Staatsanteil an Erbschaften tatsächlich fällig wird, die Kosten der Übergangsregel, der Mietwert der eigenen Wohnungen und einige Bausteine. Sozialversicherung und Gewerbesteuer bleiben in ihrer Grundstruktur bestehen.</p>
+        <p>Die Verteilung der Ausgaben ist vereinfacht angenommen. Am unsichersten sind, wie viel vom Staatsanteil an Erbschaften tatsächlich fällig wird, die Kosten der Übergangsregel, der Mietwert der eigenen Wohnungen und einige Bausteine. Renten- und Pflegeversicherung und die Gewerbesteuer bleiben in ihrer Grundstruktur bestehen.</p>
       </div></details>
     </div>
   </div>
@@ -445,7 +449,7 @@ table.q th:nth-child(3), table.q td:nth-child(3), table.q th:nth-child(4) { text
   <div class="wrap">
     <div class="eyebrow">Annahmen und Quellen</div>
     <h2>Woher die Zahlen kommen</h2>
-    <p class="lead">Hier steht jede Zahl, mit der der Rechner arbeitet, mit ihrer Quelle. Die Werte entsprechen dem Rechenmodell zum Buch (Steuermodell.xlsx, Version 2.1, Blatt „Annahmen“). Wenn Sie oben an den Stellschrauben drehen, ändern sich die Werte hier mit.</p>
+    <p class="lead">Hier steht jede Zahl, mit der der Rechner arbeitet, mit ihrer Quelle. Die Werte entsprechen dem Rechenmodell zum Buch (Steuermodell.xlsx, Modell 2.4, Blatt „Annahmen“). Wenn Sie oben an den Stellschrauben drehen, ändern sich die Werte hier mit.</p>
     <div class="facts">
       <div class="fact"><b>464,5 Mrd. €</b><span>bringen heute die sieben Steuern auf Einkommen, Gewinne und Erbschaften, die im Vorschlag wegfallen.</span><small>Steuerschätzung 2025, sozialpolitik-aktuell.de, Tabelle II.8</small></div>
       <div class="fact"><b>2.350 Mrd. €</b><span>geben die privaten Haushalte im Jahr für ihren Konsum aus. Das ist die Grundlage der neuen Steuer.</span><small>Destatis, VGR: 2.283 Mrd. € im Jahr 2024, für 2025 fortgeschrieben</small></div>
@@ -476,7 +480,7 @@ table.q th:nth-child(3), table.q td:nth-child(3), table.q th:nth-child(4) { text
 
 <footer>
   <div class="wrap">
-    <p>Grundlage: Rechenmodell 2.2 zum Buch „Mut zur Zukunft“. Rechtsstand 2026, Steueraufkommen 2025 (Schätzung). Alle Angaben ohne Gewähr; der Rechner zeigt Größenordnungen, keine Steuerberatung.</p>
+    <p>Grundlage: Rechenmodell 2.4 zum Buch „Mut zur Zukunft“. Rechtsstand 2026, Steueraufkommen 2025 (Schätzung). Alle Angaben ohne Gewähr; der Rechner zeigt Größenordnungen, keine Steuerberatung.</p>
     <p>Datenschutz: Der Rechner lädt keine fremden Inhalte und speichert keine Eingaben.</p>
     <p><a href="../">Startseite</a> · <a href="../buch/">Buch online lesen</a> · <a href="../ueber-mich.html">Über den Autor</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p>
   </div>
@@ -504,9 +508,15 @@ const ANNAHMEN = {
   KVAN: 0.0875, PVAN: 0.018, PVK: 0.006, PVR: 0.036, RVAN: 0.093, AVAN: 0.013,
   BBGKV: 69750, BBGRV: 101400, Mini: 603, Midi: 2000,
   // Neues System: Ausgabensteuer je Erwachsenem, Satz auf die Ausgaben über dem Existenzminimum
-  Satz1: 0.30, Grenze1: 10000, Satz2: 0.45, Grenze2: 20000, Satz3: 0.65,
-  SVFB: 12348,              // Lohn frei von Sozialabgaben bis (im Buch: Existenzminimum; Modell 2.2: 24.000)
-  TaperEnd: 36000,          // Sozialversicherungs-Freibetrag läuft bis zu diesem Bruttolohn aus (Modell 2.2: 72.000)
+  // Modell 2.4: Aufschlag 50 / 75 / 100 %, im Preis 33,3 / 42,9 / 50,0 %; Stufe 1 bis 2.000 €, Stufe 2 bis 3.000 € Ausgaben im Monat
+  Satz1: 0.50, Grenze1: 11652, Satz2: 0.75, Grenze2: 23652, Satz3: 1.00,
+  SVFB: 24000,              // Lohn frei von Beiträgen zu Pflege und Rente bis 2.000 € im Monat
+  TaperEnd: 72000,          // dieser Freibetrag ist bei 6.000 € im Monat aufgebraucht
+  // Grundschutz aus der Steuer (Modell 2.4)
+  KVAus: 0.0875,            // Arbeitgeberanteil Krankenkasse, wird als Lohn ausgezahlt (bis zur heutigen Grenze)
+  KVPausch: 315, KVPraem: 1289, KVBZ: 14.5, BGKV: 10.5, ExMinPraem: 10, PVPriv: 0.10,
+  AVKost: 45, ALGLuecke: 2.5, BodenKost: 15, GSAlter: 7, AnrGrenze: 0.5, AnrKost: 12, GSMwStJ: 66, GSMwStN: 8,
+  StartAn: 1, StartN: 0.2, StartGrund: 15000, StartSatz: 0.20, StartAb: 30000, StartLohn: 53000,
   MwStQ: 0.10,              // Mehrwertsteuer-Anteil an den Konsumausgaben heute
   RBE: 563, RBK: 400, MwStRB: 0.12,
   // Gesamtwirtschaft
@@ -530,10 +540,11 @@ const ANNAHMEN = {
   SicherheitWerte: {
     Verteidigung: 66,       // 1,5 % des BIP mehr für Verteidigung, Mrd. € pro Jahr
     SubvAbbau: 8,           // Abbau klimaschädlicher Subventionen: Diesel 7, Kerosin Inland 0,6, Agrardiesel 0,4
-    // Sätze so, dass der Beitrag netto 58 Mrd. € bringt, auch nach den höheren Kosten für steuerfreie Mehrarbeit und Rentnerarbeit (Faktor 1,0986)
-    Satz1: 0.30 * 1.0986,   // 24,8 % von dem, was ins Private fließt
-    Satz2: 0.45 * 1.0986,   // 33,1 %
-    Satz3: 0.65 * 1.0986,   // 41,7 %
+    // Sätze so, dass der Beitrag netto 58 Mrd. € bringt, auch nach den höheren Kosten für steuerfreie Mehrarbeit und Rentnerarbeit
+    // (Steuermodell.xlsx, Modell 2.4, Blatt Sicherheit: im Preis 34,7 / 44,4 / 51,5 %)
+    Satz1: 0.50 * 1.06387876,
+    Satz2: 0.75 * 1.06387876,
+    Satz3: 1.00 * 1.06387876,
   },
   Verteidigung: 0, SubvAbbau: 0,
   // Prognose bis 2070 (Blatt „Schulden bis 2070“, Nachbildung des Tragfähigkeitsberichts BMF 2024)
@@ -567,10 +578,10 @@ const ANNAHMEN = {
   },        // reale Rendite für die 30-Jahres-Rechnung im Haushalt
   // Bausteine: Wohnen und Mehrwertsteuer
   Stundung: 0.2, GBAn: 1, GBE: 280, GBK: 180, ErstAn: 0, LuxAn: 1, LuxErtrag: 9,
-  NormPkt: 3, NormJePkt: 11.4, SVjePkt: 18, NormAnteil: 0.577,
+  NormPkt: 6, RVPkt: 3, NullSatz: 3, NormJePkt: 11.4, SVjePkt: 18, NormAnteil: 0.577,
   // Bausteine: Bildung und Arbeit
   BildAn: 1, Stud: 2.3, BAfoeg: 2.6, KG18: 4.7, Azubi: 0.7, WBTn: 0.6, WBheute: 2.4,
-  BJAn: 1, BJTn: 2, BJKV: 1800, BJAnl: 3500, BJheuteTn: 1.5, BJheute: 14200, BJVerw: 2, BJAnr: 4,
+  BJAn: 1, BJTn: 2, BJPV: 420, BJAnl: 3500, BJheuteTn: 1.5, BJheute: 14200, BJVerw: 2, BJAnr: 4,
   CoachAn: 1, CoachN: 70000, CoachK: 85000,
   RentAn: 1, RentN: 1.3, RentKonsum: 23000, RentVerd: 9000, RentDyn: 0.6,
   MehrAn: 1, MehrStd: 40, MehrKind: 5, MehrDeckel: 0,
@@ -588,7 +599,7 @@ const ANNAHMEN = {
   ],
 };
 
-const QUELLEN = [{"t": "Bevölkerung und Wirtschaft", "i": "Die Größen, auf denen die Gesamtrechnung aufbaut.", "r": [["Einw", "Einwohner", "mio", "Statistik", "Destatis, gerundet", 83.5], ["Erw", "Erwachsene", "mio", "Statistik", "Destatis, gerundet", 70.5], ["Kinder", "Kinder unter 18 Jahren", "mio", "Statistik", "Destatis, gerundet", 13.9], ["KGKinder", "Kinder mit Kindergeldanspruch", "mio", "Statistik", "inkl. volljährige Kinder in Ausbildung; gerundet", 17.4], ["Konsum", "Konsumausgaben der privaten Haushalte", "mrd", "Statistik", "2024: 2.283 Mrd. € (Statistische Ämter); 2025 fortgeschrieben", 2350], ["Miete", "davon Mietwert selbst genutzter Wohnungen (unterstellte Mieten)", "mrd", "Annahme", "Annahme, rund 8,5 % der Konsumausgaben (VGR: unterstellte Mieten)", 200], ["Sigma", "Ungleichheit der Konsumausgaben (Streuung)", "num", "Annahme", "Lognormal-Annahme, entspricht Gini rund 0,30 und einem Konsumanteil der oberen 10 % von rund 23 %. Die EVS zeigt Konsum etwas gleicher verteilt als Einkommen (Gini rund 0,28), erfasst aber keine sehr hohen Einkommen.", 0.55], ["BIP", "Bruttoinlandsprodukt", "mrd", "Statistik", "2024: rund 4.300 Mrd. €; 2025 fortgeschrieben", 4400], ["Schuld", "Staatsschulden (Maastricht)", "pct", "Statistik", "2024 rund 63 %", 0.63], ["ZinsAlt", "Durchschnittszins der bestehenden Staatsschulden", "pct", "Annahme", "Annahme: steigt mit der Umschuldung Richtung Marktzins", 0.025], ["Zins", "Zins für Bundesanleihen (10 Jahre)", "pct", "Annahme", "Annahme, Stand 2025/26", 0.027], ["Wachstum", "Nominales Wachstum des BIP", "pct", "Annahme", "Annahme", 0.025], ["Jahre", "Dauer der Übergangsphase", "jahre", "Annahme", "Annahme", 15]]}, {"t": "Steuern heute nach Einkommensart", "i": "Was die Steuern einbringen, die im Vorschlag wegfallen. Daran sieht man, wie Lohn, Gewinne, Dividenden, Zinsen und Erbschaften heute jeweils besteuert werden.", "r": [["LSt", "Lohnsteuer (nach Abzug des Kindergelds)", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 262.1], ["vESt", "Veranlagte Einkommensteuer", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 79.4], ["nvSt", "Nicht veranlagte Steuern vom Ertrag (Dividenden)", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 31.9], ["AbgStA", "Abgeltungsteuer auf Zinsen und Kursgewinne", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 24.2], ["KSt", "Körperschaftsteuer", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 39], ["Soli", "Solidaritätszuschlag", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 13], ["ErbSt", "Erbschaft- und Schenkungsteuer (alt)", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 14.9]]}, {"t": "Erbschaften und Vermögen", "i": "Wie viel jedes Jahr vererbt wird und wie viel davon im Vorschlag fällig wird.", "r": [["ErbVol", "Erbschaften und Schenkungen pro Jahr", "mrd", "Statistik", "DIW: 300–400 Mrd. €", 350], ["ErbAnteil", "Staatsanteil beim Erbgang", "pct", "Vorschlag", "Vorschlag: gleiche Regeln wie für jedes Einkommen, keine Sonderfreibeträge; Entnahmen in Höhe des Existenzminimums bleiben frei, soweit es nicht schon durch andere Einkommen gedeckt ist", 0.5], ["ErbBasis", "Anteil des vererbten Vermögens, auf den der Staatsanteil greift", "pct", "Vorschlag", "1 = keine Sonderfreibeträge (Vorschlag). Mit Freibeträgen wie heute (400.000 € je Kind) grob 0,3 bis 0,4, eigene Schätzung", 1], ["RealStart", "davon jährlich realisiert: Startphase", "pct", "Annahme", "Annahme: nur Entnahmen ins Private werden fällig", 0.25], ["RealLang", "davon jährlich realisiert: langfristig", "pct", "Annahme", "Annahme", 0.5], ["AltCap", "Obergrenze steuerfreier Entnahmen aus Altvermögen je Erwachsenem", "eur", "Vorschlag", "Vorschlag für die Übergangsregel (Blatt Haushalte)", 30000], ["AltUeb", "Übergangsregel Altvermögen: Steuerausfall in der Startphase", "mrd", "Annahme", "grobe Schätzung: rund 40 Mrd. € Konsum von Ruheständlern aus versteuertem Ersparten, Steuersatz rund 30 %; läuft über die Übergangsphase aus", 12]]}, {"t": "Recht heute (2026)", "i": "Gesetzliche Werte für den Vergleich mit heute.", "r": [["GFB", "Grundfreibetrag Einkommensteuer 2026", "eur", "Recht", "§ 32a EStG, Tarif 2026", 12348], ["GrenzeZone2", "Ende Tarifzone 2", "eur", "Recht", "§ 32a EStG 2026", 17799], ["GrenzeZone3", "Ende Tarifzone 3", "eur", "Recht", "§ 32a EStG 2026", 69878], ["GrenzeZone5", "Beginn Reichensteuer", "eur", "Recht", "§ 32a EStG 2026", 277826], ["SoliFG", "Freigrenze Solidaritätszuschlag (Einzelveranlagung)", "eur", "Recht", "SolZG, Wert 2026", 20350], ["AbgSt", "Abgeltungsteuer inkl. Soli", "pct", "Recht", "25 % + 5,5 % Soli", 0.26375], ["SPB", "Sparerpauschbetrag je Person", "eur", "Recht", "§ 20 Abs. 9 EStG", 1000], ["KStS", "Körperschaftsteuer inkl. Soli", "pct", "Recht", "15 % + 5,5 % Soli; Gewerbesteuer bleibt in beiden Systemen und ist nicht berücksichtigt", 0.15825], ["WKP", "Arbeitnehmer-Pauschbetrag", "eur", "Recht", "§ 9a EStG", 1230], ["WKR", "Werbungskostenpauschale Rente", "eur", "Recht", "§ 9a EStG", 102], ["BestAnteil", "Besteuerungsanteil der Rente", "pct", "Annahme", "Annahme: Rentenbeginn 2024", 0.83], ["EntlAE", "Entlastungsbetrag Alleinerziehende", "eur", "Recht", "§ 24b EStG", 4260], ["KindergeldMonat", "Kindergeld je Kind", "eurm", "Recht", "Wert 2026", 259], ["KIDA", "Existenzminimum Kind (sächlich)", "eur", "Recht", "Kinderfreibetrag 2026, 2 × 3.414 €", 6828], ["KVAN", "Krankenversicherung Arbeitnehmeranteil inkl. halber Zusatzbeitrag", "pct", "Recht", "7,3 % + 1,45 % (Ø Zusatzbeitrag 2026: 2,9 %)", 0.0875], ["PVAN", "Pflegeversicherung Arbeitnehmeranteil", "pct", "Recht", "3,6 % hälftig (Sachsen abweichend)", 0.018], ["PVK", "Kinderlosenzuschlag Pflege", "pct", "Recht", "nur Arbeitnehmer/Rentner", 0.006], ["PVR", "Pflegeversicherung Rentner (voll)", "pct", "Recht", "Rentner zahlen PV allein", 0.036], ["RVAN", "Rentenversicherung Arbeitnehmeranteil", "pct", "Recht", "18,6 % hälftig", 0.093], ["AVAN", "Arbeitslosenversicherung Arbeitnehmeranteil", "pct", "Recht", "2,6 % hälftig", 0.013], ["BBGKV", "Beitragsbemessungsgrenze Kranken-/Pflegeversicherung", "eur", "Recht", "Wert 2026", 69750], ["BBGRV", "Beitragsbemessungsgrenze Renten-/Arbeitslosenversicherung", "eur", "Recht", "Wert 2026", 101400], ["Mini", "Minijob-Grenze", "eurm", "Recht", "Wert 2026", 603], ["Midi", "Obergrenze Übergangsbereich (Midijob)", "eurm", "Recht", "Wert 2026", 2000], ["RBE", "Regelbedarf Erwachsene", "eurm", "Recht", "Wert 2026", 563]]}, {"t": "Das neue System", "i": "Tarif und Mehrwertsteuer im Vorschlag.", "r": [["Satz1", "Ausgabensteuer Stufe 1", "pct", "Vorschlag", "Satz auf Ausgaben oberhalb des Existenzminimums, Stufe 1", 0.3], ["Grenze1", "Ende Stufe 1 (über dem Existenzminimum)", "eur", "Vorschlag", "je Erwachsenem; bei Paaren werden die Ausgaben des Haushalts wie beim Splitting auf beide verteilt", 10000], ["Satz2", "Ausgabensteuer Stufe 2", "pct", "Vorschlag", "", 0.45], ["Grenze2", "Ende Stufe 2 (über dem Existenzminimum)", "eur", "Vorschlag", "Kalibriert: Die Schulden der Übergangsphase sind innerhalb einer Generation getilgt (Blatt Kredit)", 20000], ["Satz3", "Ausgabensteuer Stufe 3", "pct", "Vorschlag", "", 0.65], ["SVFB", "Lohn frei von Sozialabgaben bis", "eur", "Vorschlag", "im Buch: in Höhe des Existenzminimums; neue Variante: 24.000 € (2.000 € im Monat)", 12348], ["TaperEnd", "SV-Freibetrag läuft aus bei Bruttolohn von", "eur", "Vorschlag", "linear abschmelzend; im Buch 36.000 €, neue Variante 72.000 € (6.000 € im Monat)", 36000], ["MwStQ", "Mehrwertsteuer-Anteil an den Konsumausgaben", "pct", "Annahme", "Annahme (Mieten sind steuerfrei, Lebensmittel 7 %)", 0.1], ["Nutzwert", "Mietwert selbst genutzter Wohnungen in der Ausgabensteuer", "mrd", "Vorschlag", "Vorschlag: voll einbezogen, damit Mieter und Eigentümer gleich behandelt werden. 0 = nicht besteuert", 200], ["Stundung", "Mietwert: Anteil der Steuer, der in der Startphase gestundet wird", "pct", "Annahme", "Eigentümer mit wenig Bargeld stunden bis Verkauf oder Erbfall; langfristig gleichen Rückzahlungen aus Nachlässen neue Stundungen aus", 0.2], ["NormPkt", "Anhebung des Normalsatzes der Mehrwertsteuer", "pkt", "Vorschlag", "Vorschlag: 22 % statt 19 %; der Erlös geht vollständig an Renten- und Krankenversicherung", 3], ["NormJePkt", "Mehreinnahmen je Punkt Normalsatz", "mrd", "Annahme", "grobe Schätzung nach Abzug der Mehrkosten des Staates", 11.4], ["SVjePkt", "Wert eines Beitragspunkts Rente und Krankenversicherung (Arbeitnehmer und Arbeitgeber)", "mrd", "Annahme", "rund 17 bis 19 Mrd. € je Punkt", 18], ["NormAnteil", "Anteil des Konsums zum Normalsatz", "pct", "Annahme", "abgeleitet: 10 % Mehrwertsteuer-Anteil bei 12 % Lebensmitteln zu 7 %", 0.577], ["GBE", "Grundbedarf je Erwachsenem (Lebensmittel, Wasser, Nahverkehr)", "eurm", "Vorschlag", "VGR 2024: 225,6 Mrd. € für Nahrungsmittel; dazu Wasser und Nahverkehr", 280], ["GBK", "Grundbedarf je Kind", "eurm", "Annahme", "Annahme", 180], ["LuxErtrag", "Mehreinnahmen der Luxusstufe", "mrd", "Annahme", "grobe Schätzung: 0,96 Mio. private Neuwagen im Jahr zu Ø 37.000 € netto, 50 % auf den Teil über 10.000 €, Nachfrage −15 %: +4,3 Mrd. €; weitere Luxusgüter (Wohnmobile, Boote, Uhren, Schmuck): +4,5 Mrd. €", 9], ["SVKost", "Kosten SV-Freibetrag (Bundeszuschuss an die Sozialkassen)", "mrd", "Annahme", "hochgerechnet über zwei Lohnverteilungen (22,9 Mio. in Vollzeit, Median 3.950 €; 12,0 Mio. in Teilzeit, Median 1.650 €), abgeglichen auf die frühere Schätzung von 20 Mrd. € für den Freibetrag im Buch", 20], ["Gruend", "Gründungszuschuss 50 % auf Stammkapital", "mrd", "Annahme", "grobe Schätzung", 3]]}, {"t": "Sicherheit und Verteidigung", "i": "Grundlage des Schalters „Mit Sicherheitsbeitrag“.", "r": [["DefMehr", "Mehrausgaben für Verteidigung", "pct", "Recht", "3,5 % statt 2 % nach dem Beschluss der NATO in Den Haag (25.06.2025)", 0.015], ["SubvDiesel", "Abbau des Dieselprivilegs", "mrd", "Statistik", "Bundesrechnungshof, Bericht zum 30. Subventionsbericht (Januar 2026)", 7], ["SubvKerosin", "Kerosin für Inlandsflüge besteuern", "mrd", "Annahme", "Schätzung des Finanzministeriums, nach Ariadne-Kurzdossier (April 2024)", 0.6], ["SubvAgrar", "Abbau des Agrardiesels", "mrd", "Statistik", "Bundesrechnungshof (Januar 2026)", 0.4]]}, {"t": "Bausteine: Bildung, Arbeit, Verwaltung, Gesundheit", "i": "Grobe Schätzungen für die einzelnen Ideen aus dem Buch.", "r": [["Stud", "Vollzeit-Studierende mit Anspruch", "mio", "Statistik", "2,88 Mio. Studierende im WS 2025/26; ohne Teilzeit- und Langzeitstudium", 2.3], ["BAfoeg", "heutiges BAföG für Studierende (entfällt)", "mrd", "Statistik", "Destatis: 3,0 Mrd. € BAföG 2025 für 443.100 Studierende und 126.900 Schüler", 2.6], ["KG18", "Kindergeld für Volljährige in Ausbildung (entfällt)", "mrd", "Annahme", "rund 1,5 Mio. × 259 € × 12", 4.7], ["Azubi", "Aufstockung der Ausbildungsvergütung bis zum Existenzminimum", "mrd", "Statistik", "1,22 Mio. Auszubildende; tariflich im Schnitt 1.209 € (2025), rund ein Viertel liegt im Schnitt 200 € unter dem Existenzminimum", 0.7], ["WBTn", "Erwachsene in Vollzeit-Weiterbildung", "mio", "Annahme", "Annahme; heute rund 0,2 Mio. in geförderter Weiterbildung der Arbeitsagentur", 0.6], ["WBheute", "heutige Förderung der Weiterbildung (entfällt)", "mrd", "Annahme", "grobe Schätzung", 2.4], ["BJTn", "Teilnehmer am Bürgerjob oder an Bildung", "mio", "Annahme", "Annahme: rund 1,9 Mio. Arbeitslose in der Grundsicherung und neue Teilnehmer", 2], ["BJKV", "Kranken- und Pflegeversicherung je Teilnehmer", "eur", "Annahme", "grobe Schätzung", 1800], ["BJAnl", "Anleitung, Begleitung und Material je Teilnehmer", "eur", "Annahme", "grobe Schätzung", 3500], ["BJheuteTn", "davon heute schon in der Grundsicherung", "mio", "Annahme", "Annahme", 1.5], ["BJheute", "heutige Grundsicherung je Person (Regelbedarf, Wohnung, Versicherung)", "eur", "Statistik", "Regelbedarf 563 €, Wohnkosten rund 470 €, Versicherung rund 150 € im Monat", 14200], ["BJVerw", "Einsparung bei der Verwaltung der Jobcenter", "mrd", "Annahme", "Verwaltungskosten Grundsicherung 2025: rund 8 Mrd. €; Anrechnung und Bedarfsprüfung entfallen weitgehend", 2], ["BJAnr", "Mehrkosten: Zuverdienst wird nicht mehr angerechnet", "mrd", "Annahme", "rund 0,8 Mio. Aufstocker", 4], ["CoachN", "Berufscoaches mit KI-Unterstützung", "int", "Annahme", "rund 1 Coach je 750 Menschen im Erwerbsalter", 70000], ["CoachK", "Kosten je Coach inklusive Arbeitsplatz", "eur", "Annahme", "Annahme", 85000], ["RentN", "Erwerbstätige Rentner", "mio", "Statistik", "Destatis: rund 13 % der 65- bis 74-Jährigen arbeiten", 1.3], ["RentKonsum", "Konsum eines erwerbstätigen Rentners", "eur", "Annahme", "Annahme: Rente rund 16.000 €, Zuverdienst 9.000 €", 23000], ["RentVerd", "Zuverdienst eines erwerbstätigen Rentners", "eur", "Annahme", "Annahme", 9000], ["RentDyn", "Mehreinnahmen, weil mehr Rentner arbeiten", "mrd", "Annahme", "Annahme: 200.000 Rentner mehr im Beruf", 0.6], ["MehrStd", "Steuerfrei ist Arbeit ab Wochenstunden", "std", "Vorschlag", "Vorschlag", 40], ["MehrKind", "Schwelle sinkt je Kind unter 18 um", "std", "Vorschlag", "Vorschlag: Familie mit zwei Kindern ab 30 Stunden", 5], ["MehrDeckel", "Höchstbetrag steuerfreier Lohn je Person (0 = kein Deckel)", "eur", "Vorschlag", "Variante: 6.000 € senkt die Kosten auf rund 34 Mrd. €", 0], ["VerwZiel", "Einsparung nach der Übergangsphase", "mrd", "Annahme", "rund 380.000 Stellen (7 % des öffentlichen Dienstes) zu je rund 66.000 €; Arbeitnehmerentgelt des Staates 2024: 356 Mrd. €; ohne Kündigungen, weil bis Mitte der 2030er rund 40 % der Beschäftigten in Rente gehen", 25], ["VerwIT", "Aufbau der Systeme zu Beginn", "mrd", "Annahme", "läuft über die Übergangsphase aus", 3], ["ZuckSatz", "Zuckerabgabe je kg zugesetztem Zucker", "eurkg", "Annahme", "Größenordnung der direkten Krankheitskosten: 8,6 Mrd. € (2008, Meier u. a. 2015), heute rund 12 Mrd. €, geteilt durch die Verbrauchsmenge", 5], ["ZuckMenge", "Zuckerverbrauch für Lebensmittel", "miot", "Statistik", "BMEL 2023/24: 2,73 Mio. t Inlandsverwendung, davon rund 93 % für Nahrung (30,4 kg je Kopf)", 2.54], ["ZuckRueck", "Rückgang durch Abgabe und neue Rezepturen", "pct", "Annahme", "Annahme; in Großbritannien sank der Zucker in abgabepflichtigen Getränken um rund 46 %", 0.25], ["ZuckBonus", "Gesundheitsbonus der Krankenkassen", "mrd", "Annahme", "im Schnitt 150 € je Erwachsenem, bis 600 € für Vorsorge, Nichtrauchen und Bewegung", 9]]}];
+const QUELLEN = [{"t": "Bevölkerung und Wirtschaft", "i": "Die Größen, auf denen die Gesamtrechnung aufbaut.", "r": [["Einw", "Einwohner", "mio", "Statistik", "Destatis, gerundet", 83.5], ["Erw", "Erwachsene", "mio", "Statistik", "Destatis, gerundet", 70.5], ["Kinder", "Kinder unter 18 Jahren", "mio", "Statistik", "Destatis, gerundet", 13.9], ["KGKinder", "Kinder mit Kindergeldanspruch", "mio", "Statistik", "inkl. volljährige Kinder in Ausbildung; gerundet", 17.4], ["Konsum", "Konsumausgaben der privaten Haushalte", "mrd", "Statistik", "2024: 2.283 Mrd. € (Statistische Ämter); 2025 fortgeschrieben", 2350], ["Miete", "davon Mietwert selbst genutzter Wohnungen (unterstellte Mieten)", "mrd", "Annahme", "Annahme, rund 8,5 % der Konsumausgaben (VGR: unterstellte Mieten)", 200], ["Sigma", "Ungleichheit der Konsumausgaben (Streuung)", "num", "Annahme", "Lognormal-Annahme, entspricht Gini rund 0,30 und einem Konsumanteil der oberen 10 % von rund 23 %. Die EVS zeigt Konsum etwas gleicher verteilt als Einkommen (Gini rund 0,28), erfasst aber keine sehr hohen Einkommen.", 0.55], ["BIP", "Bruttoinlandsprodukt", "mrd", "Statistik", "2024: rund 4.300 Mrd. €; 2025 fortgeschrieben", 4400], ["Schuld", "Staatsschulden (Maastricht)", "pct", "Statistik", "2024 rund 63 %", 0.63], ["ZinsAlt", "Durchschnittszins der bestehenden Staatsschulden", "pct", "Annahme", "Annahme: steigt mit der Umschuldung Richtung Marktzins", 0.025], ["Zins", "Zins für Bundesanleihen (10 Jahre)", "pct", "Annahme", "Annahme, Stand 2025/26", 0.027], ["Wachstum", "Nominales Wachstum des BIP", "pct", "Annahme", "Annahme", 0.025], ["Jahre", "Dauer der Übergangsphase", "jahre", "Annahme", "Annahme", 15]]}, {"t": "Steuern heute nach Einkommensart", "i": "Was die Steuern einbringen, die im Vorschlag wegfallen. Daran sieht man, wie Lohn, Gewinne, Dividenden, Zinsen und Erbschaften heute jeweils besteuert werden.", "r": [["LSt", "Lohnsteuer (nach Abzug des Kindergelds)", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 262.1], ["vESt", "Veranlagte Einkommensteuer", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 79.4], ["nvSt", "Nicht veranlagte Steuern vom Ertrag (Dividenden)", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 31.9], ["AbgStA", "Abgeltungsteuer auf Zinsen und Kursgewinne", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 24.2], ["KSt", "Körperschaftsteuer", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 39], ["Soli", "Solidaritätszuschlag", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 13], ["ErbSt", "Erbschaft- und Schenkungsteuer (alt)", "mrd", "Statistik", "Steuereinnahmen 2025 (Schätzung des Arbeitskreises Steuerschätzungen), sozialpolitik-aktuell.de, Tabelle II.8", 14.9]]}, {"t": "Erbschaften und Vermögen", "i": "Wie viel jedes Jahr vererbt wird und wie viel davon im Vorschlag fällig wird.", "r": [["ErbVol", "Erbschaften und Schenkungen pro Jahr", "mrd", "Statistik", "DIW: 300–400 Mrd. €", 350], ["ErbAnteil", "Staatsanteil beim Erbgang", "pct", "Vorschlag", "Vorschlag: gleiche Regeln wie für jedes Einkommen, keine Sonderfreibeträge; Entnahmen in Höhe des Existenzminimums bleiben frei, soweit es nicht schon durch andere Einkommen gedeckt ist", 0.5], ["ErbBasis", "Anteil des vererbten Vermögens, auf den der Staatsanteil greift", "pct", "Vorschlag", "1 = keine Sonderfreibeträge (Vorschlag). Mit Freibeträgen wie heute (400.000 € je Kind) grob 0,3 bis 0,4, eigene Schätzung", 1], ["RealStart", "davon jährlich realisiert: Startphase", "pct", "Annahme", "Annahme: nur Entnahmen ins Private werden fällig", 0.25], ["RealLang", "davon jährlich realisiert: langfristig", "pct", "Annahme", "Annahme", 0.5], ["AltCap", "Obergrenze steuerfreier Entnahmen aus Altvermögen je Erwachsenem", "eur", "Vorschlag", "Vorschlag für die Übergangsregel (Blatt Haushalte)", 30000], ["AltUeb", "Übergangsregel Altvermögen: Steuerausfall in der Startphase", "mrd", "Annahme", "grobe Schätzung: rund 40 Mrd. € Konsum von Ruheständlern aus versteuertem Ersparten, Steuersatz rund 30 %; läuft über die Übergangsphase aus", 12]]}, {"t": "Recht heute (2026)", "i": "Gesetzliche Werte für den Vergleich mit heute.", "r": [["GFB", "Grundfreibetrag Einkommensteuer 2026", "eur", "Recht", "§ 32a EStG, Tarif 2026", 12348], ["GrenzeZone2", "Ende Tarifzone 2", "eur", "Recht", "§ 32a EStG 2026", 17799], ["GrenzeZone3", "Ende Tarifzone 3", "eur", "Recht", "§ 32a EStG 2026", 69878], ["GrenzeZone5", "Beginn Reichensteuer", "eur", "Recht", "§ 32a EStG 2026", 277826], ["SoliFG", "Freigrenze Solidaritätszuschlag (Einzelveranlagung)", "eur", "Recht", "SolZG, Wert 2026", 20350], ["AbgSt", "Abgeltungsteuer inkl. Soli", "pct", "Recht", "25 % + 5,5 % Soli", 0.26375], ["SPB", "Sparerpauschbetrag je Person", "eur", "Recht", "§ 20 Abs. 9 EStG", 1000], ["KStS", "Körperschaftsteuer inkl. Soli", "pct", "Recht", "15 % + 5,5 % Soli; Gewerbesteuer bleibt in beiden Systemen und ist nicht berücksichtigt", 0.15825], ["WKP", "Arbeitnehmer-Pauschbetrag", "eur", "Recht", "§ 9a EStG", 1230], ["WKR", "Werbungskostenpauschale Rente", "eur", "Recht", "§ 9a EStG", 102], ["BestAnteil", "Besteuerungsanteil der Rente", "pct", "Annahme", "Annahme: Rentenbeginn 2024", 0.83], ["EntlAE", "Entlastungsbetrag Alleinerziehende", "eur", "Recht", "§ 24b EStG", 4260], ["KindergeldMonat", "Kindergeld je Kind", "eurm", "Recht", "Wert 2026", 259], ["KIDA", "Existenzminimum Kind (sächlich)", "eur", "Recht", "Kinderfreibetrag 2026, 2 × 3.414 €", 6828], ["KVAN", "Krankenversicherung Arbeitnehmeranteil inkl. halber Zusatzbeitrag", "pct", "Recht", "7,3 % + 1,45 % (Ø Zusatzbeitrag 2026: 2,9 %)", 0.0875], ["PVAN", "Pflegeversicherung Arbeitnehmeranteil", "pct", "Recht", "3,6 % hälftig (Sachsen abweichend)", 0.018], ["PVK", "Kinderlosenzuschlag Pflege", "pct", "Recht", "nur Arbeitnehmer/Rentner", 0.006], ["PVR", "Pflegeversicherung Rentner (voll)", "pct", "Recht", "Rentner zahlen PV allein", 0.036], ["RVAN", "Rentenversicherung Arbeitnehmeranteil", "pct", "Recht", "18,6 % hälftig", 0.093], ["AVAN", "Arbeitslosenversicherung Arbeitnehmeranteil", "pct", "Recht", "2,6 % hälftig", 0.013], ["BBGKV", "Beitragsbemessungsgrenze Kranken-/Pflegeversicherung", "eur", "Recht", "Wert 2026", 69750], ["BBGRV", "Beitragsbemessungsgrenze Renten-/Arbeitslosenversicherung", "eur", "Recht", "Wert 2026", 101400], ["Mini", "Minijob-Grenze", "eurm", "Recht", "Wert 2026", 603], ["Midi", "Obergrenze Übergangsbereich (Midijob)", "eurm", "Recht", "Wert 2026", 2000], ["RBE", "Regelbedarf Erwachsene (Grundsicherung)", "eurm", "Recht", "Wert 2026", 563]]}, {"t": "Das neue System", "i": "Tarif und Mehrwertsteuer im Vorschlag.", "r": [["Satz1", "Ausgabensteuer Stufe 1", "pct", "Vorschlag", "Aufschlag auf die Ausgaben oberhalb des Existenzminimums bis zu Ausgaben von 2.000 € im Monat; im Preis 33,3 %", 0.5], ["Grenze1", "Ende Stufe 1 (über dem Existenzminimum)", "eur", "Vorschlag", "12 × 2.000 € − Existenzminimum; je Erwachsenem, bei Paaren wie beim Splitting auf beide verteilt", 11652], ["Satz2", "Ausgabensteuer Stufe 2", "pct", "Vorschlag", "bis zu Ausgaben von 3.000 € im Monat; im Preis 42,9 %", 0.75], ["Grenze2", "Ende Stufe 2 (über dem Existenzminimum)", "eur", "Vorschlag", "12 × 3.000 € − Existenzminimum", 23652], ["Satz3", "Ausgabensteuer Stufe 3", "pct", "Vorschlag", "auf alle Ausgaben darüber; im Preis 50,0 %", 1.0], ["SVFB", "Lohn frei von Beiträgen zu Pflege und Rente bis", "eur", "Vorschlag", "Vorschlag: 2.000 € im Monat; der Bund zahlt die Beiträge an die Sozialkassen", 24000], ["TaperEnd", "SV-Freibetrag läuft aus bei Bruttolohn von", "eur", "Vorschlag", "6.000 € im Monat; der Freibetrag schmilzt linear ab", 72000], ["MwStQ", "Mehrwertsteuer-Anteil an den Konsumausgaben", "pct", "Annahme", "Annahme (Mieten sind steuerfrei, Lebensmittel 7 %)", 0.1], ["Nutzwert", "Mietwert selbst genutzter Wohnungen in der Ausgabensteuer", "mrd", "Vorschlag", "Vorschlag: voll einbezogen, damit Mieter und Eigentümer gleich behandelt werden. 0 = nicht besteuert", 200], ["Stundung", "Mietwert: Anteil der Steuer, der in der Startphase gestundet wird", "pct", "Annahme", "Eigentümer mit wenig Bargeld stunden bis Verkauf oder Erbfall; langfristig gleichen Rückzahlungen aus Nachlässen neue Stundungen aus", 0.2], ["NormPkt", "Anhebung des Normalsatzes der Mehrwertsteuer", "pkt", "Vorschlag", "Vorschlag: 25 % statt 19 %; 3 Punkte gehen an die Rentenversicherung (Beitrag je Seite −0,95 Punkte), 3 Punkte an den Staatshaushalt", 6], ["RVPkt", "davon für die Rentenversicherung", "pkt", "Vorschlag", "senkt den Rentenbeitrag je Seite um 0,95 Punkte", 3], ["NullSatz", "Erweiterter Nullsatz: Hygieneartikel und Kinderkleidung", "mrd", "Annahme", "Mindereinnahme; der Grundbedarf (Lebensmittel, Wasser, Nahverkehr) bleibt ohne Mehrwertsteuer", 3], ["NormJePkt", "Mehreinnahmen je Punkt Normalsatz", "mrd", "Annahme", "grobe Schätzung nach Abzug der Mehrkosten des Staates", 11.4], ["SVjePkt", "Wert eines Beitragspunkts der Rentenversicherung (Arbeitnehmer und Arbeitgeber)", "mrd", "Annahme", "rund 16 bis 18 Mrd. € je Punkt; mit dem oberen Wert vorsichtig gerechnet", 18], ["NormAnteil", "Anteil des Konsums zum Normalsatz", "pct", "Annahme", "abgeleitet: 10 % Mehrwertsteuer-Anteil bei 12 % Lebensmitteln zu 7 %", 0.577], ["GBE", "Grundbedarf je Erwachsenem (Lebensmittel, Wasser, Nahverkehr)", "eurm", "Vorschlag", "VGR 2024: 225,6 Mrd. € für Nahrungsmittel; dazu Wasser und Nahverkehr", 280], ["GBK", "Grundbedarf je Kind", "eurm", "Annahme", "Annahme", 180], ["LuxErtrag", "Mehreinnahmen der Luxusstufe", "mrd", "Annahme", "grobe Schätzung: 0,96 Mio. private Neuwagen im Jahr zu Ø 37.000 € netto, 50 % auf den Teil über 10.000 €, Nachfrage −15 %: +4,3 Mrd. €; weitere Luxusgüter (Wohnmobile, Boote, Uhren, Schmuck): +4,5 Mrd. €", 9], ["SVKost", "Kosten des Freibetrags bei Pflege und Rente (Bundeszuschuss an die Sozialkassen)", "mrd", "Annahme", "hochgerechnet über zwei Lohnverteilungen (22,9 Mio. in Vollzeit, Median 3.950 €; 12,0 Mio. in Teilzeit, Median 1.650 €), abgeglichen auf die frühere Schätzung von 20 Mrd. €; Modell 2.4: 36,1 Mrd. €", 36.1], ["Gruend", "Gründungszuschuss 50 % auf Stammkapital", "mrd", "Annahme", "grobe Schätzung", 3]]}, {"t": "Grundschutz aus der Steuer", "i": "Modell 2.4: Krankenkasse und Arbeitslosengeld aus der Steuer, Rentenboden, Obergrenze und Startprämie.", "r": [["KVAus", "Arbeitgeberanteil zur Krankenversicherung, der als Lohn ausgezahlt wird", "pct", "Vorschlag", "heute 7,3 % plus halber Zusatzbeitrag von 1,45 %, bis zur heutigen Beitragsbemessungsgrenze; die Rentenversicherung zahlt ihn als höhere Rente", 0.0875], ["KVPausch", "Pauschale des Staates an die Krankenkassen", "mrd", "Annahme", "je Versichertem nach Alter und Krankheitsrisiko, rund 78 % der Ausgaben von rund 406 Mrd. €; Spanne 284 bis 345 Mrd. €", 315], ["KVPraem", "Prämie der Krankenkasse je Erwachsenem", "eur", "Vorschlag", "der Rest der Ausgaben, rund 91 Mrd. €, geteilt durch 70,5 Mio. Erwachsene, rund 107 € im Monat; steuerfrei, Kinder sind frei", 1289], ["KVBZ", "davon heute schon: Bundeszuschuss an die gesetzliche Krankenversicherung", "mrd", "Recht", "§ 221 SGB V", 14.5], ["BGKV", "davon heute schon: Beiträge des Bundes für Bezieher der Grundsicherung", "mrd", "Annahme", "entfallen", 10.5], ["ExMinPraem", "Existenzminimum der Leistungen steigt um die Prämie", "mrd", "Annahme", "rund 8 Mio. Bezieher von Grundsicherung, Sozialhilfe und Rentenboden × 1.289 €", 10], ["PVPriv", "Private Pflegeversicherung als Anteil der heutigen privaten Kranken- und Pflegeversicherung", "pct", "Annahme", "Annahme; die Pflegeversicherung bleibt, wie sie ist", 0.1], ["AVKost", "Arbeitslosengeld und Arbeitsförderung aus der Steuer", "mrd", "Annahme", "heute rund 42 Mrd. € Beiträge, dazu Selbständige; der Arbeitgeberanteil wird als Lohn ausgezahlt", 45], ["ALGLuecke", "Arbeitslosengeld auf die Lohnlücke (wie Kurzarbeitergeld)", "mrd", "Annahme", "60 % (mit Kindern 67 %) des fehlenden Nettolohns aus dem Anspruch, längstens 3 Jahre; grobe Schätzung", 2.5], ["BodenKost", "Rentenboden: niemand ab 67 unter 1.136 € im Monat", "mrd", "Annahme", "Prüfung des Haushaltseinkommens, keine Prüfung des Vermögens, ausgezahlt vom Finanzamt ohne Antrag; grobe Schätzung 14 bis 16 Mrd. €", 15], ["GSAlter", "davon heute schon: Grundsicherung im Alter", "mrd", "Statistik", "rund 0,74 Mio. Empfänger; entfällt", 7], ["AnrGrenze", "Steuer und Beiträge zusammen höchstens", "pct", "Vorschlag", "auf jeden Euro Lohn: Auf der obersten Stufe wird ein Teil der eigenen Renten- und Pflegebeiträge auf die Steuer angerechnet", 0.5], ["AnrKost", "Kosten der Anrechnung", "mrd", "Annahme", "Hochrechnung rund 10 Mrd. € (eigene Simulation für 35 Mio. Beschäftigte), vorsichtig gerechnet", 12], ["GSMwStJ", "Ausgleich der höheren Mehrwertsteuer in der Grundsicherung je Erwachsenem", "eur", "Vorschlag", "rund 5,50 € im Monat", 66], ["StartN", "Fachkräfte mit Startprämie pro Jahr", "mio", "Annahme", "2023 kamen rund 71.000 Fachkräfte aus Drittstaaten (BAMF), der Bedarf liegt bei rund 400.000 Zuwanderern im Jahr (IAB)", 0.2], ["StartGrund", "Startprämie: Grundbetrag", "eur", "Vorschlag", "Ausgleich für die Bildungskosten, die das Herkunftsland getragen hat", 15000], ["StartSatz", "Startprämie: Anteil am Jahresgehalt über 30.000 €", "pct", "Vorschlag", "Vorschlag", 0.2], ["StartLohn", "Mittleres Jahresgehalt der Fachkräfte", "eur", "Annahme", "etwas über der Gehaltsgrenze der Blauen Karte", 53000]]}, {"t": "Sicherheit und Verteidigung", "i": "Grundlage des Schalters „Mit Sicherheitsbeitrag“.", "r": [["DefMehr", "Mehrausgaben für Verteidigung", "pct", "Recht", "3,5 % statt 2 % nach dem Beschluss der NATO in Den Haag (25.06.2025)", 0.015], ["SubvDiesel", "Abbau des Dieselprivilegs", "mrd", "Statistik", "Bundesrechnungshof, Bericht zum 30. Subventionsbericht (Januar 2026)", 7], ["SubvKerosin", "Kerosin für Inlandsflüge besteuern", "mrd", "Annahme", "Schätzung des Finanzministeriums, nach Ariadne-Kurzdossier (April 2024)", 0.6], ["SubvAgrar", "Abbau des Agrardiesels", "mrd", "Statistik", "Bundesrechnungshof (Januar 2026)", 0.4]]}, {"t": "Bausteine: Bildung, Arbeit, Verwaltung, Gesundheit", "i": "Grobe Schätzungen für die einzelnen Ideen aus dem Buch.", "r": [["Stud", "Vollzeit-Studierende mit Anspruch", "mio", "Statistik", "2,88 Mio. Studierende im WS 2025/26; ohne Teilzeit- und Langzeitstudium", 2.3], ["BAfoeg", "heutiges BAföG für Studierende (entfällt)", "mrd", "Statistik", "Destatis: 3,0 Mrd. € BAföG 2025 für 443.100 Studierende und 126.900 Schüler", 2.6], ["KG18", "Kindergeld für Volljährige in Ausbildung (entfällt)", "mrd", "Annahme", "rund 1,5 Mio. × 259 € × 12", 4.7], ["Azubi", "Aufstockung der Ausbildungsvergütung bis zum Existenzminimum", "mrd", "Statistik", "1,22 Mio. Auszubildende; tariflich im Schnitt 1.209 € (2025), rund ein Viertel liegt im Schnitt 200 € unter dem Existenzminimum", 0.7], ["WBTn", "Erwachsene in Vollzeit-Weiterbildung", "mio", "Annahme", "Annahme; heute rund 0,2 Mio. in geförderter Weiterbildung der Arbeitsagentur", 0.6], ["WBheute", "heutige Förderung der Weiterbildung (entfällt)", "mrd", "Annahme", "grobe Schätzung", 2.4], ["BJTn", "Teilnehmer am Bürgerjob oder an Bildung", "mio", "Annahme", "Annahme: rund 1,9 Mio. Arbeitslose in der Grundsicherung und neue Teilnehmer", 2], ["BJPV", "Pflegeversicherung je Teilnehmer", "eur", "Annahme", "3,4 % auf das Existenzminimum; die Prämie der Krankenkasse ist im Lohn enthalten", 420], ["BJAnl", "Anleitung, Begleitung und Material je Teilnehmer", "eur", "Annahme", "grobe Schätzung", 3500], ["BJheuteTn", "davon heute schon in der Grundsicherung", "mio", "Annahme", "Annahme", 1.5], ["BJheute", "heutige Grundsicherung je Person (Regelbedarf, Wohnung, Versicherung)", "eur", "Statistik", "Regelbedarf 563 €, Wohnkosten rund 470 €, Versicherung rund 150 € im Monat", 14200], ["BJVerw", "Einsparung bei der Verwaltung der Jobcenter", "mrd", "Annahme", "Verwaltungskosten Grundsicherung 2025: rund 8 Mrd. €; Anrechnung und Bedarfsprüfung entfallen weitgehend", 2], ["BJAnr", "Mehrkosten: Zuverdienst wird nicht mehr angerechnet", "mrd", "Annahme", "rund 0,8 Mio. Aufstocker", 4], ["CoachN", "Berufscoaches mit KI-Unterstützung", "int", "Annahme", "rund 1 Coach je 750 Menschen im Erwerbsalter", 70000], ["CoachK", "Kosten je Coach inklusive Arbeitsplatz", "eur", "Annahme", "Annahme", 85000], ["RentN", "Erwerbstätige Rentner", "mio", "Statistik", "Destatis: rund 13 % der 65- bis 74-Jährigen arbeiten", 1.3], ["RentKonsum", "Konsum eines erwerbstätigen Rentners", "eur", "Annahme", "Annahme: Rente rund 16.000 €, Zuverdienst 9.000 €", 23000], ["RentVerd", "Zuverdienst eines erwerbstätigen Rentners", "eur", "Annahme", "Annahme", 9000], ["RentDyn", "Mehreinnahmen, weil mehr Rentner arbeiten", "mrd", "Annahme", "Annahme: 200.000 Rentner mehr im Beruf", 0.6], ["MehrStd", "Steuerfrei ist Arbeit ab Wochenstunden", "std", "Vorschlag", "Vorschlag", 40], ["MehrKind", "Schwelle sinkt je Kind unter 18 um", "std", "Vorschlag", "Vorschlag: Familie mit zwei Kindern ab 30 Stunden", 5], ["MehrDeckel", "Höchstbetrag steuerfreier Lohn je Person (0 = kein Deckel)", "eur", "Vorschlag", "Variante: 6.000 € senkt die Kosten auf gut 30 Mrd. €", 0], ["VerwZiel", "Einsparung nach der Übergangsphase", "mrd", "Annahme", "rund 380.000 Stellen (7 % des öffentlichen Dienstes) zu je rund 66.000 €; Arbeitnehmerentgelt des Staates 2024: 356 Mrd. €; ohne Kündigungen, weil bis Mitte der 2030er rund 40 % der Beschäftigten in Rente gehen", 25], ["VerwIT", "Aufbau der Systeme zu Beginn", "mrd", "Annahme", "läuft über die Übergangsphase aus", 3], ["ZuckSatz", "Zuckerabgabe je kg zugesetztem Zucker", "eurkg", "Annahme", "Größenordnung der direkten Krankheitskosten: 8,6 Mrd. € (2008, Meier u. a. 2015), heute rund 12 Mrd. €, geteilt durch die Verbrauchsmenge", 5], ["ZuckMenge", "Zuckerverbrauch für Lebensmittel", "miot", "Statistik", "BMEL 2023/24: 2,73 Mio. t Inlandsverwendung, davon rund 93 % für Nahrung (30,4 kg je Kopf)", 2.54], ["ZuckRueck", "Rückgang durch Abgabe und neue Rezepturen", "pct", "Annahme", "Annahme; in Großbritannien sank der Zucker in abgabepflichtigen Getränken um rund 46 %", 0.25], ["ZuckBonus", "Gesundheitsbonus der Krankenkasse", "mrd", "Annahme", "im Schnitt 150 € je Erwachsenem, bis 600 € im Jahr für guten Langzeitzucker, Nichtrauchen, Bewegung und Vorsorge", 9]]}];
 
 /* Die zehn Haushalte aus dem Buch (Blatt „Haushalte“) */
 const BEISPIELE = [
@@ -602,7 +613,7 @@ const BEISPIELE = [
   { name: "Handwerksmeister", text: "90.000 € Gewinn, investiert in den Betrieb, eigenes Haus.", v: { gewinn: 90000, pkv: 9000, vorsorge: 6000, miet: 12000, kinderlos: 1, spar: 0.15 } },
   { name: "Führungskraft", text: "160.000 € Gehalt, 45 Stunden, 20.000 € Kapitalerträge, Eigentumswohnung.", v: { lohn1: 160000, std1: 45, kap: 20000, miet: 18000, kinderlos: 1, spar: 0.35 } },
   { name: "Wohlhabender Ruheständler", text: "30.000 € Rente, 60.000 € Kapitalerträge, lebt auch vom Vermögen, eigenes Haus.", v: { rente: 30000, kap: 60000, verm: 30000, miet: 18000, rentner: 1 } },
-  { name: "Unternehmerin mit GmbH", text: "1 Mio. € Gewinn, 300.000 € Ausschüttung, Villa.", v: { gmbh: 1000000, aus: 300000, miet: 30000, kinderlos: 1 } },
+  { name: "Unternehmerin mit GmbH", text: "1 Mio. € Gewinn, 300.000 € Ausschüttung, Villa, privat versichert.", v: { gmbh: 1000000, aus: 300000, pkv: 9000, miet: 30000, kinderlos: 1 } },
 ];
 const DEFAULT_BEISPIEL = 5;
 
@@ -622,7 +633,9 @@ function estTarif(z) {
   if (z < A.GrenzeZone5) return 0.42 * z - A.Abzug42;
   return 0.45 * z - A.Abzug45;
 }
-const svSenkAN = () => A.NormPkt * A.NormJePkt / A.SVjePkt / 2 / 100;
+const svSenkAN = () => A.RVPkt * A.NormJePkt / A.SVjePkt / 2 / 100;   // 3 Punkte Mehrwertsteuer senken den Rentenbeitrag je Seite
+const rvNeu = () => A.RVAN - svSenkAN();                                   // Rentenbeitrag der Beschäftigten im Vorschlag: 8,35 %
+const ausNeu = l => A.KVAus * Math.min(l, A.BBGKV) + A.AVAN * Math.min(l, A.BBGRV); // als Lohn ausgezahlte Arbeitgeberanteile
 
 function haushalt(h) {
   const kl = h.kinderlos ? 1 : 0, z = h.erw === 2 ? 1 : 0;
@@ -659,17 +672,19 @@ function haushalt(h) {
   const entfall = A.BildAn ? Math.min(unterhalt, h.vollj * A.GFB) : 0;
   const mwst = konsum * A.MwStQ;
   const einkommen = lohn + h.mini + h.rente + h.gewinn + h.kap + h.gmbh + h.transfer + kg;
-  const heute = { sv: sv + svRente, est: est + soli, kap: abg + kst + kapest, mwst, ausg: 0 };
-  // --- Vorschlag ---
-  let svNeu = svRente, fbSum = 0, senkSum = 0, mehr = 0;
+  const heute = { sv: sv + svRente + h.pkv, est: est + soli, kap: abg + kst + kapest, mwst, ausg: 0, gut: 0 };
+  // --- Vorschlag (Modell 2.4): Krankenkasse und Arbeitslosengeld aus der Steuer, Beiträge nur noch zu Pflege und Rente ---
+  const rvn = rvNeu(), pvSatz = A.PVAN + kl * A.PVK;
+  let svNeu = h.rente * (A.PVR + kl * A.PVK), fbSum = 0, senkSum = 0, mehr = 0, ausSum = 0, beschaeftigt = false;
   const schwelle = A.MehrStd - A.MehrKind * h.kinder;
   for (const p of personen) {
     const m = p.l / 12;
     if (!(p.l === 0 || m <= A.Mini)) {
-      const sv0 = Math.min(p.l, A.BBGKV) * svSatzKV + Math.min(p.l, A.BBGRV) * svSatzRV;
-      const fb = (svSatzKV + svSatzRV) * Math.min(p.l, A.SVFB) * clamp((A.TaperEnd - p.l) / Math.max(1, A.TaperEnd - A.SVFB), 0, 1);
-      const senk = Math.min(p.l, A.BBGKV) * svSenkAN();
-      svNeu += sv0 - fb - senk; fbSum += fb; senkSum += senk;
+      beschaeftigt = true;
+      const aus = ausNeu(p.l), w2 = p.l + aus;
+      const full = Math.min(p.l, A.BBGKV) * pvSatz + Math.min(p.l, A.BBGRV) * rvn;
+      const fb = Math.min(w2, A.SVFB) * p.l / w2 * (pvSatz + rvn) * clamp((A.TaperEnd - w2) / Math.max(1, A.TaperEnd - A.SVFB), 0, 1);
+      svNeu += full - fb; fbSum += fb; ausSum += aus; senkSum += Math.min(p.l, A.BBGRV) * svSenkAN();
     }
     if (A.MehrAn && p.s > 0 && !h.rentner) {
       let f = p.l * Math.max(0, p.s - schwelle) / p.s;
@@ -677,6 +692,11 @@ function haushalt(h) {
       mehr += f;
     }
   }
+  const pvPriv = A.PVPriv * h.pkv;                        // private Pflegeversicherung bleibt
+  const praemie = A.KVPraem * h.erw;                      // Prämie der Krankenkasse je Erwachsenem
+  svNeu += pvPriv + praemie;
+  const rentePlus = A.KVAus * h.rente;                    // Anteil der Rentenversicherung an der Krankenkasse als höhere Rente
+  const gsPlus = h.transfer > 0 ? (A.KVPraem + A.GSMwStJ) * h.erw : 0; // Grundsicherung steigt um Prämie und Ausgleich der Mehrwertsteuer
   const rentFrei = A.RentAn && h.rentner ? (lohn + h.mini + h.gewinn) : 0;
   const existenz = h.erw * A.GFB + h.kinder * A.KIDA;
   const frei = existenz + mehr + rentFrei;
@@ -687,13 +707,25 @@ function haushalt(h) {
   const erst = A.ErstAn * (h.erw * A.RBE + h.kinder * A.RBK) * 12 * A.MwStRB;
   const p = A.NormPkt / 100;
   const mwstNeu = konsum * (A.MwStQ + A.NormAnteil * ((0.19 + p) / (1.19 + p) - 0.19 / 1.19)) - gb - erst;
-  const vorschlag = { sv: svNeu, est: 0, kap: 0, mwst: mwstNeu, ausg };
+  // Anrechnung: Steuer und Beiträge zusammen höchstens AnrGrenze je Euro Lohn auf der obersten Stufe;
+  // über der Beitragsbemessungsgrenze so hoch wie mit Lohn an der Grenze
+  let anr = 0, x3s = 0;
+  if (beschaeftigt && !h._cap) {
+    const cap = personen.some(q => q.l > A.BBGRV) ? haushalt({ ...h, lohn1: Math.min(h.lohn1, A.BBGRV), lohn2: Math.min(h.lohn2, A.BBGRV), _cap: true }) : null;
+    const ks = cap ? cap.konsum : konsum, frS = cap ? cap.frei : existenz + mehr + rentFrei;
+    x3s = h.erw * Math.max(0, Math.max(0, ks + mietw - frS) / h.erw - A.Grenze2);
+    const q = rvn + pvSatz, t3 = A.Satz3 / (1 + A.Satz3);
+    anr = Math.max(0, q + (1 - q) * t3 - A.AnrGrenze) * x3s * (1 + A.Satz3) / (1 - q);
+  }
+  const gut = ausSum + rentePlus + gsPlus + anr;           // ausgezahlte Anteile und höhere Leistungen, gegengerechnet
+  const vorschlag = { sv: svNeu, est: 0, kap: 0, mwst: mwstNeu, ausg, gut: -gut };
   // Übergangsphase
   const alt = Math.min(h.verm, A.AltCap * h.erw);
   const ueber2 = Math.max(0, konsum + mietw - alt - frei);
   const ausgUeb = h.erw * tarif(ueber2 / h.erw);
-  const sum = o => o.sv + o.est + o.kap + o.mwst + o.ausg;
-  return { heute, vorschlag, sumH: sum(heute), sumV: sum(vorschlag), einkommen, konsum, verf, existenz, mehr, rentFrei, frei, mietw, ueber, ausg, gb, fbSum, senkSum, mwstNeu, mwst, alt, ausgUeb, kg, sv, svRente, svNeu, unterhalt, entfall };
+  const sum = o => o.sv + o.est + o.kap + o.mwst + o.ausg + o.gut;
+  return { heute, vorschlag, sumH: sum(heute), sumV: sum(vorschlag), einkommen, konsum, verf, existenz, mehr, rentFrei, frei, mietw, ueber, ausg, gb, fbSum, senkSum, mwstNeu, mwst, alt, ausgUeb, kg, sv, svRente, svNeu, unterhalt, entfall,
+    praemie, pvPriv, ausSum, rentePlus, gsPlus, anr, x3s, gut };
 }
 
 /* Inverse Standardnormalverteilung (Acklam) */
@@ -719,17 +751,22 @@ function aufkommen(mitMiete) { // Ausgabensteuer über die Konsumverteilung, Mrd
   return s / Z.length * A.Erw * 1e6 / 1e9;
 }
 
-function svKostRoh(fb, te) { // Hochrechnung über zwei Lognormal-Verteilungen der Löhne, Mrd. €
-  const rate = A.KVAN + A.PVAN + A.RVAN + A.AVAN + 0.5 * A.PVK;
+function svKostRoh(fb, te, neu) { // Hochrechnung über zwei Lognormal-Verteilungen der Löhne, Mrd. €
+  const rate = A.KVAN + A.PVAN + A.RVAN + A.AVAN + 0.5 * A.PVK;          // Abgleich: Freibetrag nach heutigem Recht
+  const rateNeu = A.PVAN + 0.5 * A.PVK + rvNeu();                        // Vorschlag: nur Pflege und Rente
   let tot = 0;
   for (const [n, med, sig] of [[A.SVNVoll, A.SVMedVoll, A.SVSigVoll], [A.SVNTeil, A.SVMedTeil, A.SVSigTeil]]) {
     const mu = Math.log(med * 12); let s = 0;
-    for (const z of Z) { const w = Math.exp(mu + sig * z); if (w > A.Mini * 12) s += rate * Math.min(w, fb) * clamp((te - w) / Math.max(1, te - fb), 0, 1); }
+    for (const z of Z) {
+      const w = Math.exp(mu + sig * z); if (w <= A.Mini * 12) continue;
+      if (neu) { const w2 = w + ausNeu(w); s += Math.min(w2, fb) * w / w2 * rateNeu * clamp((te - w2) / Math.max(1, te - fb), 0, 1); }
+      else s += rate * Math.min(w, fb) * clamp((te - w) / Math.max(1, te - fb), 0, 1);
+    }
     tot += n * 1e6 * s / Z.length;
   }
   return tot / 1e9;
 }
-function svKost() { return svKostRoh(A.SVFB, A.TaperEnd) * A.SVKostAlt / svKostRoh(A.GFB, A.SVTaperAlt); }
+function svKost() { return svKostRoh(A.SVFB, A.TaperEnd, true) * A.SVKostAlt / svKostRoh(A.GFB, A.SVTaperAlt, false); }
 
 function gesamt() {
   A.SVKost = svKost();
@@ -737,8 +774,13 @@ function gesamt() {
   const kindergeld = A.KGKinder * A.KindergeldMonat * 12 / 1000;
   const gb = A.GBAn * (A.Erw * A.GBE + A.Kinder * A.GBK) * 12 * 0.07 / 1.07 / 1000;
   const erst = A.ErstAn * (A.Erw * A.RBE * 12 * A.MwStRB + A.Kinder * A.RBK * 12 * A.MwStRB) / 1000;
-  const bild = A.BildAn * ((A.Stud * A.GFB / 1000 - A.BAfoeg - A.KG18) + A.Azubi + (A.WBTn * A.GFB / 1000 - A.WBheute));
-  const bj = A.BJAn * (A.BJTn * (A.GFB + A.BJKV + A.BJAnl) / 1000 - A.BJheuteTn * A.BJheute / 1000 - A.BJVerw + A.BJAnr);
+  const bild = A.BildAn * ((A.Stud + A.WBTn) * (A.GFB + A.KVPraem) / 1000 - A.BAfoeg - A.KG18 + A.Azubi - A.WBheute);
+  const bj = A.BJAn * (A.BJTn * (A.GFB + A.KVPraem + A.BJPV + A.BJAnl) / 1000 - A.BJheuteTn * A.BJheute / 1000 - A.BJVerw + A.BJAnr);
+  // Grundschutz aus der Steuer (Modell 2.4)
+  const kasse = A.KVPausch - A.KVBZ - A.BGKV + A.ExMinPraem, boden = A.BodenKost - A.GSAlter;
+  const gsMwSt = A.GSMwStN * A.GSMwStJ / 1000;
+  const start = A.StartAn * A.StartN * (A.StartGrund + A.StartSatz * Math.max(0, A.StartLohn - A.StartAb)) / 1000;
+  const mwstH = (A.NormPkt - A.RVPkt) * A.NormJePkt - A.NullSatz;
   const coach = A.CoachAn * A.CoachN * A.CoachK / 1e9;
   const rx = Math.max(0, A.RentKonsum - A.GFB);
   const rent = A.RentAn * (A.RentN * (tarif(rx) - tarif(Math.max(0, rx - A.RentVerd))) / 1000 - A.RentDyn);
@@ -761,13 +803,20 @@ function gesamt() {
     ["Kindergeld, bisher mit der Lohnsteuer verrechnet", kindergeld, kindergeld],
     ["Grundbedarf ohne Mehrwertsteuer", gb, gb],
     ["Pauschale Mehrwertsteuer-Erstattung (Modell 1.0)", erst, erst],
-    [Math.abs(A.SVFB - A.GFB) < 1 ? "Keine Sozialabgaben auf das Existenzminimum" : `Keine Sozialabgaben auf Lohn bis ${eur(A.SVFB / 12)} im Monat`, A.SVKost, A.SVKost],
+    [`Keine Beiträge zu Pflege und Rente auf Lohn bis ${eur(A.SVFB / 12)} im Monat`, A.SVKost, A.SVKost],
     ["Gründungszuschuss auf Stammkapital", A.Gruend, A.Gruend],
     ["Existenzminimum in der Bildung", bild, bild],
     ["Bürgerjob: Recht auf Arbeit oder Bildung", bj, bj],
     ["Berufscoach für alle", coach, coach],
     ["Arbeit im Rentenalter steuerfrei", rent, rent],
     ["Mehrarbeit steuerfrei", mehrK, mehrK],
+    ["Krankenkasse aus der Steuer, nach Abzug der heutigen Zahlungen des Staates", kasse, kasse],
+    ["Arbeitslosengeld aus der Steuer", A.AVKost, A.AVKost],
+    ["Arbeitslosengeld auf die Lohnlücke, wie Kurzarbeitergeld", A.ALGLuecke, A.ALGLuecke],
+    [`Rentenboden ${eur((A.GFB + A.KVPraem) / 12)} im Monat, nach Abzug der Grundsicherung im Alter`, boden, boden],
+    [`Obergrenze: Steuer und Beiträge höchstens ${pct(A.AnrGrenze, 0)} je Euro Lohn`, A.AnrKost, A.AnrKost],
+    ["Ausgleich der höheren Mehrwertsteuer in der Grundsicherung", gsMwSt, gsMwSt],
+    ["Startprämie für Fachkräfte aus dem Ausland", start, start],
     ["Aufbau der KI-tauglichen Verwaltung", it, 0],
     ["Übergangsregel für versteuertes Erspartes", A.AltUeb, 0],
     ["Mehr für Verteidigung (1,5 % des BIP)", A.Verteidigung, A.Verteidigung],
@@ -778,6 +827,7 @@ function gesamt() {
     ["Dieselbe Steuer auf den Mietwert der eigenen Wohnung", mietSt * (1 - A.Stundung), mietSt],
     ["Staatsanteil an Erbschaften", erbS, erbL],
     ["Luxusstufe der Mehrwertsteuer", lux, lux],
+    [`Mehrwertsteuer ${fmt(19 + A.NormPkt)} %: ${fmt(A.NormPkt - A.RVPkt)} Punkte für den Staatshaushalt, abzüglich Nullsatz`, mwstH, mwstH],
     ["Einsparung in der Verwaltung", 0, verwE],
     ["Abbau klimaschädlicher Subventionen", A.SubvAbbau, A.SubvAbbau],
   ];
@@ -785,7 +835,7 @@ function gesamt() {
   const bedarfS = wegfall + sumCol(ausgaben, 1), bedarfL = wegfall + sumCol(ausgaben, 2);
   const einS = sumCol(einnahmen, 1), einL = sumCol(einnahmen, 2);
   const saldoS = einS - bedarfS, saldoL = einL - bedarfL;
-  return { wegfall, ausgaben, einnahmen, bedarfS, bedarfL, einS, einL, saldoS, saldoL, normE: A.NormPkt * A.NormJePkt, svsenk: A.NormPkt * A.NormJePkt / A.SVjePkt };
+  return { wegfall, ausgaben, einnahmen, bedarfS, bedarfL, einS, einL, saldoS, saldoL, normE: A.RVPkt * A.NormJePkt, svsenk: A.RVPkt * A.NormJePkt / A.SVjePkt };
 }
 
 function kredit(saldoS, saldoL, jahre = 45) {
@@ -848,7 +898,7 @@ function showTip(e, html) { tip.innerHTML = html; tip.hidden = false; const x = 
 function hideTip() { tip.hidden = true; }
 
 const KAT = [
-  ["sv", "Sozialbeiträge", "--s1"],
+  ["sv", "Sozialbeiträge und Krankenversicherung", "--s1"],
   ["est", "Einkommensteuer und Soli", "--s2"],
   ["kap", "Steuern auf Kapital und Gewinne", "--s3"],
   ["mwst", "Mehrwertsteuer", "--s4"],
@@ -922,16 +972,16 @@ function updateHH() {
   if (r.entfall > 0.5) {
     const plus = r.entfall - diff;
     vd.className = plus > 0 ? "verdict good" : "verdict bad";
-    vd.innerHTML = `<span class="big num">${eur(Math.abs(plus))} ${plus > 0 ? "mehr" : "weniger"} im Jahr</span><p>${aktiv >= 0 ? "Diesem Haushalt bleiben" : "Ihnen bleiben"} im Vorschlag ${eur(Math.abs(plus) / 12)} im Monat ${plus > 0 ? "mehr" : "weniger"}. Davon ${eur(r.entfall)} weil der Staat das Existenzminimum der Kinder in Studium oder Ausbildung übernimmt und ${diff <= 0 ? eur(-diff) + " aus niedrigeren Steuern und Abgaben" : eur(diff) + " weniger durch höhere Steuern und Abgaben"}.</p>`;
+    vd.innerHTML = `<span class="big num">${eur(Math.abs(plus))} ${plus > 0 ? "mehr" : "weniger"} im Portemonnaie</span><p>${aktiv >= 0 ? "Diesem Haushalt bleiben" : "Ihnen bleiben"} im Vorschlag ${eur(Math.abs(plus) / 12)} im Monat ${plus > 0 ? "mehr" : "weniger"}. Davon ${eur(r.entfall)} weil der Staat das Existenzminimum der Kinder in Studium oder Ausbildung übernimmt und ${diff <= 0 ? eur(-diff) + " aus niedrigeren Steuern und Abgaben" : eur(diff) + " weniger durch höhere Steuern und Abgaben"}.</p>`;
   } else if (Math.abs(diff) < 50) {
     vd.className = "verdict neutral";
     vd.innerHTML = `<span class="big">Kaum Unterschied</span><p>${wer} im Vorschlag etwa gleich viel wie heute.</p>`;
   } else if (diff < 0) {
     vd.className = "verdict good";
-    vd.innerHTML = `<span class="big num">${eur(-diff)} weniger im Jahr</span><p>${wer} im Vorschlag ${eur(-diff / 12)} im Monat weniger Steuern und Abgaben. Das sind ${pct(-diff / Math.max(1, r.einkommen))} des Einkommens, die zusätzlich zum Sparen und Investieren bleiben.</p>`;
+    vd.innerHTML = `<span class="big num">${eur(-diff)} mehr im Portemonnaie</span><p>Im Jahr, das sind ${eur(-diff / 12)} im Monat: ${wer.replace(" zahlt", "")} zahlt im Vorschlag so viel weniger Steuern und Abgaben. Das sind ${pct(-diff / Math.max(1, r.einkommen))} des Einkommens, die zusätzlich zum Sparen und Investieren bleiben.</p>`;
   } else {
     vd.className = "verdict bad";
-    vd.innerHTML = `<span class="big num">${eur(diff)} mehr im Jahr</span><p>${wer} im Vorschlag ${eur(diff / 12)} im Monat mehr, das sind ${pct(diff / Math.max(1, r.einkommen))} des Einkommens. Wer weniger privat ausgibt und mehr investiert, zahlt weniger.</p>`;
+    vd.innerHTML = `<span class="big num">${eur(diff)} weniger im Portemonnaie</span><p>Im Jahr: ${wer} im Vorschlag ${eur(diff / 12)} im Monat mehr, das sind ${pct(diff / Math.max(1, r.einkommen))} des Einkommens. Wer weniger privat ausgibt und mehr investiert, zahlt weniger.</p>`;
   }
   if (r.alt > 0) {
     const d2 = diff - r.ausg + r.ausgUeb;
@@ -947,7 +997,8 @@ function updateHH() {
   // Balken
   const max = Math.max(r.sumH, r.sumV, 1);
   const bars = $("bars"); bars.innerHTML = "";
-  [["Heute", r.heute, r.sumH], ["Vorschlag", r.vorschlag, r.sumV]].forEach(([lbl, o, s]) => {
+  const netto = o => { const n = { ...o }; let g = -(o.gut || 0); for (const k of ["sv", "mwst", "ausg"]) { const d = Math.min(g, Math.max(0, n[k])); n[k] -= d; g -= d; } return n; };
+  [["Heute", r.heute, r.sumH], ["Vorschlag", netto(r.vorschlag), r.sumV]].forEach(([lbl, o, s]) => {
     const row = document.createElement("div"); row.className = "barrow";
     row.innerHTML = `<div class="lbl">${lbl}<small>${eur(s)}</small></div>`;
     const tr = document.createElement("div"); tr.className = "track"; tr.style.width = (s / max * 100) + "%";
@@ -962,7 +1013,7 @@ function updateHH() {
   });
   $("legend").innerHTML = KAT.filter(([k]) => r.heute[k] > 0.5 || r.vorschlag[k] > 0.5).map(([, n, c]) => `<span><i style="background:var(${c})"></i>${n}</span>`).join("");
   // Tabelle
-  const zeilen = KAT.map(([k, n]) => `<tr><td>${n}</td><td>${eur(r.heute[k])}</td><td>${eur(r.vorschlag[k])}</td><td class="${r.vorschlag[k] - r.heute[k] < -0.5 ? "pos" : r.vorschlag[k] - r.heute[k] > 0.5 ? "neg" : ""}">${sign(r.vorschlag[k] - r.heute[k])} €</td></tr>`).join("");
+  const zeilen = [...KAT, ["gut", "Gegengerechnet: Arbeitgeberanteile als Lohn, höhere Rente oder Grundsicherung, Obergrenze"]].filter(([k]) => k !== "gut" || r.gut > 0.5).map(([k, n]) => `<tr><td>${n}</td><td>${eur(r.heute[k])}</td><td>${k === "gut" ? "−" : ""}${eur(Math.abs(r.vorschlag[k]))}</td><td class="${r.vorschlag[k] - r.heute[k] < -0.5 ? "pos" : r.vorschlag[k] - r.heute[k] > 0.5 ? "neg" : ""}">${sign(r.vorschlag[k] - r.heute[k])} €</td></tr>`).join("");
   $("hhTable").innerHTML = `<thead><tr><th>Euro pro Jahr</th><th>Heute</th><th>Vorschlag</th><th>Differenz</th></tr></thead><tbody>${zeilen}
     <tr class="sum"><td>Zusammen</td><td>${eur(r.sumH)}</td><td>${eur(r.sumV)}</td><td class="${diff < -0.5 ? "pos" : diff > 0.5 ? "neg" : ""}">${sign(diff)} €</td></tr>
     ${r.unterhalt > 0 ? `<tr><td>Unterhalt für Kinder in Studium oder Ausbildung</td><td>${eur(r.unterhalt)}</td><td>${eur(r.unterhalt - r.entfall)}</td><td class="${r.entfall > 0.5 ? "pos" : ""}">${sign(-r.entfall)} €</td></tr>
@@ -983,24 +1034,34 @@ function updateHH() {
   const stufe = (lbl, betrag, satz) => `<div class="stufe"><span>${lbl}</span><span class="meter"><span style="width:${betrag / mStufe * 100}%;opacity:${0.55 + satz * 0.6}"></span></span><b>${eur(betrag * satz * h.erw)}</b></div>`;
   st.push(`<li><div><b>Ausgabensteuer: ${eur(r.ausg)}</b><div class="why">Auf die ${eur(r.ueber)} über dem Freibetrag${h.erw === 2 ? ", verteilt auf beide Erwachsene (" + eur(proErw) + " je Person)" : ""}, gelten die Stufen je Erwachsenem:</div>
     <div class="stufen">${stufe(pct(A.Satz1, 0) + " auf " + eur(st1), st1, A.Satz1)}${stufe(pct(A.Satz2, 0) + " auf " + eur(st2), st2, A.Satz2)}${stufe(pct(A.Satz3, 0) + " auf " + eur(st3), st3, A.Satz3)}</div></div></li>`);
-  st.push(`<li><div><b>Mehrwertsteuer: ${eur(r.mwstNeu)}</b><div class="why">Der Normalsatz steigt um ${fmt(A.NormPkt)} Punkte; das Geld geht an Rente und Krankenversicherung.${r.gb > 0 ? " Lebensmittel, Wasser und Nahverkehr sind frei von Mehrwertsteuer, das spart diesem Haushalt " + eur(r.gb) + "." : ""}</div></div></li>`);
-  if (r.svNeu > 0.5) st.push(`<li><div><b>Sozialbeiträge: ${eur(r.svNeu)}</b><div class="why">Die Sozialversicherung bleibt.${r.fbSum > 0.5 ? " " + (Math.abs(A.SVFB - A.GFB) < 1 ? "Auf das Existenzminimum" : "Auf Lohn bis " + eur(A.SVFB / 12) + " im Monat") + " fallen keine Beiträge an, bei höheren Löhnen schmilzt dieser Freibetrag ab: " + eur(r.fbSum) + " weniger." : ""}${r.senkSum > 0.5 ? " Die höhere Mehrwertsteuer senkt die Beiträge um " + eur(r.senkSum) + "." : ""}</div></div></li>`);
-  st.push(`<li><div><b>Weg fallen ${eur(r.heute.est + r.heute.kap)}</b><div class="why">Einkommensteuer, Soli, Abgeltungsteuer und Körperschaftsteuer gibt es nicht mehr. Was nicht privat ausgegeben wird, bleibt steuerfrei, bis es ins Private fließt oder vererbt wird.</div></div></li>`);
+  st.push(`<li><div><b>Mehrwertsteuer: ${eur(r.mwstNeu)}</b><div class="why">Der Normalsatz steigt um ${fmt(A.NormPkt)} Punkte auf ${fmt(19 + A.NormPkt)} %: ${fmt(A.RVPkt)} Punkte gehen an die Rentenversicherung, ${fmt(A.NormPkt - A.RVPkt)} an den Staatshaushalt.${r.gb > 0 ? " Lebensmittel, Wasser und Nahverkehr sind frei von Mehrwertsteuer, das spart diesem Haushalt " + eur(r.gb) + "." : ""}</div></div></li>`);
+  if (r.svNeu > 0.5) st.push(`<li><div><b>Sozialbeiträge und Krankenkasse: ${eur(r.svNeu)}</b><div class="why">Krankenkasse und Arbeitslosengeld bezahlt der Staat aus der Steuer. Jeder Erwachsene zahlt der Krankenkasse eine Prämie von ${eur(A.KVPraem)} im Jahr${h.erw === 2 ? ", zusammen " + eur(r.praemie) : ""}; Kinder sind frei. Beiträge gibt es nur noch für Pflege und Rente${r.senkSum > 0.5 ? ", der Rentenbeitrag sinkt durch die Mehrwertsteuer um " + fmt(svSenkAN() * 100, 2) + " Punkte" : ""}.${r.fbSum > 0.5 ? " Auf Lohn bis " + eur(A.SVFB / 12) + " im Monat fallen sie nicht an, bei höheren Löhnen schmilzt dieser Freibetrag ab: " + eur(r.fbSum) + " weniger." : ""}${r.pvPriv > 0.5 ? " Die private Pflegeversicherung bleibt: " + eur(r.pvPriv) + "." : ""}</div></div></li>`);
+  if (r.gut > 0.5) { const t = [];
+    if (r.ausSum > 0.5) t.push(`Der Arbeitgeber zahlt seine Anteile zu Krankenkasse und Arbeitslosenversicherung als Lohn aus: ${eur(r.ausSum)} mehr brutto`);
+    if (r.rentePlus > 0.5) t.push(`die Rentenversicherung zahlt ihren Anteil an der Krankenkasse als höhere Rente aus: ${eur(r.rentePlus)}`);
+    if (r.gsPlus > 0.5) t.push(`die Grundsicherung steigt um die Prämie und den Ausgleich der Mehrwertsteuer: ${eur(r.gsPlus)}`);
+    if (r.anr > 0.5) t.push(`Steuer und Beiträge zusammen sind auf ${pct(A.AnrGrenze, 0)} je Euro Lohn begrenzt; angerechnet werden ${eur(r.anr)}`);
+    st.push(`<li><div><b>Gegengerechnet: ${eur(r.gut)}</b><div class="why">${t.join("; ")}.</div></div></li>`); }
+  st.push(`<li><div><b>Weg fallen ${eur(r.heute.est + r.heute.kap)}${h.pkv > 0 ? " und die private Krankenversicherung" : ""}</b><div class="why">Einkommensteuer, Soli, Abgeltungsteuer und Körperschaftsteuer gibt es nicht mehr. Was nicht privat ausgegeben wird, bleibt steuerfrei, bis es ins Private fließt oder vererbt wird.</div></div></li>`);
   $("steps").innerHTML = st.join("");
 }
 
 /* ===================== Stellschrauben ===================== */
 const KNOBS = [
   { titel: "Tarif der Ausgabensteuer", items: [
-    { k: "Satz1", lbl: "Stufe 1: Satz", min: 0.1, max: 0.6, step: 0.01, f: v => pct(v, Math.abs(v * 100 - Math.round(v * 100)) > 0.05 ? 1 : 0), sub: v => `entspricht ${pct(v / (1 + v))} von dem, was ins Private fließt` },
+    { k: "Satz1", lbl: "Stufe 1: Aufschlag", min: 0.1, max: 1, step: 0.01, f: v => pct(v, Math.abs(v * 100 - Math.round(v * 100)) > 0.05 ? 1 : 0), sub: v => `im Preis ${pct(v / (1 + v))} von dem, was ins Private fließt` },
     { k: "Grenze1", lbl: "Stufe 1 reicht bis zu Ausgaben von", min: 1200, max: 48000, step: 120, f: v => eur((v + A.GFB) / 12) + " im Monat", sub: () => `je Erwachsenem; bis ${eur(A.GFB / 12)} im Monat (Existenzminimum) bleibt alles frei` },
-    { k: "Satz2", lbl: "Stufe 2: Satz", min: 0.1, max: 0.8, step: 0.01, f: v => pct(v, Math.abs(v * 100 - Math.round(v * 100)) > 0.05 ? 1 : 0), sub: v => `entspricht ${pct(v / (1 + v))}` },
+    { k: "Satz2", lbl: "Stufe 2: Aufschlag", min: 0.1, max: 1.2, step: 0.01, f: v => pct(v, Math.abs(v * 100 - Math.round(v * 100)) > 0.05 ? 1 : 0), sub: v => `im Preis ${pct(v / (1 + v))}` },
     { k: "Grenze2", lbl: "Stufe 2 reicht bis zu Ausgaben von", min: 1200, max: 72000, step: 120, f: v => eur((v + A.GFB) / 12) + " im Monat", sub: () => "Stufe 3 gilt für alles darüber" },
-    { k: "Satz3", lbl: "Stufe 3: Satz", min: 0.1, max: 1.2, step: 0.01, f: v => pct(v, Math.abs(v * 100 - Math.round(v * 100)) > 0.05 ? 1 : 0), sub: v => `entspricht ${pct(v / (1 + v))}` },
+    { k: "Satz3", lbl: "Stufe 3: Aufschlag", min: 0.1, max: 1.5, step: 0.01, f: v => pct(v, Math.abs(v * 100 - Math.round(v * 100)) > 0.05 ? 1 : 0), sub: v => `im Preis ${pct(v / (1 + v))}` },
   ]},
-  { titel: "Sozialabgaben", items: [
-    { k: "SVFB", lbl: "Lohn frei von Sozialabgaben bis", min: 0, max: 48000, step: 600, f: v => eur(v / 12) + " im Monat", sub: () => `Der Bund zahlt diese Beiträge an die Sozialkassen: ${fmt(svKost(), 1)} Mrd. € im Jahr` },
+  { titel: "Sozialbeiträge", items: [
+    { k: "SVFB", lbl: "Lohn frei von Beiträgen zu Pflege und Rente bis", min: 0, max: 48000, step: 600, f: v => eur(v / 12) + " im Monat", sub: () => `Der Bund zahlt diese Beiträge an die Sozialkassen: ${fmt(svKost(), 1)} Mrd. € im Jahr` },
     { k: "TaperEnd", lbl: "Dieser Freibetrag läuft aus bei", min: 12000, max: 120000, step: 1200, f: v => eur(v / 12) + " im Monat", sub: () => "Bruttolohn; bis dahin schmilzt der Freibetrag gleichmäßig ab" },
+  ]},
+  { titel: "Grundschutz aus der Steuer", items: [
+    { k: "KVPraem", lbl: "Prämie der Krankenkasse je Erwachsenem", min: 0, max: 3000, step: 12, f: v => eur(v / 12) + " im Monat", sub: () => "steuerfrei, Kinder sind frei; ändert die Haushalte, die Pauschale des Staates bleibt" },
+    { k: "KVPausch", lbl: "Pauschale des Staates an die Krankenkassen", min: 250, max: 380, step: 5, f: v => fmt(v) + " Mrd. €", sub: () => "Schätzung 284 bis 345 Mrd. €" },
   ]},
   { titel: "Erbschaften", items: [
     { k: "ErbAnteil", lbl: "Staatsanteil beim Erbgang", min: 0, max: 0.75, step: 0.05, f: v => pct(v, 0), sub: () => "ohne Sonderfreibeträge" },
@@ -1123,7 +1184,7 @@ function updateGesamt() {
   g.einnahmen.forEach(r => h += row(r[0], r[1], r[2]));
   h += row("Einnahmen zusammen", g.einS, g.einL, "sum");
   h += `<tr class="sum"><td>Saldo</td><td class="${g.saldoS >= 0 ? "pos" : "neg"}">${mrd(g.saldoS)}</td><td class="${g.saldoL >= 0 ? "pos" : "neg"}">${mrd(g.saldoL)}</td></tr>`;
-  h += `<tr><td colspan="3" class="note" style="text-align:left;white-space:normal">Zweckgebunden und nicht im Saldo: Der höhere Normalsatz der Mehrwertsteuer bringt rund ${mrd(g.normE)} Mrd. € für Rente und Krankenversicherung und senkt dort die Beiträge um ${fmt(g.svsenk, 1)} Punkte. Die Zuckerabgabe fließt als Gesundheitsbonus zurück.</td></tr></tbody>`;
+  h += `<tr><td colspan="3" class="note" style="text-align:left;white-space:normal">Zweckgebunden und nicht im Saldo: ${fmt(A.RVPkt)} Punkte der Mehrwertsteuer bringen rund ${mrd(g.normE)} Mrd. € für die Rentenversicherung und senken den Rentenbeitrag um ${fmt(g.svsenk, 1)} Punkte. Die Zuckerabgabe fließt als Gesundheitsbonus zurück.</td></tr></tbody>`;
   $("grTable").innerHTML = h;
 }
 
