@@ -386,12 +386,13 @@ table.q th:nth-child(3), table.q td:nth-child(3), table.q th:nth-child(4) { text
   <div class="wrap">
     <div class="eyebrow">CO₂-Abgabe auf Produkte</div>
     <h2>Was CO₂ ohne Preis kostet, und wer es zurückbekommt</h2>
-    <p class="lead">Die Abgabe besteuert das CO₂, das in einem Produkt steckt und noch keinen Preis hat. Hersteller und Importeure zahlen einmal beim ersten Verkauf in Deutschland. Ein Teil geht als Klimageld zu gleichen Teilen an alle zurück, der Rest als Bonus an Hersteller, die besser sind als der Bestwert ihrer Gruppe. Weil das Geld vollständig zurückfließt, steht die Abgabe nicht im Saldo des Staates. Die erste Stufe gilt für Lebensmittel.</p>
+    <p class="lead">Die Abgabe besteuert das CO₂, das in einem Produkt steckt und noch keinen Preis hat. Hersteller und Importeure zahlen einmal beim ersten Verkauf in Deutschland. Ein Teil geht als Klimageld zu gleichen Teilen an alle zurück, der Rest als Bonus an Hersteller, die besser sind als der Bestwert ihrer Gruppe. Weil das Geld vollständig zurückfließt, steht die Abgabe nicht im Saldo des Staates. Die erste Stufe gilt ab 2028 für Lebensmittel, ab 2030 kommen Autos, Elektronik und Möbel dazu. Der Preis steigt von 100 € je Tonne auf 150 € (2030) und 200 € (2035).</p>
     <div class="calc">
       <div class="panel knobs" id="co2knobs">
         <fieldset><legend>Stellschrauben</legend>
-          <div class="slider"><div class="row"><label for="c_Preis">CO₂-Preis</label><output id="co_Preis"></output></div><input type="range" id="c_Preis" min="20" max="200" step="5"><div class="sub">2026 kostet CO₂ beim Heizen und Tanken 55 bis 65 € je Tonne</div></div>
-          <div class="slider"><div class="row"><label for="c_Menge">CO₂ ohne Preis bei Lebensmitteln</label><output id="co_Menge"></output></div><input type="range" id="c_Menge" min="0" max="1" step="0.05"><div class="sub">von 32,1 Mio. t (Methan aus der Tierhaltung) bis 53,3 Mio. t (Landwirtschaft ohne Energie), Umweltbundesamt</div></div>
+          <div class="presets" id="c_jahre" role="group" aria-label="Jahr wählen"></div>
+          <div class="slider"><div class="row"><label for="c_Preis">CO₂-Preis</label><output id="co_Preis"></output></div><input type="range" id="c_Preis" min="20" max="300" step="5"><div class="sub">Vorschlag: 100 € ab 2028, 150 € ab 2030, 200 € ab 2035. Zum Vergleich: im Emissionshandel 2025 rund 70 bis 80 €, Klimaschäden nach dem Umweltbundesamt rund 300 € je Tonne</div></div>
+          <div class="slider"><div class="row"><label for="c_Menge">CO₂ ohne Preis</label><output id="co_Menge"></output></div><input type="range" id="c_Menge" min="0" max="1" step="0.05"><div class="sub" id="cs_Menge"></div></div>
           <div class="slider"><div class="row"><label for="c_Rueck">Davon als Klimageld zurück</label><output id="co_Rueck"></output></div><input type="range" id="c_Rueck" min="0.5" max="1" step="0.05"><div class="sub">der Rest geht als Bonus an bessere Hersteller</div></div>
           <div class="slider"><div class="row"><label for="c_Personen">Personen in Ihrem Haushalt</label><output id="co_Personen"></output></div><input type="range" id="c_Personen" min="1" max="8" step="1"></div>
         </fieldset>
@@ -400,7 +401,9 @@ table.q th:nth-child(3), table.q td:nth-child(3), table.q th:nth-child(4) { text
         <div class="tiles" id="co2tiles"></div>
         <div><h3>Was die Abgabe je Kilogramm ausmacht</h3><p class="note">Fußabdruck an der Supermarktkasse nach ifeu (2020). Lebensmittel mit hohem Fußabdruck sind in der ersten Stufe; vereinfacht ist ihr ganzer Fußabdruck belegt.</p></div>
         <div class="tbl-wrap"><table id="co2tbl"></table></div>
-        <p class="note">Noch offen ist die Rechnung für Kleidung, Heimtextilien und Schuhe (Stufe 1) und für Elektronik, Möbel und Autos (Stufe 2 ab 2030). Dafür fehlen belastbare Mengen, die eine Studie des Umweltbundesamts vor dem Start liefern sollte.</p>
+        <div><h3>Stufe 2 ab 2030: Autos, Elektronik, Möbel</h3><p class="note">Grobe eigene Schätzung, bis eine Studie des Umweltbundesamts genaue Werte liefert. Gezählt wird nur das CO₂ ohne Preis: Stahl, Aluminium und Strom aus der EU haben im Emissionshandel schon einen Preis, belastet werden vor allem Vorprodukte aus Asien, etwa Batteriezellen und Bildschirme. Grundlage: 2,86 Mio. neue Pkw 2025 (KBA), Absatz von 4,5 Mio. Fernsehern, 18,3 Mio. Smartphones und 9,4 Mio. großen Hausgeräten (gfu, HEMIX 2025), Möbelumsatz 20,6 Mrd. € (IFH Köln), Herstellungsemissionen nach Öko-Institut (2021) und VDI (2023).</p></div>
+        <div class="tbl-wrap"><table id="co2prod"></table></div>
+        <p class="note">Noch offen ist die Rechnung für Kleidung, Heimtextilien und Schuhe (Stufe 1). Dafür fehlen belastbare Mengen.</p>
       </div>
     </div>
   </div>
@@ -570,7 +573,12 @@ const ANNAHMEN = {
   RenditeReal: 0.03,
   // CO₂-Abgabe auf Produkte, Stufe 1 Lebensmittel (Kapitel 6, Anhang B7, Blatt „CO₂-Abgabe“)
   CO2: {
-    Preis: 60,               // €/t, etwa der CO₂-Preis fürs Heizen und Tanken 2026
+    Preis: 100,              // €/t: Pfad 100 € ab 2028, 150 € ab 2030, 200 € ab 2035 (Entscheidung Tomas, 07.11.2026)
+    Pfad: [[2028, 100], [2030, 150], [2035, 200]], Jahr: 2028,
+    // Stufe 2 ab 2030: Autos, Elektronik und Haushaltsgeräte, Möbel; CO₂ ohne Preis in Mio. t, grobe eigene Schätzung (untere / obere Grenze)
+    Produkte: [["Autos", 8, 15], ["Elektronik und Haushaltsgeräte", 6, 10], ["Möbel", 3, 6]],
+    // Abgabe je Stück: CO₂ ohne Preis in t je Stück, grobe Schätzung
+    Stueck: [["Neuwagen mit Verbrennungsmotor", 3], ["Elektroauto", 5.5], ["Fernseher ab 42 Zoll", 0.4], ["Waschmaschine", 0.25], ["Notebook", 0.25], ["Sofa", 0.1], ["Smartphone", 0.06]],
     Lo: 32.1, Hi: 53.3,      // Mio. t CO₂e ohne Preis: Methan aus der Tierhaltung bzw. Landwirtschaft ohne Energie (UBA, 2025)
     Menge: 0,                // 0 = untere Grenze, 1 = obere Grenze (Werte dazwischen möglich)
     Rueck: 0.8,              // Anteil, der als Klimageld zurückfließt; der Rest geht in den Bonustopf
@@ -1286,20 +1294,30 @@ function renderQuellen() {
 function updateCO2() {
   const C = A.CO2;
   $("c_Preis").value = C.Preis; $("c_Menge").value = C.Menge; $("c_Rueck").value = C.Rueck; $("c_Personen").value = C.Personen;
-  const t = C.Lo + (C.Hi - C.Lo) * C.Menge;
+  const st2 = C.Jahr >= 2030;
+  const tL = C.Lo + (C.Hi - C.Lo) * C.Menge;
+  const tP = st2 ? C.Produkte.reduce((a, [, lo, hi]) => a + lo + (hi - lo) * C.Menge, 0) : 0;
+  const t = tL + tP;
+  $("c_jahre").innerHTML = C.Pfad.map(([j, pr]) => `<button type="button" class="chip" data-j="${j}" aria-pressed="${C.Jahr === j}">ab ${j}: ${fmt(pr)} €</button>`).join("");
+  $("c_jahre").querySelectorAll("button").forEach(b => b.onclick = () => { C.Jahr = +b.dataset.j; C.Preis = C.Pfad.find(x => x[0] === C.Jahr)[1]; updateCO2(); });
   $("co_Preis").textContent = fmt(C.Preis) + " € je Tonne";
   $("co_Menge").textContent = fmt(t, 1) + " Mio. t";
+  $("cs_Menge").textContent = `Lebensmittel ${fmt(tL, 1)} Mio. t (von 32,1 Mio. t Methan aus der Tierhaltung bis 53,3 Mio. t Landwirtschaft ohne Energie, Umweltbundesamt)` + (st2 ? `, dazu ${fmt(tP, 1)} Mio. t aus Autos, Elektronik und Möbeln (grobe Schätzung 17 bis 31 Mio. t)` : "; Autos, Elektronik und Möbel kommen ab 2030 dazu");
   $("co_Rueck").textContent = pct(C.Rueck, 0);
   $("co_Personen").textContent = fmt(C.Personen);
   const auf = t * C.Preis / 1000, kg = auf * C.Rueck, bon = auf - kg, jeEw = kg * 1000 / C.Einw;
   const tile = (k, v, s) => `<div class="tile"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
-  $("co2tiles").innerHTML = tile("Aufkommen im Jahr", fmt(auf, 1) + " Mrd. €", "wenn sich Exporte und Importe ausgleichen")
+  $("co2tiles").innerHTML = tile("Aufkommen im Jahr", fmt(auf, 1) + " Mrd. €", st2 ? `davon Lebensmittel ${fmt(tL * C.Preis / 1000, 1)} Mrd. €; Exporte und Importe gleichen sich aus` : "nur Lebensmittel; Exporte und Importe gleichen sich aus")
     + tile("Klimageld je Einwohner", eur(jeEw), "im Jahr, für jeden gleich")
     + tile(`Klimageld für ${C.Personen} ${C.Personen === 1 ? "Person" : "Personen"}`, eur(jeEw * C.Personen), "im Jahr")
     + tile("Bonustopf für bessere Hersteller", fmt(bon, 2) + " Mrd. €", `${fmt(bon / (C.KSVMax / C.KSVJahre), 1)}-mal so viel wie die Klimaschutzverträge des Bundes im Jahr`);
   const max = Math.max(...C.Lebensmittel.map(l => l[1]));
   $("co2tbl").innerHTML = `<thead><tr><th>Lebensmittel</th><th>kg CO₂ je kg</th><th>In Stufe 1</th><th>Abgabe je kg</th></tr></thead><tbody>` + C.Lebensmittel.map(([n, f, st]) =>
     `<tr><td>${n}</td><td>${fmt(f, 1)}</td><td style="text-align:left">${st ? "ja" : "nein"}</td><td>${fmt(f * C.Preis / 10, 1)} Cent</td></tr>`).join("") + `</tbody>`;
+  $("co2prod").innerHTML = `<thead><tr><th>Produktgruppe</th><th>Mio. t ohne Preis</th><th>Aufkommen</th></tr></thead><tbody>` + C.Produkte.map(([n, lo, hi]) =>
+    `<tr><td>${n}</td><td>${fmt(lo)} bis ${fmt(hi)}</td><td>${fmt(lo * C.Preis / 1000, 1)} bis ${fmt(hi * C.Preis / 1000, 1)} Mrd. €</td></tr>`).join("")
+    + `</tbody><thead><tr><th>Beispiel, je Stück</th><th>t CO₂ ohne Preis</th><th>Abgabe</th></tr></thead><tbody>` + C.Stueck.map(([n, tt]) =>
+    `<tr><td>${n}</td><td>${fmt(tt, tt < 1 ? 2 : 1)}</td><td>${eur(tt * C.Preis)}</td></tr>`).join("") + `</tbody>`;
 }
 ["Preis", "Menge", "Rueck", "Personen"].forEach(k => $("c_" + k).addEventListener("input", e => { A.CO2[k] = +e.target.value; updateCO2(); }));
 
