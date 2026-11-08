@@ -135,3 +135,7 @@ figcaption, figure .small { font-family: var(--font-body); font-size: .82rem; co
 .treffer .wo { font-size: .85rem; color: var(--muted); }
 .treffer p { margin: 4px 0 0; color: var(--muted); font-size: .95rem; }
 .treffer mark { background: #fbe3a8; color: #1d1d1b; border-radius: 2px; padding: 0 1px; }
+
+/* Externe Quellen-Links */
+.btext a.ext { overflow-wrap: anywhere; }
+.btext a.ext::after { content: "↗"; display: inline-block; margin-left: .15em; font-size: .8em; text-decoration: none; opacity: .7; }

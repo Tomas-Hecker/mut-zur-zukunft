@@ -102,6 +102,10 @@ def linkify(ch):
         t = str(tn)
         new = re.sub(r'(https?://[^\s<)\]]+[^\s<)\].,;:])', lambda m: f'<a href="{m.group(1)}" rel="noopener">{m.group(1)}</a>', html.escape(t, quote=False))
         tn.replace_with(BeautifulSoup(new, 'html.parser'))
+    # Externe Links (Quellen): neuer Tab, als extern erkennbar
+    for a in ch['body'].find_all('a', href=re.compile(r'^https?://')):
+        a['target'] = '_blank'; a['rel'] = 'noopener'
+        a['class'] = (a.get('class') or []) + ['ext']
 
 for ch in chapters: linkify(ch)
 
