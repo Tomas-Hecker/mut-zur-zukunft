@@ -591,6 +591,8 @@ const ANNAHMEN = {
     mittel:         { grund: 3, wachs: 0.03743993357700338, pbx: 0.0025, ki: 0, bild: 0.005, ern: 0.002, binnen: 0.02 },
     zuversichtlich: { grund: 1, wachs: (17.238457286086184 - 3.0408257071388167) / 100, pbx: 0.005, ki: 1, bild: 0.01, ern: 0.003, binnen: 0.035 },
     KI: { dg: 0.008, von: 2027, jahre: 15 },
+    // Anhang C6/C7 (Sicherheit): zuversichtlich nur mit den Anreizen des Steuermodells, ohne KI-Schub
+    zuversichtlichC7: { wachs: 0.07538457286086185, ki: 0 },
     Plan: { Rente: 0.01, Ges: 0.01, Subv: 0.0035, AusgBasis: 0.12, AusgMax: 0.02, AusgBis: 0.60, RegelAb: 2030, RegelSchritt: 0.005, Rendite: 1.03 * 1.02 - 1, NJP: 11.312 },
     DefMehr: 0.015, DefStart: 2026, DefJahre: 4,
   },
@@ -971,8 +973,9 @@ const ramp = (y, a, b) => clamp((y - a) / (b - a), 0, 1);
 // Staatsschulden in % des BIP, 2023 bis 2070 (wie schulden_2070_kern.py): fall = "ohne" | "reform" | "plan" | "regel"
 // regel: ab 2030 jedes Jahr mindestens 0,5 Punkte weniger bis null; reicht der Plan nicht, steigt der Normalsatz (mw = Punkte)
 function prognose(sz, fall, saldoPfad) {
-  const P = A.Prognose, c = P[sz], Q = P.Plan;
+  const P = A.Prognose, Q = P.Plan;
   const reform = fall !== "ohne", plan = fall === "plan" || fall === "regel", regel = fall === "regel";
+  const c = A.Sicherheit && !plan && sz === "zuversichtlich" ? { ...P[sz], ...P.zuversichtlichC7 } : P[sz];
   const PB = [P.PBG, P.PBU, (P.PBG + P.PBU) / 2][c.grund - 1];
   const Demo = [P.DemoG, P.DemoU, (P.DemoG + P.DemoU) / 2][c.grund - 1];
   let d = A.Schuld, dprev = d, nprev = 0, g = P.TBZins0, b = Q.AusgBasis; const out = [{ jahr: P.Start, v: d, mw: 0 }];
