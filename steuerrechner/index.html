@@ -386,12 +386,12 @@ table.q th:nth-child(3), table.q td:nth-child(3), table.q th:nth-child(4) { text
   <div class="wrap">
     <div class="eyebrow">CO₂-Abgabe auf Produkte</div>
     <h2>Was CO₂ ohne Preis kostet, und wer es zurückbekommt</h2>
-    <p class="lead">Die Abgabe besteuert das CO₂, das in einem Produkt steckt und noch keinen Preis hat. Hersteller und Importeure zahlen einmal beim ersten Verkauf in Deutschland. Ein Teil geht als Klimageld zu gleichen Teilen an alle zurück, der Rest als Bonus an Hersteller, die besser sind als der Bestwert ihrer Gruppe. Weil das Geld vollständig zurückfließt, steht die Abgabe nicht im Saldo des Staates. Die erste Stufe gilt ab 2028 für Lebensmittel, ab 2030 kommen Autos, Elektronik und Möbel dazu. Der Preis steigt von 100 € je Tonne auf 150 € (2030) und 200 € (2035).</p>
+    <p class="lead">Die Abgabe besteuert das CO₂, das in einem Produkt steckt und noch keinen Preis hat. Hersteller und Importeure zahlen einmal beim ersten Verkauf in Deutschland. Ein Teil geht als Klimageld zu gleichen Teilen an alle zurück, der Rest als Bonus an Hersteller, die besser sind als der Bestwert ihrer Gruppe. Weil das Geld vollständig zurückfließt, steht die Abgabe nicht im Saldo des Staates. Die erste Stufe gilt ab 2028 für Lebensmittel, ab 2030 kommen Autos, Elektronik und Möbel dazu. Der Preis steigt von 100 € je Tonne auf 150 € (2030), 200 € (2035) und 300 € (2040).</p>
     <div class="calc">
       <div class="panel knobs" id="co2knobs">
         <fieldset><legend>Stellschrauben</legend>
           <div class="presets" id="c_jahre" role="group" aria-label="Jahr wählen"></div>
-          <div class="slider"><div class="row"><label for="c_Preis">CO₂-Preis</label><output id="co_Preis"></output></div><input type="range" id="c_Preis" min="20" max="300" step="5"><div class="sub">Vorschlag: 100 € ab 2028, 150 € ab 2030, 200 € ab 2035. Zum Vergleich: im Emissionshandel 2025 rund 70 bis 80 €, Klimaschäden nach dem Umweltbundesamt rund 300 € je Tonne</div></div>
+          <div class="slider"><div class="row"><label for="c_Preis">CO₂-Preis</label><output id="co_Preis"></output></div><input type="range" id="c_Preis" min="20" max="400" step="5"><div class="sub">Vorschlag: 100 € ab 2028, 150 € ab 2030, 200 € ab 2035, 300 € ab 2040. Zum Vergleich: im Emissionshandel 2025 rund 70 bis 80 €, Klimaschäden nach dem Umweltbundesamt rund 300 € je Tonne</div></div>
           <div class="slider"><div class="row"><label for="c_Menge">CO₂ ohne Preis</label><output id="co_Menge"></output></div><input type="range" id="c_Menge" min="0" max="1" step="0.05"><div class="sub" id="cs_Menge"></div></div>
           <div class="slider"><div class="row"><label for="c_Rueck">Davon als Klimageld zurück</label><output id="co_Rueck"></output></div><input type="range" id="c_Rueck" min="0.5" max="1" step="0.05"><div class="sub">der Rest geht als Bonus an bessere Hersteller</div></div>
           <div class="slider"><div class="row"><label for="c_Personen">Personen in Ihrem Haushalt</label><output id="co_Personen"></output></div><input type="range" id="c_Personen" min="1" max="8" step="1"></div>
@@ -573,8 +573,8 @@ const ANNAHMEN = {
   RenditeReal: 0.03,
   // CO₂-Abgabe auf Produkte, Stufe 1 Lebensmittel (Kapitel 6, Anhang B7, Blatt „CO₂-Abgabe“)
   CO2: {
-    Preis: 100,              // €/t: Pfad 100 € ab 2028, 150 € ab 2030, 200 € ab 2035 (Entscheidung Tomas, 07.11.2026)
-    Pfad: [[2028, 100], [2030, 150], [2035, 200]], Jahr: 2028,
+    Preis: 100,              // €/t: Pfad 100 € ab 2028, 150 € ab 2030, 200 € ab 2035, 300 € ab 2040 (Entscheidung Tomas, 07./08.11.2026)
+    Pfad: [[2028, 100], [2030, 150], [2035, 200], [2040, 300]], Jahr: 2028,
     // Stufe 2 ab 2030: Autos, Elektronik und Haushaltsgeräte, Möbel; CO₂ ohne Preis in Mio. t, grobe eigene Schätzung (untere / obere Grenze)
     Produkte: [["Autos", 8, 15], ["Elektronik und Haushaltsgeräte", 6, 10], ["Möbel", 3, 6]],
     // Abgabe je Stück: CO₂ ohne Preis in t je Stück, grobe Schätzung
