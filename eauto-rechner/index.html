@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<title>E-Auto oder Verbrenner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: Eingaben links in zwei Fahrzeugspalten, Ergebnis rechts; darunter Kostenverlauf, Kosten je 100 km, Dienstwagen und Hinweise */
+:root {
+  --bg: #f4f6f5; --panel: #ffffff; --fg: #17201e; --muted: #5a6763; --line: #d9dfdc; --grid: #e6ebe9; --field: #f8faf9;
+  --ice: #d0603c; --ev: #00907f; --good: #1d7a46; --bad: #b3401e; --hl: #e7f3f1;
+  --display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1415; --panel: #171e1f; --fg: #e7eceb; --muted: #9aa8a4; --line: #2b3536; --grid: #222b2c; --field: #1d2526;
+  --ice: #dc6a3a; --ev: #1aa896; --good: #5cc98a; --bad: #ef8a66; --hl: #183230; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1415; --panel: #171e1f; --fg: #e7eceb; --muted: #9aa8a4; --line: #2b3536; --grid: #222b2c; --field: #1d2526;
+  --ice: #dc6a3a; --ev: #1aa896; --good: #5cc98a; --bad: #ef8a66; --hl: #183230; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font: 16px/1.5 var(--body); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 56px }
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 24px }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15 }
+h1 { font-size: clamp(28px, 4.2vw, 42px); font-weight: 800 }
+h2 { font-size: 21px; font-weight: 700 }
+h3 { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px }
+h3 i { width: 12px; height: 12px; border-radius: 3px; display: inline-block }
+p { margin: 0; max-width: 70ch }
+.eyebrow { font: 700 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+header { display: grid; gap: 10px }
+.lead { color: var(--muted); font-size: 17px }
+.main { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px; align-items: start }
+@media (max-width: 900px) { .main { grid-template-columns: minmax(0, 1fr) } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 16px; min-width: 0 }
+.cars { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px }
+@media (max-width: 560px) { .cars { grid-template-columns: minmax(0, 1fr) } }
+.grp { display: grid; gap: 10px; align-content: start }
+.f { display: grid; gap: 3px; align-content: start }
+.f label { font-size: 13.5px; color: var(--muted) }
+.f .in { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 7px; background: var(--field); overflow: hidden }
+.f input, .f select { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--fg); font: 600 15px var(--body); padding: 7px 9px; font-variant-numeric: tabular-nums }
+.f .u { padding: 0 9px; color: var(--muted); font-size: 13px; white-space: nowrap }
+.f small { font-size: 12px; color: var(--muted); line-height: 1.35 }
+.row2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; background: var(--bg) }
+.seg button { font: 700 14px var(--body); border: 0; background: transparent; color: var(--muted); padding: 6px 14px; border-radius: 999px; cursor: pointer }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg) }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--ev); outline-offset: 2px }
+.verdict { background: var(--hl); border-radius: 8px; padding: 14px 16px; font-size: 17px; line-height: 1.45 }
+.verdict b { font-family: var(--display) }
+.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px }
+.tile { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 2px; align-content: start }
+.tile .k { font-size: 13px; color: var(--muted); display: flex; gap: 6px; align-items: center }
+.tile .k i { width: 10px; height: 10px; border-radius: 2px; display: inline-block }
+.tile .v { font: 800 24px/1.15 var(--display); font-variant-numeric: tabular-nums }
+.tile .s { font-size: 12.5px; color: var(--muted) }
+.chart svg { width: 100%; height: auto; display: block }
+.chart text { fill: var(--muted); font: 12px var(--body); font-variant-numeric: tabular-nums }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13.5px; color: var(--muted) }
+.legend span { display: inline-flex; align-items: center; gap: 6px }
+.legend i { width: 18px; height: 0; border-top: 2.5px solid; display: inline-block }
+.legend i.sq { width: 12px; height: 12px; border: 0; border-radius: 2px }
+.chart { position: relative }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 4px 16px rgb(0 0 0 / .12); min-width: 170px; font-variant-numeric: tabular-nums }
+.tip .r { display: flex; justify-content: space-between; gap: 12px }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; align-items: start }
+.tbl { overflow-x: auto }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; font-variant-numeric: tabular-nums }
+th, td { text-align: right; padding: 7px 9px; border-bottom: 1px solid var(--line) }
+td:not(:first-child), th:not(:first-child) { white-space: nowrap }
+th:first-child, td:first-child { text-align: left }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700 }
+tr.sum td { font-weight: 700 }
+.good { color: var(--good) } .bad { color: var(--bad) }
+ul.src { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: var(--muted) }
+a { color: var(--ev) }
+.note { font-size: 13.5px; color: var(--muted) }
+[hidden] { display: none !important }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Gesamtkosten über das Fahrzeugleben</div>
+    <h1>E-Auto oder Verbrenner: Was kostet mich das wirklich?</h1>
+    <p class="lead">Kaufpreis, Sprit oder Strom, Versicherung, Wartung und Steuern für beide Autos über die ganze Nutzungsdauer. Für Dienstwagen zeigt der Rechner zusätzlich, wie viel Steuer auf den geldwerten Vorteil anfällt. Alle Werte lassen sich ändern.</p>
+  </header>
+
+  <div class="main">
+    <div class="panel">
+      <div class="seg" role="group" aria-label="Nutzung">
+        <button type="button" id="m_privat" aria-pressed="true">Privat gekauft</button>
+        <button type="button" id="m_dienst" aria-pressed="false">Dienstwagen</button>
+      </div>
+      <div class="row2" id="allg"></div>
+      <div class="cars">
+        <div class="grp" id="g_ice"><h3><i style="background:var(--ice)"></i>Verbrenner</h3></div>
+        <div class="grp" id="g_ev"><h3><i style="background:var(--ev)"></i>Elektroauto</h3></div>
+      </div>
+      <div class="grp" id="g_dw" hidden>
+        <h3>Dienstwagen: geldwerter Vorteil</h3>
+        <div class="row2" id="dw"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Ergebnis</h2>
+      <div class="verdict" id="verdict"></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="legend"><span><i style="border-color:var(--ice)"></i>Verbrenner</span><span><i style="border-color:var(--ev)"></i>Elektroauto</span></div>
+      <div class="chart" id="cum"></div>
+      <p class="note">Aufsummierte Kosten ab Kauf, in Euro. Wo sich die Linien kreuzen, hat sich das Elektroauto bezahlt gemacht.</p>
+    </div>
+  </div>
+
+  <div class="panel" id="p_dw" hidden>
+    <h2>Dienstwagen: Ihre Steuer auf den geldwerten Vorteil</h2>
+    <div class="tbl"><table id="t_dw"></table></div>
+    <p class="note" id="n_dw"></p>
+  </div>
+
+  <div class="cols">
+    <div class="panel">
+      <h2>Kosten je 100 km</h2>
+      <div class="tbl"><table id="t100"></table></div>
+    </div>
+    <div class="panel">
+      <h2>Was gilt (Stand November 2026)</h2>
+      <ul class="src">
+        <li><b>Kfz-Steuer:</b> Reine Elektroautos mit Erstzulassung bis Ende 2030 sind bis zu zehn Jahre steuerfrei, längstens bis 31.12.2035. Danach zahlen sie Steuer nach Gewicht, halbiert. <a href="https://www.steuertipps.de/finanzamt-formalitaeten/elektroautos-kfz-steuerbefreiung-bis-ende-2035-verlaengert" target="_blank" rel="noopener">steuertipps.de</a></li>
+        <li><b>Dienstwagen, private Nutzung:</b> 1 % des Bruttolistenpreises im Monat beim Verbrenner. Reine Elektroautos: ein Viertel davon (0,25 %) bei einem Listenpreis bis 100.000 € (Anschaffung ab 1.7.2025; vorher 70.000 €), darüber die Hälfte (0,5 %). Gilt für Anschaffungen bis Ende 2030 (§ 6 Abs. 1 Nr. 4 EStG). <a href="https://www.auto-motor-und-sport.de/verkehr/wichtige-gesetze-der-e-dienstwagen-darf-jetzt-100-000-euro-kosten/" target="_blank" rel="noopener">auto motor und sport</a></li>
+        <li><b>Arbeitsweg:</b> 0,03 % des (geminderten) Listenpreises je Entfernungskilometer und Monat, oder 0,002 % je Fahrt, höchstens 180 Fahrten im Jahr (§ 8 Abs. 2 EStG).</li>
+        <li><b>Laden beim Arbeitgeber</b> ist steuerfrei (§ 3 Nr. 46 EStG), ebenso der Ersatz der Stromkosten für das Laden zu Hause (§ 3 Nr. 50 EStG).</li>
+        <li>Verbrauch nach Herstellerangabe (WLTP) enthält beim E-Auto keine Ladeverluste. Der Rechner schlägt sie deshalb auf.</li>
+        <li>Keine Steuerberatung. Fahrtenbuch, Zuzahlungen, Plug-in-Hybride und Sonderfälle sind nicht abgebildet.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Der Rechner läuft im Browser und speichert keine Eingaben. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
+<script>
+const $ = id => document.getElementById(id);
+const fmt = (v, d = 0) => (+v).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const eur = v => fmt(Math.round(v)) + " €";
+const V = {
+  km: 13500, jahre: 18, kaufjahr: 2026,
+  iPreis: 44630, iVerb: 7.1, iSprit: 2.10, iSteuer: 150, iVers: 600, iWart: 300,
+  ePreis: 52700, eVerb: 20.6, eVerlust: 10, eHaus: 0.30, eOff: 0.55, eAnteil: 80, eVers: 600, eWart: 180, eSteuerNach: 60, eWallbox: 0,
+  modus: "privat", methode: "pausch", entf: 25, fahrten: 180, satz: 43, agLaden: "nein", erstatt: 0, dJahre: 4,
+};
+const F = (k, lbl, u, step, sub, sel) => ({ k, lbl, u, step, sub, sel });
+const FELDER = {
+  allg: [F("km", "Fahrleistung im Jahr", "km", 500), F("jahre", "Nutzungsdauer", "Jahre", 1, "bis zum Verschrotten oder Verkauf ohne Restwert"), F("kaufjahr", "Kaufjahr", "", 1, "bei Dienstwagen 2025: Grenze 100.000 € erst ab 1.7.2025")],
+  g_ice: [F("iPreis", "Anschaffung", "€", 100), F("iVerb", "Verbrauch", "l/100 km", 0.1), F("iSprit", "Spritpreis", "€/l", 0.01), F("iSteuer", "Kfz-Steuer", "€/Jahr", 10), F("iVers", "Versicherung", "€/Jahr", 10), F("iWart", "Wartung und Reparaturen", "€/Jahr", 10)],
+  g_ev: [F("ePreis", "Anschaffung", "€", 100), F("eVerb", "Verbrauch (Herstellerangabe)", "kWh/100 km", 0.1), F("eVerlust", "Ladeverluste", "%", 1, "typisch 10 bis 15 %"),
+    F("eHaus", "Strompreis zu Hause", "€/kWh", 0.01), F("eOff", "Strompreis unterwegs", "€/kWh", 0.01), F("eAnteil", "Anteil Laden zu Hause", "%", 5),
+    F("eVers", "Versicherung", "€/Jahr", 10), F("eWart", "Wartung und Reparaturen", "€/Jahr", 10), F("eSteuerNach", "Kfz-Steuer nach der Befreiung", "€/Jahr", 5, "nach Gewicht, halbiert; meist 30 bis 100 €"), F("eWallbox", "Wallbox (einmalig)", "€", 100, "0, wenn schon vorhanden")],
+  dw: [F("methode", "Arbeitsweg", "", 0, "", [["pausch", "0,03 % pauschal"], ["einzel", "0,002 % je Fahrt"]]), F("entf", "Entfernung zur Arbeit (einfach)", "km", 1), F("fahrten", "Fahrten zur Arbeit im Jahr", "", 1, "nur bei 0,002 % je Fahrt, höchstens 180"),
+    F("satz", "Steuer und Sozialabgaben auf den letzten Euro", "%", 1, "Grenzsteuersatz plus Sozialabgaben, soweit unter der Beitragsgrenze"), F("agLaden", "Arbeitgeber zahlt den Strom", "", 0, "Laden beim Arbeitgeber oder Erstattung zu Hause, steuerfrei", [["nein", "Nein"], ["ja", "Ja"]]), F("dJahre", "Dauer der Überlassung", "Jahre", 1)],
+};
+function feld(f) {
+  const d = document.createElement("div"); d.className = "f";
+  const ctl = f.sel ? `<select id="i_${f.k}">${f.sel.map(([v, t]) => `<option value="${v}">${t}</option>`).join("")}</select>`
+                    : `<input id="i_${f.k}" type="number" inputmode="decimal" step="${f.step}" min="0">`;
+  d.innerHTML = `<label for="i_${f.k}">${f.lbl}</label><div class="in">${ctl}${f.u ? `<span class="u">${f.u}</span>` : ""}</div>${f.sub ? `<small>${f.sub}</small>` : ""}`;
+  const el = d.querySelector("input,select"); el.value = V[f.k];
+  el.addEventListener("input", () => { V[f.k] = f.sel ? el.value : (+el.value || 0); run(); });
+  return d;
+}
+Object.entries(FELDER).forEach(([box, fs]) => fs.forEach(f => $(box).append(feld(f))));
+
+// Rechenkern (privat: Gesamtkosten des Halters)
+function rechne(v) {
+  const lebKm = v.km * v.jahre;
+  const iEnergie = v.iVerb / 100 * v.iSprit;                                         // €/km
+  const ePreisMix = v.eAnteil / 100 * v.eHaus + (1 - v.eAnteil / 100) * v.eOff;
+  const eEnergie = v.eVerb * (1 + v.eVerlust / 100) / 100 * ePreisMix;                 // €/km
+  const befreitBis = v.kaufjahr <= 2030 ? Math.min(v.kaufjahr + 9, 2035) : v.kaufjahr - 1; // letztes steuerfreies Jahr
+  const jahre = [];
+  let i = v.iPreis, e = v.ePreis + v.eWallbox;
+  jahre.push({ j: 0, i, e });
+  for (let n = 1; n <= v.jahre; n++) {
+    const kj = v.kaufjahr + n - 1;
+    const eSt = kj > befreitBis ? v.eSteuerNach : 0;
+    i += v.iSteuer + v.iVers + v.iWart + v.km * iEnergie;
+    e += eSt + v.eVers + v.eWart + v.km * eEnergie;
+    jahre.push({ j: n, i, e, eSt });
+  }
+  const eStSum = jahre.slice(1).reduce((a, r) => a + r.eSt, 0);
+  const teile = {
+    Anschaffung: [v.iPreis, v.ePreis + v.eWallbox],
+    "Sprit oder Strom": [lebKm * iEnergie, lebKm * eEnergie],
+    Versicherung: [v.jahre * v.iVers, v.jahre * v.eVers],
+    "Wartung und Reparaturen": [v.jahre * v.iWart, v.jahre * v.eWart],
+    "Kfz-Steuer": [v.jahre * v.iSteuer, eStSum],
+  };
+  // Break-even: erster Zeitpunkt, an dem die aufsummierten Kosten des E-Autos unter denen des Verbrenners liegen
+  let be = null;
+  if (jahre[0].e <= jahre[0].i) be = 0;
+  else for (let n = 1; n < jahre.length; n++) if (jahre[n].e <= jahre[n].i) {
+    const a = jahre[n - 1], b = jahre[n], t = (a.e - a.i) / ((a.e - a.i) - (b.e - b.i)); be = n - 1 + t; break;
+  }
+  return { lebKm, iEnergie, eEnergie, ePreisMix, jahre, teile, iTCO: jahre.at(-1).i, eTCO: jahre.at(-1).e, be, befreitBis };
+}
+// Dienstwagen: geldwerter Vorteil nach § 6 Abs. 1 Nr. 4 und § 8 Abs. 2 EStG
+function gv(v) {
+  const blp = p => Math.floor(p / 100) * 100;
+  const grenze = v.kaufjahr >= 2025 ? 100000 : v.kaufjahr >= 2024 ? 70000 : 60000;
+  const evFaktor = v.kaufjahr > 2030 ? 1 : v.ePreis <= grenze ? 0.25 : 0.5;
+  const basis = { i: blp(v.iPreis), e: blp(v.ePreis) * evFaktor };
+  const weg = b => v.methode === "pausch" ? 0.0003 * b * v.entf : 0.00002 * b * v.entf * Math.min(180, v.fahrten) / 12;
+  const mon = k => 0.01 * basis[k] + weg(basis[k]);
+  const r = { evFaktor, basis, privI: 0.01 * basis.i, privE: 0.01 * basis.e, wegI: weg(basis.i), wegE: weg(basis.e), monI: mon("i"), monE: mon("e") };
+  r.stI = r.monI * v.satz / 100; r.stE = r.monE * v.satz / 100;
+  // eigener Strom für private Fahrten, wenn der Arbeitgeber nicht zahlt (Annahme: alle Kilometer)
+  const k = rechne(v);
+  r.stromE = v.agLaden === "ja" ? 0 : v.km * k.eEnergie / 12;
+  return r;
+}
+
+function run() {
+  const r = rechne(V);
+  const dienst = V.modus === "dienst";
+  $("g_dw").hidden = !dienst; $("p_dw").hidden = !dienst;
+  const diff = r.iTCO - r.eTCO;
+  let txt;
+  if (r.be === null) txt = `Über ${fmt(V.jahre)} Jahre und ${fmt(r.lebKm)} km ist das <b>Elektroauto ${eur(-diff)} teurer</b>. Es holt den höheren Kaufpreis in dieser Zeit nicht wieder herein.`;
+  else if (r.be === 0) txt = `Das Elektroauto ist von Anfang an günstiger. Über ${fmt(V.jahre)} Jahre und ${fmt(r.lebKm)} km sparen Sie <b>${eur(diff)}</b>.`;
+  else txt = `Das Elektroauto hat sich nach <b>${fmt(r.be, 1)} Jahren</b> bezahlt gemacht, das sind rund ${fmt(Math.round(r.be * V.km / 100) * 100)} km. Über ${fmt(V.jahre)} Jahre und ${fmt(r.lebKm)} km sparen Sie <b>${eur(diff)}</b>.`;
+  if (dienst) txt = "Kosten für den Halter, also den Arbeitgeber. " + txt;
+  $("verdict").innerHTML = txt;
+  const tile = (k, v, s, c) => `<div class="tile"><span class="k">${c ? `<i style="background:var(--${c})"></i>` : ""}${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
+  $("tiles").innerHTML = tile("Verbrenner gesamt", eur(r.iTCO), `${fmt(r.iTCO / r.lebKm * 100, 1)} € je 100 km`, "ice")
+    + tile("Elektroauto gesamt", eur(r.eTCO), `${fmt(r.eTCO / r.lebKm * 100, 1)} € je 100 km`, "ev")
+    + tile("Energie je 100 km", `${fmt(r.iEnergie * 100, 2)} € / ${fmt(r.eEnergie * 100, 2)} €`, `Verbrenner / Elektroauto; Strom im Mix ${fmt(r.ePreisMix * 100, 1)} Cent je kWh`)
+    + tile("Kfz-Steuer E-Auto", r.befreitBis >= V.kaufjahr ? `frei bis ${r.befreitBis}` : "keine Befreiung", r.befreitBis >= V.kaufjahr ? `danach ${eur(V.eSteuerNach)} im Jahr` : "Erstzulassung nach 2030");
+  drawCum(r);
+  // je 100 km
+  const k100 = x => fmt(x / r.lebKm * 100, 2) + " €";
+  let h = `<thead><tr><th>Kosten</th><th>Verbrenner</th><th>Elektroauto</th></tr></thead><tbody>`;
+  Object.entries(r.teile).forEach(([n, [a, b]]) => h += `<tr><td>${n}</td><td>${k100(a)}</td><td>${k100(b)}</td></tr>`);
+  h += `<tr class="sum"><td>Zusammen</td><td>${k100(r.iTCO)}</td><td>${k100(r.eTCO)}</td></tr></tbody>`;
+  $("t100").innerHTML = h;
+  if (dienst) {
+    const g = gv(V), m = V.dJahre * 12;
+    const row = (n, a, b, cls = "") => `<tr class="${cls}"><td>${n}</td><td>${a}</td><td>${b}</td></tr>`;
+    $("t_dw").innerHTML = `<thead><tr><th>Je Monat</th><th>Verbrenner</th><th>Elektroauto</th></tr></thead><tbody>`
+      + row("Bemessungsgrundlage", eur(g.basis.i), eur(g.basis.e) + ` <small class="note">(${g.evFaktor === 0.25 ? "ein Viertel" : g.evFaktor === 0.5 ? "die Hälfte" : "voll, Anschaffung nach 2030"})</small>`)
+      + row("Private Nutzung (1 %)", eur(g.privI), eur(g.privE))
+      + row("Arbeitsweg", eur(g.wegI), eur(g.wegE))
+      + row("Geldwerter Vorteil", eur(g.monI), eur(g.monE), "sum")
+      + row(`Steuer und Abgaben (${fmt(V.satz)} %)`, eur(g.stI), eur(g.stE))
+      + row("Eigener Ladestrom", "–", eur(g.stromE))
+      + row("Ihre Belastung im Monat", eur(g.stI), eur(g.stE + g.stromE), "sum")
+      + row(`Über ${fmt(V.dJahre)} Jahre`, eur(g.stI * m), eur((g.stE + g.stromE) * m), "sum") + `</tbody>`;
+    const sp = (g.stI - g.stE - g.stromE) * m;
+    $("n_dw").textContent = `Mit dem Elektroauto haben Sie über ${fmt(V.dJahre)} Jahre ${sp >= 0 ? eur(sp) + " mehr netto" : eur(-sp) + " weniger netto"}. Beim Verbrenner ist angenommen, dass der Arbeitgeber den Sprit zahlt (Tankkarte).` + (V.agLaden === "nein" ? " Beim Elektroauto zahlen Sie den Strom selbst; zahlt der Arbeitgeber ihn, ist das steuerfrei." : "");
+  }
+}
+
+function drawCum(r) {
+  const W = 560, H = 260, L = 58, R = 12, T = 12, B = 28;
+  const all = r.jahre.flatMap(x => [x.i, x.e]), max = Math.max(...all);
+  const step = Math.pow(10, Math.floor(Math.log10(max))) * (max / Math.pow(10, Math.floor(Math.log10(max))) > 5 ? 2 : 1);
+  const ymax = Math.ceil(max / step) * step;
+  const n = r.jahre.length - 1;
+  const x = j => L + (W - L - R) * j / n, y = v => T + (H - T - B) * (1 - v / ymax);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Aufsummierte Kosten über die Jahre">`;
+  for (let v = 0; v <= ymax; v += step) s += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${fmt(v / 1000)} T€</text>`;
+  const tick = n > 12 ? 3 : n > 6 ? 2 : 1;
+  for (let j = 0; j <= n; j += tick) s += `<text x="${x(j)}" y="${H - 8}" text-anchor="middle">${j === 0 ? "Kauf" : j + ". J."}</text>`;
+  const p = (k, c) => `<path d="${r.jahre.map((q, j) => (j ? "L" : "M") + x(j).toFixed(1) + " " + y(q[k]).toFixed(1)).join(" ")}" fill="none" stroke="var(--${c})" stroke-width="2.5" stroke-linejoin="round"/>`;
+  s += p("i", "ice") + p("e", "ev");
+  if (r.be && r.be > 0) {
+    const j0 = Math.floor(r.be), a = r.jahre[j0], b = r.jahre[Math.min(n, j0 + 1)], t = r.be - j0, v = a.i + (b.i - a.i) * t;
+    s += `<circle cx="${x(r.be)}" cy="${y(v)}" r="5" fill="var(--panel)" stroke="var(--fg)" stroke-width="2"/><text x="${x(r.be) + 10}" y="${y(v) + 18}" style="fill:var(--fg)">bezahlt nach ${fmt(r.be, 1)} J.</text>`;
+  }
+  s += `<line id="cl" y1="${T}" y2="${H - B}" stroke="var(--muted)" opacity="0"/></svg><div class="tip" id="ctip" hidden></div>`;
+  $("cum").innerHTML = s;
+  const svg = $("cum").querySelector("svg"), tip = $("ctip"), cl = $("cl");
+  const mv = ev => {
+    const b = svg.getBoundingClientRect(), px = (ev.clientX - b.left) * W / b.width;
+    const j = Math.max(0, Math.min(n, Math.round((px - L) / (W - L - R) * n))), q = r.jahre[j];
+    cl.setAttribute("x1", x(j)); cl.setAttribute("x2", x(j)); cl.setAttribute("opacity", 1);
+    tip.hidden = false;
+    tip.innerHTML = `<b>${j === 0 ? "Beim Kauf" : "Nach " + j + " Jahren"}</b><div class="r"><span style="color:var(--ice)">Verbrenner</span><span>${eur(q.i)}</span></div><div class="r"><span style="color:var(--ev)">Elektroauto</span><span>${eur(q.e)}</span></div><div class="r"><span>Unterschied</span><span>${eur(q.i - q.e)}</span></div>`;
+    tip.style.left = Math.min(b.width - tip.offsetWidth, Math.max(0, x(j) * b.width / W + 12)) + "px"; tip.style.top = "6px";
+  };
+  svg.addEventListener("pointermove", mv); svg.addEventListener("pointerdown", mv);
+  svg.addEventListener("pointerleave", () => { tip.hidden = true; cl.setAttribute("opacity", 0); });
+}
+["privat", "dienst"].forEach(m => $("m_" + m).onclick = () => { V.modus = m; $("m_privat").setAttribute("aria-pressed", m === "privat"); $("m_dienst").setAttribute("aria-pressed", m === "dienst"); run(); });
+run();
+</script>
+
+</body>
+</html>
