@@ -568,13 +568,11 @@ const ANNAHMEN = {
   SicherheitWerte: {
     Verteidigung: 66,       // 1,5 % des BIP mehr für Verteidigung, Mrd. € pro Jahr
     SubvAbbau: 8,           // Abbau klimaschädlicher Subventionen: Diesel 7, Kerosin Inland 0,6, Agrardiesel 0,4
-    // Sätze so, dass der Beitrag netto 58 Mrd. € bringt, auch nach den höheren Kosten für steuerfreie Mehrarbeit und Rentnerarbeit
-    // (Steuermodell.xlsx, Modell 2.4, Blatt Sicherheit: im Preis 34,7 / 44,4 / 51,6 %)
-    Satz1: 0.35 / 0.65 * 1.06404848,
-    Satz2: 0.45 / 0.55 * 1.06404848,
-    Satz3: 1.00 * 1.06404848,
+    // Beitrag von 58 Mrd. € über die Mehrwertsteuer: Normalsatz +5,13 Punkte auf 26,1 % (Kapitel 7, Anhang C7, sicherheit.json);
+    // die Ausgabensteuer bleibt bei 35 / 45 / 50 %
+    SichPkt: 5.13,
   },
-  Verteidigung: 0, SubvAbbau: 0,
+  Verteidigung: 0, SubvAbbau: 0, SichPkt: 0,
   // Prognose bis 2070 (Blatt „Schulden bis 2070“, Nachbildung des Tragfähigkeitsberichts BMF 2024)
   Prognose: {
     Start: 2023, Ende: 2070, ReformStart: 2028, Infl: 0.02,
@@ -778,7 +776,8 @@ function haushalt(h) {
   const gb = A.GBAn * (h.erw * A.GBE + h.kinder * A.GBK) * 12 * 0.07 / 1.07;
   const erst = A.ErstAn * (h.erw * A.RBE + h.kinder * A.RBK) * 12 * A.MwStRB;
   const p = A.NormPkt / 100;
-  const mwstNeu = konsum * (A.MwStQ + A.NormAnteil * ((0.19 + p) / (1.19 + p) - 0.19 / 1.19)) - gb - erst;
+  const ps = p + A.SichPkt / 100;   // mit Sicherheitsbeitrag höherer Normalsatz
+  const mwstNeu = konsum * (A.MwStQ + A.NormAnteil * ((0.19 + ps) / (1.19 + ps) - 0.19 / 1.19)) - gb - erst;
   // Anrechnung: Steuer und Beiträge zusammen höchstens AnrGrenze je Euro Lohn auf der obersten Stufe;
   // über der Beitragsbemessungsgrenze so hoch wie mit Lohn an der Grenze
   let anr = 0, x3s = 0;
@@ -886,6 +885,7 @@ function gesamt() {
   const ausg0 = aufkommen(false);
   const mietSt = A.Nutzwert > 0 ? aufkommen(true) - ausg0 : 0;
   const lux = A.LuxAn * A.LuxErtrag;
+  const sichE = A.SichPkt * (A.NormJePkt - (A.NormPkt > 0 ? A.GSMwStN * A.GSMwStJ / A.NormPkt / 1000 : 0));   // 11,312 Mrd. € je Punkt nach Ausgleich in der Grundsicherung
   const erbS = A.ErbVol * A.ErbBasis * erbQuote() * A.RealStart;
   const erbL = A.ErbVol * A.ErbBasis * erbQuote() * A.RealLang;
   const fam = A.FamAn * A.FamEP * A.FamGeb * A.FamRW * 12 * A.FamJ / 1000;
@@ -928,6 +928,7 @@ function gesamt() {
     [`Mehrwertsteuer ${fmt(19 + A.NormPkt)} %: ${fmt(A.NormPkt - A.RVPkt)} Punkte für den Staatshaushalt, abzüglich Nullsatz`, mwstH, mwstH],
     ["Einsparung in der Verwaltung", 0, verwE],
     ["Abbau klimaschädlicher Subventionen", A.SubvAbbau, A.SubvAbbau],
+    [`Sicherheitsbeitrag: Mehrwertsteuer ${fmt(A.SichPkt, 1)} Punkte höher`, sichE, sichE],
   ];
   const sumCol = (rows, i) => rows.reduce((s, r) => s + r[i], 0);
   const bedarfS = wegfall + sumCol(ausgaben, 1), bedarfL = wegfall + sumCol(ausgaben, 2);
@@ -1209,12 +1210,12 @@ const SCHALTER = [
 function renderKnobs() {
   const box = $("knobs"); box.innerHTML = "";
   const sfs = document.createElement("fieldset");
-  sfs.innerHTML = `<legend>Sicherheit und Verteidigung</legend><label class="check"><input type="checkbox" id="b_Sicherheit" ${A.Sicherheit ? "checked" : ""}> Mit Sicherheitsbeitrag (Variante aus dem Buch)</label><p class="sub note">1,5 % des BIP mehr für Verteidigung, rund 66 Mrd. € im Jahr. Bezahlt mit 8 Mrd. € aus dem Abbau klimaschädlicher Subventionen und einem offen ausgewiesenen Sicherheitsbeitrag von rund 58 Mrd. €, im Schnitt knapp 700 € je Einwohner. Dafür steigen die drei Sätze auf 24,8, 33,1 und 41,7 %.</p>`;
+  sfs.innerHTML = `<legend>Sicherheit und Verteidigung</legend><label class="check"><input type="checkbox" id="b_Sicherheit" ${A.Sicherheit ? "checked" : ""}> Mit Sicherheitsbeitrag (Variante aus dem Buch)</label><p class="sub note">1,5 % des BIP mehr für Verteidigung, rund 66 Mrd. € im Jahr. Bezahlt mit 8 Mrd. € aus dem Abbau klimaschädlicher Subventionen und einem offen ausgewiesenen Sicherheitsbeitrag von rund 58 Mrd. €, im Schnitt knapp 700 € je Einwohner. Dafür steigt der Normalsatz der Mehrwertsteuer um ${fmt(A.SicherheitWerte.SichPkt, 1)} Punkte auf ${fmt(19 + A.NormPkt + A.SicherheitWerte.SichPkt, 1)} %, rund 58 € je Einwohner im Monat. Die Ausgabensteuer bleibt bei höchstens 50 %.</p>`;
   sfs.querySelector("input").onchange = e => {
     const on = e.target.checked, W = A.SicherheitWerte;
     A.Sicherheit = on ? 1 : 0;
     A.Verteidigung = on ? W.Verteidigung : 0; A.SubvAbbau = on ? W.SubvAbbau : 0;
-    ["Satz1", "Satz2", "Satz3"].forEach(k => { A[k] = on ? W[k] : A0[k]; $("k_" + k).value = A[k]; });
+    A.SichPkt = on ? W.SichPkt : 0;
     updateAll();
   };
   KNOBS.forEach(g => {
@@ -1261,9 +1262,8 @@ function updateGesamt() {
   // der Saldo bleibt also auf dem Pfad ohne Verteidigung und ohne Beitrag.
   let pf = kr.rows.map(r => r.saldo);
   if (A.Sicherheit) {
-    const W = A.SicherheitWerte, sic = { Verteidigung: A.Verteidigung, SubvAbbau: A.SubvAbbau, Satz1: A.Satz1, Satz2: A.Satz2, Satz3: A.Satz3 };
-    const f = W.Satz1 / A0.Satz1;
-    Object.assign(A, { Verteidigung: 0, SubvAbbau: 0, Satz1: A.Satz1 / f, Satz2: A.Satz2 / f, Satz3: A.Satz3 / f });
+    const sic = { Verteidigung: A.Verteidigung, SubvAbbau: A.SubvAbbau, SichPkt: A.SichPkt };
+    Object.assign(A, { Verteidigung: 0, SubvAbbau: 0, SichPkt: 0 });
     const gB = gesamt(); pf = kredit(gB.saldoS, gB.saldoL, 45, gB.s4).rows.map(r => r.saldo);
     Object.assign(A, sic);
   }
@@ -1290,7 +1290,7 @@ function updateGesamt() {
   else {
     const mwMax = reihen.reduce((m, r) => r.mw > m.mw ? r : m, reihen[0]), mw30 = reihen.find(r => r.jahr === 2030).mw;
     t += tile("Staatsschulden 2070", pct(e.plan, 0), `mit Zukunftsplan und Schuldenregel; Reform allein ${pct(e.quote, 0)}, ohne Reform ${pct(e.ohne, 0)}`, e.plan < e.ohne ? "good" : "bad");
-    t += tile("Mehrwertsteuer-Aufschlag", mwMax.mw > 0.05 ? fmt(mw30, 1) + " Punkte" : "keiner", mwMax.mw > 0.05 ? `2030 über ${fmt(19 + A.NormPkt)} %; höchstens ${fmt(mwMax.mw, 1)} Punkte (${mwMax.jahr}), ${reihen.filter(r => r.mw > 0.05).length} Jahre` : "Die Schuldenregel braucht keinen Aufschlag.", mwMax.mw > 5 ? "bad" : "good");
+    t += tile("Mehrwertsteuer-Aufschlag", mwMax.mw > 0.05 ? fmt(mw30, 1) + " Punkte" : "keiner", mwMax.mw > 0.05 ? `2030 über ${fmt(19 + A.NormPkt + A.SichPkt, 1)} %; höchstens ${fmt(mwMax.mw, 1)} Punkte (${mwMax.jahr}), ${reihen.filter(r => r.mw > 0.05).length} Jahre` : "Die Schuldenregel braucht keinen Aufschlag.", mwMax.mw > 5 ? "bad" : "good");
   }
   $("tiles").innerHTML = t;
   const SZ = { vorsichtig: "Vorsichtig", mittel: "Mittel", zuversichtlich: "Zuversichtlich", basis: "Einfache Rechnung (Kapitel 7)" };
@@ -1473,7 +1473,7 @@ $("hhForm").addEventListener("submit", e => e.preventDefault());
 $("moreBox").addEventListener("toggle", postHeight);
 document.querySelectorAll("details").forEach(d => d.addEventListener("toggle", postHeight));
 
-function sicherheitAnwenden() { if (A.Sicherheit) { const W = A.SicherheitWerte; Object.assign(A, { Verteidigung: W.Verteidigung, SubvAbbau: W.SubvAbbau, Satz1: W.Satz1, Satz2: W.Satz2, Satz3: W.Satz3 }); } }
+function sicherheitAnwenden() { if (A.Sicherheit) { const W = A.SicherheitWerte; Object.assign(A, { Verteidigung: W.Verteidigung, SubvAbbau: W.SubvAbbau, SichPkt: W.SichPkt }); } }
 sicherheitAnwenden();
 setForm(BEISPIELE[DEFAULT_BEISPIEL].v);
 renderPresets();
