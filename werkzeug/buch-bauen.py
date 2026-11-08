@@ -96,6 +96,16 @@ def linkify(ch):
         if not out: continue
         out.append(html.escape(txt[last:], quote=False))
         tn.replace_with(BeautifulSoup(''.join(out), 'html.parser'))
+    # Interne Verweise aus der Satzdatei (#anh-B5, #anh-C, #kap-7) auf die Seiten des Online-Buchs umlenken
+    for a in ch['body'].find_all('a', href=re.compile(r'^#(anh|kap)-')):
+        ref = a['href'][1:]
+        m = re.match(r'anh-([ABC])([1-9])?$', ref)
+        if m: href = appendix_ids.get(m.group(1) + m.group(2)) if m.group(2) else f'anhang-{m.group(1).lower()}.html'
+        else:
+            m = re.match(r'kap-([1-9])$', ref); href = f'kapitel-{m.group(1)}.html' if m else None
+        if not href: continue
+        if href.split('#')[0] == ch['slug'] + '.html': href = '#' + href.split('#')[1] if '#' in href else '#top'
+        a['href'] = href; a['class'] = [c for c in (a.get('class') or []) if c != 'ref'] + ['xref']
     # URLs in Quellen
     for tn in list(ch['body'].find_all(string=re.compile(r'https?://'))):
         if tn.find_parent('a') is not None: continue
@@ -108,6 +118,12 @@ def linkify(ch):
         a['class'] = (a.get('class') or []) + ['ext']
 
 for ch in chapters: linkify(ch)
+# dieselben Verweise im Vorspann eines Kapitels
+def _lead_ref(m):
+    ref = m.group(1); mm = re.match(r'anh-([ABC])([1-9])?$', ref)
+    if mm: return 'class="xref" href="' + ((appendix_ids.get(mm.group(1) + mm.group(2)) or 'anhang-' + mm.group(1).lower() + '.html') if mm.group(2) else 'anhang-' + mm.group(1).lower() + '.html') + '"'
+    return 'class="xref" href="kapitel-' + ref[4:] + '.html"'
+for ch in chapters: ch['lead'] = re.sub(r'class="ref" href="#((?:anh-[ABC][1-9]?)|(?:kap-[1-9]))"', _lead_ref, ch['lead'])
 
 # ---------- Rechner-Verweise ----------
 R = '../steuerrechner/'
