@@ -604,7 +604,7 @@ const ANNAHMEN = {
     KI: { dg: 0.008, von: 2027, jahre: 15 },
     // Anhang C6/C7 (Sicherheit): zuversichtlich nur mit den Anreizen des Steuermodells, ohne KI-Schub
     zuversichtlichC7: { wachs: 0.07538457286086185, ki: 0 },
-    Plan: { Rente: 0.01, Ges: 0.01, Subv: 0.0035, AusgBasis: 0.12, AusgMax: 0.02, AusgBis: 0.60, RegelAb: 2030, RegelSchritt: 0.005, Rendite: 1.03 * 1.02 - 1, NJP: 11.312 },
+    Plan: { Rente: 0.015, Ges: 0.01, Subv: 0.0035, AusgBasis: 0.12, AusgMax: 0.02, AusgBis: 0.0, RegelAb: 2030, RegelZiel: 0.63, RegelBis: 2035, Rendite: 1.03 * 1.02 - 1, NJP: 11.312 },
     DefMehr: 0.015, DefStart: 2026, DefJahre: 4,
   },
   RenditeReal: 0.03,
@@ -983,14 +983,15 @@ function interp(t, pts) {
 }
 const ramp = (y, a, b) => clamp((y - a) / (b - a), 0, 1);
 // Staatsschulden in % des BIP, 2023 bis 2070 (wie schulden_2070_kern.py): fall = "ohne" | "reform" | "plan" | "regel"
-// regel: ab 2030 jedes Jahr mindestens 0,5 Punkte weniger bis null; reicht der Plan nicht, steigt der Normalsatz (mw = Punkte)
+// plan: Rente für 20 Jahre (1,5 % des BIP bis 2070), Ausgabenregel, solange der Staat Schulden hat (wie zukunftsplan-20-uhr/zp19.py)
+// regel: ab 2030 nie über 63 %; liegen die Schulden 2029 höher, bis 2035 gleichmäßig auf 63 %; reicht der Plan nicht, steigt der Normalsatz (mw = Punkte)
 function prognose(sz, fall, saldoPfad) {
   const P = A.Prognose, Q = P.Plan;
   const reform = fall !== "ohne", plan = fall === "plan" || fall === "regel", regel = fall === "regel";
   const c = A.Sicherheit && !plan && sz === "zuversichtlich" ? { ...P[sz], ...P.zuversichtlichC7 } : P[sz];
   const PB = [P.PBG, P.PBU, (P.PBG + P.PBU) / 2][c.grund - 1];
   const Demo = [P.DemoG, P.DemoU, (P.DemoG + P.DemoU) / 2][c.grund - 1];
-  let d = A.Schuld, dprev = d, nprev = 0, g = P.TBZins0, b = Q.AusgBasis; const out = [{ jahr: P.Start, v: d, mw: 0 }];
+  let d = A.Schuld, dprev = d, nprev = 0, g = P.TBZins0, b = Q.AusgBasis, dab = d; const out = [{ jahr: P.Start, v: d, mw: 0 }];
   for (let y = P.Start + 1; y <= P.Ende; y++) {
     g = g + (interp(y, P.ZinsNeu) - g) / P.TBLaufzeit;
     const wG = interp(y, P.WachsG), wU = interp(y, P.WachsU);
@@ -1011,7 +1012,8 @@ function prognose(sz, fall, saldoPfad) {
     const M = A.Sicherheit && y < P.ReformStart ? P.DefMehr * clamp((y - P.DefStart + 1) / P.DefJahre, 0, 1) : 0;
     const r = (d > 0 || !plan) ? g : Q.Rendite;
     let dn = d * (1 + r) / (1 + nom) - pb + M, need = 0;
-    if (regel && y >= Q.RegelAb) { const tgt = d > 0 ? Math.max(0, d - Q.RegelSchritt) : d; if (dn > tgt) { need = dn - tgt; dn = tgt; } }
+    if (y === Q.RegelAb) dab = d;
+    if (regel && y >= Q.RegelAb) { const tgt = dab > Q.RegelZiel && y < Q.RegelBis ? dab - (dab - Q.RegelZiel) * (y - Q.RegelAb + 1) / (Q.RegelBis - Q.RegelAb + 1) : Q.RegelZiel; if (dn > tgt) { need = dn - tgt; dn = tgt; } }
     dprev = d; nprev = need; d = dn;
     out.push({ jahr: y, v: d, mw: need * A.BIP / Q.NJP });
   }
@@ -1306,7 +1308,7 @@ function updateGesamt() {
   else {
     const mwMax = reihen.reduce((m, r) => r.mw > m.mw ? r : m, reihen[0]), mw30 = reihen.find(r => r.jahr === 2030).mw;
     t += tile("Staatsschulden 2070", pct(e.plan, 0), `mit Zukunftsplan und Schuldenregel; Reform allein ${pct(e.quote, 0)}, ohne Reform ${pct(e.ohne, 0)}`, e.plan < e.ohne ? "good" : "bad");
-    t += tile("Mehrwertsteuer-Aufschlag", mwMax.mw > 0.05 ? fmt(mw30, 1) + " Punkte" : "keiner", mwMax.mw > 0.05 ? `2030 über ${fmt(19 + A.NormPkt + A.SichPkt, A.SichPkt ? 1 : 0)} %; höchstens ${fmt(mwMax.mw, 1)} Punkte (${mwMax.jahr}), ${reihen.filter(r => r.mw > 0.05).length} Jahre` : "Die Schuldenregel braucht keinen Aufschlag.", mwMax.mw > 5 ? "bad" : "good");
+    t += tile("Mehrwertsteuer-Aufschlag", mwMax.mw > 0.05 ? "bis " + fmt(mwMax.mw, 1) + " Punkte" : "keiner", mwMax.mw > 0.05 ? `über ${fmt(19 + A.NormPkt + A.SichPkt, A.SichPkt ? 1 : 0)} %, höchstens ${mwMax.jahr}; 2030: ${fmt(mw30, 1)} Punkte; in ${reihen.filter(r => r.mw > 0.05).length} Jahren` : "Die Schuldenregel braucht keinen Aufschlag.", mwMax.mw > 5 ? "bad" : "good");
   }
   $("tiles").innerHTML = t;
   const SZ = { vorsichtig: "Vorsichtig", mittel: "Mittel", zuversichtlich: "Zuversichtlich", basis: "Einfache Rechnung (Kapitel 7)" };
@@ -1314,7 +1316,7 @@ function updateGesamt() {
   $("szenarien").querySelectorAll("button").forEach(b => b.onclick = () => { szenario = b.dataset.sz; updateGesamt(); });
   $("chartNote").textContent = szenario === "basis"
     ? `Die einfache Rechnung aus Kapitel 7: Der Überschuss tilgt die heutigen Schulden. ${kr.altFrei ? "Schuldenfrei im Jahr " + (A.Prognose.ReformStart - 1 + kr.altFrei) + "." : ""} Nicht eingerechnet sind die steigenden Kosten durch die Alterung und mehr Wachstum durch die Reform.`
-    : `Mit den steigenden Kosten für Rente, Pflege und Gesundheit nach dem Tragfähigkeitsbericht des Finanzministeriums (2024). ${{ vorsichtig: "Vorsichtig: ungünstige Entwicklung, wenig zusätzliches Wachstum durch die Reform.", mittel: "Mittel: zwischen günstiger und ungünstiger Entwicklung, mittleres Wachstum durch die Reform.", zuversichtlich: "Zuversichtlich: günstige Entwicklung, mehr Wachstum durch die Reform." }[szenario]} Die Reform beginnt 2028. Der Zukunftsplan aus Kapitel 7 setzt dazu: Rente nach Lebenserwartung, Gesundheit, Bildung, weniger Finanzhilfen, gesunde Ernährung, EU-Binnenmarkt und eine Ausgabenregel. Die Schuldenregel senkt die Schulden ab 2030 jedes Jahr um mindestens 0,5 Punkte bis null; reicht das nicht, steigt der Normalsatz der Mehrwertsteuer um die nötigen Punkte.${A.Sicherheit ? " Mit Sicherheitsbeitrag; die Verteidigung bis 2027 läuft auf Kredit." : ""}`;
+    : `Mit den steigenden Kosten für Rente, Pflege und Gesundheit nach dem Tragfähigkeitsbericht des Finanzministeriums (2024). ${{ vorsichtig: "Vorsichtig: ungünstige Entwicklung, wenig zusätzliches Wachstum durch die Reform.", mittel: "Mittel: zwischen günstiger und ungünstiger Entwicklung, mittleres Wachstum durch die Reform.", zuversichtlich: "Zuversichtlich: günstige Entwicklung, mehr Wachstum durch die Reform." }[szenario]} Die Reform beginnt 2028. Der Zukunftsplan aus Kapitel 7 setzt dazu: Rente für 20 Jahre, Gesundheit, Bildung, weniger Finanzhilfen, gesunde Ernährung, EU-Binnenmarkt und eine Ausgabenregel, solange der Staat Schulden hat. Die Schuldenregel: ab 2030 nie über 63 % der Wirtschaftsleistung; liegen die Schulden 2029 höher, sinken sie bis 2035 gleichmäßig auf 63 %. Reicht der Plan nicht, steigt der Normalsatz der Mehrwertsteuer um die nötigen Punkte.${A.Sicherheit ? " Mit Sicherheitsbeitrag; die Verteidigung bis 2027 läuft auf Kredit." : ""}`;
   drawChart(reihen);
   // Tabelle
   const row = (n, s, l, cls = "") => `<tr class="${cls}"><td>${n}</td><td>${mrd(s)}</td><td>${mrd(l)}</td></tr>`;
