@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<title>Wärmepumpe, Gas oder Öl</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: Eingaben links (Haus, drei Heizungen, Förderung), Ergebnis rechts; darunter Kostenaufstellung und Regeln */
+:root {
+  --bg: #f4f6f5; --panel: #ffffff; --fg: #17201e; --muted: #5a6763; --line: #d9dfdc; --grid: #e6ebe9; --field: #f8faf9;
+  --wp: #00907f; --gas: #4f68b8; --oel: #d0603c; --good: #1d7a46; --bad: #b3401e; --hl: #e7f3f1;
+  --display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1415; --panel: #171e1f; --fg: #e7eceb; --muted: #9aa8a4; --line: #2b3536; --grid: #222b2c; --field: #1d2526;
+  --wp: #1aa896; --gas: #6f88e0; --oel: #dc6a3a; --good: #5cc98a; --bad: #ef8a66; --hl: #183230; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1415; --panel: #171e1f; --fg: #e7eceb; --muted: #9aa8a4; --line: #2b3536; --grid: #222b2c; --field: #1d2526;
+  --wp: #1aa896; --gas: #6f88e0; --oel: #dc6a3a; --good: #5cc98a; --bad: #ef8a66; --hl: #183230; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font: 16px/1.5 var(--body); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 56px }
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 24px }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15 }
+h1 { font-size: clamp(28px, 4.2vw, 42px); font-weight: 800 }
+h2 { font-size: 21px; font-weight: 700 }
+h3 { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px }
+h3 i { width: 12px; height: 12px; border-radius: 3px; display: inline-block }
+p { margin: 0; max-width: 70ch }
+.eyebrow { font: 700 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+header { display: grid; gap: 10px }
+.lead { color: var(--muted); font-size: 17px }
+.main { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 20px; align-items: start }
+@media (max-width: 960px) { .main { grid-template-columns: minmax(0, 1fr) } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 16px; min-width: 0 }
+.three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px }
+@media (max-width: 640px) { .three { grid-template-columns: minmax(0, 1fr) } }
+.grp { display: grid; gap: 10px; align-content: start }
+.f { display: grid; gap: 3px; align-content: start }
+.f label { font-size: 13.5px; color: var(--muted) }
+.f .in { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 7px; background: var(--field); overflow: hidden }
+.f input, .f select { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--fg); font: 600 15px var(--body); padding: 7px 9px; font-variant-numeric: tabular-nums }
+.f .u { padding: 0 9px; color: var(--muted); font-size: 13px; white-space: nowrap }
+.f small { font-size: 12px; color: var(--muted); line-height: 1.35 }
+.row2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 18px; padding: 3px; gap: 2px; background: var(--bg) }
+.seg button { font: 700 14px var(--body); border: 0; background: transparent; color: var(--muted); padding: 6px 14px; border-radius: 999px; cursor: pointer }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg) }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--wp); outline-offset: 2px }
+.verdict { background: var(--hl); border-radius: 8px; padding: 14px 16px; font-size: 17px; line-height: 1.45 }
+.verdict b { font-family: var(--display) }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px }
+@media (max-width: 480px) { .tiles { grid-template-columns: minmax(0, 1fr) } }
+.tile { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: grid; gap: 2px; align-content: start }
+.tile .k { font-size: 13px; color: var(--muted); display: flex; gap: 6px; align-items: center }
+.tile .k i { width: 10px; height: 10px; border-radius: 2px; display: inline-block }
+.tile .v { font: 800 22px/1.15 var(--display); font-variant-numeric: tabular-nums }
+.tile .s { font-size: 12.5px; color: var(--muted) }
+.chart { position: relative }
+.chart svg { width: 100%; height: auto; display: block }
+.chart text { fill: var(--muted); font: 12px var(--body); font-variant-numeric: tabular-nums }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13.5px; color: var(--muted) }
+.legend span { display: inline-flex; align-items: center; gap: 6px }
+.legend i { width: 18px; height: 0; border-top: 2.5px solid; display: inline-block }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 4px 16px rgb(0 0 0 / .12); min-width: 170px; font-variant-numeric: tabular-nums }
+.tip .r { display: flex; justify-content: space-between; gap: 12px }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; align-items: start }
+.tbl { overflow-x: auto }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; font-variant-numeric: tabular-nums }
+th, td { text-align: right; padding: 7px 9px; border-bottom: 1px solid var(--line) }
+td:not(:first-child), th:not(:first-child) { white-space: nowrap }
+th:first-child, td:first-child { text-align: left }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700 }
+tr.sum td { font-weight: 700 }
+ul.src { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: var(--muted) }
+a { color: var(--wp) }
+.note { font-size: 13.5px; color: var(--muted) }
+[hidden] { display: none !important }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Heizkosten über 20 Jahre</div>
+    <h1>Wärmepumpe, Gas oder Öl: Was heizt am günstigsten?</h1>
+    <p class="lead">Der Rechner vergleicht eine neue Heizung über ihre ganze Lebensdauer: Kauf nach Förderung, Gas, Öl oder Strom, steigender CO₂-Preis, Pflicht zur Bio-Beimischung bei neuen Gas- und Ölheizungen, Wartung und Schornsteinfeger. Alle Werte lassen sich ändern.</p>
+  </header>
+
+  <div class="main">
+    <div class="panel">
+      <div class="grp"><h3>Ihr Haus</h3><div class="row2" id="haus"></div></div>
+      <div class="grp">
+        <h3>CO₂-Preis</h3>
+        <div class="seg" role="group" aria-label="CO₂-Preis">
+          <button type="button" id="p_ets" aria-pressed="true">Erwartung nach heutigem Recht</button>
+          <button type="button" id="p_mzz" aria-pressed="false">Vorschlag „Mut zur Zukunft“</button>
+        </div>
+        <small class="note" id="co2txt"></small>
+      </div>
+      <div class="three">
+        <div class="grp" id="g_wp"><h3><i style="background:var(--wp)"></i>Wärmepumpe</h3></div>
+        <div class="grp" id="g_gas"><h3><i style="background:var(--gas)"></i>Gasheizung</h3></div>
+        <div class="grp" id="g_oel"><h3><i style="background:var(--oel)"></i>Ölheizung</h3></div>
+      </div>
+      <div class="grp"><h3>Förderung für die Wärmepumpe</h3><div class="row2" id="foe"></div></div>
+    </div>
+
+    <div class="panel">
+      <h2>Ergebnis</h2>
+      <div class="verdict" id="verdict"></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="legend"><span><i style="border-color:var(--wp)"></i>Wärmepumpe</span><span><i style="border-color:var(--gas)"></i>Gas</span><span><i style="border-color:var(--oel)"></i>Öl</span></div>
+      <div class="chart" id="cum"></div>
+      <p class="note">Aufsummierte Kosten ab Einbau in Euro, mit Preisen des jeweiligen Jahres.</p>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div class="panel">
+      <h2>Kosten über die ganze Laufzeit</h2>
+      <div class="tbl"><table id="tk"></table></div>
+      <p class="note" id="tknote"></p>
+    </div>
+    <div class="panel">
+      <h2>Was gilt (Stand November 2026)</h2>
+      <ul class="src">
+        <li><b>Gebäudemodernisierungsgesetz:</b> Die 65-%-Pflicht ist seit 29.7.2026 gestrichen. Neue Gas- und Ölheizungen sind wieder erlaubt, müssen aber steigende Anteile Biogas, Bioöl oder Wasserstoff nutzen: 10 % ab 2029, 15 % ab 2030, 30 % ab 2035, 60 % ab 2040. <a href="https://reduco.ai/blog/heizungsgesetz-2026-aenderungen" target="_blank" rel="noopener">Überblick</a></li>
+        <li><b>CO₂-Preis:</b> 2026 und 2027 zwischen 55 und 65 € je Tonne, ab 2028 frühestens der EU-Emissionshandel für Gebäude und Verkehr (ETS2). <a href="https://www.zfk.de/politik/deutschland/co2-preis-2027-einigung-union-spd-behg-ets2" target="_blank" rel="noopener">ZfK</a></li>
+        <li><b>Förderung (KfW 458, seit 21.7.2026):</b> 30 % Grundförderung, 16 % Klimageschwindigkeitsbonus beim Tausch einer funktionierenden fossilen Heizung im selbst bewohnten Haus, Einkommensbonus 10 bis 40 %. Höchstens 70 % (80 % bei kleinem Einkommen) von höchstens 28.000 € Kosten. Ab Februar 2027 sinkt der Bonus auf 12 %. <a href="https://reduco.ai/blog/foerderung/heizungsfoerderung-21-juli-2026-aenderungen" target="_blank" rel="noopener">Überblick</a>; vor dem Antrag bei der KfW prüfen.</li>
+        <li>Vorschlag aus dem Buch „Mut zur Zukunft“: CO₂-Preis 100 € ab 2028 bis 300 € ab 2040, das Geld fließt als Klimageld an alle zurück (rund 240 € je Person 2030, hier nicht eingerechnet). Dazu ein zinsloses Darlehen für die Wärmepumpe und Strom ohne Netzentgelt in 8 Stunden am Tag.</li>
+        <li>Keine Energieberatung. Für die richtige Größe der Wärmepumpe und die Förderung braucht es einen Energieberater oder Fachbetrieb.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Der Rechner läuft im Browser und speichert keine Eingaben. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
+<script>
+const $ = id => document.getElementById(id);
+const fmt = (v, d = 0) => (+v).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const eur = v => fmt(Math.round(v / 10) * 10) + " €";
+const PFAD = {
+  ets: { txt: "65 € je Tonne bis 2027, dann EU-Emissionshandel: Erwartung rund 60 € 2028, 70 € 2030, 100 € 2035, 150 € 2040 (eigene Annahme, Bandbreite groß).", p: [[2026, 60], [2027, 65], [2028, 60], [2030, 70], [2035, 100], [2040, 150]] },
+  mzz: { txt: "Vorschlag aus dem Buch: 100 € ab 2028, 150 € ab 2030, 200 € ab 2035, 300 € ab 2040. Das Geld fließt als Klimageld zurück.", p: [[2026, 60], [2027, 65], [2028, 100], [2030, 150], [2035, 200], [2040, 300]] },
+};
+const V = {
+  waerme: 18000, jahr: 2026, dauer: 20, steig: 2, pfad: "ets",
+  wpPreis: 30000, wpJaz: 3.2, wpStrom: 0.27, wpGrund: 120, wpWart: 200,
+  gasPreis: 12000, gasNutz: 92, gasKwh: 0.115, gasGrund: 180, gasWart: 300, gasBio: 0.06, gasNeu: "ja",
+  oelPreis: 15000, oelNutz: 90, oelLiter: 1.00, oelWart: 370, oelBio: 0.06,
+  foeBonus: "ja", foeEink: "0",
+};
+const F = (k, lbl, u, step, sub, sel) => ({ k, lbl, u, step, sub, sel });
+const FELDER = {
+  haus: [F("waerme", "Wärme im Jahr für Heizung und Warmwasser", "kWh", 500, "ungefähr Gasverbrauch × 0,9; Einfamilienhaus meist 12.000 bis 25.000"), F("jahr", "Einbau im Jahr", "", 1), F("dauer", "Laufzeit", "Jahre", 1), F("steig", "Preissteigerung im Jahr", "%", 0.5, "für Gas, Öl und Strom, ohne CO₂-Preis"), F("gasNeu", "Gas oder Öl: Pflicht zur Bio-Beimischung", "", 0, "gilt für Heizungen, die nach dem 29.7.2026 eingebaut werden", [["ja", "Ja, neue Heizung"], ["nein", "Nein, alte Heizung weiter nutzen"]])],
+  g_wp: [F("wpPreis", "Kosten mit Einbau", "€", 500), F("wpJaz", "Jahresarbeitszahl", "", 0.1, "kWh Wärme je kWh Strom; Altbau 2,8 bis 3,5"), F("wpStrom", "Strompreis (Wärmepumpentarif)", "€/kWh", 0.01, "mit 8 Stunden ohne Netzentgelt eher 0,20 €"), F("wpGrund", "Grundpreis Zähler", "€/Jahr", 10), F("wpWart", "Wartung", "€/Jahr", 10)],
+  g_gas: [F("gasPreis", "Kosten mit Einbau", "€", 500), F("gasNutz", "Nutzungsgrad", "%", 1), F("gasKwh", "Gaspreis heute (mit CO₂-Preis)", "€/kWh", 0.005), F("gasGrund", "Grundpreis", "€/Jahr", 10), F("gasWart", "Wartung und Schornsteinfeger", "€/Jahr", 10), F("gasBio", "Mehrpreis Biogas", "€/kWh", 0.01, "Biomethan kostet heute rund 5 bis 8 Cent mehr")],
+  g_oel: [F("oelPreis", "Kosten mit Einbau", "€", 500), F("oelNutz", "Nutzungsgrad", "%", 1), F("oelLiter", "Heizölpreis heute (mit CO₂-Preis)", "€/Liter", 0.01, "1 Liter ≈ 10 kWh"), F("oelWart", "Wartung, Schornsteinfeger, Tank", "€/Jahr", 10), F("oelBio", "Mehrpreis Bioöl", "€/kWh", 0.01)],
+  foe: [F("foeBonus", "Funktionierende Öl- oder Gasheizung wird ersetzt, Haus selbst bewohnt", "", 0, "Klimageschwindigkeitsbonus 16 %", [["ja", "Ja"], ["nein", "Nein"]]), F("foeEink", "Zu versteuerndes Haushaltseinkommen", "", 0, "je Kind 10.000 € weniger anrechnen", [["0", "über 50.000 €"], ["10", "bis 50.000 € (+10 %)"], ["30", "bis 40.000 € (+30 %)"], ["40", "bis 30.000 € (+40 %)"]])],
+};
+function feld(f) {
+  const d = document.createElement("div"); d.className = "f";
+  const ctl = f.sel ? `<select id="i_${f.k}">${f.sel.map(([v, t]) => `<option value="${v}">${t}</option>`).join("")}</select>`
+                    : `<input id="i_${f.k}" type="number" inputmode="decimal" step="${f.step}" min="0">`;
+  d.innerHTML = `<label for="i_${f.k}">${f.lbl}</label><div class="in">${ctl}${f.u ? `<span class="u">${f.u}</span>` : ""}</div>${f.sub ? `<small>${f.sub}</small>` : ""}`;
+  const el = d.querySelector("input,select"); el.value = V[f.k];
+  el.addEventListener("input", () => { V[f.k] = f.sel ? el.value : (+el.value || 0); run(); });
+  return d;
+}
+Object.entries(FELDER).forEach(([box, fs]) => fs.forEach(f => $(box).append(feld(f))));
+
+const EF = { gas: 0.201, oel: 0.266 };           // kg CO₂ je kWh
+const co2 = (pfad, j) => { const p = PFAD[pfad].p; if (j <= p[0][0]) return p[0][1]; for (let i = 1; i < p.length; i++) if (j <= p[i][0]) { const [a, pa] = p[i - 1], [b, pb] = p[i]; return pa + (pb - pa) * (j - a) / (b - a); } return p.at(-1)[1]; };
+const bio = j => j >= 2040 ? 0.6 : j >= 2035 ? 0.3 : j >= 2030 ? 0.15 : j >= 2029 ? 0.1 : 0;
+function foerderung(v) {
+  const satz = Math.min(0.30 + (v.foeBonus === "ja" ? 0.16 : 0) + (v.foeBonus === "ja" ? +v.foeEink / 100 : 0), v.foeEink === "40" ? 0.8 : 0.7);
+  return { satz, betrag: satz * Math.min(v.wpPreis, 28000) };
+}
+function rechne(v) {
+  const foe = foerderung(v);
+  const c0 = co2(v.pfad, v.jahr);
+  // Grundpreise ohne CO₂-Anteil (brutto, je kWh Brennstoff)
+  const gasBasis = v.gasKwh - EF.gas * c0 / 1000 * 1.19, oelBasis = v.oelLiter / 10 - EF.oel * c0 / 1000 * 1.19;
+  const kGas = v.waerme / (v.gasNutz / 100), kOel = v.waerme / (v.oelNutz / 100), kWp = v.waerme / v.wpJaz;
+  const S = { wp: { kauf: v.wpPreis - foe.betrag, energie: 0, co2: 0, bio: 0, fix: 0, t: 0 }, gas: { kauf: v.gasPreis, energie: 0, co2: 0, bio: 0, fix: 0, t: 0 }, oel: { kauf: v.oelPreis, energie: 0, co2: 0, bio: 0, fix: 0, t: 0 } };
+  const jahre = [{ n: 0, wp: S.wp.kauf, gas: S.gas.kauf, oel: S.oel.kauf }];
+  let erst = null;
+  for (let n = 1; n <= v.dauer; n++) {
+    const j = v.jahr + n - 1, f = Math.pow(1 + v.steig / 100, n - 1), c = co2(v.pfad, j);
+    const b = bio(j), bg = v.gasNeu === "ja" ? b : 0;
+    const wpE = kWp * v.wpStrom * f;
+    const gE = kGas * (1 - bg) * gasBasis * f, gC = kGas * (1 - bg) * EF.gas * c / 1000 * 1.19, gB = kGas * bg * (gasBasis * f + v.gasBio);
+    const oE = kOel * (1 - bg) * oelBasis * f, oC = kOel * (1 - bg) * EF.oel * c / 1000 * 1.19, oB = kOel * bg * (oelBasis * f + v.oelBio);
+    S.wp.energie += wpE; S.wp.fix += v.wpGrund + v.wpWart;
+    S.gas.energie += gE; S.gas.co2 += gC; S.gas.bio += gB; S.gas.fix += v.gasGrund + v.gasWart; S.gas.t += kGas * (1 - bg) * EF.gas / 1000;
+    S.oel.energie += oE; S.oel.co2 += oC; S.oel.bio += oB; S.oel.fix += v.oelWart; S.oel.t += kOel * (1 - bg) * EF.oel / 1000;
+    const sum = k => S[k].kauf + S[k].energie + S[k].co2 + S[k].bio + S[k].fix;
+    jahre.push({ n, wp: sum("wp"), gas: sum("gas"), oel: sum("oel") });
+    if (n === 1) erst = { wp: wpE + v.wpGrund + v.wpWart, gas: gE + gC + gB + v.gasGrund + v.gasWart, oel: oE + oC + oB + v.oelWart };
+  }
+  const tot = k => jahre.at(-1)[k];
+  return { S, jahre, foe, erst, tot: { wp: tot("wp"), gas: tot("gas"), oel: tot("oel") }, kWp, kGas, kOel };
+}
+
+function run() {
+  const r = rechne(V);
+  $("co2txt").textContent = PFAD[V.pfad].txt;
+  const nm = { wp: "Wärmepumpe", gas: "Gasheizung", oel: "Ölheizung" };
+  const rang = Object.entries(r.tot).sort((a, b) => a[1] - b[1]);
+  const [best, zweit] = rang;
+  // Ab wann ist die Wärmepumpe günstiger als Gas?
+  let ab = null; for (const q of r.jahre) if (q.wp <= q.gas) { ab = q.n; break; }
+  $("verdict").innerHTML = `Über ${fmt(V.dauer)} Jahre ist die <b>${nm[best[0]]}</b> am günstigsten: ${eur(best[1])}, das sind ${eur(zweit[1] - best[1])} weniger als die ${nm[zweit[0]]}.` +
+    (ab === 0 ? " Die Wärmepumpe ist nach Förderung schon beim Kauf günstiger als die Gasheizung." : ab ? ` Die Wärmepumpe hat den höheren Kaufpreis gegenüber Gas nach <b>${ab} Jahren</b> wieder herein.` : " Gegenüber Gas holt die Wärmepumpe den höheren Kaufpreis in dieser Zeit nicht herein.");
+  const tile = (k, c) => `<div class="tile"><span class="k"><i style="background:var(--${c})"></i>${nm[c]}</span><span class="v">${eur(r.tot[c])}</span><span class="s">${eur(r.erst[c])} Betriebskosten im ersten Jahr</span></div>`;
+  $("tiles").innerHTML = tile("", "wp") + tile("", "gas") + tile("", "oel");
+  drawCum(r);
+  const S = r.S, row = (n, a, b, c, cls = "") => `<tr class="${cls}"><td>${n}</td><td>${a}</td><td>${b}</td><td>${c}</td></tr>`;
+  $("tk").innerHTML = `<thead><tr><th>Über ${fmt(V.dauer)} Jahre</th><th>Wärmepumpe</th><th>Gas</th><th>Öl</th></tr></thead><tbody>`
+    + row("Kauf und Einbau", eur(V.wpPreis), eur(V.gasPreis), eur(V.oelPreis))
+    + row(`Förderung (${fmt(r.foe.satz * 100)} %)`, "−" + eur(r.foe.betrag), "–", "–")
+    + row("Strom, Gas oder Öl", eur(S.wp.energie), eur(S.gas.energie), eur(S.oel.energie))
+    + row("CO₂-Preis", "–", eur(S.gas.co2), eur(S.oel.co2))
+    + row("Bio-Beimischung", "–", eur(S.gas.bio), eur(S.oel.bio))
+    + row("Grundpreis, Wartung, Schornsteinfeger", eur(S.wp.fix), eur(S.gas.fix), eur(S.oel.fix))
+    + row("Zusammen", eur(r.tot.wp), eur(r.tot.gas), eur(r.tot.oel), "sum")
+    + row("CO₂ aus dem Schornstein", "0 t", fmt(S.gas.t, 0) + " t", fmt(S.oel.t, 0) + " t") + `</tbody>`;
+  $("tknote").textContent = `Verbrauch im ersten Jahr: Wärmepumpe ${fmt(r.kWp)} kWh Strom, Gas ${fmt(r.kGas)} kWh, Öl ${fmt(r.kOel / 10)} Liter. Der Strom für die Wärmepumpe ist im Strommix nur teilweise CO₂-frei; sein CO₂ ist über den Emissionshandel im Strompreis enthalten.`;
+}
+
+function drawCum(r) {
+  const W = 560, H = 260, L = 58, R = 12, T = 12, B = 28, keys = ["wp", "gas", "oel"];
+  const max = Math.max(...r.jahre.flatMap(q => keys.map(k => q[k])));
+  const mag = Math.pow(10, Math.floor(Math.log10(max))), step = max / mag > 5 ? 2 * mag : max / mag > 2 ? mag : mag / 2;
+  const ymax = Math.ceil(max / step) * step, n = r.jahre.length - 1;
+  const x = j => L + (W - L - R) * j / n, y = v => T + (H - T - B) * (1 - v / ymax);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Aufsummierte Heizkosten über die Jahre">`;
+  for (let v = 0; v <= ymax + 1; v += step) s += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${fmt(v / 1000)} T€</text>`;
+  const tick = n > 12 ? 5 : 2;
+  for (let j = 0; j <= n; j += tick) s += `<text x="${x(j)}" y="${H - 8}" text-anchor="middle">${j === 0 ? "Einbau" : V.jahr + j}</text>`;
+  keys.forEach(k => s += `<path d="${r.jahre.map((q, j) => (j ? "L" : "M") + x(j).toFixed(1) + " " + y(q[k]).toFixed(1)).join(" ")}" fill="none" stroke="var(--${k})" stroke-width="2.5" stroke-linejoin="round"/>`);
+  s += `<line id="cl" y1="${T}" y2="${H - B}" stroke="var(--muted)" opacity="0"/></svg><div class="tip" id="ctip" hidden></div>`;
+  $("cum").innerHTML = s;
+  const svg = $("cum").querySelector("svg"), tip = $("ctip"), cl = $("cl");
+  const mv = ev => {
+    const b = svg.getBoundingClientRect(), px = (ev.clientX - b.left) * W / b.width;
+    const j = Math.max(0, Math.min(n, Math.round((px - L) / (W - L - R) * n))), q = r.jahre[j];
+    cl.setAttribute("x1", x(j)); cl.setAttribute("x2", x(j)); cl.setAttribute("opacity", 1); tip.hidden = false;
+    tip.innerHTML = `<b>${j === 0 ? "Beim Einbau" : "Ende " + (V.jahr + j - 1)}</b><div class="r"><span style="color:var(--wp)">Wärmepumpe</span><span>${eur(q.wp)}</span></div><div class="r"><span style="color:var(--gas)">Gas</span><span>${eur(q.gas)}</span></div><div class="r"><span style="color:var(--oel)">Öl</span><span>${eur(q.oel)}</span></div>`;
+    tip.style.left = Math.min(b.width - tip.offsetWidth, Math.max(0, x(j) * b.width / W + 12)) + "px"; tip.style.top = "6px";
+  };
+  svg.addEventListener("pointermove", mv); svg.addEventListener("pointerdown", mv);
+  svg.addEventListener("pointerleave", () => { tip.hidden = true; cl.setAttribute("opacity", 0); });
+}
+["ets", "mzz"].forEach(p => $("p_" + p).onclick = () => { V.pfad = p; $("p_ets").setAttribute("aria-pressed", p === "ets"); $("p_mzz").setAttribute("aria-pressed", p === "mzz"); run(); });
+run();
+</script>
+
+</body>
+</html>
