@@ -81,8 +81,26 @@ a { color: var(--wp) }
 .note { font-size: 13.5px; color: var(--muted) }
 [hidden] { display: none !important }
 </style>
+<style id="sitenav-css">
+.sitenav{background:#12372a;color:#fbf8f1;font:600 15px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sitenav{background:#0a1913}}
+:root[data-theme="dark"] .sitenav{background:#0a1913}
+.sitenav.flush{margin:-28px calc(-1 * max(16px, env(safe-area-inset-left, 0px))) 24px}
+.sitenav .sn-in{max-width:1180px;margin:0 auto;padding:10px max(16px, env(safe-area-inset-left, 0px));display:flex;align-items:center;justify-content:space-between;gap:10px 18px;flex-wrap:wrap}
+.sitenav a{color:#fbf8f1;text-decoration:none}
+.sitenav .sn-logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:14px}
+.sitenav .sn-logo b{color:#f2b33d;font-weight:800}
+.sitenav .sn-links{display:flex;align-items:center;gap:4px 16px;flex-wrap:wrap}
+.sitenav .sn-links a{padding:5px 0;border-bottom:2px solid transparent}
+.sitenav .sn-links a:hover,.sitenav .sn-links a[aria-current]{border-color:#f2b33d}
+.sitenav .sn-links a.sn-buch{background:#f2b33d;color:#12372a;border:0;border-radius:999px;padding:6px 14px;font-weight:700}
+.sitenav .sn-links a.sn-buch:hover{background:#ffc75a}
+.sitenav a:focus-visible{outline:2px solid #f2b33d;outline-offset:3px}
+@media (max-width:640px){.sitenav .sn-links{gap:2px 14px;font-size:14px}.sitenav .sn-logo span{display:none}}
+</style>
 </head>
 <body>
+<nav class="sitenav flush" aria-label="Hauptmenü"><div class="sn-in"><a class="sn-logo" href="../" aria-label="Mut zur Zukunft, zur Startseite"><svg viewBox="0 0 100 100" width="34" height="34" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#f2b33d" stroke-width="3"/><path d="M30,64 A20,20 0 0 1 70,64 Z" fill="#f2b33d"/><path d="M50,64 L50,33" stroke="#fbf8f1" stroke-width="4" stroke-linecap="round"/><path d="M50,47 C41,46 33,39 31,28 C41,29 48,36 50,47 Z" fill="#9fd8b0"/><path d="M50,40 C57,37 65,30 68,19 C58,20 51,28 50,40 Z" fill="#9fd8b0"/><line x1="17" y1="64" x2="83" y2="64" stroke="#fbf8f1" stroke-width="3.5" stroke-linecap="round"/></svg><span>Mut zur <b>Zukunft</b></span></a><div class="sn-links"><a class="sn-buch" href="../buch/">Zum Buch</a><a href="../">Start</a><a href="../steuerrechner/">Steuerrechner</a><a href="../eauto-rechner/">E-Auto-Rechner</a><a href="../heizungsrechner/" aria-current="page">Heizungsrechner</a><a href="../energie-rechner/">Energie-Rechner</a><a href="../ueber-mich.html">Über mich</a></div></div></nav>
 
 
 <div class="wrap">
