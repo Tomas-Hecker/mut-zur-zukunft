@@ -140,3 +140,4 @@ figcaption, figure .small { font-family: var(--font-body); font-size: .82rem; co
 .btext a.ext { overflow-wrap: anywhere; }
 .btext a.ext::after { content: "↗"; display: inline-block; margin-left: .15em; font-size: .8em; text-decoration: none; opacity: .7; }
 .nur-druck { display: none; }
+a.url { hyphens: none; }
