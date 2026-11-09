@@ -54,9 +54,9 @@ CSS = '''<style id="sitenav-css">
 def nav(cur, flush):
     links = [('../', 'Start'), ('../steuerrechner/', 'Steuerrechner'), ('../eauto-rechner/', 'E-Auto-Rechner'), ('../heizungsrechner/', 'Heizungsrechner'), ('../energie-rechner/', 'Energie-Rechner'), ('../ueber-mich.html', 'Über mich')]
     a = ''.join(f'<a href="{h}"{" aria-current=\"page\"" if t == cur else ""}>{t}</a>' for h, t in links)
-    return (f'<nav class="sitenav{" flush" if flush else ""}" aria-label="Hauptmenü"><div class="sn-in"><a class="sn-logo" href="../" aria-label="Mut zur Zukunft, zur Startseite">{LOGO}<span>Mut zur <b>Zukunft</b></span></a>'
+    return (f'<nav class="sitenav{" flush" if flush else ""}" aria-label="Hauptmenü"><div class="sn-in"><a class="sn-logo" href="../" aria-label="Schuldenfrei 2070, zur Startseite">{LOGO}<span>Schuldenfrei <b>2070</b></span></a>'
             f'<div class="sn-links"><a class="sn-buch" href="../buch/">Zum Buch</a>{a}</div></div></nav>')
-HINWEIS = ('<div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Mut zur Zukunft“. '
+HINWEIS = ('<div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Schuldenfrei 2070“. '
            'Die Ergebnisse sind Größenordnungen, können Fehler enthalten und ersetzen keine Steuer-, Rechts-, Finanz- oder Energieberatung. '
            'Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>')
 def einsetzen(pfad, cur, flush):
