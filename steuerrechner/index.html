@@ -704,9 +704,10 @@ const ANNAHMEN = {
   // Zinsloses Darlehen für Elektroauto und Wallbox über das Finanzamt (Entscheidung Tomas 08.11.2026)
   EAutoAn: 1, EAutoN: 1, EAutoD: 20000, EAutoQ: 0.5, EAutoAus: 0.85, EAutoL: 8,
   // Zinslose Darlehen für Dämmung, Wärmepumpe, PV und Speicher; Größe bestätigt der Energieberater, das Finanzamt zahlt aus (Entscheidung Tomas 08.11.2026)
-  EnAn: 1, PVN: 0.3, PVD: 18000, PVL: 20, WPN: 0.5, WPD: 15000, WPL: 20, DaemN: 0.2, DaemD: 40000, DaemL: 40, StSpN: 0.5, StSpD: 1000, StSpL: 10, HKN: 0.5, HKD: 8000, HKL: 40,
+  EnAn: 1, PVN: 0.3, PVD: 18000, PVL: 20, WPN: 0.5, WPD: 15000, WPL: 20, DaemN: 0.2, DaemD: 40000, DaemL: 40, StSpN: 0.5, StSpD: 1000, StSpL: 10, HKN: 0.5, HKD: 8000, HKL: 40, EigN: 0.1, EigD: 5000, EigL: 40,
+  StufAn: 1, StufN: 0.269, StufJ: 2, StufArb: 0.5, StufRente: 1500, StufLohn: 60000, StufSt: 0.3,
   // Gesamtpaket: Rente und Pflege aus der Steuer und weitere Bausteine (Mrd. €; Modell 2.5)
-  RVPVSt: 1, RVPVKost: 345, MiniQ: 0.28, StromKost: 28.1, AutoKost: 7.3, WPKost: 3.75, DiensteKost: 14, BeamtBes: 30, SelbRente: 27.5, AusglKlein: 5, ALGSKost: 1,
+  RVPVSt: 1, RVPVKost: 345, MiniQ: 0.28, StromKost: 28.1, AutoKost: 7.3, WPKost: 3.75, DaemKost: 1.2, EigenKost: 0.25, DiensteKost: 14, BeamtBes: 30, SelbRente: 27.5, AusglKlein: 5, ALGSKost: 1,
   GesAbg: 39, DieselE: 7, QuelleE: 10, DienstwE: 2, StromSt: 5.0,
   // Zuckerabgabe (zweckgebunden)
   ZuckAn: 1, ZuckSatz: 5, ZuckMenge: 2.54, ZuckRueck: 0.25, ZuckBonus: 9,
@@ -968,7 +969,7 @@ function gesamt() {
   mehrK *= A.MehrAn;
   const eaBestand = A.EAutoAn * A.EAutoN * A.EAutoD * A.EAutoAus * A.EAutoL / 2 / 1000, eaKost = eaBestand * A.Zins;
   // Bestand bei Rückzahlung in gleichen Raten: im Dauerzustand Zahl × Betrag × Laufzeit / 2; in der Startphase (15 Jahre) erst teilweise aufgebaut
-  const enT = [[A.PVN, A.PVD, A.PVL], [A.WPN, A.WPD, A.WPL], [A.DaemN, A.DaemD, A.DaemL], [A.StSpN, A.StSpD, A.StSpL], [A.HKN, A.HKD, A.HKL]];
+  const enT = [[A.PVN, A.PVD, A.PVL], [A.WPN, A.WPD, A.WPL], [A.DaemN, A.DaemD, A.DaemL], [A.StSpN, A.StSpD, A.StSpL], [A.HKN, A.HKD, A.HKL], [A.EigN, A.EigD, A.EigL]];
   const enBestand = A.EnAn * enT.reduce((a, [n, d, l]) => a + n * d * l / 2, 0) / 1000;
   const enStart = A.EnAn * enT.reduce((a, [n, d, l]) => { const j = Math.min(l, A.Jahre / 2); return a + n * d * j * (1 - j / (2 * l)); }, 0) / 1000;
   const it = A.VerwAn * A.VerwIT, verwE = A.VerwAn * A.VerwZiel;
@@ -976,6 +977,7 @@ function gesamt() {
   const mietSt = A.Nutzwert > 0 ? aufkommen(true) - ausg0 : 0;
   const lux = A.LuxAn * A.LuxErtrag;
   const mwF = p => A.NormJePkt * 1.19 ** 2 * 100 * ((0.19 + p / 100) / (1.19 + p / 100) - 0.19 / 1.19);
+  const stuf = A.StufAn * A.StufN * A.StufJ * A.StufArb * (0.5 * A.StufRente * 12 + 0.5 * A.StufLohn * A.StufSt) / 1000;   // gesparte halbe Rente und Steuern auf den Lohn
   const sichE = A.SichPkt > 0 ? mwF(A.NormPkt + A.SichPkt) - mwF(A.NormPkt) : 0;   // Sicherheitsbeitrag über den Normalsatz, nicht linear; der höhere Ausgleich steht bei den Ausgaben
   const erbS = A.ErbVol * A.ErbBasis * erbQuote() * A.RealStart;
   const erbL = A.ErbVol * A.ErbBasis * erbQuote() * A.RealLang;
@@ -991,6 +993,8 @@ function gesamt() {
     ["Strom mit 5 % Mehrwertsteuer und ohne Umlagen", A.StromKost, A.StromKost],
     ["Neuwagen: Mehrwertsteuer auf die ersten 15.000 € erstattet", A.AutoKost, A.AutoKost],
     ["Wärmepumpen ohne Mehrwertsteuer", A.WPKost, A.WPKost],
+    ["Material für die Dämmung ohne Mehrwertsteuer", A.DaemKost, A.DaemKost],
+    ["Material in Eigenleistung ohne Mehrwertsteuer (mit Energieberater)", A.EigenKost, A.EigenKost],
     ["Dienste vor Ort mit 5 % Mehrwertsteuer", A.DiensteKost, A.DiensteKost],
     ["Besoldung der Beamten und Pensionen angepasst", A.BeamtBes, A.BeamtBes],
     ["Ausgleich der Mehrwertsteuer für kleine Einkommen", A.AusglKlein * (1 + A.SichPkt / A.NormPkt), A.AusglKlein * (1 + A.SichPkt / A.NormPkt)],   // wächst mit den Punkten des Sicherheitsbeitrags
@@ -1031,6 +1035,7 @@ function gesamt() {
     ["Dieselprivileg endet", A.DieselE, A.DieselE],
     ["Quellensteuer 50 % als stille Teilhabe", A.QuelleE, A.QuelleE],
     ["Dienstwagen: private Nutzung an der Quelle besteuert", A.DienstwE, A.DienstwE],
+    ["Stufenrente ab 63: halbe Rente und halb weiterarbeiten", stuf / A.StufJ, stuf],
     ["Einsparung in der Verwaltung", 0, verwE],
     ["Abbau klimaschädlicher Subventionen", A.SubvAbbau, A.SubvAbbau],
     [`Sicherheitsbeitrag: Mehrwertsteuer ${fmt(A.SichPkt, 1)} Punkte höher`, sichE, sichE],
@@ -1314,6 +1319,7 @@ const SCHALTER = [
   { k: "RentMini", lbl: "Minijob im Rentenalter frei" },
   { k: "EgAn", lbl: "Besseres Elterngeld" },
   { k: "RentMehrAn", lbl: "Mehrarbeit im Rentenalter in Stufen frei" },
+  { k: "StufAn", lbl: "Stufenrente ab 63" },
   { k: "FamAn", lbl: "Familienrente: 6 statt 3 Entgeltpunkte je Kind" },
   { k: "MehrAn", lbl: "Mehrarbeit steuerfrei" },
   { k: "VerwAn", lbl: "KI-taugliche Verwaltung" },
