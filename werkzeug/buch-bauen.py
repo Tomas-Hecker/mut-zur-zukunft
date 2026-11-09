@@ -239,4 +239,21 @@ open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8').write(page('Das Buc
 
 suche = f'''<main class="wrap uebersicht"><h1 class="sh">Im Buch suchen</h1>{SEARCHBOX}<p id="treffer-info" class="small"></p><ol id="treffer" class="treffer"></ol><p><a href="./">Zum Inhaltsverzeichnis</a></p></main>'''
 open(os.path.join(OUT, 'suche.html'), 'w', encoding='utf-8').write(page('Im Buch suchen · Schuldenfrei 2070', 'Volltextsuche im Buch Schuldenfrei 2070.', suche, extra_head='<script src="suche-index.js" defer></script>\n'))
-print(len(chapters), 'Kapitel,', len(index_entries), 'Suchabschnitte,', len(appendix_ids), 'Anhang-Anker')
+# ---------- Feste Buchstellen: stelle.html#anh-C2, #kap-7 oder jede id aus der Satzdatei ----------
+import json as _json, glob as _glob
+stellen = {}
+for k, v in appendix_ids.items(): stellen['anh-' + k] = v
+for b in 'ABC': stellen['anh-' + b] = f'anhang-{b.lower()}.html'
+for i in range(1, 10):
+    if os.path.exists(os.path.join(OUT, f'kapitel-{i}.html')): stellen[f'kap-{i}'] = f'kapitel-{i}.html'
+for f in sorted(_glob.glob(os.path.join(OUT, '*.html'))):
+    nm = os.path.basename(f)
+    if nm in ('index.html', 'suche.html', 'stelle.html'): continue
+    for i in re.findall(r' id="([^"]+)"', open(f, encoding='utf-8').read()):
+        if i not in ('top', 'seite', 'q', 'treffer', 'treffer-info') and i not in stellen: stellen[i] = f'{nm}#{i}'
+stelle = ('<main class="wrap uebersicht"><h1 class="sh">Buchstelle</h1><p id="st">Die Buchstelle wird geöffnet …</p><p><a href="./">Zum Inhaltsverzeichnis</a></p></main>'
+  '<script>(function(){var S=' + _json.dumps(stellen, ensure_ascii=False) + ';var k=decodeURIComponent((location.hash||"").slice(1));'
+  'if(S[k]){location.replace(S[k]);}else{document.getElementById("st").textContent=k?"Diese Buchstelle gibt es nicht: "+k:"Keine Buchstelle angegeben.";}})();</script>')
+open(os.path.join(OUT, 'stelle.html'), 'w', encoding='utf-8').write(page('Buchstelle · Schuldenfrei 2070', 'Weiterleitung auf eine Stelle im Buch Schuldenfrei 2070.', stelle))
+open(os.path.join(OUT, 'stellen.json'), 'w', encoding='utf-8').write(_json.dumps(stellen, ensure_ascii=False, indent=0))
+print(len(chapters), 'Kapitel,', len(index_entries), 'Suchabschnitte,', len(appendix_ids), 'Anhang-Anker,', len(stellen), 'Buchstellen')
