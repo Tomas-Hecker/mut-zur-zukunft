@@ -298,6 +298,25 @@ a.ql:hover { color: var(--fg); text-decoration-thickness: 2px; }
 .sitenav:not(.flush) + .sitehinweis{margin-top:14px}
 /* Große Bildschirme: ganze Breite nutzen */
 @media (min-width:1240px){.wrap,.sitenav .sn-in,.sitehinweis{max-width:none!important}.sitenav .sn-in,.sitehinweis{padding-left:max(32px, env(safe-area-inset-left, 0px));padding-right:max(32px, env(safe-area-inset-right, 0px))}}
+/* Cockpit (Energie, E-Auto, Heizung): Eingaben links, Ergebnis rechts, beide Spalten bleiben stehen und scrollen einzeln */
+@media (min-width:1200px) and (min-height:620px){
+.sitenav.flush ~ .wrap{gap:14px}
+.sitenav.flush ~ .wrap > header{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 28px;align-items:end}
+.sitenav.flush ~ .wrap > header .eyebrow{grid-column:1/-1}
+.sitenav.flush ~ .wrap > header h1{font-size:26px;max-width:22em}
+.sitenav.flush ~ .wrap > header .lead{font-size:13.5px;line-height:1.45;margin:0}
+.sitenav.flush ~ .wrap .main{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px}
+.sitenav.flush ~ .wrap .main > .panel{position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto;padding:14px;gap:12px;scrollbar-width:thin}
+.sitenav.flush ~ .wrap .main .f label{font-size:12.5px}
+.sitenav.flush ~ .wrap .main .f input,.sitenav.flush ~ .wrap .main .f select{font-size:14px;padding:4px 8px}
+.sitenav.flush ~ .wrap .main .f small{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sitenav.flush ~ .wrap .main .row2{gap:8px}
+.sitenav.flush ~ .wrap .main h2{font-size:18px}
+.sitenav.flush ~ .wrap .main h3{font-size:15px}
+.sitenav.flush ~ .wrap .main .verdict{font-size:15.5px;padding:10px 14px}
+.sitenav.flush ~ .sitehinweis{margin-bottom:10px}
+.sitenav.flush ~ .sitehinweis p{padding:6px 12px;font-size:12.5px}
+}
 @media (max-width:640px){.sitenav .sn-links{gap:2px 14px;font-size:14px}.sitenav .sn-logo span{display:none}}
 </style>
 </head>
