@@ -356,7 +356,7 @@ a.ql:hover { color: var(--fg); text-decoration-thickness: 2px; }
       <div class="rule"><b>Alle Einkommen gleich</b><span>Lohn, Gewinn, Zinsen, Dividenden, Mieten, Kursgewinne und Erbschaften folgen denselben Regeln und demselben Tarif. Keine Sonderrechte für bestimmte Einkunftsarten.</span></div>
       <div class="rule"><b>Besteuert wird, was ins Private fließt</b><span>Was investiert bleibt und für die Wirtschaft arbeitet, bleibt vorerst steuerfrei. Erst der private Verbrauch wird besteuert.</span></div>
       <div class="rule"><b>Beim Tod wird abgerechnet</b><span>Was bis zum Lebensende unversteuert investiert blieb, gehört zu 50 % der Gemeinschaft, ohne Sonderfreibeträge. Die Erben verwalten diesen Anteil, solange er investiert bleibt.</span></div>
-      <div class="rule"><b>Das Existenzminimum ist immer frei</b><span>Bis zum Existenzminimum fällt keine Steuer an, auf Lohn bis 2.000 € im Monat keine Beiträge zu Pflege und Rente, der Grundbedarf ist frei von Mehrwertsteuer. Das gilt für jedes Einkommen, auch für ein Erbe.</span></div>
+      <div class="rule"><b>Das Existenzminimum ist immer frei</b><span>Bis 1.363 € Ausgaben im Monat je Erwachsenem und 569 € je Kind fällt keine Steuer an, Beiträge gibt es außer der Prämie der Krankenkasse keine mehr, der Grundbedarf ist frei von Mehrwertsteuer. Das gilt für jedes Einkommen, auch für ein Erbe.</span></div>
     </div>
   </div>
 </section>
@@ -428,10 +428,9 @@ a.ql:hover { color: var(--fg); text-decoration-thickness: 2px; }
         <div id="zukunft"></div>
         <div class="tweak" id="tweak">
           <div class="row2"><h3>Vorschlag verändern</h3><span class="tag" id="tweakTag"></span></div>
-          <div class="slider"><div class="row"><label for="h_Satz1">Stufe 1, Ausgaben bis <span id="h_g1"></span> im Monat</label><output id="ho_Satz1"></output></div><input type="range" id="h_Satz1" min="0.1" max="1" step="0.01"></div>
-          <div class="slider"><div class="row"><label for="h_Satz2">Stufe 2, Ausgaben bis <span id="h_g2"></span> im Monat</label><output id="ho_Satz2"></output></div><input type="range" id="h_Satz2" min="0.1" max="1.2" step="0.01"></div>
-          <div class="slider"><div class="row"><label for="h_Satz3">Stufe 3, auf alles darüber</label><output id="ho_Satz3"></output></div><input type="range" id="h_Satz3" min="0.1" max="1.5" step="0.01"></div>
-          <div class="slider"><div class="row"><label for="h_SVFB">Lohn frei von Beiträgen zu Pflege und Rente bis</label><output id="ho_SVFB"></output></div><input type="range" id="h_SVFB" min="0" max="48000" step="600"><div class="sub" id="hs_SVFB"></div></div>
+          <div class="slider"><div class="row"><label for="h_Grenze1">Ausgaben frei bis, je Erwachsenem</label><output id="ho_Grenze1"></output></div><input type="range" id="h_Grenze1" min="0" max="36000" step="120"><div class="sub">dazu 569 € je Kind</div></div>
+          <div class="slider"><div class="row"><label for="h_Satz3">Steuer auf alles darüber, wie im Preis</label><output id="ho_Satz3"></output></div><input type="range" id="h_Satz3" min="0.1" max="1.5" step="0.01"><div class="sub" id="hs_Satz3"></div></div>
+          <div class="slider" id="h_SVFBbox"><div class="row"><label for="h_SVFB">Lohn frei von Beiträgen zu Pflege und Rente bis</label><output id="ho_SVFB"></output></div><input type="range" id="h_SVFB" min="0" max="48000" step="600"><div class="sub" id="hs_SVFB"></div></div>
           <label class="check"><input type="checkbox" id="h_Sicherheit"> Mit Sicherheitsbeitrag für Verteidigung</label>
           <div class="row2"><button type="button" class="btn" id="h_reset">Werte aus dem Buch</button><a href="#staat">Alle Stellschrauben und die Folgen für den Staat</a></div>
         </div>
@@ -506,12 +505,12 @@ a.ql:hover { color: var(--fg); text-decoration-thickness: 2px; }
         <p>Im Vorschlag zählt nur noch, was jemand für sich verbraucht. Wer viel verdient und viel ausgibt, zahlt viel. Wer verdient und investiert, schafft Arbeitsplätze und zahlt erst, wenn er das Geld privat nutzt, spätestens beim Erbgang.</p>
       </div></details>
       <details><summary>Wie hoch ist der Steuersatz?</summary><div>
-        <p>Bis zum Existenzminimum von 1.029 € im Monat je Erwachsenem (und 569 € je Kind) bleiben alle Ausgaben frei. Darüber wird ein Aufschlag auf die Ausgaben gerechnet: 53,8 % bis zu Ausgaben von 2.000 € im Monat, 81,8 % bis 3.000 € und 100 % auf alles darüber.</p>
-        <p>Bezogen auf das, was insgesamt ins Private fließt (Ausgaben plus Steuer), also wie im Preis, sind das 35 %, 45 % und 50 %, nie mehr. Beides ist rechnerisch dasselbe. Bei Paaren werden die Ausgaben wie beim Ehegattensplitting auf beide verteilt. Für Beschäftigte gilt eine Obergrenze: Steuer und Beiträge zusammen höchstens 50 % je Euro Lohn.</p>
+        <p>Bis zu Ausgaben von 1.363 € im Monat je Erwachsenem (und 569 € je Kind) bleibt alles frei. Darüber gibt es nur einen Satz: ein Aufschlag von 100 % auf die Ausgaben.</p>
+        <p>Bezogen auf das, was insgesamt ins Private fließt (Ausgaben plus Steuer), also wie im Preis, sind das 50 %, nie mehr. Beides ist rechnerisch dasselbe. Bei Paaren werden die Ausgaben wie beim Ehegattensplitting auf beide verteilt.</p>
       </div></details>
       <details><summary>Was ändert sich bei Krankenkasse, Arbeitslosengeld und Rente?</summary><div>
-        <p>Die Krankenkasse bekommt vom Staat eine Pauschale je Versichertem, rund 315 Mrd. € im Jahr. Dazu zahlt jeder Erwachsene eine steuerfreie Prämie von 1.289 € im Jahr, rund 107 € im Monat; Kinder sind frei. Beiträge auf den Lohn gibt es für die Krankenkasse nicht mehr. Der Arbeitgeber zahlt seinen Anteil als Lohn aus, die Rentenversicherung ihren als höhere Rente.</p>
-        <p>Das Arbeitslosengeld zahlt der Staat aus der Steuer, mit den Regeln von heute. Wer damit eine schlechter bezahlte Arbeit annimmt, bekommt 60 % des fehlenden Nettolohns (mit Kindern 67 %), längstens drei Jahre. Niemand ab 67 hat weniger als 1.136 € im Monat. Die Mehrwertsteuer steigt auf 25 %: drei Punkte senken den Rentenbeitrag, drei gehen an den Staatshaushalt. Die Grundsicherung steigt um die Prämie und rund 5,50 € im Monat als Ausgleich.</p>
+        <p>Die Krankenkasse bekommt vom Staat eine Pauschale je Versichertem, rund 315 Mrd. € im Jahr. Dazu zahlt jeder Erwachsene eine steuerfreie Prämie von 1.289 € im Jahr, rund 107 € im Monat; Kinder sind frei. Rente und Pflege bezahlt der Staat ebenfalls aus der Steuer. Beiträge auf den Lohn gibt es damit nicht mehr. Der Betrieb zahlt seine Anteile als Lohn aus, 21,15 % des Bruttolohns, beim Minijob die Pauschale von 28 %. Die Rentenversicherung zahlt ihren Anteil an der Krankenkasse als höhere Rente aus.</p>
+        <p>Das Arbeitslosengeld zahlt der Staat aus der Steuer, mit den Regeln von heute. Wer damit eine schlechter bezahlte Arbeit annimmt, bekommt 60 % des fehlenden Nettolohns (mit Kindern 67 %), längstens drei Jahre. Niemand ab 67 hat weniger als 1.136 € im Monat. Die Mehrwertsteuer steigt auf 50 %. Lebensmittel, Wasser und Nahverkehr bleiben frei, Strom, Kinderkleidung und Dienste vor Ort kosten 5 %. Grundsicherung, Bürgerjob und Rentenboden steigen um die Prämie und um 84 € im Monat als Ausgleich; kleine Einkommen bekommen einen Ausgleich, der bis 1.500 € im Monat abschmilzt.</p>
       </div></details>
       <details><summary>Was passiert beim Erben?</summary><div>
         <p>Was bis zum Lebensende investiert blieb und deshalb nie besteuert wurde, gehört beim Erbgang zur Hälfte der Gemeinschaft, ohne Sonderfreibeträge. Für den Wertzuwachs des Bodens sind es 75 %.</p>
@@ -528,12 +527,12 @@ a.ql:hover { color: var(--fg); text-decoration-thickness: 2px; }
         <p>Wer aus Vermögen lebt, das er schon unter dem alten Recht versteuert hat, soll nicht doppelt zahlen. In einer Übergangsphase bleiben deshalb Entnahmen aus diesem Altvermögen bis 30.000 € je Erwachsenem im Jahr steuerfrei. Der Rechner zeigt diesen Fall gesondert an, wenn Sie „Verbrauch aus vorhandenem Vermögen“ eintragen.</p>
       </div></details>
       <details><summary>Was sind die Bausteine?</summary><div>
-        <p>Zum Grundsystem kommen einzeln schaltbare Ideen aus dem Buch: Lebensmittel, Wasser und Nahverkehr ohne Mehrwertsteuer, keine Beiträge zu Pflege und Rente auf Lohn bis 2.000 € im Monat, das Existenzminimum für Studium, Ausbildung und Weiterbildung, ein Bürgerjob mit Recht auf Arbeit, ein Berufscoach für alle, steuerfreie Mehrarbeit (ohne Kinder und Pflege bis 6.000 € im Jahr), die Familienrente mit 6 statt 3 Entgeltpunkten je Kind, zinslose Darlehen für Elektroauto und Wallbox sowie für Dämmung, Wärmepumpe, PV und Speicher und steuerfreie Mehrarbeit (Erziehung und die Pflege von Angehörigen zählen als Arbeitszeit, die Schwelle sinkt je nach Alter der Kinder und Pflegegrad).</p>
-        <p>Gegenfinanziert werden sie unter anderem durch eine Luxusstufe der Mehrwertsteuer und eine schlankere, KI-taugliche Verwaltung. Der Normalsatz der Mehrwertsteuer steigt auf 21 %. Die Rentenversicherung bekommt den Ertrag von drei Punkten und senkt damit den Beitrag, den Rest trägt der Staatshaushalt. Fachkräfte aus dem Ausland bekommen eine Startprämie von 15.000 € plus 20 % des Gehalts über 30.000 €.</p>
+        <p>Zum Grundsystem kommen einzeln schaltbare Ideen aus dem Buch: Lebensmittel, Wasser und Nahverkehr ohne Mehrwertsteuer, Rente und Pflege aus der Steuer, Strom mit 5 % Mehrwertsteuer und ohne Umlagen, das Existenzminimum für Studium, Ausbildung und Weiterbildung, ein Bürgerjob mit Recht auf Arbeit, ein Berufscoach für alle, die Familienrente mit 6 statt 3 Entgeltpunkten je Kind, zinslose Darlehen für Elektroauto und Wallbox sowie für Dämmung, Wärmepumpe, größere Heizkörper, PV und Speicher. Steuerfreie Mehrarbeit lässt sich unter „Alle Stellschrauben“ dazuschalten; im Gesamtpaket ist sie aus.</p>
+        <p>Gegenfinanziert werden sie unter anderem durch eine Luxusstufe der Mehrwertsteuer und eine schlankere, KI-taugliche Verwaltung. Der Normalsatz der Mehrwertsteuer steigt auf 50 %. Dazu kommen eine Gesundheitsabgabe auf Tabak, Alkohol und Zucker, das Ende des Dieselprivilegs und eine Quellensteuer von 50 % als stille Teilhabe. Fachkräfte aus dem Ausland bekommen eine Startprämie von 15.000 € plus 20 % des Gehalts über 30.000 €.</p>
       </div></details>
       <details><summary>Wo liegen die Grenzen dieser Rechnung?</summary><div>
         <p>Das Modell ist statisch: Es unterstellt, dass Menschen gleich viel arbeiten, sparen und ausgeben wie heute. Wachstum durch mehr Investitionen, Bildung und weniger Bürokratie ist nicht eingerechnet. Ebenso wenig die steigenden Kosten durch die Alterung der Gesellschaft. Höhere Verteidigungsausgaben lassen sich oben mit dem Schalter „Mit Sicherheitsbeitrag“ einrechnen, weitere Kosten als zusätzliche Ausgaben.</p>
-        <p>Die Verteilung der Ausgaben ist vereinfacht angenommen. Am unsichersten sind, wie viel vom Staatsanteil an Erbschaften tatsächlich fällig wird, die Kosten der Übergangsregel, der Mietwert der eigenen Wohnungen und einige Bausteine. Renten- und Pflegeversicherung und die Gewerbesteuer bleiben in ihrer Grundstruktur bestehen.</p>
+        <p>Die Verteilung der Ausgaben ist vereinfacht angenommen. Am unsichersten sind, wie viel vom Staatsanteil an Erbschaften tatsächlich fällig wird, die Kosten der Übergangsregel, der Mietwert der eigenen Wohnungen und einige Bausteine. Die Gewerbesteuer bleibt bestehen. Die Mehrwertsteuer wird bei Zahlungseingang fällig, Vorsteuer gibt es erst nach Zahlung; Mehreinnahmen daraus sind nicht eingerechnet.</p>
       </div></details>
     </div>
   </div>
@@ -602,7 +601,7 @@ const ANNAHMEN = {
   BBGKV: 69750, BBGRV: 101400, Mini: 603, Midi: 2000,
   // Neues System: Ausgabensteuer je Erwachsenem, Satz auf die Ausgaben über dem Existenzminimum
   // Modell 2.4 (Stand 08.11.2026, 11:26): im Preis 35 / 45 / 50 %, Aufschlag 53,8 / 81,8 / 100 %; Stufe 1 bis 2.000 €, Stufe 2 bis 3.000 € Ausgaben im Monat
-  Satz1: 0.35 / 0.65, Grenze1: 11652, Satz2: 0.45 / 0.55, Grenze2: 23652, Satz3: 1.00,
+  Satz1: 0, Grenze1: 4008, Satz2: 1.00, Grenze2: 4008, Satz3: 1.00,   // Gesamtpaket (Modell 2.5): frei bis 1.363 € je Erwachsenem im Monat, darüber 50 %
   // Stufe 4 (125 % Aufschlag über 5.000 € im Monat) ist im Vorschlag aus; mit Stufe4Jahre > 0 wirkt sie in den ersten Jahren
   Stufe4Monat: 5000, Grenze3: 47652, Satz4: 1.25, Stufe4Jahre: 0,   // keine Stufe 4: höchstens 50 % Steuer (Tomas, November 2026)
   SVFB: 24000,              // Lohn frei von Beiträgen zu Pflege und Rente bis 2.000 € im Monat
@@ -610,7 +609,7 @@ const ANNAHMEN = {
   // Grundschutz aus der Steuer (Modell 2.4)
   KVAus: 0.0875,            // Arbeitgeberanteil Krankenkasse, wird als Lohn ausgezahlt (bis zur heutigen Grenze)
   KVPausch: 315, KVPraem: 1289, KVBZ: 14.5, BGKV: 10.5, ExMinPraem: 10, PVPriv: 0.10,
-  AVKost: 45, ALGLuecke: 2.5, BodenKost: 15, GSAlter: 7, AnrGrenze: 0.5, AnrKost: 12, GSMwStJ: 22, GSMwStN: 8, BeamtAusgl: 2.8,
+  AVKost: 45, ALGLuecke: 2.5, BodenKost: 15, GSAlter: 7, AnrGrenze: 0.5, AnrKost: 12, GSMwStJ: 1010, GSMwStN: 8, BeamtAusgl: 2.8,
   EgAn: 1, EgKost: 0.55,   // Elterngeld besser (Tomas, 08.11.2026)
   StartAn: 1, StartN: 0.2, StartGrund: 15000, StartSatz: 0.20, StartAb: 30000, StartLohn: 53000,
   MwStQ: 0.10,              // Mehrwertsteuer-Anteil an den Konsumausgaben heute
@@ -687,7 +686,7 @@ const ANNAHMEN = {
   },        // reale Rendite für die 30-Jahres-Rechnung im Haushalt
   // Bausteine: Wohnen und Mehrwertsteuer
   Stundung: 0.2, GBAn: 1, GBE: 280, GBK: 180, ErstAn: 0, LuxAn: 1, LuxErtrag: 9,
-  NormPkt: 2, RVPkt: 3, NullSatz: 3, NormJePkt: 11.4, SVjePkt: 18, NormAnteil: 0.577,
+  NormPkt: 31, RVPkt: 0, NullSatz: 5.76, NormJePkt: 11.4, SVjePkt: 18, NormAnteil: 0.577,
   // Bausteine: Bildung und Arbeit
   BildAn: 1, Stud: 2.3, BAfoeg: 2.6, KG18: 4.7, Azubi: 0.7, WBTn: 0.6, WBheute: 2.4,
   BJAn: 1, BJTn: 2, BJPV: 420, BJAnl: 3500, BJheuteTn: 1.5, BJheute: 14200, BJVerw: 2, BJAnr: 4,
@@ -695,8 +694,8 @@ const ANNAHMEN = {
   RentAn: 0, RentN: 1.3, RentKonsum: 23000, RentVerd: 9000, RentDyn: 0.6,
   // Minijob und Mehrarbeit im Rentenalter frei (Tomas, November 2026)
   RentMini: 1, RMiniN: 1.2, RMiniV: 350, RMiniKonsum: 16000, RMidiN: 0.25, RMidiV: 1300, RMidiKonsum: 27000,
-  RentMehrAn: 1, RentMehrStd: 18.5, RMehrN: 0.10, RMehrW: 42000, RMehrH: 38, RMehrKonsum: 45000,
-  MehrAn: 1, MehrStd: 40, MehrKind: 3, MehrKind6: 10, MehrKind3: 15, MehrPfl2: 10, MehrPfl3: 20, MehrPfl45: 30, MehrDeckel: 6000, MehrDeckelFam: 0,
+  RentMehrAn: 0, RentMehrStd: 18.5, RMehrN: 0.10, RMehrW: 42000, RMehrH: 38, RMehrKonsum: 45000,
+  MehrAn: 0, MehrStd: 40, MehrKind: 3, MehrKind6: 10, MehrKind3: 15, MehrPfl2: 10, MehrPfl3: 20, MehrPfl45: 30, MehrDeckel: 6000, MehrDeckelFam: 0,
   // Familienrente: Erziehung zählt wie Lohn, 6 statt 3 Entgeltpunkte je Kind (Entscheidung Tomas 08.11.2026)
   FamAn: 1, FamEP: 3, FamGeb: 0.68, FamRW: 42.52, FamJ: 20,
   // Verwaltung
@@ -704,7 +703,10 @@ const ANNAHMEN = {
   // Zinsloses Darlehen für Elektroauto und Wallbox über das Finanzamt (Entscheidung Tomas 08.11.2026)
   EAutoAn: 1, EAutoN: 1, EAutoD: 20000, EAutoQ: 0.5, EAutoAus: 0.85, EAutoL: 8,
   // Zinslose Darlehen für Dämmung, Wärmepumpe, PV und Speicher; Größe bestätigt der Energieberater, das Finanzamt zahlt aus (Entscheidung Tomas 08.11.2026)
-  EnAn: 1, PVN: 0.3, PVD: 18000, PVL: 20, WPN: 0.3, WPD: 15000, WPL: 20, DaemN: 0.2, DaemD: 40000, DaemL: 30, StSpN: 0.5, StSpD: 1000, StSpL: 10,
+  EnAn: 1, PVN: 0.3, PVD: 18000, PVL: 20, WPN: 0.5, WPD: 15000, WPL: 20, DaemN: 0.2, DaemD: 40000, DaemL: 40, StSpN: 0.5, StSpD: 1000, StSpL: 10, HKN: 0.5, HKD: 8000, HKL: 40,
+  // Gesamtpaket: Rente und Pflege aus der Steuer und weitere Bausteine (Mrd. €; Modell 2.5)
+  RVPVSt: 1, RVPVKost: 345, MiniQ: 0.28, StromKost: 28.1, AutoKost: 7.3, WPKost: 3.75, DiensteKost: 14, BeamtBes: 30, SelbRente: 27.5, AusglKlein: 5, ALGSKost: 1,
+  GesAbg: 39, DieselE: 7, QuelleE: 10, DienstwE: 2, StromSt: 5.0,
   // Zuckerabgabe (zweckgebunden)
   ZuckAn: 1, ZuckSatz: 5, ZuckMenge: 2.54, ZuckRueck: 0.25, ZuckBonus: 9,
   // Steuerfreie Mehrarbeit: Gruppen (Mio. Haushalte, Lohn/Stunden je Person, Kinder, Ausgaben über dem Existenzminimum, Erwachsene)
@@ -754,7 +756,7 @@ const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
 
 function tarif(x) { // Ausgabensteuer je Erwachsenem auf Ausgaben x über dem Existenzminimum
   x = Math.max(0, x);
-  return A.Satz1 * Math.min(x, A.Grenze1) + A.Satz2 * Math.max(0, Math.min(x, A.Grenze2) - A.Grenze1) + A.Satz3 * Math.max(0, x - A.Grenze2);
+  return A.Satz1 * Math.min(x, A.Grenze1) + A.Satz2 * Math.max(0, Math.min(x, A.Grenze2) - A.Grenze1) + A.Satz3 * Math.max(0, x - Math.max(A.Grenze1, A.Grenze2));
 }
 function estTarif(z) {
   if (z <= A.GFB) return 0;
@@ -834,7 +836,13 @@ function haushalt(h) {
   }
   const pvPriv = A.PVPriv * h.pkv;                        // private Pflegeversicherung bleibt
   const praemie = A.KVPraem * h.erw;                      // Prämie der Krankenkasse je Erwachsenem
-  svNeu += pvPriv + praemie;
+  // Gesamtpaket: Rente und Pflege aus der Steuer. Keine Beiträge mehr außer der Prämie; die Betriebe zahlen ihren Anteil zu
+  // Rente und Pflege als Lohn aus, beim Minijob die Pauschale (13 % Krankenkasse + 15 % Rente)
+  const rp = A.RVPVSt;
+  const svRP = svNeu + pvPriv;                            // Beiträge zu Rente und Pflege, die wegfallen (rp = 1)
+  let agRP = rp * A.MiniQ * h.mini;
+  for (const q of personen) { const mq = q.l / 12; if (q.l === 0 || mq <= A.Mini) agRP += rp * A.MiniQ * q.l; else agRP += rp * (Math.min(q.l, A.BBGRV) * rvn + Math.min(q.l, A.BBGKV) * A.PVAN); }
+  svNeu = (1 - rp) * svRP + praemie; fbSum *= 1 - rp;
   const rentePlus = A.KVAus * h.rente;                    // Anteil der Rentenversicherung an der Krankenkasse als höhere Rente
   const gsPlus = h.transfer > 0 ? (A.KVPraem + A.GSMwStJ) * h.erw : 0; // Grundsicherung steigt um Prämie und Ausgleich der Mehrwertsteuer
   const rentFrei = h.rentner ? Math.max(A.RentAn * (lohn + h.mini + h.gewinn), A.RentMini * miniFrei(lohn + h.mini + h.gewinn), A.RentMehrAn * personen.reduce((a, q) => a + rentMehr(q.l, q.s, h.kinder, h.pg), 0)) : 0;
@@ -856,9 +864,9 @@ function haushalt(h) {
     const ks = cap ? cap.konsum : konsum, frS = cap ? cap.frei : existenz + mehr + rentFrei;
     x3s = h.erw * Math.max(0, Math.max(0, ks + mietw - frS) / h.erw - A.Grenze2);
     const q = rvn + pvSatz, t3 = A.Satz3 / (1 + A.Satz3);
-    anr = Math.max(0, q + (1 - q) * t3 - A.AnrGrenze) * x3s * (1 + A.Satz3) / (1 - q);
+    anr = (1 - A.RVPVSt) * Math.max(0, q + (1 - q) * t3 - A.AnrGrenze) * x3s * (1 + A.Satz3) / (1 - q);
   }
-  const gut = ausSum + rentePlus + gsPlus + anr;           // ausgezahlte Anteile und höhere Leistungen, gegengerechnet
+  const gut = ausSum + agRP + rentePlus + gsPlus + anr;           // ausgezahlte Anteile und höhere Leistungen, gegengerechnet
   const vorschlag = { sv: svNeu, est: 0, kap: 0, mwst: mwstNeu, ausg, gut: -gut };
   // Übergangsphase
   const alt = Math.min(h.verm, A.AltCap * h.erw);
@@ -867,7 +875,7 @@ function haushalt(h) {
   const s4 = A.Stufe4Jahre > 0 ? h.erw * (A.Satz4 - A.Satz3) * Math.max(0, ueber2 / h.erw - A.Grenze3) : 0;
   const sum = o => o.sv + o.est + o.kap + o.mwst + o.ausg + o.gut;
   return { heute, vorschlag, sumH: sum(heute), sumV: sum(vorschlag), einkommen, konsum, verf, existenz, mehr, rentFrei, frei, mietw, ueber, ausg, gb, fbSum, senkSum, mwstNeu, mwst, alt, ausgUeb, s4, kg, sv, svRente, svNeu, unterhalt, entfall,
-    praemie, pvPriv, ausSum, rentePlus, gsPlus, anr, x3s, gut };
+    praemie, pvPriv, ausSum, agRP, svRP, rentePlus, gsPlus, anr, x3s, gut };
 }
 
 /* Inverse Standardnormalverteilung (Acklam) */
@@ -919,17 +927,19 @@ function svKost() { return svKostRoh(A.SVFB, A.TaperEnd, true) * A.SVKostAlt / s
 
 function gesamt() {
   A.SVKost = svKost();
-  const wegfall = A.LSt + A.vESt + A.nvSt + A.AbgStA + A.KSt + A.Soli + A.ErbSt;
+  const wegfall = A.LSt + A.vESt + A.nvSt + A.AbgStA + A.KSt + A.Soli + A.ErbSt + A.StromSt;
   const kindergeld = A.KGKinder * A.KindergeldMonat * 12 / 1000;
   const gb = A.GBAn * (A.Erw * A.GBE + A.Kinder * A.GBK) * 12 * 0.07 / 1.07 / 1000;
   const erst = A.ErstAn * (A.Erw * A.RBE * 12 * A.MwStRB + A.Kinder * A.RBK * 12 * A.MwStRB) / 1000;
   const bild = A.BildAn * ((A.Stud + A.WBTn) * (A.GFB + A.KVPraem) / 1000 - A.BAfoeg - A.KG18 + A.Azubi - A.WBheute);
-  const bj = A.BJAn * (A.BJTn * (A.GFB + A.KVPraem + A.BJPV + A.BJAnl) / 1000 - A.BJheuteTn * A.BJheute / 1000 - A.BJVerw + A.BJAnr);
+  const bj = A.BJAn * (A.BJTn * (A.GFB + A.KVPraem + (1 - A.RVPVSt) * A.BJPV + A.BJAnl) / 1000 - A.BJheuteTn * A.BJheute / 1000 - A.BJVerw + A.BJAnr);
   // Grundschutz aus der Steuer (Modell 2.4)
   const kasse = A.KVPausch - A.KVBZ - A.BGKV + A.ExMinPraem, boden = A.BodenKost - A.GSAlter;
   const gsMwSt = A.GSMwStN * A.GSMwStJ / 1000;
   const start = A.StartAn * A.StartN * (A.StartGrund + A.StartSatz * Math.max(0, A.StartLohn - A.StartAb)) / 1000;
-  const mwstH = (A.NormPkt - A.RVPkt) * A.NormJePkt - A.NullSatz;
+  // Mehreinnahmen aller Punkte, nicht linear: bei hohem Satz bringt jeder Punkt etwas weniger
+  const mwstAll = A.NormJePkt * 1.19 ** 2 * 100 * ((0.19 + A.NormPkt / 100) / (1.19 + A.NormPkt / 100) - 0.19 / 1.19);
+  const mwstH = mwstAll - A.RVPkt * A.NormJePkt - A.NullSatz;
   const coach = A.CoachAn * A.CoachN * A.CoachK / 1e9;
   const rx = Math.max(0, A.RentKonsum - A.GFB);
   const rent = A.RentAn * (A.RentN * (tarif(rx) - tarif(Math.max(0, rx - A.RentVerd))) / 1000 - A.RentDyn);
@@ -948,7 +958,7 @@ function gesamt() {
   mehrK *= A.MehrAn;
   const eaBestand = A.EAutoAn * A.EAutoN * A.EAutoD * A.EAutoAus * A.EAutoL / 2 / 1000, eaKost = eaBestand * A.Zins;
   // Bestand bei Rückzahlung in gleichen Raten: im Dauerzustand Zahl × Betrag × Laufzeit / 2; in der Startphase (15 Jahre) erst teilweise aufgebaut
-  const enT = [[A.PVN, A.PVD, A.PVL], [A.WPN, A.WPD, A.WPL], [A.DaemN, A.DaemD, A.DaemL], [A.StSpN, A.StSpD, A.StSpL]];
+  const enT = [[A.PVN, A.PVD, A.PVL], [A.WPN, A.WPD, A.WPL], [A.DaemN, A.DaemD, A.DaemL], [A.StSpN, A.StSpD, A.StSpL], [A.HKN, A.HKD, A.HKL]];
   const enBestand = A.EnAn * enT.reduce((a, [n, d, l]) => a + n * d * l / 2, 0) / 1000;
   const enStart = A.EnAn * enT.reduce((a, [n, d, l]) => { const j = Math.min(l, A.Jahre / 2); return a + n * d * j * (1 - j / (2 * l)); }, 0) / 1000;
   const it = A.VerwAn * A.VerwIT, verwE = A.VerwAn * A.VerwZiel;
@@ -965,7 +975,16 @@ function gesamt() {
     ["Kindergeld, bisher mit der Lohnsteuer verrechnet", kindergeld, kindergeld],
     ["Grundbedarf ohne Mehrwertsteuer", gb, gb],
     ["Pauschale Mehrwertsteuer-Erstattung (Modell 1.0)", erst, erst],
-    [`Keine Beiträge zu Pflege und Rente auf Lohn bis ${eur(A.SVFB / 12)} im Monat`, A.SVKost, A.SVKost],
+    [`Keine Beiträge zu Pflege und Rente auf Lohn bis ${eur(A.SVFB / 12)} im Monat`, (1 - A.RVPVSt) * A.SVKost, (1 - A.RVPVSt) * A.SVKost],
+    ["Rente und Pflege aus der Steuer: Beiträge entfallen", A.RVPVSt * A.RVPVKost, A.RVPVSt * A.RVPVKost],
+    ["Strom mit 5 % Mehrwertsteuer und ohne Umlagen", A.StromKost, A.StromKost],
+    ["Neuwagen: Mehrwertsteuer auf die ersten 15.000 € erstattet", A.AutoKost, A.AutoKost],
+    ["Wärmepumpen ohne Mehrwertsteuer", A.WPKost, A.WPKost],
+    ["Dienste vor Ort mit 5 % Mehrwertsteuer", A.DiensteKost, A.DiensteKost],
+    ["Besoldung der Beamten und Pensionen angepasst", A.BeamtBes, A.BeamtBes],
+    ["Ausgleich der Mehrwertsteuer für kleine Einkommen", A.AusglKlein, A.AusglKlein],
+    ["Arbeitslosengeld für Selbständige", A.ALGSKost, A.ALGSKost],
+    ["Rente für Selbständige und aus Ausschüttungen (läuft ein)", A.SelbRente / A.FamJ, A.SelbRente],
     ["Gründungszuschuss 100 % auf Stammkapital", A.Gruend, A.Gruend],
     ["Existenzminimum in der Bildung", bild, bild],
     ["Bürgerjob: Recht auf Arbeit oder Bildung", bj, bj],
@@ -978,8 +997,8 @@ function gesamt() {
     ["Arbeitslosengeld aus der Steuer", A.AVKost, A.AVKost],
     ["Arbeitslosengeld auf die Lohnlücke, wie Kurzarbeitergeld", A.ALGLuecke, A.ALGLuecke],
     [`Rentenboden ${eur((A.GFB + A.KVPraem) / 12)} im Monat, nach Abzug der Grundsicherung im Alter`, boden, boden],
-    [`Obergrenze: Steuer und Beiträge höchstens ${pct(A.AnrGrenze, 0)} je Euro Lohn`, A.AnrKost, A.AnrKost],
-    ["Ausgleich der höheren Mehrwertsteuer in der Grundsicherung", gsMwSt, gsMwSt],
+    [`Obergrenze: Steuer und Beiträge höchstens ${pct(A.AnrGrenze, 0)} je Euro Lohn`, (1 - A.RVPVSt) * A.AnrKost, (1 - A.RVPVSt) * A.AnrKost],
+    [`Ausgleich der Mehrwertsteuer in Grundsicherung, Bürgerjob und Rentenboden (${eur(A.GSMwStJ / 12)} im Monat)`, gsMwSt, gsMwSt],
     ["Ausgleichszulage für Beamte und Pensionäre", A.BeamtAusgl, A.BeamtAusgl],
     ["Elterngeld besser: 4 + 6 + 4 Monate, 80 und 65 %, 430 bis 2.600 €", A.EgAn * A.EgKost, A.EgAn * A.EgKost],
     ["Startprämie für Fachkräfte aus dem Ausland", start, start],
@@ -996,7 +1015,11 @@ function gesamt() {
     ["Dieselbe Steuer auf den Mietwert der eigenen Wohnung", mietSt * (1 - A.Stundung), mietSt],
     ["Staatsanteil an Erbschaften", erbS, erbL],
     ["Luxusstufe der Mehrwertsteuer", lux, lux],
-    [`Mehrwertsteuer ${fmt(19 + A.NormPkt)} %: ${fmt(A.NormPkt - A.RVPkt)} Punkte für den Staatshaushalt, abzüglich Nullsatz`, mwstH, mwstH],
+    [`Mehrwertsteuer ${fmt(19 + A.NormPkt)} % statt 19 %, abzüglich Nullsatz${A.RVPkt ? "; " + fmt(A.RVPkt) + " Punkte für die Rente" : ""}`, mwstH, mwstH],
+    ["Gesundheitsabgabe auf Tabak, Alkohol und Zucker", A.GesAbg, A.GesAbg],
+    ["Dieselprivileg endet", A.DieselE, A.DieselE],
+    ["Quellensteuer 50 % als stille Teilhabe", A.QuelleE, A.QuelleE],
+    ["Dienstwagen: private Nutzung an der Quelle besteuert", A.DienstwE, A.DienstwE],
     ["Einsparung in der Verwaltung", 0, verwE],
     ["Abbau klimaschädlicher Subventionen", A.SubvAbbau, A.SubvAbbau],
     [`Sicherheitsbeitrag: Mehrwertsteuer ${fmt(A.SichPkt, 1)} Punkte höher`, sichE, sichE],
@@ -1156,7 +1179,7 @@ function updateHH() {
   const entl = r.entfall > 0.5;
   const H = r.sumH + (entl ? r.unterhalt : 0), V = r.sumV + (entl ? r.unterhalt - r.entfall : 0);
   const was = entl ? "Steuern, Abgaben und Unterhalt" : "Steuern und Abgaben";
-  $("duo").innerHTML = `<div><span class="k">Heute</span><span class="v">${eur(H)}</span><span class="s">${eur(H / 12)} im Monat</span><span class="s">${was}</span></div><div class="neu"><span class="k">Im Vorschlag</span><span class="v">${eur(V)}</span><span class="s">${eur(V / 12)} im Monat</span><span class="s">${A.Sicherheit ? "mit Sicherheitsbeitrag" : (tarifGeaendert() ? "mit Ihren geänderten Sätzen" : "wie im Buch")}</span></div>`;
+  $("duo").innerHTML = `<div><span class="k">Heute</span><span class="v">${eur(H)}</span><span class="s">${eur(H / 12)} im Monat</span><span class="s">${was}</span></div><div class="neu"><span class="k">Reform wie im Buch</span><span class="v">${eur(V)}</span><span class="s">${eur(V / 12)} im Monat</span><span class="s">${A.Sicherheit ? "mit Sicherheitsbeitrag" : (tarifGeaendert() ? "mit Ihren geänderten Sätzen" : "wie im Buch")}</span></div>`;
   mbarText = `<span>Heute <b>${eur(H)}</b></span><span>Vorschlag <b>${eur(V)}</b></span><span>${V - H < -0.5 ? "−" + eur(H - V) : V - H > 0.5 ? "+" + eur(V - H) : "±0 €"}</span>`;
   $("mbar").innerHTML = mbarText;
   const vd = $("verdict");
@@ -1190,7 +1213,7 @@ function updateHH() {
   // Balken
   const max = Math.max(r.sumH, r.sumV, 1);
   const bars = $("bars"); bars.innerHTML = "";
-  const netto = o => { const n = { ...o }; let g = -(o.gut || 0); for (const k of ["sv", "mwst", "ausg"]) { const d = Math.min(g, Math.max(0, n[k])); n[k] -= d; g -= d; } return n; };
+  const netto = o => { const n = { ...o }, ks = ["sv", "mwst", "ausg"], pos = ks.reduce((a, k) => a + Math.max(0, n[k]), 0), f = pos > 0 ? Math.max(0, pos + (o.gut || 0)) / pos : 0; for (const k of ks) n[k] = Math.max(0, n[k]) * f; n.gut = 0; return n; };   // Gegengerechnetes anteilig abziehen
   [["Heute", r.heute, r.sumH], ["Vorschlag", netto(r.vorschlag), r.sumV]].forEach(([lbl, o, s]) => {
     const row = document.createElement("div"); row.className = "barrow";
     row.innerHTML = `<div class="lbl">${lbl}<small>${eur(s)}</small></div>`;
@@ -1225,12 +1248,12 @@ function updateHH() {
   const st1 = Math.min(proErw, A.Grenze1), st2 = Math.max(0, Math.min(proErw, A.Grenze2) - A.Grenze1), st3 = Math.max(0, proErw - A.Grenze2);
   const mStufe = Math.max(A.Grenze1, A.Grenze2 - A.Grenze1, st3, 1);
   const stufe = (lbl, betrag, satz) => `<div class="stufe"><span>${lbl}</span><span class="meter"><span style="width:${betrag / mStufe * 100}%;opacity:${0.55 + satz * 0.6}"></span></span><b>${eur(betrag * satz * h.erw)}</b></div>`;
-  st.push(`<li><div><b>Ausgabensteuer: ${eur(r.ausg)}</b><div class="why">Auf die ${eur(r.ueber)} über dem Freibetrag${h.erw === 2 ? ", verteilt auf beide Erwachsene (" + eur(proErw) + " je Person)" : ""}, gelten die Stufen je Erwachsenem:</div>
-    <div class="stufen">${stufe(pct(A.Satz1, 0) + " auf " + eur(st1), st1, A.Satz1)}${stufe(pct(A.Satz2, 0) + " auf " + eur(st2), st2, A.Satz2)}${stufe(pct(A.Satz3, 0) + " auf " + eur(st3), st3, A.Satz3)}</div></div></li>`);
-  st.push(`<li><div><b>Mehrwertsteuer: ${eur(r.mwstNeu)}</b><div class="why">Der Normalsatz steigt um ${fmt(A.NormPkt)} Punkte auf ${fmt(19 + A.NormPkt)} %: ${fmt(A.RVPkt)} Punkte gehen an die Rentenversicherung, ${fmt(A.NormPkt - A.RVPkt)} an den Staatshaushalt.${r.gb > 0 ? " Lebensmittel, Wasser und Nahverkehr sind frei von Mehrwertsteuer, das spart diesem Haushalt " + eur(r.gb) + "." : ""}</div></div></li>`);
-  if (r.svNeu > 0.5) st.push(`<li><div><b>Sozialbeiträge und Krankenkasse: ${eur(r.svNeu)}</b><div class="why">Krankenkasse und Arbeitslosengeld bezahlt der Staat aus der Steuer. Jeder Erwachsene zahlt der Krankenkasse eine Prämie von ${eur(A.KVPraem)} im Jahr${h.erw === 2 ? ", zusammen " + eur(r.praemie) : ""}; Kinder sind frei. Beiträge gibt es nur noch für Pflege und Rente${r.senkSum > 0.5 ? ", der Rentenbeitrag sinkt durch die Mehrwertsteuer um " + fmt(svSenkAN() * 100, 2) + " Punkte" : ""}.${r.fbSum > 0.5 ? " Auf Lohn bis " + eur(A.SVFB / 12) + " im Monat fallen sie nicht an, bei höheren Löhnen schmilzt dieser Freibetrag ab: " + eur(r.fbSum) + " weniger." : ""}${r.pvPriv > 0.5 ? " Die private Pflegeversicherung bleibt: " + eur(r.pvPriv) + "." : ""}</div></div></li>`);
+  st.push(`<li><div><b>Ausgabensteuer: ${eur(r.ausg)}</b><div class="why">Auf die ${eur(r.ueber)} über dem Freibetrag${h.erw === 2 ? ", verteilt auf beide Erwachsene (" + eur(proErw) + " je Person)" : ""}, ${A.Satz1 === 0 && A.Grenze1 === A.Grenze2 ? ` bleiben je Erwachsenem ${eur(st1)} frei (bis ${eur((A.Grenze1 + A.GFB) / 12)} im Monat). Auf ${eur(st3)} darüber gilt ein Aufschlag von ${pct(A.Satz3, 0)}, das sind ${pct(A.Satz3 / (1 + A.Satz3), 0)} von dem, was ins Private fließt.</div></div></li>` : `gelten die Stufen je Erwachsenem:</div>
+    <div class="stufen">${stufe(pct(A.Satz1, 0) + " auf " + eur(st1), st1, A.Satz1)}${stufe(pct(A.Satz2, 0) + " auf " + eur(st2), st2, A.Satz2)}${stufe(pct(A.Satz3, 0) + " auf " + eur(st3), st3, A.Satz3)}</div></div></li>`}`);
+  st.push(`<li><div><b>Mehrwertsteuer: ${eur(r.mwstNeu)}</b><div class="why">Der Normalsatz steigt um ${fmt(A.NormPkt)} Punkte auf ${fmt(19 + A.NormPkt)} %${A.RVPkt ? `: ${fmt(A.RVPkt)} Punkte gehen an die Rentenversicherung, ${fmt(A.NormPkt - A.RVPkt)} an den Staatshaushalt` : ""}. Gerechnet wird mit dem Anteil der Ausgaben, die heute dem Normalsatz unterliegen; Strom, Kinderkleidung und Dienste vor Ort mit 5 % sind in der Gesamtrechnung berücksichtigt, hier vereinfacht nicht.${r.gb > 0 ? " Lebensmittel, Wasser und Nahverkehr sind frei von Mehrwertsteuer, das spart diesem Haushalt " + eur(r.gb) + "." : ""}</div></div></li>`);
+  if (r.svNeu > 0.5) st.push(`<li><div><b>Sozialbeiträge und Krankenkasse: ${eur(r.svNeu)}</b><div class="why">Krankenkasse und Arbeitslosengeld bezahlt der Staat aus der Steuer. Jeder Erwachsene zahlt der Krankenkasse eine Prämie von ${eur(A.KVPraem)} im Jahr${h.erw === 2 ? ", zusammen " + eur(r.praemie) : ""}; Kinder sind frei. ${A.RVPVSt ? "Rente und Pflege zahlt der Staat ebenfalls aus der Steuer, andere Beiträge gibt es nicht mehr" : "Beiträge gibt es nur noch für Pflege und Rente"}${!A.RVPVSt && r.senkSum > 0.5 ? ", der Rentenbeitrag sinkt durch die Mehrwertsteuer um " + fmt(svSenkAN() * 100, 2) + " Punkte" : ""}.${r.fbSum > 0.5 ? " Auf Lohn bis " + eur(A.SVFB / 12) + " im Monat fallen sie nicht an, bei höheren Löhnen schmilzt dieser Freibetrag ab: " + eur(r.fbSum) + " weniger." : ""}${!A.RVPVSt && r.pvPriv > 0.5 ? " Die private Pflegeversicherung bleibt: " + eur(r.pvPriv) + "." : ""}</div></div></li>`);
   if (r.gut > 0.5) { const t = [];
-    if (r.ausSum > 0.5) t.push(`Der Arbeitgeber zahlt seine Anteile zu Krankenkasse und Arbeitslosenversicherung als Lohn aus: ${eur(r.ausSum)} mehr brutto`);
+    if (r.ausSum + r.agRP > 0.5) t.push(`Der Betrieb zahlt seine Anteile ${A.RVPVSt ? "zu Krankenkasse, Arbeitslosenversicherung, Rente und Pflege" : "zu Krankenkasse und Arbeitslosenversicherung"} als Lohn aus${A.RVPVSt && h.mini > 0 ? " (beim Minijob die Pauschale von " + pct(A.MiniQ, 0) + ")" : ""}: ${eur(r.ausSum + r.agRP)} mehr brutto`);
     if (r.rentePlus > 0.5) t.push(`die Rentenversicherung zahlt ihren Anteil an der Krankenkasse als höhere Rente aus: ${eur(r.rentePlus)}`);
     if (r.gsPlus > 0.5) t.push(`die Grundsicherung steigt um die Prämie und den Ausgleich der Mehrwertsteuer: ${eur(r.gsPlus)}`);
     if (r.anr > 0.5) t.push(`Steuer und Beiträge zusammen sind auf ${pct(A.AnrGrenze, 0)} je Euro Lohn begrenzt; angerechnet werden ${eur(r.anr)}`);
@@ -1242,10 +1265,10 @@ function updateHH() {
 /* ===================== Stellschrauben ===================== */
 const KNOBS = [
   { titel: "Tarif der Ausgabensteuer", items: [
-    { k: "Satz1", lbl: "Stufe 1: Aufschlag", min: 0.1, max: 1, step: 0.01, f: v => pct(v, Math.abs(v * 100 - Math.round(v * 100)) > 0.05 ? 1 : 0), sub: v => `im Preis ${pct(v / (1 + v))} von dem, was ins Private fließt` },
-    { k: "Grenze1", lbl: "Stufe 1 reicht bis zu Ausgaben von", min: 1200, max: 48000, step: 120, f: v => eur((v + A.GFB) / 12) + " im Monat", sub: () => `je Erwachsenem; bis ${eur(A.GFB / 12)} im Monat (Existenzminimum) bleibt alles frei` },
+    { k: "Satz1", lbl: "Stufe 1: Aufschlag", min: 0, max: 1, step: 0.01, f: v => pct(v, Math.abs(v * 100 - Math.round(v * 100)) > 0.05 ? 1 : 0), sub: v => `im Preis ${pct(v / (1 + v))} von dem, was ins Private fließt` },
+    { k: "Grenze1", lbl: "Freibetrag (Stufe 1) reicht bis zu Ausgaben von", min: 0, max: 48000, step: 120, f: v => eur((v + A.GFB) / 12) + " im Monat", sub: () => `je Erwachsenem; bis ${eur(A.GFB / 12)} im Monat (Existenzminimum) bleibt alles frei` },
     { k: "Satz2", lbl: "Stufe 2: Aufschlag", min: 0.1, max: 1.2, step: 0.01, f: v => pct(v, Math.abs(v * 100 - Math.round(v * 100)) > 0.05 ? 1 : 0), sub: v => `im Preis ${pct(v / (1 + v))}` },
-    { k: "Grenze2", lbl: "Stufe 2 reicht bis zu Ausgaben von", min: 1200, max: 72000, step: 120, f: v => eur((v + A.GFB) / 12) + " im Monat", sub: () => "Stufe 3 gilt für alles darüber" },
+    { k: "Grenze2", lbl: "Stufe 2 reicht bis zu Ausgaben von", min: 0, max: 72000, step: 120, f: v => eur((v + A.GFB) / 12) + " im Monat", sub: () => "Stufe 3 gilt für alles darüber" },
     { k: "Satz3", lbl: "Stufe 3: Aufschlag", min: 0.1, max: 1.5, step: 0.01, f: v => pct(v, Math.abs(v * 100 - Math.round(v * 100)) > 0.05 ? 1 : 0), sub: v => `im Preis ${pct(v / (1 + v))}` },
   ]},
   { titel: "Sozialbeiträge", items: [
@@ -1510,20 +1533,23 @@ function updateCO2() {
 
 let mbarText = "";
 function svRegeln(k) { // Stufen und Freibetrag in sich stimmig halten
+  if (A.Satz1 === 0 && A0.Grenze1 === A0.Grenze2) { if (k === "Grenze1") A.Grenze2 = A.Grenze1; if (k === "Satz3") { A.Satz2 = A.Satz3; const kn = $("k_Satz2"); if (kn) kn.value = A.Satz2; } }
   if (A.Grenze2 < A.Grenze1) { if (k === "Grenze2") A.Grenze1 = A.Grenze2; else A.Grenze2 = A.Grenze1; }
   if (A.TaperEnd < A.SVFB + 1200) { if (k === "TaperEnd") A.SVFB = Math.max(0, A.TaperEnd - 1200); else A.TaperEnd = A.SVFB + 1200; }
   ["Grenze1", "Grenze2", "SVFB", "TaperEnd"].forEach(x => { const el = $("k_" + x); if (el) el.value = A[x]; const h = $("h_" + x); if (h) h.value = A[x]; });
 }
 const tarifGeaendert = () => ["Satz1", "Satz2", "Satz3", "Grenze1", "Grenze2", "SVFB", "TaperEnd"].some(k => Math.abs(A[k] - (A.Sicherheit && A.SicherheitWerte[k] !== undefined ? A.SicherheitWerte[k] : A0[k])) > 1e-9);
 function syncTweak() {
-  ["Satz1", "Satz2", "Satz3"].forEach(k => { $("h_" + k).value = A[k]; $("ho_" + k).textContent = pct(A[k], Math.abs(A[k] * 100 - Math.round(A[k] * 100)) > 0.05 ? 1 : 0); });
-  $("h_g1").textContent = eur((A.Grenze1 + A.GFB) / 12); $("h_g2").textContent = eur((A.Grenze2 + A.GFB) / 12);
+  $("h_Grenze1").value = A.Grenze1; $("ho_Grenze1").textContent = eur((A.Grenze1 + A.GFB) / 12) + " im Monat";
+  $("h_Satz3").value = A.Satz3; $("ho_Satz3").textContent = pct(A.Satz3 / (1 + A.Satz3), 0); $("hs_Satz3").textContent = `Aufschlag ${pct(A.Satz3, 0)} auf die Ausgaben`;
+  $("h_SVFBbox").style.display = A.RVPVSt ? "none" : "";
   $("h_SVFB").value = A.SVFB; $("ho_SVFB").textContent = eur(A.SVFB / 12) + " im Monat"; $("hs_SVFB").textContent = `Bei höheren Löhnen schmilzt der Freibetrag ab und ist bei ${eur(A.TaperEnd / 12)} im Monat aufgebraucht.`;
   $("h_Sicherheit").checked = !!A.Sicherheit;
   const buch = !tarifGeaendert() && !A.Sicherheit && !A.Extra;
   const tag = $("tweakTag"); tag.textContent = buch ? "wie im Buch" : "geändert"; tag.className = buch ? "tag" : "tag mod";
 }
-["Satz1", "Satz2", "Satz3"].forEach(k => $("h_" + k).addEventListener("input", e => { A[k] = +e.target.value; const kn = $("k_" + k); if (kn) kn.value = A[k]; updateAll(); }));
+$("h_Grenze1").addEventListener("input", e => { A.Grenze1 = +e.target.value; svRegeln("Grenze1"); updateAll(); });
+$("h_Satz3").addEventListener("input", e => { A.Satz3 = +e.target.value; svRegeln("Satz3"); updateAll(); });
 $("h_SVFB").addEventListener("input", e => { A.SVFB = +e.target.value; A.TaperEnd = Math.max(1200, 3 * A.SVFB); svRegeln("SVFB"); updateAll(); });
 $("h_Sicherheit").addEventListener("change", e => { const b = $("b_Sicherheit"); if (b) { b.checked = e.target.checked; b.dispatchEvent(new Event("change")); } });
 $("h_reset").addEventListener("click", () => { Object.assign(A, structuredClone(A0)); sicherheitAnwenden(); renderKnobs(); updateAll(); });
