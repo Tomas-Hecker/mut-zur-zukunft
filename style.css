@@ -53,3 +53,6 @@ footer nav{display:flex;gap:18px;flex-wrap:wrap}
 .legal .stand{color:var(--muted);font-size:.9rem;margin-top:2em}
 .todo{background:#fff3cd;color:#5c4400;border:1px dashed #b97a06;border-radius:4px;padding:0 .3em}
 @media (max-width:760px){.hero .wrap,.grid3,ol.toc{grid-template-columns:1fr}.cover{max-width:220px}.hero{padding-top:24px}header.top .logo{height:40px}}
+
+/* Große Bildschirme: ganze Breite nutzen, Fließtext bleibt lesbar breit */
+@media (min-width:1240px){.wrap{max-width:none;padding:0 max(32px,env(safe-area-inset-left,0px))}}

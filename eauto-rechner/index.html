@@ -99,13 +99,15 @@ a { color: var(--ev) }
 .sitenav a:focus-visible{outline:2px solid #f2b33d;outline-offset:3px}
 .sitehinweis{max-width:1180px;margin:0 auto 20px;padding:0 max(16px, env(safe-area-inset-left, 0px));font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
 .sitenav.flush + .sitehinweis{margin-top:-8px;padding:0}
-.sitehinweis p{margin:0;padding:10px 14px;border:1px solid #e0a52b;border-left-width:5px;border-radius:8px;background:#fff6dd;color:#3d2e05}
+.sitehinweis p{max-width:none;margin:0;padding:10px 14px;border:1px solid #e0a52b;border-left-width:5px;border-radius:8px;background:#fff6dd;color:#3d2e05}
 .sitehinweis b{color:#7a4f00}
 .sitehinweis a{color:inherit;text-decoration:underline}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sitehinweis p{background:#2e2410;color:#f3e6c4;border-color:#a8790f}:root:not([data-theme="light"]) .sitehinweis b{color:#f2b33d}}
 :root[data-theme="dark"] .sitehinweis p{background:#2e2410;color:#f3e6c4;border-color:#a8790f}
 :root[data-theme="dark"] .sitehinweis b{color:#f2b33d}
 .sitenav:not(.flush) + .sitehinweis{margin-top:14px}
+/* Große Bildschirme: ganze Breite nutzen */
+@media (min-width:1240px){.wrap,.sitenav .sn-in,.sitehinweis{max-width:none!important}.sitenav .sn-in,.sitehinweis{padding-left:max(32px, env(safe-area-inset-left, 0px));padding-right:max(32px, env(safe-area-inset-right, 0px))}}
 @media (max-width:640px){.sitenav .sn-links{gap:2px 14px;font-size:14px}.sitenav .sn-logo span{display:none}}
 </style>
 </head>
