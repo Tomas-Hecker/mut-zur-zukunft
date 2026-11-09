@@ -184,7 +184,7 @@ def page(title, desc, body, cur='', extra_head=''):
 <body class="buch">
 <header class="top" id="top"><div class="wrap"><a href="../" aria-label="Zur Startseite">{WORT}</a><nav aria-label="Hauptmenü"><a href="../">Start</a><a href="./" aria-current="page">Das Buch</a><a href="../steuerrechner/">Steuerrechner</a><a href="../eauto-rechner/">E-Auto-Rechner</a><a href="../heizungsrechner/">Heizungsrechner</a><a href="../energie-rechner/">Energie-Rechner</a><a href="../ueber-mich.html">Über mich</a></nav></div></header>
 {body}
-<footer><div class="wrap"><span>© 2026 Tomas Hecker · Schuldenfrei 2070 · Alle Angaben ohne Gewähr</span><nav aria-label="Rechtliches"><a href="Mut-zur-Zukunft.pdf" download>Buch als PDF</a><a href="../impressum.html#haftung">Haftungsausschluss</a><a href="../impressum.html">Impressum</a><a href="../datenschutz.html">Datenschutz</a></nav></div></footer>
+<footer><div class="wrap"><span>© 2026 Tomas Hecker · Schuldenfrei 2070 · Alle Angaben ohne Gewähr</span><nav aria-label="Rechtliches"><a href="Schuldenfrei-2070.pdf" download>Buch als PDF</a><a href="../impressum.html#haftung">Haftungsausschluss</a><a href="../impressum.html">Impressum</a><a href="../datenschutz.html">Datenschutz</a></nav></div></footer>
 <script src="buch.js" defer></script>
 </body>
 </html>
@@ -231,7 +231,7 @@ for c in chapters:
     subs = ''.join(f'<li><a href="{c["slug"]}.html#{i}">{f"<b>{a}</b> " if a else ""}{html.escape(t[len(a):].strip() if a else t)}</a></li>' for i, t, a in c['heads'])
     lis.append(f'''<li class="kap"><details{" open" if c["no"] in ("5", "7") else ""}><summary><a href="{c["slug"]}.html"><span class="no">{c["no"]}</span><span class="tt">{html.escape(c["title"])}</span></a></summary>{f'<ol class="sub">{subs}</ol>' if subs else ''}</details></li>''')
 uebersicht = f'''<div class="bhero big"><div class="bwrap"><div><p class="eyebrow">Das Buch online lesen</p><h1>Schuldenfrei 2070</h1><p class="blead">Warum wir uns auf die Zukunft freuen können. Das ganze Buch, Kapitel für Kapitel, mit allen Grafiken. Tippe auf ein Kapitel, um es zu lesen, oder auf den Pfeil, um seine Abschnitte zu sehen.</p>
-<div class="btns"><a class="btn" href="vorwort.html">Mit dem Vorwort beginnen</a><a class="btn ghost" href="Mut-zur-Zukunft.pdf" download>Als PDF herunterladen</a></div></div></div></div>
+<div class="btns"><a class="btn" href="vorwort.html">Mit dem Vorwort beginnen</a><a class="btn ghost" href="Schuldenfrei-2070.pdf" download>Als PDF herunterladen</a></div></div></div></div>
 <main class="wrap uebersicht">{SEARCHBOX}<h2>Inhalt</h2><ol class="ktoc">{''.join(lis)}</ol>
 <aside class="rechner"><div><strong>Selbst nachrechnen</strong><p>Was das Steuersystem aus Kapitel 5 für deinen Haushalt bedeutet, zeigt der Steuerrechner.</p></div><div class="rbtns"><a class="rbtn" href="../steuerrechner/">Zum Steuerrechner</a></div></aside></main>'''
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8').write(page('Das Buch online lesen · Schuldenfrei 2070', 'Schuldenfrei 2070 von Tomas Hecker: das ganze Buch online lesen, mit Inhaltsverzeichnis, Suche und Verweisen zum Nachrechnen.', uebersicht))
