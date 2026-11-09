@@ -1596,5 +1596,6 @@ updateAll();
 document.querySelectorAll(".field .hint").forEach(h => { const f = h.closest(".field"); new MutationObserver(() => f.title = h.textContent).observe(h, { childList: true, characterData: true, subtree: true }); f.title = h.textContent; });
 </script>
 
+<script src="../satz.js" defer></script>
 </body>
 </html>

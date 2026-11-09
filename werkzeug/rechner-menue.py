@@ -66,6 +66,8 @@ def einsetzen(pfad, cur, flush):
     s = re.sub(r'<div class="sitehinweis".*?</p></div>\n?', '', s, flags=re.S)
     s = s.replace('</head>', CSS + '\n</head>', 1)
     s = s.replace('<body>\n', '<body>\n' + nav(cur, flush) + '\n' + HINWEIS + '\n', 1)
+    s = s.replace('<script src="../satz.js" defer></script>\n', '')
+    s = s.replace('</body>', '<script src="../satz.js" defer></script>\n</body>', 1)
     open(pfad, 'w', encoding='utf-8').write(s)
 if __name__ == '__main__':
     for d, cur, flush in SEITEN:

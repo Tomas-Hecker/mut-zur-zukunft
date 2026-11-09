@@ -186,6 +186,7 @@ def page(title, desc, body, cur='', extra_head=''):
 {body}
 <footer><div class="wrap"><span>© 2026 Tomas Hecker · Schuldenfrei 2070 · Alle Angaben ohne Gewähr</span><nav aria-label="Rechtliches"><a href="Schuldenfrei-2070.pdf" download>Buch als PDF</a><a href="../impressum.html#haftung">Haftungsausschluss</a><a href="../impressum.html">Impressum</a><a href="../datenschutz.html">Datenschutz</a></nav></div></footer>
 <script src="buch.js" defer></script>
+<script src="../satz.js" defer></script>
 </body>
 </html>
 '''
