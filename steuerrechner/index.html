@@ -404,6 +404,7 @@ a.ql:hover { color: var(--fg); text-decoration-thickness: 2px; }
             <div class="field"><label for="gmbh">Gewinn der eigenen GmbH</label><input id="gmbh" type="number" min="0" step="1000"></div>
             <div class="field"><label for="aus">Ausschüttung aus der GmbH</label><input id="aus" type="number" min="0" step="1000"></div>
             <div class="field"><label for="transfer">Grundsicherung und andere steuerfreie Leistungen</label><input id="transfer" type="number" min="0" step="100"></div>
+            <label class="check field wide"><input id="bjob" type="checkbox"> Im Vorschlag im Bürgerjob statt Grundsicherung (17 Stunden in der Woche, 1.400 € im Monat, gibt alles aus)</label>
             <div class="field"><label for="verm">Verbrauch aus vorhandenem Vermögen</label><input id="verm" type="number" min="0" step="1000"><span class="hint">zusätzlich zum laufenden Einkommen</span></div>
             <label class="check field wide"><input id="kinderlos" type="checkbox"> Kinderlos (keine eigenen Kinder, auch keine erwachsenen; höherer Pflegebeitrag)</label>
             <label class="check field wide"><input id="allein" type="checkbox"> Alleinerziehend</label>
@@ -736,6 +737,7 @@ const QUELLEN = [{"t": "Bevölkerung und Wirtschaft", "i": "Die Größen, auf de
 /* Die zehn Haushalte aus dem Buch (Blatt „Haushalte“) */
 const BEISPIELE = [
   { name: "Grundsicherung", text: "Alleinstehend, Regelbedarf plus Miete und Heizung.", v: { transfer: 12256, kinderlos: 1 } },
+  { name: "Bürgerjob", text: "Heute Grundsicherung. Im Vorschlag 17 Stunden in der Woche im Bürgerjob, 1.400 € im Monat, Krankenkasse, Rente und Pflege zahlt der Staat, gibt alles aus (Buch, Kapitel 6).", v: { transfer: 12348, kinderlos: 1, bjob: 1 } },
   { name: "Rentnerin mit Minijob", text: "9.600 € Rente, 603 € im Monat als Alltagsbegleiterin.", v: { rente: 9600, mini: 7236, rentner: 1 } },
   { name: "Alleinerziehende Pflegehelferin", text: "Teilzeit, 1.600 € brutto im Monat, ein Kind.", v: { lohn1: 19200, std1: 30, kinder: 1, allein: 1 } },
   { name: "Verkäuferin, Mindestlohn", text: "Vollzeit zu 13,90 € pro Stunde, spart 3 %.", v: { lohn1: 28912, std1: 40, kinderlos: 1, spar: 0.03 } },
@@ -747,7 +749,7 @@ const BEISPIELE = [
   { name: "Wohlhabender Ruheständler", text: "30.000 € Rente, 60.000 € Kapitalerträge, lebt auch vom Vermögen, eigenes Haus.", v: { rente: 30000, kap: 60000, verm: 30000, miet: 18000, rentner: 1 } },
   { name: "Unternehmerin mit GmbH", text: "1 Mio. € Gewinn, 300.000 € Ausschüttung, Villa, privat versichert.", v: { gmbh: 1000000, aus: 300000, pkv: 9000, miet: 30000, kinderlos: 1 } },
 ];
-const DEFAULT_BEISPIEL = 5;
+const DEFAULT_BEISPIEL = 6;
 
 /* ===================== Rechenkern ===================== */
 const A = structuredClone(ANNAHMEN);
@@ -844,18 +846,26 @@ function haushalt(h) {
   for (const q of personen) { const mq = q.l / 12; if (q.l === 0 || mq <= A.Mini) agRP += rp * A.MiniQ * q.l; else agRP += rp * (Math.min(q.l, A.BBGRV) * rvn + Math.min(q.l, A.BBGKV) * A.PVAN); }
   svNeu = (1 - rp) * svRP + praemie; fbSum *= 1 - rp;
   const rentePlus = A.KVAus * h.rente;                    // Anteil der Rentenversicherung an der Krankenkasse als höhere Rente
-  const gsPlus = h.transfer > 0 ? (A.KVPraem + A.GSMwStJ + A.ExMinPlus) * h.erw : 0; // Grundsicherung steigt um Prämie und Ausgleich der Mehrwertsteuer
+  const bjPlus = h.bjob && h.transfer > 0 && A.BJAn ? (A.BJPlus || 0) * h.erw : 0;   // Bürgerjob: 200 € im Monat mehr als die Grundsicherung
+  const gsPlus = h.transfer > 0 ? (A.KVPraem + A.GSMwStJ + A.ExMinPlus) * h.erw + bjPlus : 0; // Grundsicherung steigt um Prämie und Ausgleich der Mehrwertsteuer
   const rentFrei = h.rentner ? Math.max(A.RentAn * (lohn + h.mini + h.gewinn), A.RentMini * miniFrei(lohn + h.mini + h.gewinn), A.RentMehrAn * personen.reduce((a, q) => a + rentMehr(q.l, q.s, h.kinder, h.pg), 0)) : 0;
   const existenz = h.erw * A.GFB + h.kinder * A.KIDA;
   const frei = existenz + mehr + rentFrei;
   const mietw = A.Nutzwert > 0 ? h.miet : 0;
-  const ueber = Math.max(0, konsum + mietw - frei);
-  const ausg = h.erw * tarif(ueber / h.erw);
+  let ueber = Math.max(0, konsum + mietw - frei), konsumV = konsum;
+  let ausg = h.erw * tarif(ueber / h.erw);
+  if (bjPlus) {
+    // Bürgerjob: gibt alles aus, was nach der Prämie bleibt; die Ausgabensteuer steckt im Preis
+    const brutto = konsum + gsPlus - praemie;
+    let lo = 0, hi = brutto;
+    for (let i = 0; i < 60; i++) { const x = (lo + hi) / 2; if (x + h.erw * tarif(Math.max(0, x + mietw - frei) / h.erw) > brutto) hi = x; else lo = x; }
+    konsumV = lo; ueber = Math.max(0, konsumV + mietw - frei); ausg = brutto - konsumV;
+  }
   const gb = A.GBAn * (h.erw * A.GBE + h.kinder * A.GBK) * 12 * 0.07 / 1.07;
   const erst = A.ErstAn * (h.erw * A.RBE + h.kinder * A.RBK) * 12 * A.MwStRB;
   const p = A.NormPkt / 100;
   const ps = p + A.SichPkt / 100;   // mit Sicherheitsbeitrag höherer Normalsatz
-  const mwstNeu = konsum * (A.MwStQ + A.NormAnteil * ((0.19 + ps) / (1.19 + ps) - 0.19 / 1.19)) - gb - erst;
+  const mwstNeu = konsumV * (A.MwStQ + A.NormAnteil * ((0.19 + ps) / (1.19 + ps) - 0.19 / 1.19)) - gb - erst;
   // Anrechnung: Steuer und Beiträge zusammen höchstens AnrGrenze je Euro Lohn auf der obersten Stufe;
   // über der Beitragsbemessungsgrenze so hoch wie mit Lohn an der Grenze
   let anr = 0, x3s = 0;
@@ -875,7 +885,7 @@ function haushalt(h) {
   const s4 = A.Stufe4Jahre > 0 ? h.erw * (A.Satz4 - A.Satz3) * Math.max(0, ueber2 / h.erw - A.Grenze3) : 0;
   const sum = o => o.sv + o.est + o.kap + o.mwst + o.ausg + o.gut;
   return { heute, vorschlag, sumH: sum(heute), sumV: sum(vorschlag), einkommen, konsum, verf, existenz, mehr, rentFrei, frei, mietw, ueber, ausg, gb, fbSum, senkSum, mwstNeu, mwst, alt, ausgUeb, s4, kg, sv, svRente, svNeu, unterhalt, entfall,
-    praemie, pvPriv, ausSum, agRP, svRP, rentePlus, gsPlus, anr, x3s, gut };
+    praemie, pvPriv, ausSum, agRP, svRP, rentePlus, gsPlus, bjPlus, konsumV, anr, x3s, gut };
 }
 
 /* Inverse Standardnormalverteilung (Acklam) */
@@ -1120,7 +1130,7 @@ const KAT = [
   ["ausg", "Ausgabensteuer (neu)", "--s5"],
 ];
 const FELDER = ["kid6", "kid3", "lohn1", "std1", "lohn2", "std2", "rente", "kap", "miet", "mini", "gewinn", "pkv", "vorsorge", "gmbh", "aus", "transfer", "verm", "kinder", "vollj", "unterhalt"];
-const LEER = { erw: 1, kinder: 0, kid6: 0, kid3: 0, pg: 0, vollj: 0, unterhalt: 0, lohn1: 0, std1: 0, lohn2: 0, std2: 0, rente: 0, kap: 0, miet: 0, mini: 0, gewinn: 0, pkv: 0, vorsorge: 0, gmbh: 0, aus: 0, transfer: 0, verm: 0, spar: 0, kinderlos: 0, allein: 0, rentner: 0 };
+const LEER = { erw: 1, kinder: 0, kid6: 0, kid3: 0, pg: 0, vollj: 0, unterhalt: 0, lohn1: 0, std1: 0, lohn2: 0, std2: 0, rente: 0, kap: 0, miet: 0, mini: 0, gewinn: 0, pkv: 0, vorsorge: 0, gmbh: 0, aus: 0, transfer: 0, verm: 0, spar: 0, kinderlos: 0, bjob: 0, allein: 0, rentner: 0 };
 
 const GELD = ["lohn1", "lohn2", "rente", "kap", "miet", "mini", "gewinn", "pkv", "vorsorge", "gmbh", "aus", "transfer", "verm"];
 let einheit = 12; // 12 = Eingabe pro Monat, 1 = pro Jahr
@@ -1139,7 +1149,7 @@ function setForm(v) {
   GELD.forEach(f => zeigeGeld(f, h[f]));
   if (![...sparSel.options].some(o => +o.value === h.spar)) { const o = document.createElement("option"); o.value = h.spar; o.textContent = fmt(h.spar * 100) + " %"; sparSel.append(o); }
   sparSel.value = h.spar;
-  $("kinderlos").checked = !!h.kinderlos; $("allein").checked = !!h.allein; $("rentner").checked = !!h.rentner;
+  $("kinderlos").checked = !!h.kinderlos; $("bjob").checked = !!h.bjob; $("allein").checked = !!h.allein; $("rentner").checked = !!h.rentner;
   const needMore = ["mini", "gewinn", "pkv", "vorsorge", "gmbh", "aus", "transfer", "verm"].some(f => h[f] > 0);
   if (needMore) $("moreBox").open = true;
 }
@@ -1150,7 +1160,7 @@ function readForm() {
   h.kinder = Math.round(h.kinder); h.vollj = Math.round(h.vollj);
   h.kid6 = Math.min(h.kinder, Math.round(h.kid6)); h.kid3 = Math.min(h.kid6, Math.round(h.kid3)); h.pg = +$("pg").value;
   h.erw = +$("erw").value; h.spar = +sparSel.value;
-  h.kinderlos = $("kinderlos").checked; h.allein = $("allein").checked; h.rentner = $("rentner").checked;
+  h.kinderlos = $("kinderlos").checked; h.bjob = $("bjob").checked; h.allein = $("allein").checked; h.rentner = $("rentner").checked;
   if (h.erw === 1) { h.lohn2 = 0; h.std2 = 0; }
   return h;
 }
@@ -1194,7 +1204,7 @@ function updateHH() {
     vd.innerHTML = `<span class="big">Kaum Unterschied</span><p>${wer} im Vorschlag etwa gleich viel wie heute.</p>`;
   } else if (diff < 0) {
     vd.className = "verdict good";
-    vd.innerHTML = `<span class="big num">${eur(-diff)} mehr im Portemonnaie</span><p>Im Jahr, das sind ${eur(-diff / 12)} im Monat: ${wer.replace(" zahlt", "")} zahlt im Vorschlag so viel weniger Steuern und Abgaben. Das sind ${pct(-diff / Math.max(1, r.einkommen))} des Einkommens, die zusätzlich zum Sparen und Investieren bleiben.</p>`;
+    vd.innerHTML = `<span class="big num">${eur(-diff)} mehr im Portemonnaie</span><p>Im Jahr, das sind ${eur(-diff / 12)} im Monat: ${wer.replace(" zahlt", "")} ${r.bjPlus > 0.5 ? `${aktiv >= 0 ? "hat" : "haben"} im Bürgerjob so viel mehr zum Leben als heute in der Grundsicherung, nach Prämie, Ausgabensteuer und höherer Mehrwertsteuer.` : `zahlt im Vorschlag so viel weniger Steuern und Abgaben. Das sind ${pct(-diff / Math.max(1, r.einkommen))} des Einkommens, die zusätzlich zum Sparen und Investieren bleiben.`}</p>`;
   } else {
     vd.className = "verdict bad";
     vd.innerHTML = `<span class="big num">${eur(diff)} weniger im Portemonnaie</span><p>Im Jahr: ${wer} im Vorschlag ${eur(diff / 12)} im Monat mehr, das sind ${pct(diff / Math.max(1, r.einkommen))} des Einkommens. Wer weniger privat ausgibt und mehr investiert, zahlt weniger.</p>`;
@@ -1239,7 +1249,7 @@ function updateHH() {
     <tr><td>Belastung in % des Einkommens</td><td>${pct(r.sumH / Math.max(1, r.einkommen))}</td><td>${pct(r.sumV / Math.max(1, r.einkommen))}</td><td></td></tr></tbody>`;
   // Schritte
   const st = [];
-  st.push(`<li><div><b>Privater Verbrauch: ${eur(r.konsum)}</b><div class="why">Das ist, was der Haushalt heute nach Steuern${r.unterhalt > 0 ? ", Unterhalt" : ""} und Sparen für sich ausgibt${h.verm > 0 ? ", einschließlich " + eur(h.verm) + " aus Vermögen" : ""}. Im Vergleich gibt er im Vorschlag genauso viel aus.${r.mietw > 0 ? " Dazu kommt der Mietwert der eigenen Wohnung von " + eur(r.mietw) + ", damit Eigentümer und Mieter gleich behandelt werden." : ""}</div></div></li>`);
+  st.push(`<li><div><b>Privater Verbrauch: ${eur(r.konsum)}</b><div class="why">Das ist, was der Haushalt heute nach Steuern${r.unterhalt > 0 ? ", Unterhalt" : ""} und Sparen für sich ausgibt${h.verm > 0 ? ", einschließlich " + eur(h.verm) + " aus Vermögen" : ""}. ${r.bjPlus > 0.5 ? `Im Bürgerjob gibt er im Vorschlag alles aus, was nach der Prämie bleibt: ${eur(r.konsumV + r.ausg)}, davon ${eur(r.konsumV)} für Waren und Dienste und ${eur(r.ausg)} Ausgabensteuer.` : "Im Vergleich gibt er im Vorschlag genauso viel aus."}${r.mietw > 0 ? " Dazu kommt der Mietwert der eigenen Wohnung von " + eur(r.mietw) + ", damit Eigentümer und Mieter gleich behandelt werden." : ""}</div></div></li>`);
   if (r.unterhalt > 0) st.push(`<li><div><b>Unterhalt für Kinder in Studium oder Ausbildung: ${r.entfall > 0.5 ? eur(r.entfall) + " entfallen" : "bleibt"}</b><div class="why">${r.entfall > 0.5 ? `Heute zahlen Sie ${eur(r.unterhalt)} im Jahr selbst, weil es BAföG nur bei geringem Elterneinkommen gibt. Im Vorschlag bekommt jedes Kind in Studium, Ausbildung oder Weiterbildung das Existenzminimum von ${eur(A.GFB / 12)} im Monat vom Staat, unabhängig vom Einkommen der Eltern. BAföG und Kindergeld für Volljährige gehen darin auf. ${r.unterhalt > r.entfall ? "Was Sie darüber hinaus zahlen (" + eur(r.unterhalt - r.entfall) + "), bleibt freiwillig. " : ""}Im Vergleich gibt der Haushalt trotzdem gleich viel für sich aus; der frei gewordene Betrag bleibt zusätzlich.` : "Der Baustein „Existenzminimum in der Bildung“ ist unten ausgeschaltet, deshalb zahlen Sie den Unterhalt weiter."}</div></div></li>`);
   let freiTxt = `Existenzminimum ${eur(r.existenz)} (${h.erw} × ${eur(A.GFB)}${h.kinder ? " und " + h.kinder + " × " + eur(A.KIDA) + " je Kind" : ""})`;
   if (r.mehr > 0) freiTxt += `, dazu ${eur(r.mehr)} Lohn für Mehrarbeit über ${fmt(mehrSchwelle(h.kinder, h.kid6, h.kid3, h.pg), 1)} Wochenstunden`;
@@ -1256,7 +1266,7 @@ function updateHH() {
   if (r.gut > 0.5) { const t = [];
     if (r.ausSum + r.agRP > 0.5) t.push(`Der Betrieb zahlt seine Anteile ${A.RVPVSt ? "zu Krankenkasse, Arbeitslosenversicherung, Rente und Pflege" : "zu Krankenkasse und Arbeitslosenversicherung"} als Lohn aus${A.RVPVSt && h.mini > 0 ? " (beim Minijob die Pauschale von " + pct(A.MiniQ, 0) + ")" : ""}: ${eur(r.ausSum + r.agRP)} mehr brutto`);
     if (r.rentePlus > 0.5) t.push(`die Rentenversicherung zahlt ihren Anteil an der Krankenkasse als höhere Rente aus: ${eur(r.rentePlus)}`);
-    if (r.gsPlus > 0.5) t.push(`die Grundsicherung steigt um die Prämie und den Ausgleich der Mehrwertsteuer: ${eur(r.gsPlus)}`);
+    if (r.gsPlus > 0.5) t.push(r.bjPlus > 0.5 ? `statt der Grundsicherung gibt es den Lohn im Bürgerjob, ${eur((h.transfer + r.gsPlus) / h.erw / 12)} im Monat: ${eur(r.gsPlus)} mehr (Prämie, Ausgleich der Mehrwertsteuer und ${eur(r.bjPlus / h.erw / 12)} im Monat für die Arbeit)` : `die Grundsicherung steigt um die Prämie und den Ausgleich der Mehrwertsteuer: ${eur(r.gsPlus)}`);
     if (r.anr > 0.5) t.push(`Steuer und Beiträge zusammen sind auf ${pct(A.AnrGrenze, 0)} je Euro Lohn begrenzt; angerechnet werden ${eur(r.anr)}`);
     st.push(`<li><div><b>Gegengerechnet: ${eur(r.gut)}</b><div class="why">${t.join("; ")}.</div></div></li>`); }
   st.push(`<li><div><b>Weg fallen ${eur(r.heute.est + r.heute.kap)}${h.pkv > 0 ? " und die private Krankenversicherung" : ""}</b><div class="why">Einkommensteuer, Soli, Abgeltungsteuer und Körperschaftsteuer gibt es nicht mehr. Was nicht privat ausgegeben wird, bleibt steuerfrei, bis es ins Private fließt oder vererbt wird.</div></div></li>`);
