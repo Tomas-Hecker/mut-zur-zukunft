@@ -182,7 +182,7 @@ def page(title, desc, body, cur='', extra_head=''):
 <link rel="stylesheet" href="buch.css">
 {extra_head}</head>
 <body class="buch">
-<header class="top" id="top"><div class="wrap"><a href="../" aria-label="Zur Startseite">{WORT}</a><nav aria-label="Hauptmenü"><a href="../">Start</a><a href="./" aria-current="page">Das Buch</a><a href="../steuerrechner/">Steuerrechner</a><a href="../eauto-rechner/">E-Auto-Rechner</a><a href="../heizungsrechner/">Heizungsrechner</a><a href="../energie-rechner/">Energie-Rechner</a><a href="../ueber-mich.html">Über mich</a></nav></div></header>
+<header class="top" id="top"><div class="wrap"><a href="../" aria-label="Zur Startseite">{WORT}</a><nav aria-label="Hauptmenü"><a href="../">Start</a><a href="./" aria-current="page">Das Buch</a><a href="../steuerrechner/">Steuerrechner</a><a href="../eauto-rechner/">E-Auto-Rechner</a><a href="../heizungsrechner/">Heizungsrechner</a><a href="../energie-rechner/">Energie-Rechner</a><a href="../balkon-rechner/">Balkon-Rechner</a><a href="../ueber-mich.html">Über mich</a></nav></div></header>
 {body}
 <footer><div class="wrap"><span>© 2026 Tomas Hecker · Schuldenfrei 2070 · Alle Angaben ohne Gewähr</span><nav aria-label="Rechtliches"><a href="Schuldenfrei-2070.pdf" download>Buch als PDF</a><a href="../impressum.html#haftung">Haftungsausschluss</a><a href="../impressum.html">Impressum</a><a href="../datenschutz.html">Datenschutz</a></nav></div></footer>
 <script src="buch.js" defer></script>
