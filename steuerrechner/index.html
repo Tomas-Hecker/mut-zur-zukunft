@@ -356,7 +356,7 @@ a.ql:hover { color: var(--fg); text-decoration-thickness: 2px; }
       <div class="rule"><b>Alle Einkommen gleich</b><span>Lohn, Gewinn, Zinsen, Dividenden, Mieten, Kursgewinne und Erbschaften folgen denselben Regeln und demselben Tarif. Keine Sonderrechte für bestimmte Einkunftsarten.</span></div>
       <div class="rule"><b>Besteuert wird, was ins Private fließt</b><span>Was investiert bleibt und für die Wirtschaft arbeitet, bleibt vorerst steuerfrei. Erst der private Verbrauch wird besteuert.</span></div>
       <div class="rule"><b>Beim Tod wird abgerechnet</b><span>Was bis zum Lebensende unversteuert investiert blieb, gehört zu 50 % der Gemeinschaft, ohne Sonderfreibeträge. Die Erben verwalten diesen Anteil, solange er investiert bleibt.</span></div>
-      <div class="rule"><b>Das Existenzminimum ist immer frei</b><span>Bis 1.363 € Ausgaben im Monat je Erwachsenem und 569 € je Kind fällt keine Steuer an, Beiträge gibt es außer der Prämie der Krankenkasse keine mehr, der Grundbedarf ist frei von Mehrwertsteuer. Das gilt für jedes Einkommen, auch für ein Erbe.</span></div>
+      <div class="rule"><b>Das Existenzminimum ist immer frei</b><span>Bis 1.350 € Ausgaben im Monat je Erwachsenem und 569 € je Kind fällt keine Steuer an, Beiträge gibt es außer der Prämie der Krankenkasse keine mehr, der Grundbedarf ist frei von Mehrwertsteuer. Das gilt für jedes Einkommen, auch für ein Erbe.</span></div>
     </div>
   </div>
 </section>
@@ -505,7 +505,7 @@ a.ql:hover { color: var(--fg); text-decoration-thickness: 2px; }
         <p>Im Vorschlag zählt nur noch, was jemand für sich verbraucht. Wer viel verdient und viel ausgibt, zahlt viel. Wer verdient und investiert, schafft Arbeitsplätze und zahlt erst, wenn er das Geld privat nutzt, spätestens beim Erbgang.</p>
       </div></details>
       <details><summary>Wie hoch ist der Steuersatz?</summary><div>
-        <p>Bis zu Ausgaben von 1.363 € im Monat je Erwachsenem (und 569 € je Kind) bleibt alles frei. Darüber gibt es nur einen Satz: ein Aufschlag von 100 % auf die Ausgaben.</p>
+        <p>Bis zu Ausgaben von 1.350 € im Monat je Erwachsenem (und 569 € je Kind) bleibt alles frei. Darüber gibt es nur einen Satz: ein Aufschlag von 100 % auf die Ausgaben.</p>
         <p>Bezogen auf das, was insgesamt ins Private fließt (Ausgaben plus Steuer), also wie im Preis, sind das 50 %, nie mehr. Beides ist rechnerisch dasselbe. Bei Paaren werden die Ausgaben wie beim Ehegattensplitting auf beide verteilt.</p>
       </div></details>
       <details><summary>Was ändert sich bei Krankenkasse, Arbeitslosengeld und Rente?</summary><div>
@@ -601,7 +601,7 @@ const ANNAHMEN = {
   BBGKV: 69750, BBGRV: 101400, Mini: 603, Midi: 2000,
   // Neues System: Ausgabensteuer je Erwachsenem, Satz auf die Ausgaben über dem Existenzminimum
   // Modell 2.4 (Stand 08.11.2026, 11:26): im Preis 35 / 45 / 50 %, Aufschlag 53,8 / 81,8 / 100 %; Stufe 1 bis 2.000 €, Stufe 2 bis 3.000 € Ausgaben im Monat
-  Satz1: 0, Grenze1: 4008, Satz2: 1.00, Grenze2: 4008, Satz3: 1.00,   // Gesamtpaket (Modell 2.5): frei bis 1.363 € je Erwachsenem im Monat, darüber 50 %
+  Satz1: 0, Grenze1: 3852, Satz2: 1.00, Grenze2: 3852, Satz3: 1.00,   // Gesamtpaket (Modell 2.5): frei bis 1.350 € je Erwachsenem im Monat, darüber 50 %
   // Stufe 4 (125 % Aufschlag über 5.000 € im Monat) ist im Vorschlag aus; mit Stufe4Jahre > 0 wirkt sie in den ersten Jahren
   Stufe4Monat: 5000, Grenze3: 47652, Satz4: 1.25, Stufe4Jahre: 0,   // keine Stufe 4: höchstens 50 % Steuer (Tomas, November 2026)
   SVFB: 24000,              // Lohn frei von Beiträgen zu Pflege und Rente bis 2.000 € im Monat
@@ -634,10 +634,10 @@ const ANNAHMEN = {
   Sicherheit: 0,
   SicherheitWerte: {
     Verteidigung: 66,       // 1,5 % des BIP mehr für Verteidigung, Mrd. € pro Jahr
-    SubvAbbau: 8,           // Abbau klimaschädlicher Subventionen: Diesel 7, Kerosin Inland 0,6, Agrardiesel 0,4
-    // Beitrag von 58 Mrd. € über die Mehrwertsteuer: Normalsatz +5,13 Punkte auf 26,1 % (Kapitel 7, Anhang C7, sicherheit.json);
-    // die Ausgabensteuer bleibt bei 35 / 45 / 50 %
-    SichPkt: 5.13,
+    SubvAbbau: 1,           // Kerosin Inland 0,6 und Agrardiesel 0,4; das Dieselprivileg endet schon im Gesamtpaket
+    // Sicherheitsbeitrag netto rund 65 Mrd. € über den Normalsatz der Mehrwertsteuer: +10,33 Punkte auf rund 60,3 %,
+    // nicht linear gerechnet; der Ausgleich im Existenzminimum steigt von 84 auf rund 112 € im Monat
+    SichPkt: 10.33, GSMwStJ: 1344,
   },
   Verteidigung: 0, SubvAbbau: 0, SichPkt: 0,
   // Prognose bis 2070 (Blatt „Schulden bis 2070“, Nachbildung des Tragfähigkeitsberichts BMF 2024)
@@ -685,7 +685,7 @@ const ANNAHMEN = {
     Lebensmittel: [["Rindfleisch", 13.6, 1], ["Butter", 9, 1], ["Käse", 5.7, 1], ["Hähnchen", 5.5, 1], ["Schweinefleisch", 4.6, 1], ["Reis", 3.1, 1], ["Eier", 3, 1], ["Milch (Liter)", 1.4, 1], ["Tofu", 1, 0], ["Tomaten", 0.8, 0], ["Brot", 0.6, 0], ["Kartoffeln", 0.2, 0]],
   },        // reale Rendite für die 30-Jahres-Rechnung im Haushalt
   // Bausteine: Wohnen und Mehrwertsteuer
-  Stundung: 0.2, GBAn: 1, GBE: 280, GBK: 180, ErstAn: 0, LuxAn: 1, LuxErtrag: 9,
+  Stundung: 0.2, GBAn: 1, GBE: 280, GBK: 180, ErstAn: 0, LuxAn: 0, LuxErtrag: 9,
   NormPkt: 31, RVPkt: 0, NullSatz: 5.76, NormJePkt: 11.4, SVjePkt: 18, NormAnteil: 0.577,
   // Bausteine: Bildung und Arbeit
   BildAn: 1, Stud: 2.3, BAfoeg: 2.6, KG18: 4.7, Azubi: 0.7, WBTn: 0.6, WBheute: 2.4,
@@ -965,7 +965,8 @@ function gesamt() {
   const ausg0 = aufkommen(false);
   const mietSt = A.Nutzwert > 0 ? aufkommen(true) - ausg0 : 0;
   const lux = A.LuxAn * A.LuxErtrag;
-  const sichE = A.SichPkt * (A.NormJePkt - (A.NormPkt > 0 ? A.GSMwStN * A.GSMwStJ / A.NormPkt / 1000 : 0));   // 11,312 Mrd. € je Punkt nach Ausgleich in der Grundsicherung
+  const mwF = p => A.NormJePkt * 1.19 ** 2 * 100 * ((0.19 + p / 100) / (1.19 + p / 100) - 0.19 / 1.19);
+  const sichE = A.SichPkt > 0 ? mwF(A.NormPkt + A.SichPkt) - mwF(A.NormPkt) : 0;   // Sicherheitsbeitrag über den Normalsatz, nicht linear; der höhere Ausgleich steht bei den Ausgaben
   const erbS = A.ErbVol * A.ErbBasis * erbQuote() * A.RealStart;
   const erbL = A.ErbVol * A.ErbBasis * erbQuote() * A.RealLang;
   const fam = A.FamAn * A.FamEP * A.FamGeb * A.FamRW * 12 * A.FamJ / 1000;
@@ -1308,12 +1309,12 @@ const SCHALTER = [
 function renderKnobs() {
   const box = $("knobs"); box.innerHTML = "";
   const sfs = document.createElement("fieldset");
-  sfs.innerHTML = `<legend>Sicherheit und Verteidigung</legend><label class="check"><input type="checkbox" id="b_Sicherheit" ${A.Sicherheit ? "checked" : ""}> Mit Sicherheitsbeitrag (Variante aus dem Buch)</label><p class="sub note">1,5 % des BIP mehr für Verteidigung, rund 66 Mrd. € im Jahr. Bezahlt mit 8 Mrd. € aus dem Abbau klimaschädlicher Subventionen und einem offen ausgewiesenen Sicherheitsbeitrag von rund 58 Mrd. €, im Schnitt knapp 700 € je Einwohner. Dafür steigt der Normalsatz der Mehrwertsteuer um ${fmt(A.SicherheitWerte.SichPkt, 1)} Punkte auf ${fmt(19 + A.NormPkt + A.SicherheitWerte.SichPkt, 1)} %, rund 58 € je Einwohner im Monat. Die Ausgabensteuer bleibt bei höchstens 50 %.</p>`;
+  sfs.innerHTML = `<legend>Sicherheit und Verteidigung</legend><label class="check"><input type="checkbox" id="b_Sicherheit" ${A.Sicherheit ? "checked" : ""}> Mit Sicherheitsbeitrag (Variante aus dem Buch)</label><p class="sub note">1,5 % des BIP mehr für Verteidigung, rund 66 Mrd. € im Jahr. Bezahlt mit 1 Mrd. € aus dem Abbau weiterer klimaschädlicher Subventionen (Kerosin, Agrardiesel; das Dieselprivileg endet schon im Gesamtpaket) und einem offen ausgewiesenen Sicherheitsbeitrag von netto rund 65 Mrd. €, im Schnitt knapp 800 € je Einwohner. Dafür steigt der Normalsatz der Mehrwertsteuer um ${fmt(A.SicherheitWerte.SichPkt, 1)} Punkte auf ${fmt(19 + A.NormPkt + A.SicherheitWerte.SichPkt, 1)} %; der Ausgleich im Existenzminimum steigt auf rund 112 € im Monat. Die Ausgabensteuer bleibt bei höchstens 50 %.</p>`;
   sfs.querySelector("input").onchange = e => {
     const on = e.target.checked, W = A.SicherheitWerte;
     A.Sicherheit = on ? 1 : 0;
     A.Verteidigung = on ? W.Verteidigung : 0; A.SubvAbbau = on ? W.SubvAbbau : 0;
-    A.SichPkt = on ? W.SichPkt : 0;
+    A.SichPkt = on ? W.SichPkt : 0; A.GSMwStJ = on ? W.GSMwStJ : A0.GSMwStJ;
     updateAll();
   };
   KNOBS.forEach(g => {
@@ -1574,7 +1575,7 @@ $("hhForm").addEventListener("submit", e => e.preventDefault());
 $("moreBox").addEventListener("toggle", postHeight);
 document.querySelectorAll("details").forEach(d => d.addEventListener("toggle", postHeight));
 
-function sicherheitAnwenden() { if (A.Sicherheit) { const W = A.SicherheitWerte; Object.assign(A, { Verteidigung: W.Verteidigung, SubvAbbau: W.SubvAbbau, SichPkt: W.SichPkt }); } }
+function sicherheitAnwenden() { if (A.Sicherheit) { const W = A.SicherheitWerte; Object.assign(A, { Verteidigung: W.Verteidigung, SubvAbbau: W.SubvAbbau, SichPkt: W.SichPkt, GSMwStJ: W.GSMwStJ }); } }
 sicherheitAnwenden();
 setForm(BEISPIELE[DEFAULT_BEISPIEL].v);
 renderPresets();
