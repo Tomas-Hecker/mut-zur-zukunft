@@ -239,6 +239,38 @@ a.ql:hover { color: var(--fg); text-decoration-thickness: 2px; }
 @media (prefers-reduced-motion: no-preference) { .seg, .stufe .meter span { transition: width .35s ease; } }
 @media (max-width: 340px) { .fields { grid-template-columns: 1fr; } }
 @media (max-width: 480px) { .stufe { grid-template-columns: 96px minmax(0,1fr) 76px; } }
+
+/* Cockpit: auf großen Bildschirmen Eingaben links, Ergebnis heute und Reform in der Mitte, Stellschrauben rechts, ohne Scrollen der Seite */
+@media (min-width: 1200px) and (min-height: 620px) {
+  #haushalt { padding-top: 20px; padding-bottom: 20px; }
+  #haushalt .lead, #haushalt .howto, #haushalt .eyebrow { display: none; }
+  #haushalt h2 { font-size: 1.5rem; margin: 0 0 10px; }
+  .calc.cockpit { grid-template-columns: minmax(0, 400px) minmax(0, 1fr) minmax(0, 330px); gap: 16px; }
+  .calc.cockpit > .panel { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; padding: 14px; gap: 12px; scrollbar-width: thin; }
+  .calc.cockpit .field label { font-size: .8rem; }
+  .calc.cockpit .fields { gap: 8px 12px; }
+  .calc.cockpit .fields > .field > label:first-child { min-height: 0; }
+  .calc.cockpit .field .hint { font-size: .72rem; }
+  .calc.cockpit .field input[type="number"], .calc.cockpit .field select { padding: 5px 8px; font-size: .92rem; }
+  .calc.cockpit .presets { gap: 5px; }
+  .calc.cockpit .chip { font-size: .76rem; padding: 3px 8px; }
+  .calc.cockpit .preset-note { font-size: .78rem; line-height: 1.35; }
+  .calc.cockpit .field { align-content: start; }
+  .calc.cockpit .field input[type="number"], .calc.cockpit .field select { height: 32px; }
+  .calc.cockpit .unit span { padding-top: 4px; padding-bottom: 4px; font-size: .85rem; }
+  .calc.cockpit .field .hint { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .calc.cockpit { grid-template-columns: minmax(0, 430px) minmax(0, 1fr) minmax(0, 380px); }
+  .calc.cockpit .verdict .big { font-size: 1.7rem; }
+  .calc.cockpit .verdict p { font-size: .92rem; }
+  .calc.cockpit .duo > div { padding: 10px 14px; }
+  .calc.cockpit #zukunft { font-size: .88rem; }
+  .calc.cockpit table td, .calc.cockpit table th { padding-top: 5px; padding-bottom: 5px; }
+  .calc.cockpit .note { font-size: .75rem; }
+  .calc.cockpit .tweak { border: 0; padding: 0; gap: 10px; }
+  .calc.cockpit .duo .v { font-size: 2.2rem; }
+  .calc.cockpit .verdict { padding: 12px 16px; }
+}
+@media (max-width: 1199px) { .panel.side { order: 3; } }
 </style>
 <style id="sitenav-css">
 .sitenav{background:#12372a;color:#fbf8f1;font:600 15px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
@@ -316,7 +348,7 @@ a.ql:hover { color: var(--fg); text-decoration-thickness: 2px; }
     <h2>Was ändert sich für mich?</h2>
     <p class="lead">Wählen Sie ein Beispiel aus dem Buch oder tragen Sie Ihre eigenen Zahlen ein. Verglichen werden alle Steuern und Abgaben, die ein Haushalt heute zahlt, mit denen im Vorschlag. Damit der Vergleich fair ist, gibt der Haushalt in beiden Fällen gleich viel aus.</p>
     <ol class="howto"><li>Beispiel wählen oder eigene Zahlen eintragen</li><li>Ergebnis ablesen: heute und im Vorschlag</li><li>Vorschlag verändern und vergleichen</li></ol>
-    <div class="calc">
+    <div class="calc cockpit">
       <form class="panel" id="hhForm" autocomplete="off">
         <div class="field wide">
           <label>Beispiel aus dem Buch</label>
@@ -362,12 +394,19 @@ a.ql:hover { color: var(--fg); text-decoration-thickness: 2px; }
         <p class="note">Alle Beträge in Euro, Rechtsstand 2026. Die Ergebnisse stehen pro Jahr und pro Monat.</p>
       </form>
 
-      <div class="panel" aria-live="polite">
+      <div class="panel mitte" aria-live="polite">
         <div class="duo" id="duo"></div>
         <div class="verdict" id="verdict"></div>
-        <div id="zukunft"></div>
         <div class="bars" id="bars"></div>
         <div class="legend" id="legend"></div>
+        <div class="tbl-wrap"><table id="hhTable"></table></div>
+        <div>
+          <h3>So rechnet der Vorschlag</h3>
+          <ol class="steps" id="steps"></ol>
+        </div>
+      </div>
+      <div class="panel side" id="sidePanel">
+        <div id="zukunft"></div>
         <div class="tweak" id="tweak">
           <div class="row2"><h3>Vorschlag verändern</h3><span class="tag" id="tweakTag"></span></div>
           <div class="slider"><div class="row"><label for="h_Satz1">Stufe 1, Ausgaben bis <span id="h_g1"></span> im Monat</label><output id="ho_Satz1"></output></div><input type="range" id="h_Satz1" min="0.1" max="1" step="0.01"></div>
@@ -376,11 +415,6 @@ a.ql:hover { color: var(--fg); text-decoration-thickness: 2px; }
           <div class="slider"><div class="row"><label for="h_SVFB">Lohn frei von Beiträgen zu Pflege und Rente bis</label><output id="ho_SVFB"></output></div><input type="range" id="h_SVFB" min="0" max="48000" step="600"><div class="sub" id="hs_SVFB"></div></div>
           <label class="check"><input type="checkbox" id="h_Sicherheit"> Mit Sicherheitsbeitrag für Verteidigung</label>
           <div class="row2"><button type="button" class="btn" id="h_reset">Werte aus dem Buch</button><a href="#staat">Alle Stellschrauben und die Folgen für den Staat</a></div>
-        </div>
-        <div class="tbl-wrap"><table id="hhTable"></table></div>
-        <div>
-          <h3>So rechnet der Vorschlag</h3>
-          <ol class="steps" id="steps"></ol>
         </div>
       </div>
     </div>
@@ -1501,6 +1535,8 @@ setForm(BEISPIELE[DEFAULT_BEISPIEL].v);
 renderPresets();
 renderKnobs();
 updateAll();
+
+document.querySelectorAll(".field .hint").forEach(h => { const f = h.closest(".field"); new MutationObserver(() => f.title = h.textContent).observe(h, { childList: true, characterData: true, subtree: true }); f.title = h.textContent; });
 </script>
 
 </body>
