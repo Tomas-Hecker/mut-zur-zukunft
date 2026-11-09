@@ -983,7 +983,7 @@ function gesamt() {
     ["Wärmepumpen ohne Mehrwertsteuer", A.WPKost, A.WPKost],
     ["Dienste vor Ort mit 5 % Mehrwertsteuer", A.DiensteKost, A.DiensteKost],
     ["Besoldung der Beamten und Pensionen angepasst", A.BeamtBes, A.BeamtBes],
-    ["Ausgleich der Mehrwertsteuer für kleine Einkommen", A.AusglKlein, A.AusglKlein],
+    ["Ausgleich der Mehrwertsteuer für kleine Einkommen", A.AusglKlein * (1 + A.SichPkt / A.NormPkt), A.AusglKlein * (1 + A.SichPkt / A.NormPkt)],   // wächst mit den Punkten des Sicherheitsbeitrags
     ["Arbeitslosengeld für Selbständige", A.ALGSKost, A.ALGSKost],
     ["Rente für Selbständige und aus Ausschüttungen (läuft ein)", A.SelbRente / A.FamJ, A.SelbRente],
     ["Gründungszuschuss 100 % auf Stammkapital", A.Gruend, A.Gruend],
