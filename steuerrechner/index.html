@@ -1221,7 +1221,7 @@ function updateHH() {
     vd.innerHTML = `<span class="big">Kaum Unterschied</span><p>${wer} im Vorschlag etwa gleich viel wie heute.</p>`;
   } else if (diff < 0) {
     vd.className = "verdict good";
-    vd.innerHTML = `<span class="big num">${eur(-diff)} mehr im Portemonnaie</span><p>Im Jahr, das sind ${eur(-diff / 12)} im Monat: ${wer.replace(" zahlt", "")} ${r.bjPlus > 0.5 ? `${aktiv >= 0 ? "hat" : "haben"} im Bürgerjob so viel mehr zum Leben als heute in der Grundsicherung, nach Prämie, Ausgabensteuer und höherer Mehrwertsteuer. Das Buch rechnet in Kaufkraft und kommt auf 1.226 € statt 1.033 € im Monat.` : `zahlt im Vorschlag so viel weniger Steuern und Abgaben. Das sind ${pct(-diff / Math.max(1, r.einkommen))} des Einkommens, die zusätzlich zum Sparen und Investieren bleiben.`}</p>`;
+    vd.innerHTML = `<span class="big num">${eur(-diff)} mehr im Portemonnaie</span><p>Im Jahr, das sind ${eur(-diff / 12)} im Monat: ${aktiv >= 0 ? "Dieser Haushalt" : "Sie"} ${r.bjPlus > 0.5 ? `${aktiv >= 0 ? "hat" : "haben"} im Bürgerjob so viel mehr zum Leben als heute in der Grundsicherung, nach Prämie, Ausgabensteuer und höherer Mehrwertsteuer. Das Buch rechnet in Kaufkraft und kommt auf 1.226 € statt 1.033 € im Monat.` : `${aktiv >= 0 ? "zahlt" : "zahlen"} im Vorschlag so viel weniger Steuern und Abgaben. Das sind ${pct(-diff / Math.max(1, r.einkommen))} des Einkommens, die zusätzlich zum Sparen und Investieren bleiben.`}</p>`;
   } else {
     vd.className = "verdict bad";
     vd.innerHTML = `<span class="big num">${eur(diff)} weniger im Portemonnaie</span><p>Im Jahr: ${wer} im Vorschlag ${eur(diff / 12)} im Monat mehr, das sind ${pct(diff / Math.max(1, r.einkommen))} des Einkommens. Wer weniger privat ausgibt und mehr investiert, zahlt weniger.</p>`;
@@ -1489,7 +1489,7 @@ function drawChart(rows) {
 }
 
 const TYPEN = REG.arten;
-const C10 = false;   // true, sobald Anhang C10 im Online-Buch steht (stelle.html#ann-NAME)
+const C10 = true;   // true, sobald Anhang C10 im Online-Buch steht (stelle.html#ann-NAME)
 const esc = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 let qFilter = "";
 function fmtQ(v, u) {
