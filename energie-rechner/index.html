@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-<meta name="description" content="Stündliche Simulation für Idstein: PV auf Süd-, Ost- und Westdach, Batteriespeicher, Wärmepumpe und E-Auto bei Festpreis, dynamischem Tarif, § 14a und 8 Stunden ohne Netzentgelt.">
+<meta name="description" content="Stündliche Simulation für Idstein: PV auf Süd-, Ost- und Westdach, Batteriespeicher, Wärmepumpe und E-Auto bei Festpreis, dynamischem Tarif und § 14a, dazu der Vorschlag 8 Stunden ohne Netzentgelt.">
 <title>Energie-Rechner Idstein</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -150,7 +150,7 @@ a { color: var(--wp) }
   <header>
     <div class="eyebrow">Stündliche Simulation · Idstein im Taunus</div>
     <h1>PV, Speicher, Wärmepumpe und E-Auto: Was lohnt sich bei welchem Stromtarif?</h1>
-    <p class="lead">Der Rechner spielt ein ganzes Jahr Stunde für Stunde durch: Sonne auf Süd-, Ost- und Westdach, Temperatur und Luftfeuchte in Idstein, Haushaltsstrom, Wärmepumpe und Wallbox. Er vergleicht Festpreis, dynamischen Tarif, das zeitvariable Netzentgelt nach § 14a und den Vorschlag „8 Stunden ohne Netzentgelt“. Die wirtschaftlichste Speichergröße sucht er selbst.</p>
+    <p class="lead">Der Rechner spielt ein ganzes Jahr Stunde für Stunde durch: Sonne auf Süd-, Ost- und Westdach, Temperatur und Luftfeuchte in Idstein, Haushaltsstrom, Wärmepumpe und Wallbox. Er vergleicht Festpreis, dynamischen Tarif und das zeitvariable Netzentgelt nach § 14a, dazu als Vorschlag aus dem Buch „8 Stunden ohne Netzentgelt“, der heute noch nicht gilt. Die wirtschaftlichste Speichergröße sucht er selbst.</p>
     <p class="note" style="margin-top:8px">Zur Miete? Der <a href="../balkon-rechner/">Balkon-Rechner</a> rechnet Balkonkraftwerk und Speicher durch. Die Folien zum Vortrag „Strom clever managen“ stehen <a href="../vortraege/strom-clever-managen/">hier</a>.</p>
   </header>
 
@@ -178,7 +178,7 @@ a { color: var(--wp) }
       </div>
       <div class="seg" role="group" aria-label="Kennzahl" id="kz"></div>
       <div class="tbl"><table id="mx"></table></div>
-      <p class="note">Spalten: Festpreis, dynamischer Tarif, dynamischer Tarif mit zeitvariablem Netzentgelt nach § 14a (Modul 3) für Wärmepumpe und Wallbox, Vorschlag 8 Stunden am Tag ohne Netzentgelt. Kosten im Jahr: Strom, Einspeisevergütung abgezogen, dazu Abschreibung und Zins für PV und Speicher, als Mittel über die Laufzeit mit steigendem Strompreis. Ohne Grundpreise. Tippen Sie auf ein Feld. Die Kacheln, die Beispielwoche und die Strompreise darunter zeigen dann diese Variante.</p>
+      <p class="note">Spalten: Festpreis, dynamischer Tarif, dynamischer Tarif mit zeitvariablem Netzentgelt nach § 14a (Modul 3) für Wärmepumpe und Wallbox, und in der letzten Spalte der Vorschlag aus dem Buch, 8 Stunden am Tag ohne Netzentgelt, der heute noch nicht gilt. Kosten im Jahr: Strom, Einspeisevergütung abgezogen, dazu Abschreibung und Zins für PV und Speicher, als Mittel über die Laufzeit mit steigendem Strompreis. Ohne Grundpreise. Tippen Sie auf ein Feld. Die Kacheln, die Beispielwoche und die Strompreise darunter zeigen dann diese Variante.</p>
       <div class="tiles" id="tiles"></div>
     </div>
   </div>
@@ -248,8 +248,8 @@ a { color: var(--wp) }
         <li><b>Wetter:</b> Idstein (50,22° N, 8,27° O, 273 m). Typisches meteorologisches Jahr (TMY) aus PVGIS 5.3 der Europäischen Kommission: für jeden Monat ein typischer Monat aus den Jahren 2005 bis 2023, Stunde für Stunde Temperatur, Feuchte, Global- und Diffusstrahlung (SARAH-3, ERA5). 1.166 kWh Sonne je m² im Jahr, Mittel 9,8 °C, kälteste Stunde −12,2 °C. Quelle: © Europäische Union, PVGIS, CC BY 4.0.</li>
         <li><b>Börsenpreise:</b> Day-Ahead-Preise Deutschland/Luxemburg 2024, Stunde für Stunde (ENTSO-E). Mittel 7,9 Cent je kWh, 457 Stunden unter null.</li>
         <li><b>Einspeisung:</b> Neue Anlagen seit 25.2.2025 bekommen für Stunden mit negativem Börsenpreis keine Vergütung (Solarspitzengesetz). Der Rechner setzt die Vergütung dann auf null.</li>
-        <li><b>§ 14a EnWG, Modul 3:</b> Zeitvariables Netzentgelt für steuerbare Wärmepumpen und Wallboxen, hier mit den Fenstern der Syna: 0 bis 6 Uhr 1,00 Cent, 6 bis 16 und 20 bis 24 Uhr 9,98 Cent, 16 bis 20 Uhr 14,66 Cent je kWh netto. Der Haushaltsstrom zahlt das normale Netzentgelt.</li>
-        <li><b>Vorschlag „Schuldenfrei 2070“:</b> Stündliche Zähler für alle. In mindestens 8 Stunden am Tag, die der Netzbetreiber vor Ort festlegt, fällt kein Netzentgelt an. Der Rechner nimmt dafür die 8 Stunden mit dem niedrigsten Börsenpreis des Tages.</li>
+        <li><b>§ 14a EnWG, Modul 3:</b> Zeitvariables Netzentgelt für steuerbare Wärmepumpen und Wallboxen, hier mit den Fenstern der Syna für 2026: nur von Oktober bis März 0 bis 6 Uhr 0,874 Cent, 17 bis 21 Uhr 13,46 Cent und sonst 8,67 Cent je kWh netto; von April bis September gilt immer das normale Netzentgelt von 8,67 Cent. Der Haushaltsstrom zahlt das normale Netzentgelt.</li>
+        <li><b>Vorschlag „Schuldenfrei 2070“, kein geltendes Recht:</b> Stündliche Zähler für alle. In mindestens 8 Stunden am Tag, die der Netzbetreiber vor Ort festlegt, fällt kein Netzentgelt an. Der Rechner nimmt dafür die 8 Stunden mit dem niedrigsten Börsenpreis des Tages.</li>
         <li><b>Intelligente Steuerung:</b> Die Wallbox lädt, solange das Auto zu Hause steht, in den günstigsten Stunden, bei PV-Überschuss zuerst. Die Wärmepumpe macht Warmwasser in der günstigsten Stunde des Tages und verschiebt Heizwärme im Rahmen des Wärmespeichers. Der Batteriespeicher lädt nur aus PV-Überschuss.</li>
         <li><b>Wirtschaftlichkeit:</b> Kosten der Anlagen als Annuität über die Lebensdauer. Ersparnisse steigen mit dem Strompreis und werden mit dem Zins abgezinst (VDI 4703: 20 Jahre Betrachtung). Grundpreise und Zählerkosten sind nicht enthalten.</li>
         <li>Keine Energieberatung. Für die genaue Auslegung braucht es einen Energieberater oder Fachbetrieb.</li>
@@ -268,11 +268,11 @@ const N = 8760, LAT = 50.219, LON = 8.268;
 
 const V = {
   hh: 3500, pers: 3,
-  pvS: 10, pvO: 0, pvW: 0, neig: 30, pvKost: 1300, pvVerl: 14, eeg: 0.078, pvJahre: 20,
+  pvS: 10, pvO: 0, pvW: 0, neig: 30, pvKost: 1350, pvVerl: 14, eeg: 0.077, pvJahre: 20,
   wpAn: "ja", wpArt: "luft", waerme: 15000, ww: 2500, vl: 45, heizgr: 15, puffer: 10,
   evAn: "ja", km: 13500, evVerb: 18, evVerl: 10, evHaus: 80, evKw: 11, evModus: "pendler", ab: 7, an: 17,
-  batMod: "auto", batKwh: 10, batFix: 1500, batKwhKost: 450, batJahre: 15, batWg: 90,
-  fest: 0.32, netz: 0.0998, abg: 0.065, aufs: 0.02, h8: 8,
+  batMod: "auto", batKwh: 10, batFix: 1500, batKwhKost: 350, batJahre: 15, batWg: 90,
+  fest: 0.32, netz: 0.0867, abg: 0.066, aufs: 0.02, h8: 8,
   zins: 3, steig: 2,
   aOff: 0.55, aVerb: 7.0, aSprit: 1.75,
   gasKwh: 0.115, gasNutz: 90, gasGrund: 180, gasWart: 250,
@@ -282,8 +282,8 @@ const JN = [["ja", "Ja"], ["nein", "Nein"]];
 const FELDER = {
   g_hh: [F("hh", "Haushaltsstrom im Jahr", "kWh", 100, "ohne Wärmepumpe und Auto; 3 Personen rund 3.500")],
   g_pv: [F("pvS", "Süddach", "kWp", 0.5), F("pvO", "Ostdach", "kWp", 0.5), F("pvW", "Westdach", "kWp", 0.5), F("neig", "Dachneigung", "°", 5),
-    F("pvKost", "Kosten mit Montage", "€/kWp", 50, "10 kWp für rund 13.000 €"), F("pvVerl", "Verluste (Wechselrichter, Kabel, Schmutz)", "%", 1),
-    F("eeg", "Einspeisevergütung", "€/kWh", 0.001, "bis 10 kWp, Teileinspeisung"), F("pvJahre", "Lebensdauer", "Jahre", 1)],
+    F("pvKost", "Kosten mit Montage", "€/kWp", 50, "10 kWp für rund 13.500 €"), F("pvVerl", "Verluste (Wechselrichter, Kabel, Schmutz)", "%", 1),
+    F("eeg", "Einspeisevergütung", "€/kWh", 0.001, "bis 10 kWp, Teileinspeisung, für Anlagen ab 1.8.2026: 7,7 Cent"), F("pvJahre", "Lebensdauer", "Jahre", 1)],
   g_wp: [F("wpAn", "Wärmepumpe vorhanden", "", 0, "", JN), F("wpArt", "Art", "", 0, "", [["luft", "Luft-Wasser"], ["sole", "Erdreich (Sole)"]]),
     F("waerme", "Wärme im Jahr für Heizung und Warmwasser", "kWh", 500, "ungefähr Gasverbrauch × 0,9"), F("ww", "davon Warmwasser", "kWh", 100),
     F("vl", "Vorlauftemperatur am kältesten Tag", "°C", 1, "Fußbodenheizung 35, Heizkörper 45 bis 55"), F("heizgr", "Heizgrenze", "°C", 1, "ab dieser Außentemperatur wird nicht geheizt"),
@@ -294,7 +294,7 @@ const FELDER = {
     F("ab", "Abfahrt werktags", "Uhr", 1), F("an", "Ankunft werktags", "Uhr", 1)],
   g_bat: [F("batMod", "Größe", "", 0, "", [["auto", "automatisch (wirtschaftlichste)"], ["fest", "selbst festlegen"]]), F("batKwh", "Kapazität, wenn selbst festgelegt", "kWh", 1),
     F("batFix", "Kosten fest", "€", 100, "Wechselrichter, Einbau"), F("batKwhKost", "Kosten je kWh", "€/kWh", 10), F("batJahre", "Lebensdauer", "Jahre", 1), F("batWg", "Wirkungsgrad Laden und Entladen", "%", 1)],
-  g_tar: [F("fest", "Festpreis", "€/kWh", 0.01, "brutto"), F("netz", "Netzentgelt", "€/kWh", 0.001, "netto; Syna 2025: 9,98 Cent"), F("abg", "Steuern, Abgaben, Umlagen", "€/kWh", 0.001, "netto: Stromsteuer, Konzession, Umlagen"),
+  g_tar: [F("fest", "Festpreis", "€/kWh", 0.01, "brutto"), F("netz", "Netzentgelt", "€/kWh", 0.001, "netto; Syna 2026: 8,67 Cent"), F("abg", "Steuern, Abgaben, Umlagen", "€/kWh", 0.001, "netto: Stromsteuer, Konzession, Umlagen"),
     F("aufs", "Aufschlag des Anbieters", "€/kWh", 0.001, "netto"), F("h8", "Stunden ohne Netzentgelt (Vorschlag)", "h/Tag", 1)],
   g_wi: [F("zins", "Zins", "%", 0.5), F("steig", "Strompreisanstieg", "%/Jahr", 0.5)],
   g_auto: [F("aOff", "Strompreis unterwegs", "€/kWh", 0.01), F("aVerb", "Verbrenner: Verbrauch", "l/100 km", 0.1), F("aSprit", "Spritpreis", "€/l", 0.01)],
@@ -392,9 +392,11 @@ const TARIFE = [
   { k: "fest", n: "Festpreis", s: "Festpreis" },
   { k: "dyn", n: "Dynamisch", s: "Dynamisch" },
   { k: "m3", n: "Dynamisch + § 14a Modul 3", s: "+ § 14a Modul 3" },
-  { k: "h8", n: "Vorschlag: 8 h ohne Netzentgelt", s: "Vorschlag 8 h frei" },
+  { k: "h8", n: "Vorschlag aus dem Buch: 8 h ohne Netzentgelt (kein geltendes Recht)", s: "Vorschlag: 8 h frei", vorschlag: true },
 ];
-function m3(h) { return h < 6 ? 0.010 : (h >= 16 && h < 20) ? 0.1466 : 0.0998; }
+// § 14a Modul 3, Syna 2026: nur Oktober bis März zeitvariabel, April bis September immer das normale Netzentgelt
+const MON = (() => { const m = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31], r = new Uint8Array(N); let i = 0; m.forEach((t, k) => { for (let x = 0; x < t * 24 && i < N; x++) r[i++] = k; }); return r; })();
+function m3(i) { const h = i % 24, mo = MON[i]; if (mo > 2 && mo < 9) return 0.0867; return h < 6 ? 0.00874 : (h >= 17 && h < 21) ? 0.1346 : 0.0867; }
 function preise(v, tk) {
   const pH = new Float64Array(N), pD = new Float64Array(N), eeg = new Float64Array(N);
   let frei = null;
@@ -407,7 +409,7 @@ function preise(v, tk) {
     if (tk === "fest") { pH[i] = pD[i] = v.fest; continue; }
     const basis = BOERSE[i] + v.abg + v.aufs;
     pH[i] = (basis + (tk === "h8" && frei[i] ? 0 : v.netz)) * 1.19;
-    pD[i] = tk === "m3" ? (basis + m3(i % 24) * v.netz / 0.0998) * 1.19 : pH[i];
+    pD[i] = tk === "m3" ? (basis + m3(i) * v.netz / 0.0867) * 1.19 : pH[i];
   }
   return { pH, pD, eeg, frei };
 }
@@ -497,7 +499,7 @@ const bwf = (v, n) => { let s = 0; for (let k = 1; k <= n; k++) s += Math.pow(1 
 const batKost = (v, c) => c > 0 ? v.batFix + c * v.batKwhKost : 0;
 
 /* ---------- Gesamtrechnung ---------- */
-let STEUERUNG = true, KZ = "jk", SEL = { pv: 2, t: 3 }, WOCHE = "jan", R = null;
+let AUSWAHL_FEST = false, STEUERUNG = true, KZ = "jk", SEL = { pv: 2, t: 2 }, WOCHE = "jan", R = null;
 function rechne(v) {
   const L = lasten(v);
   const kwp = v.pvS + v.pvO + v.pvW;
@@ -602,11 +604,14 @@ function zeigeAuswahl(v) {
 function zeigeVerdict(v) {
   const Z = R.zellen, ref = Z[0][0];
   let best = { jk: Infinity };
-  (R.kwp > 0 ? [0, 1, 2] : [0]).forEach(pi => TARIFE.forEach((T, ti) => { if (Z[pi][ti].jk < best.jk) best = { jk: Z[pi][ti].jk, pi, ti }; }));
+  let bestV = { jk: Infinity };
+  (R.kwp > 0 ? [0, 1, 2] : [0]).forEach(pi => TARIFE.forEach((T, ti) => { if (T.vorschlag) { if (Z[pi][ti].jk < bestV.jk) bestV = { jk: Z[pi][ti].jk, pi, ti }; } else if (Z[pi][ti].jk < best.jk) best = { jk: Z[pi][ti].jk, pi, ti }; }));
+  if (!AUSWAHL_FEST) { SEL = { pv: best.pi, t: best.ti }; AUSWAHL_FEST = true; }
   const z2 = Z[2][best.ti];
   const sp = ref.jk - best.jk;
   let s = `Am günstigsten ist <b>${PVN[best.pi]}${best.pi === 2 ? ` (${fmt(Z[2][best.ti].kap)} kWh)` : ""}</b> mit dem Tarif <b>${TARIFE[best.ti].n}</b>: ${eur(best.jk)} im Jahr, ${eur(sp)} weniger als ohne PV mit Festpreis.`;
   if (R.kwp > 0 && z2.kap === 0) s += " Ein Batteriespeicher rechnet sich bei diesen Preisen nicht.";
+  if (bestV.jk < best.jk - 5) s += ` Mit dem Vorschlag aus dem Buch, 8 Stunden am Tag ohne Netzentgelt, wären es ${eur(bestV.jk)}. Das ist kein geltendes Recht.`;
   $("verdict").innerHTML = s;
   $("sttxt").textContent = STEUERUNG ? "Wallbox und Wärmepumpe laufen bei PV-Überschuss und in den günstigsten Stunden." : "Das Auto lädt sofort nach der Ankunft, die Wärmepumpe heizt, wenn Wärme gebraucht wird.";
   $("kz").innerHTML = KZS.map(([k, n]) => `<button type="button" data-k="${k}" aria-pressed="${KZ === k}">${n}</button>`).join("");

@@ -181,7 +181,7 @@ a { color: var(--wp) }
       <ul class="src">
         <li><b>Gebäudemodernisierungsgesetz:</b> Die 65-%-Pflicht ist seit 29.7.2026 gestrichen. Neue Gas- und Ölheizungen sind wieder erlaubt, müssen aber steigende Anteile Biogas, Bioöl oder Wasserstoff nutzen: 10 % ab 2029, 15 % ab 2030, 30 % ab 2035, 60 % ab 2040. <a href="https://reduco.ai/blog/heizungsgesetz-2026-aenderungen" target="_blank" rel="noopener">Überblick</a></li>
         <li><b>CO₂-Preis:</b> 2026 und 2027 zwischen 55 und 65 € je Tonne, ab 2028 frühestens der EU-Emissionshandel für Gebäude und Verkehr (ETS2). <a href="https://www.zfk.de/politik/deutschland/co2-preis-2027-einigung-union-spd-behg-ets2" target="_blank" rel="noopener">ZfK</a></li>
-        <li><b>Förderung (KfW 458, seit 21.7.2026):</b> 30 % Grundförderung, 16 % Klimageschwindigkeitsbonus beim Tausch einer funktionierenden fossilen Heizung im selbst bewohnten Haus, Einkommensbonus 10 bis 40 %. Höchstens 70 % (80 % bei kleinem Einkommen) von höchstens 28.000 € Kosten. Ab Februar 2027 sinkt der Bonus auf 12 %. <a href="https://reduco.ai/blog/foerderung/heizungsfoerderung-21-juli-2026-aenderungen" target="_blank" rel="noopener">Überblick</a>; vor dem Antrag bei der KfW prüfen.</li>
+        <li><b>Förderung (KfW 458, Richtlinie vom 21.7.2026):</b> 30 % Grundförderung, 16 % Klimageschwindigkeitsbonus beim Tausch einer funktionierenden fossilen Heizung im selbst bewohnten Haus, Einkommensbonus 10 bis 40 % im selbst bewohnten Haus, auch ohne Klimabonus. Höchstens 70 % (80 % bei kleinem Einkommen) von höchstens 28.000 € Kosten. <b>Geplant ab Februar 2027:</b> 15 % Grundförderung und 15 % mehr für Wärmepumpen aus der EU; der Klimabonus sinkt alle sechs Monate um 4 Punkte, von 12 % im Februar 2027 bis 0 im August 2028; förderfähig sind dann höchstens 27.250 €, ab August 2028 25.000 €. Die Deckel von 70 und 80 % bleiben. Quellen: <a href="https://mtf-online.net/wp-content/uploads/2026/07/2026-07-21_Uebersicht_Aenderungen_BEG-EM_Waermepumpe_v2.pdf" target="_blank" rel="noopener">Übersicht der Änderungen BEG EM Wärmepumpe, 21.7.2026</a>, <a href="https://reduco.ai/blog/foerderung/heizungsfoerderung-21-juli-2026-aenderungen" target="_blank" rel="noopener">Überblick</a>; vor dem Antrag bei der KfW prüfen.</li>
         <li>Vorschlag aus dem Buch „Schuldenfrei 2070“: CO₂-Preis 100 € ab 2028 bis 300 € ab 2040, das Geld fließt als Klimageld an alle zurück (rund 240 € je Person 2030, hier nicht eingerechnet). Dazu ein zinsloses Darlehen für die Wärmepumpe und Strom ohne Netzentgelt in 8 Stunden am Tag.</li>
         <li>Keine Energieberatung. Für die richtige Größe der Wärmepumpe und die Förderung braucht es einen Energieberater oder Fachbetrieb.</li>
       </ul>
@@ -204,15 +204,18 @@ const V = {
   wpPreis: 30000, wpJaz: 3.2, wpStrom: 0.27, wpGrund: 120, wpWart: 200,
   gasPreis: 12000, gasNutz: 92, gasKwh: 0.115, gasGrund: 180, gasWart: 300, gasBio: 0.06, gasNeu: "ja",
   oelPreis: 15000, oelNutz: 90, oelLiter: 1.00, oelWart: 370, oelBio: 0.06,
-  foeBonus: "ja", foeEink: "0",
+  foeAntrag: "jetzt", foeSelbst: "ja", foeBonus: "ja", foeEU: "ja", foeEink: "0",
 };
 const F = (k, lbl, u, step, sub, sel) => ({ k, lbl, u, step, sub, sel });
 const FELDER = {
   haus: [F("waerme", "Wärme im Jahr für Heizung und Warmwasser", "kWh", 500, "ungefähr Gasverbrauch × 0,9; Einfamilienhaus meist 12.000 bis 25.000"), F("jahr", "Einbau im Jahr", "", 1), F("dauer", "Laufzeit", "Jahre", 1), F("steig", "Preissteigerung im Jahr", "%", 0.5, "für Gas, Öl und Strom, ohne CO₂-Preis"), F("gasNeu", "Gas oder Öl: Pflicht zur Bio-Beimischung", "", 0, "gilt für Heizungen, die nach dem 29.7.2026 eingebaut werden", [["ja", "Ja, neue Heizung"], ["nein", "Nein, alte Heizung weiter nutzen"]])],
-  g_wp: [F("wpPreis", "Kosten mit Einbau", "€", 500), F("wpJaz", "Jahresarbeitszahl", "", 0.1, "kWh Wärme je kWh Strom; Altbau 2,8 bis 3,5"), F("wpStrom", "Strompreis (Wärmepumpentarif)", "€/kWh", 0.01, "mit 8 Stunden ohne Netzentgelt eher 0,20 €"), F("wpGrund", "Grundpreis Zähler", "€/Jahr", 10), F("wpWart", "Wartung", "€/Jahr", 10)],
+  g_wp: [F("wpPreis", "Kosten mit Einbau", "€", 500), F("wpJaz", "Jahresarbeitszahl", "", 0.1, "kWh Wärme je kWh Strom; Altbau 2,8 bis 3,5"), F("wpStrom", "Strompreis (Wärmepumpentarif)", "€/kWh", 0.01, "mit dem Vorschlag aus dem Buch, 8 Stunden ohne Netzentgelt, eher 0,20 €"), F("wpGrund", "Grundpreis Zähler", "€/Jahr", 10), F("wpWart", "Wartung", "€/Jahr", 10)],
   g_gas: [F("gasPreis", "Kosten mit Einbau", "€", 500), F("gasNutz", "Nutzungsgrad", "%", 1), F("gasKwh", "Gaspreis heute (mit CO₂-Preis)", "€/kWh", 0.005), F("gasGrund", "Grundpreis", "€/Jahr", 10), F("gasWart", "Wartung und Schornsteinfeger", "€/Jahr", 10), F("gasBio", "Mehrpreis Biogas", "€/kWh", 0.01, "Biomethan kostet heute rund 5 bis 8 Cent mehr")],
   g_oel: [F("oelPreis", "Kosten mit Einbau", "€", 500), F("oelNutz", "Nutzungsgrad", "%", 1), F("oelLiter", "Heizölpreis heute (mit CO₂-Preis)", "€/Liter", 0.01, "1 Liter ≈ 10 kWh"), F("oelWart", "Wartung, Schornsteinfeger, Tank", "€/Jahr", 10), F("oelBio", "Mehrpreis Bioöl", "€/kWh", 0.01)],
-  foe: [F("foeBonus", "Funktionierende Öl- oder Gasheizung wird ersetzt, Haus selbst bewohnt", "", 0, "Klimageschwindigkeitsbonus 16 %", [["ja", "Ja"], ["nein", "Nein"]]), F("foeEink", "Zu versteuerndes Haushaltseinkommen", "", 0, "je Kind 10.000 € weniger anrechnen", [["0", "über 50.000 €"], ["10", "bis 50.000 € (+10 %)"], ["30", "bis 40.000 € (+30 %)"], ["40", "bis 30.000 € (+40 %)"]])],
+  foe: [F("foeAntrag", "Antrag gestellt", "", 0, "ab Februar 2027 nach den geplanten neuen Regeln", [["jetzt", "bis 31.1.2027 (heutige Richtlinie)"], ["f27", "Februar bis Juli 2027 (geplant)"], ["a27", "August 2027 bis Januar 2028 (geplant)"], ["f28", "Februar bis Juli 2028 (geplant)"], ["a28", "ab August 2028 (geplant)"]]),
+    F("foeSelbst", "Haus selbst bewohnt", "", 0, "Voraussetzung für Klima- und Einkommensbonus", [["ja", "Ja"], ["nein", "Nein"]]),
+    F("foeBonus", "Funktionierende Öl- oder Gasheizung wird ersetzt", "", 0, "Klimageschwindigkeitsbonus: 16 %, geplant ab Februar 2027 alle sechs Monate 4 Punkte weniger", [["ja", "Ja"], ["nein", "Nein"]]),
+    F("foeEU", "Wärmepumpe aus der EU", "", 0, "geplant ab Februar 2027: 15 % zusätzlich", [["ja", "Ja"], ["nein", "Nein"]]), F("foeEink", "Zu versteuerndes Haushaltseinkommen", "", 0, "je Kind 10.000 € weniger anrechnen", [["0", "über 50.000 €"], ["10", "bis 50.000 € (+10 %)"], ["30", "bis 40.000 € (+30 %)"], ["40", "bis 30.000 € (+40 %)"]])],
 };
 function feld(f) {
   const d = document.createElement("div"); d.className = "f";
@@ -231,8 +234,11 @@ const EF = { gas: 0.201, oel: 0.266 };           // kg CO₂ je kWh
 const co2 = (pfad, j) => { const p = PFAD[pfad].p; if (j <= p[0][0]) return p[0][1]; for (let i = 1; i < p.length; i++) if (j <= p[i][0]) { const [a, pa] = p[i - 1], [b, pb] = p[i]; return pa + (pb - pa) * (j - a) / (b - a); } return p.at(-1)[1]; };
 const bio = j => j >= 2040 ? 0.6 : j >= 2035 ? 0.3 : j >= 2030 ? 0.15 : j >= 2029 ? 0.1 : 0;
 function foerderung(v) {
-  const satz = Math.min(0.30 + (v.foeBonus === "ja" ? 0.16 : 0) + (v.foeBonus === "ja" ? +v.foeEink / 100 : 0), v.foeEink === "40" ? 0.8 : 0.7);
-  return { satz, betrag: satz * Math.min(v.wpPreis, 28000) };
+  // heute: Richtlinie vom 21.7.2026; ab Februar 2027 geplant (Übersicht BEG EM Wärmepumpe vom 21.7.2026)
+  const R = { jetzt: [0.30, 0, 0.16, 28000], f27: [0.15, 0.15, 0.12, 27250], a27: [0.15, 0.15, 0.08, 27250], f28: [0.15, 0.15, 0.04, 27250], a28: [0.15, 0.15, 0, 25000] }[v.foeAntrag] || [0.30, 0, 0.16, 28000];
+  const selbst = v.foeSelbst === "ja";
+  const satz = Math.min(R[0] + (v.foeEU === "ja" ? R[1] : 0) + (selbst && v.foeBonus === "ja" ? R[2] : 0) + (selbst ? +v.foeEink / 100 : 0), v.foeEink === "40" ? 0.8 : 0.7);
+  return { satz, betrag: satz * Math.min(v.wpPreis, R[3]), max: R[3] };
 }
 function rechne(v) {
   const foe = foerderung(v);
