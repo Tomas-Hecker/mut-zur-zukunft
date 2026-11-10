@@ -1404,8 +1404,9 @@ function updateGesamt() {
     const mit = prognose(szenario, "reform", pf), ohne = prognose(szenario, "ohne", pf);
     let pl = prognose(szenario, "regel", pf); fixAuf = 0;
     if (pl[pl.length - 1].v > 0.0005) { // Schuldenregel: fester Aufschlag ab 2030, so dass die Schulden 2070 bei null liegen
-      let lo = 0, hi = 20; for (let i = 0; i < 40; i++) { const x = (lo + hi) / 2, t = prognose(szenario, "regel", pf, x); if (t[t.length - 1].v > 0) lo = x; else hi = x; }
-      fixAuf = hi; pl = prognose(szenario, "regel", pf, fixAuf);
+      // wie im Rechenmodell (zp19.py, fix2070): Bisektion zwischen 0 und 40 Punkten, fertig, sobald die Schulden 2070 zwischen 0 und 0,05 % des BIP liegen
+      let lo = 0, hi = 40, x = hi; for (let i = 0; i < 60; i++) { x = (lo + hi) / 2; const v = prognose(szenario, "regel", pf, x).at(-1).v; if (v >= 0 && v <= 0.0005) break; if (v > 0) lo = x; else hi = x; }
+      fixAuf = Math.round(x * 1000) / 1000; pl = prognose(szenario, "regel", pf, fixAuf);
     }
     reihen = mit.map((r, i) => ({ jahr: r.jahr, quote: r.v, ohne: ohne[i].v, plan: pl[i].v, mw: pl[i].mw }));
     if (demoAus) { // gleiche Rechnung ohne Reform, aber die Kosten für Rente, Pflege und Gesundheit bleiben auf dem Anteil am BIP von 2023
@@ -1426,7 +1427,7 @@ function updateGesamt() {
   else {
     const mwMax = reihen.reduce((m, r) => r.mw > m.mw ? r : m, reihen[0]), mw30 = reihen.find(r => r.jahr === 2030).mw;
     t += tile("Staatsschulden 2070", pct(Math.abs(e.plan) < 0.005 ? 0 : e.plan, 0), `mit Zukunftsplan und Schuldenregel; Reform allein ${pct(e.quote, 0)}, ohne Reform ${pct(e.ohne, 0)}`, e.plan < e.ohne ? "good" : "bad");
-    t += fixAuf > 0 ? tile("Mehrwertsteuer-Aufschlag", "fest " + fmt(fixAuf, 2) + " Punkte", `ab 2030 auf den Normalsatz (${fmt(19 + A.NormPkt + A.SichPkt, A.SichPkt ? 1 : 0)} auf ${fmt(19 + A.NormPkt + A.SichPkt + fixAuf, 1)} %), rund ${fmt(fixMrd(fixAuf), 1)} Mrd. € im Jahr; so sind die Schulden 2070 bei null`) : tile("Mehrwertsteuer-Aufschlag", mwMax.mw > 0.05 ? "bis " + fmt(mwMax.mw, 1) + " Punkte" : "keiner", mwMax.mw > 0.05 ? `über ${fmt(19 + A.NormPkt + A.SichPkt, A.SichPkt ? 1 : 0)} %, höchstens ${mwMax.jahr}; 2030: ${fmt(mw30, 1)} Punkte; in ${reihen.filter(r => r.mw > 0.05).length} Jahren` : "Die Schuldenregel braucht keinen Aufschlag.", mwMax.mw > 5 ? "bad" : "good");
+    t += fixAuf > 0 ? tile("Mehrwertsteuer-Aufschlag", "fest " + fmt(fixAuf, 2) + " Punkte" + (fixAuf > 4.5 && fixAuf < 5 ? " (knapp 5)" : ""), `ab 2030 auf den Normalsatz (${fmt(19 + A.NormPkt + A.SichPkt, A.SichPkt ? 1 : 0)} auf ${fmt(19 + A.NormPkt + A.SichPkt + fixAuf, 1)} %), rund ${fmt(fixMrd(fixAuf), 1)} Mrd. € im Jahr; so sind die Schulden 2070 bei null`) : tile("Mehrwertsteuer-Aufschlag", mwMax.mw > 0.05 ? "bis " + fmt(mwMax.mw, 1) + " Punkte" : "keiner", mwMax.mw > 0.05 ? `über ${fmt(19 + A.NormPkt + A.SichPkt, A.SichPkt ? 1 : 0)} %, höchstens ${mwMax.jahr}; 2030: ${fmt(mw30, 1)} Punkte; in ${reihen.filter(r => r.mw > 0.05).length} Jahren` : "Die Schuldenregel braucht keinen Aufschlag.", mwMax.mw > 5 ? "bad" : "good");
   }
   $("tiles").innerHTML = t;
   const SZ = { vorsichtig: "Vorsichtig", mittel: "Mittel", zuversichtlich: "Zuversichtlich", basis: "Einfache Rechnung (Kapitel 7)" };
