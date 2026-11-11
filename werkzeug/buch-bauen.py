@@ -78,7 +78,7 @@ for ch in chapters:
 
 # ---------- Querverweise klickbar machen ----------
 NB = r'[  ]+'
-pat = re.compile(r'(Kapitel' + NB + r'([1-9][0-9]?)(?![0-9]))|(Anhang' + NB + r'([ABC])([1-9][0-9]?)?(?![0-9]))|((?<![\w\-/.])([ABC][1-9][0-9]?)(?![\w\-]))')
+pat = re.compile(r'(Kapitel' + NB + r'([1-9][0-9]?)(?![0-9]))|(Anhang' + NB + r'([A-D])([1-9][0-9]?)?(?![0-9]))|((?<![\w\-/.])([A-D][1-9][0-9]?)(?![\w\-]))')
 def linkify(ch):
     for tn in list(ch['body'].find_all(string=True)):
         if not isinstance(tn, NavigableString) or tn.parent is None: continue
@@ -108,7 +108,7 @@ def linkify(ch):
     # Interne Verweise aus der Satzdatei (#anh-B5, #anh-C, #kap-7) auf die Seiten des Online-Buchs umlenken
     for a in ch['body'].find_all('a', href=re.compile(r'^#(anh|kap)-')):
         ref = a['href'][1:]
-        m = re.match(r'anh-([ABC])([1-9][0-9]?)?$', ref)
+        m = re.match(r'anh-([A-D])([1-9][0-9]?)?$', ref)
         if m: href = appendix_ids.get(m.group(1) + m.group(2)) if m.group(2) else f'anhang-{m.group(1).lower()}.html'
         else:
             m = re.match(r'kap-([1-9][0-9]?)$', ref); href = f'kapitel-{m.group(1)}.html' if m else None
@@ -136,10 +136,10 @@ def linkify(ch):
 for ch in chapters: linkify(ch)
 # dieselben Verweise im Vorspann eines Kapitels
 def _lead_ref(m):
-    ref = m.group(1); mm = re.match(r'anh-([ABC])([1-9][0-9]?)?$', ref)
+    ref = m.group(1); mm = re.match(r'anh-([A-D])([1-9][0-9]?)?$', ref)
     if mm: return 'class="xref" href="' + ((appendix_ids.get(mm.group(1) + mm.group(2)) or 'anhang-' + mm.group(1).lower() + '.html') if mm.group(2) else 'anhang-' + mm.group(1).lower() + '.html') + '"'
     return 'class="xref" href="kapitel-' + ref[4:] + '.html"'
-for ch in chapters: ch['lead'] = re.sub(r'class="ref" href="#((?:anh-[ABC](?:[1-9][0-9]?)?)|(?:kap-[1-9][0-9]?))"', _lead_ref, ch['lead'])
+for ch in chapters: ch['lead'] = re.sub(r'class="ref" href="#((?:anh-[A-D](?:[1-9][0-9]?)?)|(?:kap-[1-9][0-9]?))"', _lead_ref, ch['lead'])
 
 # ---------- Rechner-Verweise ----------
 R = '../steuerrechner/'
@@ -259,7 +259,7 @@ open(os.path.join(OUT, 'suche.html'), 'w', encoding='utf-8').write(page('Im Buch
 import json as _json, glob as _glob
 stellen = {}
 for k, v in appendix_ids.items(): stellen['anh-' + k] = v
-for b in 'ABC': stellen['anh-' + b] = f'anhang-{b.lower()}.html'
+for b in 'ABCD': stellen['anh-' + b] = f'anhang-{b.lower()}.html'
 for i in range(1, 30):
     if os.path.exists(os.path.join(OUT, f'kapitel-{i}.html')): stellen[f'kap-{i}'] = f'kapitel-{i}.html'
 for f in sorted(_glob.glob(os.path.join(OUT, '*.html'))):
