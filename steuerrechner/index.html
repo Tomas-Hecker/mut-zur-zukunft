@@ -653,11 +653,11 @@ const ANNAHMEN = {
   // Variante „Sicherheitsbeitrag“ aus dem Buch (Anhang C): an = 1 schaltet sie ein
   Sicherheit: 0,
   SicherheitWerte: {
-    Verteidigung: 66,       // 1,5 % des BIP mehr für Verteidigung, Mrd. € pro Jahr
+    Verteidigung: 67.9455,  // 1,5 % des BIP mehr für Verteidigung, Mrd. € pro Jahr (Excel, Blatt Sicherheit B5)
     SubvAbbau: 1,           // Kerosin Inland 0,6 und Agrardiesel 0,4; das Dieselprivileg endet schon im Gesamtpaket
-    // Sicherheitsbeitrag netto rund 65 Mrd. € über den Normalsatz der Mehrwertsteuer: +10,33 Punkte auf rund 60,3 %,
-    // nicht linear gerechnet; der Ausgleich im Existenzminimum steigt von 84 auf rund 112 € im Monat
-    SichPkt: 10.33, GSMwStJ: 1344,
+    // Sicherheitsbeitrag 66,9 Mrd. € über den Normalsatz der Mehrwertsteuer: +10,67 Punkte auf 60,67 % (Blatt Sicherheit B10, B15),
+    // nicht linear gerechnet; der Ausgleich im Existenzminimum steigt von 84 auf 113 € im Monat
+    SichPkt: 10.6658, GSMwStJ: 1356,
   },
   Verteidigung: 0, SubvAbbau: 0, SichPkt: 0,
   // Prognose bis 2070 (Blatt „Schulden bis 2070“, Nachbildung des Tragfähigkeitsberichts BMF 2024)
@@ -1425,7 +1425,7 @@ const SCHALTER = [
 function renderKnobs() {
   const box = $("knobs"); box.innerHTML = "";
   const sfs = document.createElement("fieldset");
-  sfs.innerHTML = `<legend>Sicherheit und Verteidigung</legend><label class="check"><input type="checkbox" id="b_Sicherheit" ${A.Sicherheit ? "checked" : ""}> Mit Sicherheitsbeitrag (Variante aus dem Buch)</label><p class="sub note">1,5 % des BIP mehr für Verteidigung, rund 66 Mrd. € im Jahr. Bezahlt mit 1 Mrd. € aus dem Abbau weiterer klimaschädlicher Subventionen (Kerosin, Agrardiesel; das Dieselprivileg endet schon im Gesamtpaket) und einem offen ausgewiesenen Sicherheitsbeitrag von netto rund 65 Mrd. €, im Schnitt knapp 800 € je Einwohner. Dafür steigt der Normalsatz der Mehrwertsteuer um ${fmt(A.SicherheitWerte.SichPkt, 1)} Punkte auf ${fmt(19 + A.NormPkt + A.SicherheitWerte.SichPkt, 1)} %; der Ausgleich im Existenzminimum steigt auf rund 112 € im Monat. Die Ausgabensteuer bleibt bei höchstens 50 %.</p>`;
+  sfs.innerHTML = `<legend>Sicherheit und Verteidigung</legend><label class="check"><input type="checkbox" id="b_Sicherheit" ${A.Sicherheit ? "checked" : ""}> Mit Sicherheitsbeitrag (Variante aus dem Buch)</label><p class="sub note">1,5 % des BIP mehr für Verteidigung, rund 68 Mrd. € im Jahr. Bezahlt mit 1 Mrd. € aus dem Abbau weiterer klimaschädlicher Subventionen (Kerosin, Agrardiesel; das Dieselprivileg endet schon im Gesamtpaket) und einem offen ausgewiesenen Sicherheitsbeitrag von rund 67 Mrd. €, im Schnitt 802 € je Einwohner. Dafür steigt der Normalsatz der Mehrwertsteuer um ${fmt(A.SicherheitWerte.SichPkt, 1)} Punkte auf ${fmt(19 + A.NormPkt + A.SicherheitWerte.SichPkt, 2)} %, knapp 61 %; der Ausgleich in Grundsicherung, Bürgerjob und Rentenboden steigt von 84 auf 113 € im Monat. Die Ausgabensteuer bleibt bei höchstens 52 %.</p>`;
   sfs.querySelector("input").onchange = e => {
     const on = e.target.checked, W = A.SicherheitWerte;
     A.Sicherheit = on ? 1 : 0;
@@ -1470,9 +1470,10 @@ function updateGesamt() {
   let t = tile("Saldo am Start", mrd(g.saldoS) + " Mrd. €", g.saldoS < 0 && -g.saldoS / A.BIP <= A.SBRaum ? `${pct(-g.saldoS / A.BIP, 2)} des BIP; passt in die Schuldenbremse (${pct(A.SBRaum, 2)})` : `${pct(g.saldoS / A.BIP, 2)} des BIP; negativ heißt Lücke`, cl(g.saldoS));
   t += tile("Saldo langfristig", mrd(g.saldoL) + " Mrd. €", `${pct(g.saldoL / A.BIP, 1)} des BIP, nach ${A.Jahre} Jahren`, cl(g.saldoL));
   let tilg;
-  if (kr.unendlich) tilg = tile("Übergangsschulden", "nicht getilgt", "Der Überschuss reicht nicht aus. Erhöhen Sie Sätze oder schalten Sie Ausgaben ab.", "bad");
-  else if (kr.peak <= 0.05) tilg = tile("Übergangsschulden", "keine", "Das System trägt sich von Anfang an.", "good");
-  else tilg = tile("Übergangskredit", `${mrd(kr.peak, 0)} Mrd. €`, `höchstens, im Jahr ${A.Prognose.ReformStart - 1 + kr.peakJ}; getilgt ${A.Prognose.ReformStart - 1 + kr.getilgt}`, kr.getilgt <= 30 ? "good" : "bad");
+  if (kr.unendlich) tilg = tile("Kredit am Start", "nicht getilgt", "Der Überschuss reicht nicht aus. Erhöhen Sie Sätze oder schalten Sie Ausgaben ab.", "bad");
+  else if (kr.peak <= 0.05) tilg = tile("Kredit am Start", "keiner", "Das System trägt sich von Anfang an.", "good");
+  else if (kr.peakJ === 1 && kr.peak / A.BIP <= A.SBRaum) tilg = tile("Kredit am Start", `${mrd(kr.peak, 0)} Mrd. €`, `nur im ersten Jahr, in der Schuldenbremse; getilgt ${A.Prognose.ReformStart - 1 + kr.getilgt}`, "good");
+  else tilg = tile("Kredit am Start", `${mrd(kr.peak, 0)} Mrd. €`, `höchstens, im Jahr ${A.Prognose.ReformStart - 1 + kr.peakJ}; getilgt ${A.Prognose.ReformStart - 1 + kr.getilgt}`, kr.getilgt <= 30 ? "good" : "bad");
   t += tilg;
   // Mit Sicherheitsbeitrag gilt wie im Buch (Anhang C7): Der Beitrag deckt die Verteidigung ab 2028 jedes Jahr netto voll,
   // der Saldo bleibt also auf dem Pfad ohne Verteidigung und ohne Beitrag.
