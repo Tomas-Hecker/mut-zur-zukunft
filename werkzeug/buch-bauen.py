@@ -154,8 +154,9 @@ for ch in chapters:
             h.insert_after(rbox('Selbst ausprobieren', 'Im Rechner kannst du CO₂-Preis, Rückgabe als Klimageld und Haushaltsgröße selbst einstellen.', [('co2', 'CO₂-Abgabe rechnen')]))
             break
 END = {
- 'kapitel-5': ('Was heißt das für dich?', 'Gib dein Einkommen und deinen Haushalt ein und vergleiche heute mit dem Vorschlag.', [('haushalt', 'Meinen Haushalt rechnen')]),
- 'kapitel-7': ('Selbst nachrechnen', 'Alle Ergebnisse dieses Kapitels lassen sich im Rechner nachvollziehen und mit eigenen Annahmen verändern.', [('haushalt', 'Haushalt'), ('staat', 'Staatsfinanzen bis 2070')]),
+ 'kapitel-2': ('Was heißt das für dich?', 'Gib dein Einkommen und deinen Haushalt ein und vergleiche heute mit dem Vorschlag.', [('haushalt', 'Meinen Haushalt rechnen')]),
+ 'kapitel-7': ('Was heißt das für dich?', 'Gib dein Einkommen und deinen Haushalt ein und vergleiche heute mit dem Vorschlag.', [('haushalt', 'Meinen Haushalt rechnen')]),
+ 'kapitel-9': ('Selbst nachrechnen', 'Alle Ergebnisse dieses Kapitels lassen sich im Rechner nachvollziehen und mit eigenen Annahmen verändern.', [('haushalt', 'Haushalt'), ('staat', 'Staatsfinanzen bis 2070')]),
  'anhang-a': ('Selbst nachrechnen', 'Die Fälle aus diesem Anhang sind im Rechner als Beispiele hinterlegt.', [('haushalt', 'Beispielhaushalte öffnen')]),
  'anhang-b': ('Selbst nachrechnen', 'Die Bausteine lassen sich im Rechner einzeln ein- und ausschalten.', [('staat', 'Bausteine und Staatsfinanzen'), ('co2', 'CO₂-Abgabe')]),
  'anhang-c': ('Selbst nachrechnen', 'Die Simulation bis 2070 mit den drei Szenarien steckt auch im Rechner.', [('staat', 'Staatsschulden bis 2070')]),
@@ -250,7 +251,7 @@ for c in chapters:
 uebersicht = f'''<div class="bhero big"><div class="bwrap"><div><p class="eyebrow">Das Buch online lesen</p><h1>Wir können uns die Zukunft leisten</h1><p class="blead">Wie fast jeder mehr Geld behält, der Staat schuldenfrei wird und Deutschland aufblüht. Das ganze Buch, Kapitel für Kapitel, mit allen Grafiken. Tippe auf ein Kapitel, um es zu lesen, oder auf den Pfeil, um seine Abschnitte zu sehen.</p>
 <div class="btns"><a class="btn" href="vorwort.html">Mit dem Vorwort beginnen</a><a class="btn ghost" href="Wir-koennen-uns-die-Zukunft-leisten.pdf" download>Als PDF herunterladen</a></div></div></div></div>
 <main class="wrap uebersicht">{SEARCHBOX}<h2>Inhalt</h2><ol class="ktoc">{''.join(lis)}</ol>
-<aside class="rechner"><div><strong>Selbst nachrechnen</strong><p>Was das Steuersystem aus Kapitel 5 für deinen Haushalt bedeutet, zeigt der Steuerrechner.</p></div><div class="rbtns"><a class="rbtn" href="../steuerrechner/">Zum Steuerrechner</a></div></aside></main>'''
+<aside class="rechner"><div><strong>Selbst nachrechnen</strong><p>Was das Steuersystem aus Kapitel 7 für deinen Haushalt bedeutet, zeigt der Steuerrechner.</p></div><div class="rbtns"><a class="rbtn" href="../steuerrechner/">Zum Steuerrechner</a></div></aside></main>'''
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8').write(page('Das Buch online lesen · Wir können uns die Zukunft leisten', '„Wir können uns die Zukunft leisten“ von Tomas Hecker: das ganze Buch online lesen, mit Inhaltsverzeichnis, Suche und Verweisen zum Nachrechnen.', uebersicht))
 
 suche = f'''<main class="wrap uebersicht"><h1 class="sh">Im Buch suchen</h1>{SEARCHBOX}<p id="treffer-info" class="small"></p><ol id="treffer" class="treffer"></ol><p><a href="./">Zum Inhaltsverzeichnis</a></p></main>'''
