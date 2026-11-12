@@ -278,6 +278,14 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
   .calc.cockpit .verdict { padding: 12px 16px; }
 }
 @media (max-width: 1199px) { .panel.side { order: 3; } }
+.teilen { border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; display: grid; gap: 10px; background: var(--surface); }
+.teilen h3 { margin: 0; }
+.teilen canvas { width: 100%; max-width: 360px; height: auto; border-radius: 8px; display: block; }
+.teilen .knoepfe { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.teilen .knoepfe button, .teilen .knoepfe a { font: inherit; font-weight: 600; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--brand); background: var(--brand); color: var(--brand-fg); text-decoration: none; cursor: pointer; }
+.teilen .knoepfe a.leise { background: transparent; color: var(--fg); border-color: var(--line); }
+.teilen .warum { margin: 0; }
+.teilen .warum a { color: var(--accent); font-weight: 600; }
 </style>
 <style id="sitenav-css">
 .sitenav{background:#12372a;color:#fbf8f1;font:600 15px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
@@ -427,6 +435,16 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
       <div class="panel mitte" aria-live="polite">
         <div class="duo" id="duo"></div>
         <div class="verdict" id="verdict"></div>
+        <div class="teilen" id="teilen" data-nosatz>
+          <h3 id="teilenTitel">Ergebnis teilen</h3>
+          <canvas id="teilenBild" width="1080" height="1080" role="img" aria-label="Ergebniskarte zum Teilen"></canvas>
+          <div class="knoepfe">
+            <button type="button" id="teilenKnopf">Teilen</button>
+            <a class="leise" id="teilenWa" href="#" target="_blank" rel="noopener">WhatsApp</a>
+            <a class="leise" id="teilenFb" href="#" target="_blank" rel="noopener">Facebook</a>
+          </div>
+          <p class="note warum">Warum? <a href="https://tomas-hecker.github.io/mut-zur-zukunft/buch/kapitel-2.html" target="_blank" rel="noopener">Lies Kapitel 2 kostenlos</a></p>
+        </div>
         <div class="bars" id="bars"></div>
         <div class="legend" id="legend"></div>
         <div class="tbl-wrap"><table id="hhTable"></table></div>
@@ -1253,6 +1271,58 @@ const sign = x => (x > 0.5 ? "+" : x < -0.5 ? "−" : "") + fmt(Math.abs(x));
 const mrd = (x, d = 1) => (x < 0 ? "−" : "") + fmt(Math.abs(x), d);
 const pct = (x, d = 1) => fmt(x * 100, d) + " %";
 const $ = id => document.getElementById(id);
+
+// Ergebniskarte zum Teilen: nur der Monatsbetrag, keine weiteren Angaben
+const TEILEN_URL = "https://tomas-hecker.github.io/mut-zur-zukunft/";
+const LOGO_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="translate(4,4) scale(0.92)"><circle cx="50" cy="50" r="44" fill="none" stroke="#f2b33d" stroke-width="1.6"/><line x1="27.5" y1="51.0" x2="21.4" y2="47.5" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="37.0" y1="41.5" x2="33.5" y2="35.4" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="63.0" y1="41.5" x2="66.5" y2="35.4" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="72.5" y1="51.0" x2="78.6" y2="47.5" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><path d="M30,64 A20,20 0 0 1 70,64 Z" fill="#f2b33d"/><path d="M50,64 L50,33" stroke="#fbf8f1" stroke-width="3.2" stroke-linecap="round"/><path d="M50,47 C41,46 33,39 31,28 C41,29 48,36 50,47 Z" fill="#9fd8b0"/><path d="M50,40 C57,37 65,30 68,19 C58,20 51,28 50,40 Z" fill="#9fd8b0"/><line x1="17" y1="64" x2="83" y2="64" stroke="#fbf8f1" stroke-width="2.4" stroke-linecap="round"/><line x1="28" y1="71" x2="72" y2="71" stroke="#fbf8f1" stroke-width="1.6" stroke-linecap="round" opacity="0.6"/><line x1="38" y1="77" x2="62" y2="77" stroke="#fbf8f1" stroke-width="1.2" stroke-linecap="round" opacity="0.35"/></g></svg>';
+const logoImg = new Image();
+let teilenMonat = 0;
+logoImg.onload = () => zeichneKarte();
+logoImg.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(LOGO_SVG);
+function teilenText() {
+  return teilenMonat > 0
+    ? `Mit der Reform hätte ich ${fmt(teilenMonat)} € im Monat mehr. Rechne selbst nach: ${TEILEN_URL}steuerrechner/`
+    : `Wie viel hättest du mit der Reform mehr? Rechne selbst nach: ${TEILEN_URL}steuerrechner/`;
+}
+function zeichneKarte() {
+  const cv = $("teilenBild"); if (!cv) return;
+  const g = cv.getContext("2d"), W = 1080, sans = 'system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif', serif = 'Georgia, "Times New Roman", serif';
+  g.fillStyle = "#12372a"; g.fillRect(0, 0, W, W);
+  if (logoImg.complete && logoImg.naturalWidth) g.drawImage(logoImg, W / 2 - 130, 90, 260, 260);
+  g.textAlign = "center"; g.textBaseline = "alphabetic";
+  g.fillStyle = "#fbf8f1"; g.font = "800 40px " + sans; g.fillText("MUT ZUR ZUKUNFT", W / 2, 420);
+  if (teilenMonat > 0) {
+    g.font = "56px " + serif; g.fillText("Mit der Reform hätte ich", W / 2, 560);
+    g.fillStyle = "#f2b33d"; g.font = "bold 150px " + serif; g.fillText(fmt(teilenMonat) + " €", W / 2, 730);
+    g.fillStyle = "#fbf8f1"; g.font = "56px " + serif; g.fillText("im Monat mehr", W / 2, 820);
+  } else {
+    g.font = "60px " + serif; g.fillText("Wie viel hättest du", W / 2, 590);
+    g.fillText("mit der Reform mehr?", W / 2, 670);
+    g.fillStyle = "#f2b33d"; g.font = "bold 64px " + serif; g.fillText("Rechne selbst nach.", W / 2, 780);
+  }
+  g.fillStyle = "#9fd8b0"; g.font = "600 36px " + sans; g.fillText("tomas-hecker.github.io/mut-zur-zukunft", W / 2, 960);
+}
+function teilenUpdate(jahresPlus) {
+  teilenMonat = jahresPlus / 12 >= 5 ? Math.round(jahresPlus / 12) : 0;
+  $("teilenTitel").textContent = teilenMonat > 0 ? "Ihr Ergebnis zum Teilen" : "Rechner teilen";
+  const t = encodeURIComponent(teilenText());
+  $("teilenWa").href = "https://wa.me/?text=" + t;
+  $("teilenFb").href = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(TEILEN_URL + "steuerrechner/");
+  zeichneKarte();
+}
+$("teilenKnopf").onclick = () => {
+  zeichneKarte();
+  $("teilenBild").toBlob(async blob => {
+    const name = "mut-zur-zukunft-ergebnis.png";
+    try {
+      const file = new File([blob], name, { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text: teilenText() }); return; }
+      if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) { await navigator.share({ text: teilenText() }); return; }
+    } catch (e) { if (e && e.name === "AbortError") return; }
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }, "image/png");
+};
 const tip = $("tip");
 function showTip(e, html) { tip.innerHTML = html; tip.hidden = false; const x = Math.min(e.clientX + 14, window.innerWidth - 270); tip.style.left = x + "px"; tip.style.top = (e.clientY + 14) + "px"; }
 function hideTip() { tip.hidden = true; }
@@ -1351,6 +1421,7 @@ function updateHH() {
     vd.innerHTML += `<p class="note">Mit dem Altvermögenskonto bleiben Ausgaben aus Vermögen, das schon nach altem Recht versteuert ist, steuerfrei, soweit das Konto reicht. Dann ${d2 < 0 ? "beträgt die Entlastung " + eur(-d2) : "beträgt die Mehrbelastung " + eur(d2)} im Jahr.</p>`;
   }
   if (r.s4 > 0.5) vd.innerHTML += `<p class="note">In den ersten ${fmt(A.Stufe4Jahre)} Jahren kommt die befristete Stufe 4 dazu (${pct(A.Satz4, 0)} Aufschlag auf Ausgaben über ${eur(A.Stufe4Monat)} im Monat je Erwachsenem): ${eur(r.s4)} mehr im Jahr.</p>`;
+  teilenUpdate(H - V);
   // 30 Jahre
   const jahresPlus = H - V, rr = A.RenditeReal;
   const fv = n => rr ? jahresPlus * (Math.pow(1 + rr, n) - 1) / rr : jahresPlus * n;
