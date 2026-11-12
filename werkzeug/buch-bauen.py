@@ -31,6 +31,8 @@ while i < len(secs):
         chapters.append(dict(slug=slug, no=no, kicker=kicker, title=title,
                              lead=lead.decode_contents() if lead else '', body=body))
         i += 2; continue
+    if 'chapter' in cls and s.find('h1') is None:
+        i += 1; continue   # eigenes Inhaltsverzeichnis (Version 23)
     if 'chapter' in cls:
         h1 = s.find('h1')
         title = h1.get_text(' ', strip=True)
@@ -39,6 +41,14 @@ while i < len(secs):
             lead = s.find(class_='lead'); leadh = lead.decode_contents(); lead.decompose()
             s.find(class_='kicker').decompose(); h1.decompose()
             chapters.append(dict(slug='vorwort', no='', kicker='Vorwort', title=title, lead=leadh, body=s))
+        elif s.get('id') == 'auf-einen-blick':
+            # Version 23: „Die Reform auf einen Blick“ als eigener Abschnitt vor Kapitel 1
+            lead = s.find(class_='lead'); leadh = lead.decode_contents() if lead else ''
+            if lead: lead.decompose()
+            if s.find(class_='kicker'): s.find(class_='kicker').decompose()
+            h1.decompose()
+            for a in s.select('.sorge .anr'): a['class'] = ['snr']
+            chapters.append(dict(slug='auf-einen-blick', no='', kicker='Überblick', title=title, lead=leadh, body=s))
         elif title.startswith('Quellen'):
             h1.decompose()
             chapters.append(dict(slug='quellen', no='', kicker='Anhang', title=title, lead='', body=s))
@@ -59,13 +69,16 @@ for ch in chapters:
     used = set(); ch['heads'] = []
     for h in body.find_all(['h2', 'h3']):
         anr = h.find(class_='anr')
-        hid = anr.get_text(strip=True).lower() if anr else slugify(h.get_text(' ', strip=True))
+        sg = h.find(class_='sorge')
+        hid = anr.get_text(strip=True).lower() if anr else slugify(''.join(x.get_text(' ') if hasattr(x, 'get_text') else str(x) for x in h.contents if x is not sg) if sg else h.get_text(' ', strip=True))
         base, k = hid, 2
         while hid in used: hid = f'{base}-{k}'; k += 1
         used.add(hid); h['id'] = hid
         if anr: appendix_ids[anr.get_text(strip=True)] = f"{ch['slug']}.html#{hid}"
         if h.name == 'h2':
-            ch['heads'].append((hid, h.get_text(' ', strip=True), anr.get_text(strip=True) if anr else ''))
+            sg = h.find(class_='sorge')
+            tt = ''.join(x.get_text(' ', strip=True) if hasattr(x, 'get_text') else str(x) for x in h.contents if x is not sg).strip() if sg else h.get_text(' ', strip=True)
+            ch['heads'].append((hid, tt, anr.get_text(strip=True) if anr else ''))
 
 slugs = {c['slug'] for c in chapters}
 # Druckseiten (", S. 98") gibt es online nicht
@@ -247,7 +260,7 @@ open(os.path.join(OUT, 'suche-index.js'), 'w', encoding='utf-8').write('window.B
 lis = []
 for c in chapters:
     subs = ''.join(f'<li><a href="{c["slug"]}.html#{i}">{f"<b>{a}</b> " if a else ""}{html.escape(t[len(a):].strip() if a else t)}</a></li>' for i, t, a in c['heads'])
-    lis.append(f'''<li class="kap"><details{" open" if c["no"] in ("5", "7") else ""}><summary><a href="{c["slug"]}.html"><span class="no">{c["no"]}</span><span class="tt">{html.escape(c["title"])}</span></a></summary>{f'<ol class="sub">{subs}</ol>' if subs else ''}</details></li>''')
+    lis.append(f'''<li class="kap"><details{" open" if c["no"] in ("7", "9") else ""}><summary><a href="{c["slug"]}.html"><span class="no">{c["no"]}</span><span class="tt">{html.escape(c["title"])}</span></a></summary>{f'<ol class="sub">{subs}</ol>' if subs else ''}</details></li>''')
 uebersicht = f'''<div class="bhero big"><div class="bwrap"><div><p class="eyebrow">Das Buch online lesen</p><h1>Wir können uns die Zukunft leisten</h1><p class="blead">Wie fast jeder mehr Geld behält, der Staat schuldenfrei wird und Deutschland aufblüht. Das ganze Buch, Kapitel für Kapitel, mit allen Grafiken. Tippe auf ein Kapitel, um es zu lesen, oder auf den Pfeil, um seine Abschnitte zu sehen.</p>
 <div class="btns"><a class="btn" href="vorwort.html">Mit dem Vorwort beginnen</a><a class="btn ghost" href="Wir-koennen-uns-die-Zukunft-leisten.pdf" download>Als PDF herunterladen</a></div></div></div></div>
 <main class="wrap uebersicht">{SEARCHBOX}<h2>Inhalt</h2><ol class="ktoc">{''.join(lis)}</ol>
