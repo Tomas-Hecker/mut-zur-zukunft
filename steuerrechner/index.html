@@ -1589,6 +1589,20 @@ function drawChart(rows) {
   for (let v = lo; v <= maxY + 1e-9; v += step) g += `<line class="gridl" x1="${L}" x2="${W - R}" y1="${yy(v)}" y2="${yy(v)}"/><text x="${L - 6}" y="${yy(v) + 4}" text-anchor="end">${fmt(v * 100)} %</text>`;
   [y0, ...[2030, 2040, 2050, 2060, 2070].filter(y => y > y0 + 3 && y <= y1)].forEach(y => g += `<text x="${x(y)}" y="${H - 8}" text-anchor="middle">${y}</text>`);
   g += `<line class="ref" x1="${L}" x2="${W - R}" y1="${yy(A.Schuld)}" y2="${yy(A.Schuld)}"/>`;
+  if (hatPlan && minY < 0) {
+    // Vermögen im Zukunftsfonds: goldene Fläche zwischen null und der Linie mit Zukunftsplan, wo sie unter null liegt, wie im Buch
+    const cross = (p, r) => x(p.jahr + p.plan / (p.plan - r.plan) * (r.jahr - p.jahr)).toFixed(1);
+    let a = "";
+    rows.forEach((r, i) => {
+      const p = rows[i - 1];
+      if (r.plan < 0) {
+        if (!p || p.plan >= 0) a += `M${p ? cross(p, r) : x(r.jahr).toFixed(1)},${yy(0).toFixed(1)}`;
+        a += `L${x(r.jahr).toFixed(1)},${yy(r.plan).toFixed(1)}`;
+        if (i === rows.length - 1) a += `L${x(r.jahr).toFixed(1)},${yy(0).toFixed(1)}Z`;
+      } else if (p && p.plan < 0) a += `L${cross(p, r)},${yy(0).toFixed(1)}Z`;
+    });
+    g += `<path d="${a}" style="fill:var(--accent-fill);fill-opacity:.45;stroke:none"/>`;
+  }
   const path = k => rows.map((r, i) => (i ? "L" : "M") + x(r.jahr).toFixed(1) + "," + yy(r[k]).toFixed(1)).join("");
   g += `<path class="ln" d="${path("ohne")}" style="stroke:var(--muted)" stroke-dasharray="1 0"/>`;
   if (hatDemo) g += `<path class="ln" d="${path("demo")}" style="stroke:var(--s1)" stroke-dasharray="5 4"/>`;
@@ -1603,13 +1617,13 @@ function drawChart(rows) {
   if (hatDemo) g += lab("demo", Math.abs(yy(last.demo) - yy(last.quote)) < 16 ? "" : "o. Alt.", "var(--s1)");
   g += `<line class="hair" id="hair" x1="0" x2="0" y1="${T}" y2="${H - B}" visibility="hidden"/><rect id="hit" x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent"/>`;
   $("chartBox").innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Staatsschuldenquote bis 2070, mit und ohne Reform">${g}</svg>`;
-  $("chartLegend").innerHTML = `${hatPlan ? `<span><i style="background:var(--s2)"></i>Mit Reform, Zukunftsplan und Schuldenregel</span>` : ""}<span><i style="background:var(--s3)"></i>Mit Reform</span><span><i style="background:var(--muted)"></i>Ohne Reform</span>${hatDemo ? `<span><i style="background:var(--s1)"></i>Ohne Reform und ohne Alterung</span>` : ""}<span><i style="background:transparent;border-top:1px dashed var(--muted);height:0;border-radius:0;width:14px"></i>Ende 2023: ${pct(A.Schuld, 0)}</span>`;
+  $("chartLegend").innerHTML = `${hatPlan ? `<span><i style="background:var(--s2)"></i>Mit Reform, Zukunftsplan und Schuldenregel</span>` : ""}${hatPlan && minY < 0 ? `<span><i style="background:var(--accent-fill);opacity:.6"></i>Unter null: Vermögen im Zukunftsfonds</span>` : ""}<span><i style="background:var(--s3)"></i>Mit Reform</span><span><i style="background:var(--muted)"></i>Ohne Reform</span>${hatDemo ? `<span><i style="background:var(--s1)"></i>Ohne Reform und ohne Alterung</span>` : ""}<span><i style="background:transparent;border-top:1px dashed var(--muted);height:0;border-radius:0;width:14px"></i>Ende 2023: ${pct(A.Schuld, 0)}</span>`;
   const svg = $("chartBox").firstChild, hair = $("hair");
   $("hit").onpointermove = e => {
     const pt = svg.getBoundingClientRect(); const sx = (e.clientX - pt.left) / pt.width * W;
     const i = clamp(Math.round((sx - L) / (W - L - R) * (rows.length - 1)), 0, rows.length - 1); const r = rows[i];
     hair.setAttribute("x1", x(r.jahr)); hair.setAttribute("x2", x(r.jahr)); hair.setAttribute("visibility", "visible");
-    showTip(e, `<b>${r.jahr}</b>${r.plan !== undefined ? `<br>Mit Plan und Regel: ${pct(r.plan, 0)}${r.mw > 0.05 ? ` (MwSt +${fmt(r.mw, 1)} Punkte)` : ""}` : ""}<br>Mit Reform: ${pct(r.quote, 0)}<br>Ohne Reform: ${pct(r.ohne, 0)}${r.demo !== undefined ? `<br>Ohne Alterung: ${pct(r.demo, 0)}` : ""}`);
+    showTip(e, `<b>${r.jahr}</b>${r.plan !== undefined ? `<br>Mit Plan und Regel: ${r.plan < 0 ? `Vermögen ${pct(-r.plan, 0)}` : pct(r.plan, 0)}${r.mw > 0.05 ? ` (MwSt +${fmt(r.mw, 1)} Punkte)` : ""}` : ""}<br>Mit Reform: ${pct(r.quote, 0)}<br>Ohne Reform: ${pct(r.ohne, 0)}${r.demo !== undefined ? `<br>Ohne Alterung: ${pct(r.demo, 0)}` : ""}`);
   };
   $("hit").onpointerleave = () => { hair.setAttribute("visibility", "hidden"); hideTip(); };
 }
