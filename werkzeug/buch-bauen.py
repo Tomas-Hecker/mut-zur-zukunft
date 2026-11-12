@@ -13,7 +13,7 @@ for _e in soup.select('.nur-druck'): _e.decompose()
 secs = soup.body.find_all('section', recursive=False)
 
 LOGO = '<g transform="translate(4,4) scale(0.92)"><circle cx="50" cy="50" r="44" fill="none" stroke="#f2b33d" stroke-width="1.6"/><line x1="27.5" y1="51.0" x2="21.4" y2="47.5" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="37.0" y1="41.5" x2="33.5" y2="35.4" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="63.0" y1="41.5" x2="66.5" y2="35.4" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="72.5" y1="51.0" x2="78.6" y2="47.5" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><path d="M30,64 A20,20 0 0 1 70,64 Z" fill="#f2b33d"/><path d="M50,64 L50,33" stroke="#fbf8f1" stroke-width="3.2" stroke-linecap="round"/><path d="M50,47 C41,46 33,39 31,28 C41,29 48,36 50,47 Z" fill="#9fd8b0"/><path d="M50,40 C57,37 65,30 68,19 C58,20 51,28 50,40 Z" fill="#9fd8b0"/><line x1="17" y1="64" x2="83" y2="64" stroke="#fbf8f1" stroke-width="2.4" stroke-linecap="round"/><line x1="28" y1="71" x2="72" y2="71" stroke="#fbf8f1" stroke-width="1.6" stroke-linecap="round" opacity="0.6"/><line x1="38" y1="77" x2="62" y2="77" stroke="#fbf8f1" stroke-width="1.2" stroke-linecap="round" opacity="0.35"/></g>'
-WORT = '<svg class="logo" viewBox="0 0 360 100" role="img" aria-label="Schuldenfrei 2070">' + LOGO + '<text x="110" y="50" font-family="system-ui, sans-serif" font-weight="800" font-size="25" letter-spacing="1" fill="#fbf8f1">SCHULDENFREI</text><text x="110" y="80" font-family="system-ui, sans-serif" font-weight="800" font-size="30" letter-spacing="1.5" fill="#f2b33d">2070</text></svg>'
+WORT = '<svg class="logo" viewBox="0 0 360 100" role="img" aria-label="Mut zur Zukunft">' + LOGO + '<text x="110" y="50" font-family="system-ui, sans-serif" font-weight="800" font-size="25" letter-spacing="1" fill="#fbf8f1">MUT ZUR</text><text x="110" y="80" font-family="system-ui, sans-serif" font-weight="800" font-size="30" letter-spacing="1.5" fill="#f2b33d">ZUKUNFT</text></svg>'
 
 # ---------- Kapitel einsammeln ----------
 chapters = []  # dict(slug, no, kicker, title, lead, nodes)
@@ -200,7 +200,7 @@ def page(title, desc, body, cur='', extra_head=''):
 <body class="buch">
 <header class="top" id="top"><div class="wrap"><a href="../" aria-label="Zur Startseite">{WORT}</a><nav aria-label="Hauptmenü"><a href="../">Start</a><a href="./" aria-current="page">Das Buch</a><a href="../steuerrechner/">Steuerrechner</a><a href="../eauto-rechner/">E-Auto-Rechner</a><a href="../heizungsrechner/">Heizungsrechner</a><a href="../energie-rechner/">Energie-Rechner</a><a href="../balkon-rechner/">Balkon-Rechner</a><a href="../ueber-mich.html">Über mich</a></nav></div></header>
 {body}
-<footer><div class="wrap"><span>© 2026 Tomas Hecker · Schuldenfrei 2070 · Alle Angaben ohne Gewähr</span><nav aria-label="Rechtliches"><a href="Schuldenfrei-2070.pdf" download>Buch als PDF</a><a href="../impressum.html#haftung">Haftungsausschluss</a><a href="../impressum.html">Impressum</a><a href="../datenschutz.html">Datenschutz</a></nav></div></footer>
+<footer><div class="wrap"><span>© 2026 Tomas Hecker · Mut zur Zukunft · Alle Angaben ohne Gewähr</span><nav aria-label="Rechtliches"><a href="Wir-koennen-uns-die-Zukunft-leisten.pdf" download>Buch als PDF</a><a href="../impressum.html#haftung">Haftungsausschluss</a><a href="../impressum.html">Impressum</a><a href="../datenschutz.html">Datenschutz</a></nav></div></footer>
 <script src="buch.js" defer></script>
 <script src="../satz.js" defer></script>
 </body>
@@ -222,7 +222,7 @@ for k, ch in enumerate(chapters):
 <div class="blayout" id="seite"><aside class="bside"><button type="button" class="sideclose">Schließen</button>{SEARCHBOX}{toc_html(ch["slug"])}</aside>
 <main class="bmain">{hero}<article class="btext">{ser(ch["body"])}</article>{pn}</main></div>'''
     open(os.path.join(OUT, ch['slug'] + '.html'), 'w', encoding='utf-8').write(
-        page(f'{ch["title"]} · Schuldenfrei 2070', f'{ch["kicker"]}: {ch["title"]}. Aus dem Buch „Schuldenfrei 2070“ von Tomas Hecker, online lesen.', body, ch['slug']))
+        page(f'{ch["title"]} · Wir können uns die Zukunft leisten', f'{ch["kicker"]}: {ch["title"]}. Aus dem Buch „Wir können uns die Zukunft leisten“ von Tomas Hecker, online lesen.', body, ch['slug']))
     # Suchindex: Abschnitte
     cur_id, cur_t, buf = '', ch['title'], []
     def flush():
@@ -247,14 +247,14 @@ lis = []
 for c in chapters:
     subs = ''.join(f'<li><a href="{c["slug"]}.html#{i}">{f"<b>{a}</b> " if a else ""}{html.escape(t[len(a):].strip() if a else t)}</a></li>' for i, t, a in c['heads'])
     lis.append(f'''<li class="kap"><details{" open" if c["no"] in ("5", "7") else ""}><summary><a href="{c["slug"]}.html"><span class="no">{c["no"]}</span><span class="tt">{html.escape(c["title"])}</span></a></summary>{f'<ol class="sub">{subs}</ol>' if subs else ''}</details></li>''')
-uebersicht = f'''<div class="bhero big"><div class="bwrap"><div><p class="eyebrow">Das Buch online lesen</p><h1>Schuldenfrei 2070</h1><p class="blead">Warum wir uns auf die Zukunft freuen können. Das ganze Buch, Kapitel für Kapitel, mit allen Grafiken. Tippe auf ein Kapitel, um es zu lesen, oder auf den Pfeil, um seine Abschnitte zu sehen.</p>
-<div class="btns"><a class="btn" href="vorwort.html">Mit dem Vorwort beginnen</a><a class="btn ghost" href="Schuldenfrei-2070.pdf" download>Als PDF herunterladen</a></div></div></div></div>
+uebersicht = f'''<div class="bhero big"><div class="bwrap"><div><p class="eyebrow">Das Buch online lesen</p><h1>Wir können uns die Zukunft leisten</h1><p class="blead">Wie fast jeder mehr Geld behält, der Staat schuldenfrei wird und Deutschland aufblüht. Das ganze Buch, Kapitel für Kapitel, mit allen Grafiken. Tippe auf ein Kapitel, um es zu lesen, oder auf den Pfeil, um seine Abschnitte zu sehen.</p>
+<div class="btns"><a class="btn" href="vorwort.html">Mit dem Vorwort beginnen</a><a class="btn ghost" href="Wir-koennen-uns-die-Zukunft-leisten.pdf" download>Als PDF herunterladen</a></div></div></div></div>
 <main class="wrap uebersicht">{SEARCHBOX}<h2>Inhalt</h2><ol class="ktoc">{''.join(lis)}</ol>
 <aside class="rechner"><div><strong>Selbst nachrechnen</strong><p>Was das Steuersystem aus Kapitel 5 für deinen Haushalt bedeutet, zeigt der Steuerrechner.</p></div><div class="rbtns"><a class="rbtn" href="../steuerrechner/">Zum Steuerrechner</a></div></aside></main>'''
-open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8').write(page('Das Buch online lesen · Schuldenfrei 2070', 'Schuldenfrei 2070 von Tomas Hecker: das ganze Buch online lesen, mit Inhaltsverzeichnis, Suche und Verweisen zum Nachrechnen.', uebersicht))
+open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8').write(page('Das Buch online lesen · Wir können uns die Zukunft leisten', '„Wir können uns die Zukunft leisten“ von Tomas Hecker: das ganze Buch online lesen, mit Inhaltsverzeichnis, Suche und Verweisen zum Nachrechnen.', uebersicht))
 
 suche = f'''<main class="wrap uebersicht"><h1 class="sh">Im Buch suchen</h1>{SEARCHBOX}<p id="treffer-info" class="small"></p><ol id="treffer" class="treffer"></ol><p><a href="./">Zum Inhaltsverzeichnis</a></p></main>'''
-open(os.path.join(OUT, 'suche.html'), 'w', encoding='utf-8').write(page('Im Buch suchen · Schuldenfrei 2070', 'Volltextsuche im Buch Schuldenfrei 2070.', suche, extra_head='<script src="suche-index.js" defer></script>\n'))
+open(os.path.join(OUT, 'suche.html'), 'w', encoding='utf-8').write(page('Im Buch suchen · Wir können uns die Zukunft leisten', 'Volltextsuche im Buch „Wir können uns die Zukunft leisten“.', suche, extra_head='<script src="suche-index.js" defer></script>\n'))
 # ---------- Feste Buchstellen: stelle.html#anh-C2, #kap-7 oder jede id aus der Satzdatei ----------
 import json as _json, glob as _glob
 stellen = {}
@@ -270,6 +270,6 @@ for f in sorted(_glob.glob(os.path.join(OUT, '*.html'))):
 stelle = ('<main class="wrap uebersicht"><h1 class="sh">Buchstelle</h1><p id="st">Die Buchstelle wird geöffnet …</p><p><a href="./">Zum Inhaltsverzeichnis</a></p></main>'
   '<script>(function(){var S=' + _json.dumps(stellen, ensure_ascii=False) + ';var k=decodeURIComponent((location.hash||"").slice(1));'
   'if(S[k]){location.replace(S[k]);}else{document.getElementById("st").textContent=k?"Diese Buchstelle gibt es nicht: "+k:"Keine Buchstelle angegeben.";}})();</script>')
-open(os.path.join(OUT, 'stelle.html'), 'w', encoding='utf-8').write(page('Buchstelle · Schuldenfrei 2070', 'Weiterleitung auf eine Stelle im Buch Schuldenfrei 2070.', stelle))
+open(os.path.join(OUT, 'stelle.html'), 'w', encoding='utf-8').write(page('Buchstelle · Wir können uns die Zukunft leisten', 'Weiterleitung auf eine Stelle im Buch „Wir können uns die Zukunft leisten“.', stelle))
 open(os.path.join(OUT, 'stellen.json'), 'w', encoding='utf-8').write(_json.dumps(stellen, ensure_ascii=False, indent=0))
 print(len(chapters), 'Kapitel,', len(index_entries), 'Suchabschnitte,', len(appendix_ids), 'Anhang-Anker,', len(stellen), 'Buchstellen')
