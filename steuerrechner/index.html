@@ -749,7 +749,7 @@ h1,h2,h3{break-after:avoid}
 <div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Wir können uns die Zukunft leisten“. Die Ergebnisse sind Größenordnungen, können Fehler enthalten und ersetzen keine Steuer-, Rechts-, Finanz- oder Energieberatung. Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>
 <footer>
   <div class="wrap">
-    <p>Grundlage: Rechenmodell 2.4 zum Buch „Wir können uns die Zukunft leisten“. Rechtsstand 2026, Steueraufkommen 2025 (Schätzung). Prototyp, noch nicht unabhängig geprüft. Alle Angaben ohne Gewähr; der Rechner zeigt Größenordnungen und ist keine Steuer-, Rechts- oder Finanzberatung.</p>
+    <p>Grundlage: das Rechenmodell zum Buch „Wir können uns die Zukunft leisten“. Rechtsstand 2026, Steueraufkommen 2025 (Schätzung). Prototyp, noch nicht unabhängig geprüft. Alle Angaben ohne Gewähr; der Rechner zeigt Größenordnungen und ist keine Steuer-, Rechts- oder Finanzberatung.</p>
     <p>Datenschutz: Der Rechner lädt keine fremden Inhalte und speichert keine Eingaben.</p>
     <p><a href="../">Startseite</a> · <a href="../buch/">Buch online lesen</a> · <a href="../ueber-mich.html">Über den Autor</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p>
   </div>
@@ -1252,7 +1252,7 @@ function gesamt() {
   const ausgaben = [
     ["Kindergeld, bisher mit der Lohnsteuer verrechnet", kindergeld, kindergeld],
     ["Grundbedarf ohne Mehrwertsteuer", gb, gb],
-    ["Pauschale Mehrwertsteuer-Erstattung (Modell 1.0)", erst, erst],
+    ["Pauschale Mehrwertsteuer-Erstattung auf das Existenzminimum (nicht im Vorschlag)", erst, erst],
     [`Keine Beiträge zu Pflege und Rente auf Lohn bis ${eur(A.SVFB / 12)} im Monat`, (1 - A.RVPVSt) * A.SVKost, (1 - A.RVPVSt) * A.SVKost],
     ["Rente und Pflege aus der Steuer: Beiträge entfallen", A.RVPVSt * A.RVPVKost, A.RVPVSt * A.RVPVKost],
     ["Strom mit 5 % Mehrwertsteuer und ohne Umlagen", A.StromKost, A.StromKost],
