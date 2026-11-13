@@ -69,6 +69,23 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .legend i { width: 18px; height: 0; border-top: 2.5px solid; display: inline-block }
 .tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 4px 16px rgb(0 0 0 / .12); min-width: 170px; font-variant-numeric: tabular-nums }
 .tip .r { display: flex; justify-content: space-between; gap: 12px }
+.massn { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; font-size: 14.5px }
+@media (max-width: 420px) { .massn { grid-template-columns: 1fr } }
+.check { display: flex; gap: 8px; align-items: center; cursor: pointer }
+details.more summary { cursor: pointer; font-size: 14px; font-weight: 600; margin-bottom: 8px }
+details.more { display: grid; gap: 10px }
+.f input.auto { color: var(--muted) }
+.btnk { justify-self: start; font: 600 13.5px var(--body); border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 999px; padding: 5px 12px; cursor: pointer; margin-top: 8px }
+.aussage { font: 700 17px/1.35 var(--display); max-width: none }
+.dbars { display: grid; gap: 10px }
+.dbar .t { font-size: 14px; margin-bottom: 3px; display: flex; justify-content: space-between; gap: 10px }
+.dbar .t b { font-variant-numeric: tabular-nums; white-space: nowrap }
+.dbar .trk { background: var(--bg); border-radius: 4px; height: 22px; overflow: hidden }
+.dbar .trk i { display: block; height: 100%; border-radius: 4px }
+.dbar.best .t { font-weight: 700 }
+#daemmung table td:first-child, #daemmung table th:first-child { text-align: left }
+@media (max-width: 560px) { #daemmung table { font-size: 12.5px } #daemmung th, #daemmung td { padding: 6px 3px } #daemmung th { letter-spacing: 0; font-size: 11px; white-space: normal } #daemmung td:first-child { min-width: 0; hyphens: auto; font-size: 12px } }
+#daemmung tr.sum td { font-weight: 700; border-top: 2px solid var(--line) }
 .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; align-items: start }
 .tbl { overflow-x: auto }
 table { border-collapse: collapse; width: 100%; font-size: 14.5px; font-variant-numeric: tabular-nums }
@@ -151,14 +168,14 @@ h1,h2,h3{break-after:avoid}
 </style>
 </head>
 <body>
-<nav class="sitenav flush" aria-label="Hauptmenü"><div class="sn-in"><a class="sn-logo" href="../" aria-label="Mut zur Zukunft, zur Startseite"><svg viewBox="0 0 100 100" width="34" height="34" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#f2b33d" stroke-width="3"/><path d="M30,64 A20,20 0 0 1 70,64 Z" fill="#f2b33d"/><path d="M50,64 L50,33" stroke="#fbf8f1" stroke-width="4" stroke-linecap="round"/><path d="M50,47 C41,46 33,39 31,28 C41,29 48,36 50,47 Z" fill="#9fd8b0"/><path d="M50,40 C57,37 65,30 68,19 C58,20 51,28 50,40 Z" fill="#9fd8b0"/><line x1="17" y1="64" x2="83" y2="64" stroke="#fbf8f1" stroke-width="3.5" stroke-linecap="round"/></svg><span>Mut zur <b>Zukunft</b></span></a><div class="sn-links"><a class="sn-buch" href="../buch/">Zum Buch</a><a href="../">Start</a><a href="../steuerrechner/">Steuerrechner</a><a href="../eauto-rechner/">E-Auto-Rechner</a><a href="../heizungsrechner/" aria-current="page">Heizungsrechner</a><a href="../energie-rechner/">Energie-Rechner</a><a href="../balkon-rechner/">Balkon-Rechner</a><a href="../ueber-mich.html">Über mich</a><button type="button" class="sn-druck" onclick="print()" title="Eingaben und Ergebnisse drucken oder als PDF speichern">Drucken / PDF</button></div></div></nav>
+<nav class="sitenav flush" aria-label="Hauptmenü"><div class="sn-in"><a class="sn-logo" href="../" aria-label="Mut zur Zukunft, zur Startseite"><svg viewBox="0 0 100 100" width="34" height="34" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#f2b33d" stroke-width="3"/><path d="M30,64 A20,20 0 0 1 70,64 Z" fill="#f2b33d"/><path d="M50,64 L50,33" stroke="#fbf8f1" stroke-width="4" stroke-linecap="round"/><path d="M50,47 C41,46 33,39 31,28 C41,29 48,36 50,47 Z" fill="#9fd8b0"/><path d="M50,40 C57,37 65,30 68,19 C58,20 51,28 50,40 Z" fill="#9fd8b0"/><line x1="17" y1="64" x2="83" y2="64" stroke="#fbf8f1" stroke-width="3.5" stroke-linecap="round"/></svg><span>Mut zur <b>Zukunft</b></span></a><div class="sn-links"><a class="sn-buch" href="../buch/">Zum Buch</a><a href="../">Start</a><a href="../steuerrechner/">Steuerrechner</a><a href="../eauto-rechner/">E-Auto-Rechner</a><a href="../heizungsrechner/" aria-current="page">Heizung und Dämmung</a><a href="../energie-rechner/">Energie-Rechner</a><a href="../balkon-rechner/">Balkon-Rechner</a><a href="../ueber-mich.html">Über mich</a><button type="button" class="sn-druck" onclick="print()" title="Eingaben und Ergebnisse drucken oder als PDF speichern">Drucken / PDF</button></div></div></nav>
 
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">Heizkosten über 20 Jahre</div>
+    <div class="eyebrow">Heizung und Dämmung über 20 Jahre</div>
     <h1>Wärmepumpe, Gas oder Öl: Was heizt am günstigsten?</h1>
-    <p class="lead">Der Rechner vergleicht eine neue Heizung über ihre ganze Lebensdauer: Kauf nach Förderung, Gas, Öl oder Strom, steigender CO₂-Preis, Pflicht zur Bio-Beimischung bei neuen Gas- und Ölheizungen, Wartung und Schornsteinfeger. Alle Werte lassen sich ändern.</p>
+    <p class="lead">Der Rechner vergleicht eine neue Heizung über ihre ganze Lebensdauer: Kauf nach Förderung, Gas, Öl oder Strom, steigender CO₂-Preis, Pflicht zur Bio-Beimischung bei neuen Gas- und Ölheizungen, Wartung und Schornsteinfeger. Dazu <a href="#daemmung">Dämmen und neue Fenster</a>: Sie senken die Vorlauftemperatur, die Wärmepumpe arbeitet besser, braucht weniger Strom und verschiebt mehr in billige Stunden. Alle Werte lassen sich ändern.</p>
   </header>
 
   <div class="main">
@@ -178,6 +195,37 @@ h1,h2,h3{break-after:avoid}
         <div class="grp" id="g_oel"><h3><i style="background:var(--oel)"></i>Ölheizung</h3></div>
       </div>
       <div class="grp"><h3>Förderung für die Wärmepumpe</h3><div class="row2" id="foe"></div></div>
+      <div class="grp" id="g_daemm">
+        <h3><i style="background:var(--good)"></i>Dämmen und Fenster</h3>
+        <div class="row2">
+          <div class="f"><label for="d_bj">Baujahr</label><div class="in"><select id="d_bj"><option value="1918">bis 1918</option><option value="1948">1919 bis 1948</option><option value="1957">1949 bis 1957</option><option value="1968">1958 bis 1968</option><option value="1978">1969 bis 1978</option><option value="1983">1979 bis 1983</option><option value="1994">1984 bis 1994</option><option value="2001">1995 bis 2001</option><option value="2009">2002 bis 2009</option><option value="2024">ab 2010</option></select></div><small>daraus schätzt der Rechner U-Werte und Vorlauftemperatur</small></div>
+          <div class="f"><label for="d_fl">Wohnfläche</label><div class="in"><input id="d_fl" type="number" inputmode="decimal" step="10" min="30"><span class="u">m²</span></div></div>
+          <div class="f"><label for="d_g">Geschosse</label><div class="in"><input id="d_g" type="number" inputmode="decimal" step="1" min="1"></div></div>
+          <div class="f"><label for="d_vl0">Vorlauftemperatur heute am kältesten Tag</label><div class="in"><input id="d_vl0" type="number" inputmode="decimal" step="1" min="30"><span class="u">°C</span></div><small>alte Heizkörper 60 bis 75, Fußbodenheizung 35</small></div>
+        </div>
+        <div class="massn">
+          <label class="check"><input type="checkbox" id="d_mWand"> Fassade dämmen</label>
+          <label class="check"><input type="checkbox" id="d_mDach"> Dach oder oberste Decke</label>
+          <label class="check"><input type="checkbox" id="d_mFen"> Neue Fenster</label>
+          <label class="check"><input type="checkbox" id="d_mKel"> Kellerdecke dämmen</label>
+        </div>
+        <details class="more">
+          <summary>Kosten, Förderung und U-Werte: geschätzt, änderbar</summary>
+          <div class="row2">
+            <div class="f"><label for="d_kWand">Fassade</label><div class="in"><input id="d_kWand" type="number" step="500" min="0"><span class="u">€</span></div></div>
+            <div class="f"><label for="d_kDach">Dach oder oberste Decke</label><div class="in"><input id="d_kDach" type="number" step="500" min="0"><span class="u">€</span></div><small>oberste Decke rund 60 € je m², ganzes Dach deutlich mehr</small></div>
+            <div class="f"><label for="d_kFen">Fenster</label><div class="in"><input id="d_kFen" type="number" step="500" min="0"><span class="u">€</span></div></div>
+            <div class="f"><label for="d_kKel">Kellerdecke</label><div class="in"><input id="d_kKel" type="number" step="500" min="0"><span class="u">€</span></div></div>
+            <div class="f"><label for="d_foe">Förderung</label><div class="in"><select id="d_foe"><option value="15">15 % (BEG Einzelmaßnahme)</option><option value="20">20 % mit Sanierungsfahrplan (iSFP)</option><option value="0">keine</option></select></div><small>förderfähig bis 30.000 €, mit iSFP 60.000 € je Wohnung und Jahr</small></div>
+            <div class="f"><label for="d_uw">U-Wert Wand heute</label><div class="in"><input id="d_uw" type="number" step="0.05" min="0.1"><span class="u">W/(m²K)</span></div></div>
+            <div class="f"><label for="d_ud">U-Wert Dach oder oberste Decke</label><div class="in"><input id="d_ud" type="number" step="0.05" min="0.1"><span class="u">W/(m²K)</span></div></div>
+            <div class="f"><label for="d_uf">U-Wert Fenster</label><div class="in"><input id="d_uf" type="number" step="0.1" min="0.5"><span class="u">W/(m²K)</span></div></div>
+            <div class="f"><label for="d_uk">U-Wert Kellerdecke</label><div class="in"><input id="d_uk" type="number" step="0.05" min="0.1"><span class="u">W/(m²K)</span></div></div>
+          </div>
+          <small class="note" id="d_flaechen"></small>
+          <button type="button" class="btnk" id="d_auto">Alle Schätzwerte neu berechnen</button>
+        </details>
+      </div>
     </div>
 
     <div class="panel">
@@ -188,6 +236,16 @@ h1,h2,h3{break-after:avoid}
       <div class="chart" id="cum"></div>
       <p class="note">Aufsummierte Kosten ab Einbau in Euro, mit Preisen des jeweiligen Jahres.</p>
     </div>
+  </div>
+
+  <div class="panel" id="daemmung">
+    <div class="eyebrow">Dämmen und Fenster</div>
+    <h2 id="d_titel">Was Dämmen und neue Fenster zusätzlich bringen</h2>
+    <p class="aussage" id="d_aus"></p>
+    <div class="dbars" id="d_bars"></div>
+    <div class="tbl"><table id="d_tab"></table></div>
+    <p class="note" id="d_note"></p>
+    <p class="note" id="d_link"></p>
   </div>
 
   <div class="cols">
@@ -221,7 +279,7 @@ const PFAD = {
   mzz: { txt: "Vorschlag aus dem Buch: 100 € ab 2028, 150 € ab 2030, 200 € ab 2035, 300 € ab 2040. Das Geld fließt als Klimageld zurück.", p: [[2026, 60], [2027, 65], [2028, 100], [2030, 150], [2035, 200], [2040, 300]] },
 };
 const V = {
-  waerme: 18000, jahr: 2026, dauer: 20, steig: 2, pfad: "ets",
+  waerme: 18000, jahr: 2026, wpTarif: "fest", dauer: 20, steig: 2, pfad: "ets",
   wpPreis: 30000, wpJaz: 3.2, wpStrom: 0.27, wpGrund: 120, wpWart: 200,
   gasPreis: 12000, gasNutz: 92, gasKwh: 0.115, gasGrund: 180, gasWart: 300, gasBio: 0.06, gasNeu: "ja",
   oelPreis: 15000, oelNutz: 90, oelLiter: 1.00, oelWart: 370, oelBio: 0.06,
@@ -230,7 +288,7 @@ const V = {
 const F = (k, lbl, u, step, sub, sel) => ({ k, lbl, u, step, sub, sel });
 const FELDER = {
   haus: [F("waerme", "Wärme im Jahr für Heizung und Warmwasser", "kWh", 500, "ungefähr Gasverbrauch × 0,9; Einfamilienhaus meist 12.000 bis 25.000"), F("jahr", "Einbau im Jahr", "", 1), F("dauer", "Laufzeit", "Jahre", 1), F("steig", "Preissteigerung im Jahr", "%", 0.5, "für Gas, Öl und Strom, ohne CO₂-Preis"), F("gasNeu", "Gas oder Öl: Pflicht zur Bio-Beimischung", "", 0, "gilt für Heizungen, die nach dem 29.7.2026 eingebaut werden", [["ja", "Ja, neue Heizung"], ["nein", "Nein, alte Heizung weiter nutzen"]])],
-  g_wp: [F("wpPreis", "Kosten mit Einbau", "€", 500), F("wpJaz", "Jahresarbeitszahl", "", 0.1, "kWh Wärme je kWh Strom; Altbau 2,8 bis 3,5"), F("wpStrom", "Strompreis (Wärmepumpentarif)", "€/kWh", 0.01, "mit dem Vorschlag aus dem Buch, 8 Stunden ohne Netzentgelt, eher 0,20 €"), F("wpGrund", "Grundpreis Zähler", "€/Jahr", 10), F("wpWart", "Wartung", "€/Jahr", 10)],
+  g_wp: [F("wpPreis", "Kosten mit Einbau", "€", 500), F("wpJaz", "Jahresarbeitszahl", "", 0.1, "kWh Wärme je kWh Strom; Altbau 2,8 bis 3,5"), F("wpTarif", "Stromtarif", "", 0, "dynamisch: Börsenpreise 2024 und Netzentgelt nach § 14a Modul 3, die Wärmepumpe läuft gesteuert in billigen Stunden; stundengenau aus dem Energie-Rechner", [["fest", "Wärmepumpentarif, fester Preis"], ["dyn", "dynamisch, mit Steuerung"]]), F("wpStrom", "Strompreis (Wärmepumpentarif)", "€/kWh", 0.01, "mit dem Vorschlag aus dem Buch, 8 Stunden ohne Netzentgelt, eher 0,20 €"), F("wpGrund", "Grundpreis Zähler", "€/Jahr", 10), F("wpWart", "Wartung", "€/Jahr", 10)],
   g_gas: [F("gasPreis", "Kosten mit Einbau", "€", 500), F("gasNutz", "Nutzungsgrad", "%", 1), F("gasKwh", "Gaspreis heute (mit CO₂-Preis)", "€/kWh", 0.005), F("gasGrund", "Grundpreis", "€/Jahr", 10), F("gasWart", "Wartung und Schornsteinfeger", "€/Jahr", 10), F("gasBio", "Mehrpreis Biogas", "€/kWh", 0.01, "Biomethan kostet heute rund 5 bis 8 Cent mehr")],
   g_oel: [F("oelPreis", "Kosten mit Einbau", "€", 500), F("oelNutz", "Nutzungsgrad", "%", 1), F("oelLiter", "Heizölpreis heute (mit CO₂-Preis)", "€/Liter", 0.01, "1 Liter ≈ 10 kWh"), F("oelWart", "Wartung, Schornsteinfeger, Tank", "€/Jahr", 10), F("oelBio", "Mehrpreis Bioöl", "€/kWh", 0.01)],
   foe: [F("foeAntrag", "Antrag gestellt", "", 0, "ab Februar 2027 nach den geplanten neuen Regeln", [["jetzt", "bis 31.1.2027 (heutige Richtlinie)"], ["f27", "Februar bis Juli 2027 (geplant)"], ["a27", "August 2027 bis Januar 2028 (geplant)"], ["f28", "Februar bis Juli 2028 (geplant)"], ["a28", "ab August 2028 (geplant)"]]),
@@ -287,8 +345,105 @@ function rechne(v) {
   return { S, jahre, foe, erst, tot: { wp: tot("wp"), gas: tot("gas"), oel: tot("oel") }, kWp, kGas, kOel };
 }
 
+
+/* ---------- Dämmen und Fenster ---------- */
+// Kennfeld der Wärmepumpe aus dem Energie-Rechner: Jahresarbeitszahl (fest / dynamisch gesteuert) und Strompreis dynamisch je Wärme im Jahr und Vorlauftemperatur
+const KF = {"W":[5000,7500,10000,12500,15000,20000,25000,30000],"VL":[35,40,45,50,55,60,65,70,75],"jF":[[3.168,3.1,3.036,2.975,2.918,2.864,2.812,2.763,2.716],[3.236,3.14,3.051,2.968,2.89,2.818,2.75,2.687,2.627],[3.267,3.156,3.054,2.959,2.872,2.791,2.716,2.645,2.579],[3.284,3.164,3.053,2.952,2.859,2.773,2.693,2.619,2.55],[3.294,3.168,3.053,2.947,2.85,2.761,2.678,2.601,2.53],[3.307,3.172,3.05,2.939,2.837,2.744,2.658,2.578,2.504],[3.314,3.174,3.049,2.934,2.83,2.734,2.646,2.564,2.489],[3.318,3.176,3.047,2.93,2.824,2.727,2.637,2.555,2.478]],"jD":[[3.04,2.974,2.911,2.852,2.797,2.745,2.695,2.649,2.604],[3.142,3.048,2.962,2.881,2.806,2.737,2.671,2.61,2.552],[3.193,3.085,2.985,2.893,2.808,2.729,2.656,2.588,2.524],[3.224,3.106,2.998,2.899,2.808,2.724,2.645,2.574,2.506],[3.243,3.119,3.006,2.902,2.807,2.719,2.638,2.563,2.493],[3.268,3.135,3.015,2.905,2.805,2.713,2.628,2.55,2.477],[3.282,3.144,3.02,2.907,2.803,2.709,2.622,2.541,2.467],[3.291,3.15,3.023,2.907,2.802,2.706,2.617,2.536,2.46]],"pD":[[0.2274,0.2281,0.2287,0.2293,0.2299,0.2305,0.231,0.2316,0.2321],[0.2456,0.2464,0.2472,0.2479,0.2486,0.2492,0.2498,0.2504,0.251],[0.2558,0.2566,0.2573,0.258,0.2586,0.2592,0.2597,0.2603,0.2607],[0.2622,0.2629,0.2635,0.2641,0.2647,0.2652,0.2656,0.2662,0.2666],[0.2666,0.2673,0.2678,0.2683,0.2688,0.2693,0.2697,0.2701,0.2705],[0.2723,0.2728,0.2732,0.2736,0.274,0.2744,0.2747,0.2751,0.2753],[0.2758,0.2762,0.2765,0.2769,0.2772,0.2775,0.2777,0.278,0.2782],[0.2781,0.2785,0.2788,0.279,0.2793,0.2795,0.2798,0.28,0.2802]]};
+function kf(tab, w, vl) {
+  const ix = (a, x) => { x = Math.max(a[0], Math.min(a.at(-1), x)); let i = 0; while (i < a.length - 2 && x > a[i + 1]) i++; return [i, (x - a[i]) / (a[i + 1] - a[i])]; };
+  const [i, fi] = ix(KF.W, w), [j, fj] = ix(KF.VL, vl), t = KF[tab];
+  return (t[i][j] * (1 - fj) + t[i][j + 1] * fj) * (1 - fi) + (t[i + 1][j] * (1 - fj) + t[i + 1][j + 1] * fj) * fi;
+}
+const D_U = { 1918: [1.7, 1.4, 2.8, 1.2], 1948: [1.7, 1.4, 2.8, 1.2], 1957: [1.4, 1.4, 2.8, 1.5], 1968: [1.2, 0.9, 2.8, 1.0], 1978: [1.0, 0.6, 2.8, 1.0],
+  1983: [0.8, 0.5, 2.8, 0.8], 1994: [0.6, 0.4, 2.7, 0.6], 2001: [0.5, 0.3, 1.6, 0.5], 2009: [0.35, 0.25, 1.4, 0.4], 2024: [0.25, 0.18, 1.1, 0.3] };
+const D_VL = bj => bj <= 1978 ? 65 : bj <= 1994 ? 55 : bj <= 2009 ? 50 : 35;
+const D = { Ziel: { uw: 0.20, ud: 0.14, uf: 0.95, uk: 0.25 }, Preis: { wand: 220, fen: 900, dach: 60, kel: 50 }, HGT: 52, Gewinne: 20, WW: 15, Luft: 0.7, Hoehe: 2.5, WBalt: 0.10, WBneu: 0.05,
+  WpKw: 1500, StromCO2: 0.363, Lebensdauer: 40 };
+const DV = { bj: 1968, fl: 140, g: 2, mWand: true, mDach: true, mFen: true, mKel: true, foe: 15 };
+const DAUTO = ["vl0", "uw", "ud", "uf", "uk", "kWand", "kDach", "kFen", "kKel"], dHand = new Set();
+function dGeo(fl, g) { g = Math.max(1, Math.round(g)); const G = Math.max(30, fl) / (g * 0.8), umf = 4 * Math.sqrt(G) * 1.1, fass = umf * g * 2.9, af = 0.2 * fl; return { G, af, aw: Math.max(0, fass - af), ad: G, ak: G, ah: fass + 2 * G }; }
+const dH = (u, geo, wb, fl) => u.uw * geo.aw + u.uf * geo.af + u.ud * geo.ad * 0.8 + u.uk * geo.ak * 0.6 + wb * geo.ah + 0.34 * D.Luft * fl * D.Hoehe;
+const dQ = (H, fl) => Math.max(5, H * D.HGT / fl - D.Gewinne);
+function dSchaetze() {
+  const geo = dGeo(DV.fl, DV.g), u = D_U[DV.bj] || D_U[1968];
+  const est = { vl0: D_VL(DV.bj), uw: u[0], ud: u[1], uf: u[2], uk: u[3], kWand: D.Preis.wand * geo.aw, kDach: D.Preis.dach * geo.ad, kFen: D.Preis.fen * geo.af, kKel: D.Preis.kel * geo.ak };
+  for (const k of DAUTO) if (!dHand.has(k)) { const x = k.startsWith("k") ? Math.round(est[k] / 100) * 100 : est[k]; DV[k] = x; $("d_" + k).value = x; $("d_" + k).classList.add("auto"); }
+  $("d_flaechen").textContent = `Geschätzte Flächen: Wand ${fmt(geo.aw)} m², Fenster ${fmt(geo.af)} m², Dach oder oberste Decke ${fmt(geo.ad)} m², Kellerdecke ${fmt(geo.ak)} m². Nach der Dämmung: Wand ${fmt(D.Ziel.uw, 2)}, Dach ${fmt(D.Ziel.ud, 2)}, Fenster ${fmt(D.Ziel.uf, 2)}, Kellerdecke ${fmt(D.Ziel.uk, 2)} W/(m²K), wie in der Förderung verlangt. Preise mit Mehrwertsteuer: Fassade ${fmt(D.Preis.wand)} €, Fenster ${fmt(D.Preis.fen)} €, oberste Decke ${fmt(D.Preis.dach)} €, Kellerdecke ${fmt(D.Preis.kel)} € je m².`;
+}
+function dRechne(v) {
+  const geo = dGeo(DV.fl, DV.g), u0 = { uw: DV.uw, ud: DV.ud, uf: DV.uf, uk: DV.uk };
+  const u1 = { uw: DV.mWand ? Math.min(u0.uw, D.Ziel.uw) : u0.uw, ud: DV.mDach ? Math.min(u0.ud, D.Ziel.ud) : u0.ud, uf: DV.mFen ? Math.min(u0.uf, D.Ziel.uf) : u0.uf, uk: DV.mKel ? Math.min(u0.uk, D.Ziel.uk) : u0.uk };
+  const irgend = DV.mWand || DV.mDach || DV.mFen || DV.mKel;
+  const H0 = dH(u0, geo, D.WBalt, DV.fl), H1 = dH(u1, geo, irgend ? D.WBneu : D.WBalt, DV.fl);
+  const ww = Math.min(D.WW * DV.fl, 0.4 * v.waerme), heiz0 = v.waerme - ww, heiz1 = heiz0 * dQ(H1, DV.fl) / dQ(H0, DV.fl), w1 = ww + heiz1;
+  const vl1 = Math.max(35, 20 + (DV.vl0 - 20) * Math.pow(H1 / H0, 1 / 1.3));
+  const k = heiz0 / (dQ(H0, DV.fl) * DV.fl), kw0 = H0 * 0.032 * 1.1 * k, kw1 = H1 * 0.032 * 1.1 * k;
+  const kosten = (DV.mWand ? DV.kWand : 0) + (DV.mDach ? DV.kDach : 0) + (DV.mFen ? DV.kFen : 0) + (DV.mKel ? DV.kKel : 0);
+  const foe = DV.foe / 100 * Math.min(kosten, DV.foe >= 20 ? 60000 : 30000);
+  const rest = (kosten - foe) * Math.max(0, 1 - v.dauer / D.Lebensdauer);
+  const wpKleiner = Math.min(0.4 * v.wpPreis, Math.max(0, kw0 - kw1) * D.WpKw);
+  return { w0: v.waerme, w1, vl0: DV.vl0, vl1, kw0, kw1, kosten, foe, rest, wpKleiner, irgend };
+}
+// Jahresarbeitszahl und Preis für einen Fall: eigene Angabe als Grundlage, Kennfeld für die Änderung
+function wpFall(v, w, vl) {
+  const dyn = v.wpTarif === "dyn", bj = kf("jF", v.waerme, DV.vl0);
+  const jaz = v.wpJaz * kf(dyn ? "jD" : "jF", w, vl) / bj;
+  return { jaz, preis: dyn ? kf("pD", w, vl) : v.wpStrom };
+}
+const f100 = x => fmt(Math.round(x / 100) * 100);
+function zeigeDaemmung() {
+  const d = dRechne(V);
+  const a = wpFall(V, d.w0, d.vl0), b = wpFall(V, d.w1, d.vl1);
+  const r0 = rechne({ ...V, wpJaz: a.jaz, wpStrom: a.preis }), r1 = rechne({ ...V, waerme: d.w1, wpJaz: b.jaz, wpStrom: b.preis, wpPreis: V.wpPreis - d.wpKleiner });
+  const dN = d.kosten - d.foe - d.rest;
+  const tot = { wp0: r0.tot.wp, wp1: r1.tot.wp + dN, gas0: r0.tot.gas, gas1: r1.tot.gas + dN };
+  const s0 = d.w0 / a.jaz, s1 = d.w1 / b.jaz, g0 = r0.kGas, g1 = r1.kGas;
+  const co2 = { wp0: s0 * D.StromCO2 / 1000, wp1: s1 * D.StromCO2 / 1000, gas0: g0 * EF.gas / 1000, gas1: g1 * EF.gas / 1000 };
+  const nm = { wp0: "Wärmepumpe, ohne Dämmung", wp1: "Wärmepumpe mit Dämmung und Fenstern", gas0: "Gasheizung, ohne Dämmung", gas1: "Gasheizung mit Dämmung und Fenstern" };
+  const keys = ["wp1", "wp0", "gas1", "gas0"], best = keys.reduce((x, y) => tot[y] < tot[x] ? y : x);
+  if (!d.irgend) {
+    $("d_aus").textContent = "Wähle links unter „Dämmen und Fenster“ aus, was gemacht wird.";
+    ["d_bars", "d_tab", "d_note", "d_link"].forEach(id => $(id).innerHTML = ""); return;
+  }
+  const spar = tot.wp0 - tot.wp1;
+  $("d_aus").textContent = `Die Vorlauftemperatur sinkt von ${fmt(d.vl0)} auf ${fmt(d.vl1)} °C. Die Wärmepumpe braucht ${f100(s1)} statt ${f100(s0)} kWh Strom im Jahr. ` +
+    (spar >= 0 ? `Über ${fmt(V.dauer)} Jahre ist sie mit Dämmung ${eur(spar)} günstiger, Dämmung eingerechnet.` : `Über ${fmt(V.dauer)} Jahre ist sie mit Dämmung ${eur(-spar)} teurer als ohne, Dämmung eingerechnet.`);
+  const mx = Math.max(...keys.map(k => tot[k])), col = { wp0: "var(--wp)", wp1: "var(--wp)", gas0: "var(--gas)", gas1: "var(--gas)" };
+  $("d_bars").innerHTML = keys.map(k => `<div class="dbar${k === best ? " best" : ""}"><div class="t"><span>${nm[k]}${k === best ? " · am günstigsten" : ""}</span><b>${eur(tot[k])}</b></div><div class="trk"><i style="width:${(tot[k] / mx * 100).toFixed(1)}%;background:${col[k]};opacity:${k.endsWith("1") ? 1 : .45}"></i></div></div>`).join("")
+    + `<p class="note">Alle Kosten über ${fmt(V.dauer)} Jahre: Heizung, Energie, CO₂-Preis, Wartung und die Dämmung nach Förderung, abzüglich ihres Restwerts.</p>`;
+  const row = (n, x, cls = "") => `<tr class="${cls}"><td>${n}</td>${x.map(c => `<td>${c}</td>`).join("")}</tr>`;
+  $("d_tab").innerHTML = `<thead><tr><th></th><th>Wärme&shy;pumpe ohne</th><th>Wärme&shy;pumpe mit</th><th>Gas ohne</th><th>Gas mit</th></tr></thead><tbody>`
+    + row("Wärme im Jahr, kWh", [f100(d.w0), f100(d.w1), f100(d.w0), f100(d.w1)])
+    + row("Vorlauf am kältesten Tag", [fmt(d.vl0) + " °C", fmt(d.vl1) + " °C", "", ""])
+    + row("Heizlast, grob", [fmt(d.kw0, 1) + " kW", fmt(d.kw1, 1) + " kW", "", ""])
+    + row("Jahres&shy;arbeits&shy;zahl", [fmt(a.jaz, 1), fmt(b.jaz, 1), "", ""])
+    + row("Strom oder Gas im Jahr, kWh", [f100(s0), f100(s1), f100(g0), f100(g1)])
+    + row("Strompreis je kWh", [fmt(a.preis * 100, 1) + " ct", fmt(b.preis * 100, 1) + " ct", "", ""])
+    + row("CO₂ im ersten Jahr", ["wp0", "wp1", "gas0", "gas1"].map(k => fmt(co2[k], 1) + " t"))
+    + row(`Heizung über ${fmt(V.dauer)} Jahre`, [eur(r0.tot.wp), eur(r1.tot.wp), eur(r0.tot.gas), eur(r1.tot.gas)])
+    + row("Dämmung und Fenster", ["", eur(d.kosten), "", eur(d.kosten)])
+    + row("Förderung", ["", "−" + eur(d.foe), "", "−" + eur(d.foe)])
+    + row(`Restwert nach ${fmt(V.dauer)} Jahren`, ["", "−" + eur(d.rest), "", "−" + eur(d.rest)])
+    + row("Zusammen", ["wp0", "wp1", "gas0", "gas1"].map(k => eur(tot[k])), "sum") + "</tbody>";
+  $("d_note").innerHTML = `Die Dämmung senkt den Wärmebedarf; die alten Heizkörper reichen dann mit niedrigerer Vorlauftemperatur. Das hebt die Jahresarbeitszahl. ${V.wpTarif === "dyn" ? `Im dynamischen Tarif kann ein gedämmtes Haus mehr Wärme in billige Stunden verschieben, der Strom kostet dann im Schnitt ${fmt(b.preis * 100, 1)} statt ${fmt(a.preis * 100, 1)} ct.` : "Mit dem dynamischen Tarif (oben bei der Wärmepumpe einstellbar) verschiebt ein gedämmtes Haus mehr Wärme in billige Stunden."} `
+    + `Die kleinere Wärmepumpe kostet geschätzt ${eur(d.wpKleiner)} weniger. Dämmung hält rund ${D.Lebensdauer} Jahre; der Rest zählt als Restwert. CO₂ des Stroms: Strommix 2024 mit 363 g je kWh (Umweltbundesamt, Schätzung vom 9.4.2025); er sinkt mit jedem Jahr mehr Wind und Sonne. Die Jahresarbeitszahl stammt aus deiner Angabe oben, geändert nach dem Stundenmodell des Energie-Rechners (Luft-Wasser-Wärmepumpe, Wetterjahr Idstein). Grobe Schätzung; ein Energieberater rechnet genauer. Wie Mieter und Vermieter mit der Reform aus dem Buch dabei stehen, zeigt der <a href="../steuerrechner/#sanierung">Steuerrechner</a>.`;
+  const q = new URLSearchParams({ waerme: Math.round(d.w1), vl: Math.round(d.vl1) });
+  $("d_link").innerHTML = `Stundengenau mit Solarstrom, Speicher und E-Auto: <a href="../energie-rechner/?${q}">im Energie-Rechner mit dem gedämmten Haus weiterrechnen</a>.`;
+}
+(() => {
+  const st = new URLSearchParams(location.search);
+  for (const k of ["bj", "fl", "g", "foe"]) if (st.has("d_" + k)) DV[k] = +st.get("d_" + k) || DV[k];
+  $("d_bj").value = DV.bj; $("d_fl").value = DV.fl; $("d_g").value = DV.g; $("d_foe").value = DV.foe;
+  ["mWand", "mDach", "mFen", "mKel"].forEach(k => { $("d_" + k).checked = DV[k]; $("d_" + k).onchange = e => { DV[k] = e.target.checked; run(); }; });
+  ["bj", "fl", "g"].forEach(k => $("d_" + k).addEventListener(k === "bj" ? "change" : "input", e => { DV[k] = +e.target.value || DV[k]; dSchaetze(); run(); }));
+  $("d_foe").onchange = e => { DV.foe = +e.target.value; run(); };
+  DAUTO.forEach(k => $("d_" + k).addEventListener("input", e => { dHand.add(k); e.target.classList.remove("auto"); DV[k] = +e.target.value || 0; run(); }));
+  $("d_auto").onclick = () => { dHand.clear(); dSchaetze(); run(); };
+  dSchaetze();
+})();
+
 function run() {
-  const r = rechne(V);
+  const a0 = wpFall(V, V.waerme, DV.vl0), r = rechne({ ...V, wpJaz: a0.jaz, wpStrom: a0.preis });
   $("co2txt").textContent = PFAD[V.pfad].txt;
   const nm = { wp: "Wärmepumpe", gas: "Gasheizung", oel: "Ölheizung" };
   const rang = Object.entries(r.tot).sort((a, b) => a[1] - b[1]);
@@ -310,7 +465,8 @@ function run() {
     + row("Grundpreis, Wartung, Schornsteinfeger", eur(S.wp.fix), eur(S.gas.fix), eur(S.oel.fix))
     + row("Zusammen", eur(r.tot.wp), eur(r.tot.gas), eur(r.tot.oel), "sum")
     + row("CO₂ aus dem Schornstein", "0 t", fmt(S.gas.t, 0) + " t", fmt(S.oel.t, 0) + " t") + `</tbody>`;
-  $("tknote").textContent = `Verbrauch im ersten Jahr: Wärmepumpe ${fmt(r.kWp)} kWh Strom, Gas ${fmt(r.kGas)} kWh, Öl ${fmt(r.kOel / 10)} Liter. Der Strom für die Wärmepumpe ist im Strommix nur teilweise CO₂-frei; sein CO₂ ist über den Emissionshandel im Strompreis enthalten.`;
+  zeigeDaemmung();
+  $("tknote").textContent = `${V.wpTarif === "dyn" ? `Dynamischer Tarif: Strom im Schnitt ${fmt(a0.preis * 100, 1)} ct je kWh, Jahresarbeitszahl ${fmt(a0.jaz, 1)}. ` : ""}Verbrauch im ersten Jahr: Wärmepumpe ${fmt(r.kWp)} kWh Strom, Gas ${fmt(r.kGas)} kWh, Öl ${fmt(r.kOel / 10)} Liter. Der Strom für die Wärmepumpe ist im Strommix nur teilweise CO₂-frei; sein CO₂ ist über den Emissionshandel im Strompreis enthalten.`;
 }
 
 

@@ -2,7 +2,7 @@
 Aufruf: python3 werkzeug/rechner-menue.py  (aus dem Hauptordner der Homepage)"""
 import re, os
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
-SEITEN = [('steuerrechner', 'Steuerrechner', False), ('eauto-rechner', 'E-Auto-Rechner', True), ('heizungsrechner', 'Heizungsrechner', True), ('energie-rechner', 'Energie-Rechner', True), ('balkon-rechner', 'Balkon-Rechner', True)]
+SEITEN = [('steuerrechner', 'Steuerrechner', False), ('eauto-rechner', 'E-Auto-Rechner', True), ('heizungsrechner', 'Heizung und Dämmung', True), ('energie-rechner', 'Energie-Rechner', True), ('balkon-rechner', 'Balkon-Rechner', True)]
 LOGO = '<svg viewBox="0 0 100 100" width="34" height="34" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#f2b33d" stroke-width="3"/><path d="M30,64 A20,20 0 0 1 70,64 Z" fill="#f2b33d"/><path d="M50,64 L50,33" stroke="#fbf8f1" stroke-width="4" stroke-linecap="round"/><path d="M50,47 C41,46 33,39 31,28 C41,29 48,36 50,47 Z" fill="#9fd8b0"/><path d="M50,40 C57,37 65,30 68,19 C58,20 51,28 50,40 Z" fill="#9fd8b0"/><line x1="17" y1="64" x2="83" y2="64" stroke="#fbf8f1" stroke-width="3.5" stroke-linecap="round"/></svg>'
 CSS = '''<style id="sitenav-css">
 .sitenav{background:#12372a;color:#fbf8f1;font:600 15px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
@@ -72,7 +72,7 @@ h1,h2,h3{break-after:avoid}
 @media (max-width:640px){.sitenav .sn-links{gap:2px 14px;font-size:14px}.sitenav .sn-logo span{display:none}}
 </style>'''
 def nav(cur, flush):
-    links = [('../', 'Start'), ('../steuerrechner/', 'Steuerrechner'), ('../eauto-rechner/', 'E-Auto-Rechner'), ('../heizungsrechner/', 'Heizungsrechner'), ('../energie-rechner/', 'Energie-Rechner'), ('../balkon-rechner/', 'Balkon-Rechner'), ('../ueber-mich.html', 'Über mich')]
+    links = [('../', 'Start'), ('../steuerrechner/', 'Steuerrechner'), ('../eauto-rechner/', 'E-Auto-Rechner'), ('../heizungsrechner/', 'Heizung und Dämmung'), ('../energie-rechner/', 'Energie-Rechner'), ('../balkon-rechner/', 'Balkon-Rechner'), ('../ueber-mich.html', 'Über mich')]
     a = ''.join(f'<a href="{h}"{" aria-current=\"page\"" if t == cur else ""}>{t}</a>' for h, t in links)
     return (f'<nav class="sitenav{" flush" if flush else ""}" aria-label="Hauptmenü"><div class="sn-in"><a class="sn-logo" href="../" aria-label="Mut zur Zukunft, zur Startseite">{LOGO}<span>Mut zur <b>Zukunft</b></span></a>'
             f'<div class="sn-links"><a class="sn-buch" href="../buch/">Zum Buch</a>{a}<button type="button" class="sn-druck" onclick="print()" title="Eingaben und Ergebnisse drucken oder als PDF speichern">Drucken / PDF</button></div></div></nav>')
