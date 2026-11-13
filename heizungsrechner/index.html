@@ -78,6 +78,20 @@ details.more { display: grid; gap: 10px }
 .btnk { justify-self: start; font: 600 13.5px var(--body); border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 999px; padding: 5px 12px; cursor: pointer; margin-top: 8px }
 .aussage { font: 700 17px/1.35 var(--display); max-width: none }
 .dbars { display: grid; gap: 10px }
+.hr { display: grid; gap: 6px }
+.hr table td:first-child, .hr table th:first-child { text-align: left }
+@media (max-width: 560px) { .hr table { font-size: 13px } .hr th, .hr td { padding: 6px 4px } }
+.hr td.gut { color: var(--good); font-weight: 700 } .hr td.schlecht { color: var(--bad); font-weight: 700 }
+.dv { display: grid; gap: 10px }
+.dv .t { font-size: 14px; margin-bottom: 3px }
+.dv .t.h { font-weight: 700 }
+.dv .trk { display: grid; grid-template-columns: 1fr 1fr; align-items: center; min-height: 26px }
+.dv .neg { display: flex; justify-content: flex-end; align-items: center; gap: 6px; border-right: 2px solid var(--fg); min-height: 26px }
+.dv .pos { display: flex; align-items: center; gap: 6px; min-height: 26px }
+.dv i { display: block; height: 22px; border-radius: 3px }
+.dv i.gut { background: var(--good) } .dv i.schlecht { background: var(--bad) }
+.dv b { font-size: 14.5px; white-space: nowrap; font-variant-numeric: tabular-nums } .dv b.gut { color: var(--good) } .dv b.schlecht { color: var(--bad) }
+.dv .ax { display: grid; grid-template-columns: 1fr 1fr; font-size: 12px; color: var(--muted) } .dv .ax span:first-child { text-align: right; padding-right: 8px } .dv .ax span:last-child { padding-left: 8px }
 .dbar .t { font-size: 14px; margin-bottom: 3px; display: flex; justify-content: space-between; gap: 10px }
 .dbar .t b { font-variant-numeric: tabular-nums; white-space: nowrap }
 .dbar .trk { background: var(--bg); border-radius: 4px; height: 22px; overflow: hidden }
@@ -180,6 +194,14 @@ h1,h2,h3{break-after:avoid}
 
   <div class="main">
     <div class="panel">
+      <div class="grp">
+        <h3>Rechtsstand</h3>
+        <div class="seg" role="group" aria-label="Rechtsstand">
+          <button type="button" id="r_heute" aria-pressed="true">Recht heute</button>
+          <button type="button" id="r_reform" aria-pressed="false">Mit der Reform aus dem Buch</button>
+        </div>
+        <small class="note" id="r_txt"></small>
+      </div>
       <div class="grp"><h3>Ihr Haus</h3><div class="row2" id="haus"></div></div>
       <div class="grp">
         <h3>CO₂-Preis</h3>
@@ -217,6 +239,7 @@ h1,h2,h3{break-after:avoid}
             <div class="f"><label for="d_kFen">Fenster</label><div class="in"><input id="d_kFen" type="number" step="500" min="0"><span class="u">€</span></div></div>
             <div class="f"><label for="d_kKel">Kellerdecke</label><div class="in"><input id="d_kKel" type="number" step="500" min="0"><span class="u">€</span></div></div>
             <div class="f"><label for="d_foe">Förderung</label><div class="in"><select id="d_foe"><option value="15">15 % (BEG Einzelmaßnahme)</option><option value="20">20 % mit Sanierungsfahrplan (iSFP)</option><option value="0">keine</option></select></div><small>förderfähig bis 30.000 €, mit iSFP 60.000 € je Wohnung und Jahr</small></div>
+            <div class="f"><label for="d_wst">Wertsteigerung des Hauses im Jahr</label><div class="in"><input id="d_wst" type="number" step="0.5" min="-3"><span class="u">%</span></div><small>Reform: der Anteil des Staates am Hauswert wächst mit</small></div>
             <div class="f"><label for="d_uw">U-Wert Wand heute</label><div class="in"><input id="d_uw" type="number" step="0.05" min="0.1"><span class="u">W/(m²K)</span></div></div>
             <div class="f"><label for="d_ud">U-Wert Dach oder oberste Decke</label><div class="in"><input id="d_ud" type="number" step="0.05" min="0.1"><span class="u">W/(m²K)</span></div></div>
             <div class="f"><label for="d_uf">U-Wert Fenster</label><div class="in"><input id="d_uf" type="number" step="0.1" min="0.5"><span class="u">W/(m²K)</span></div></div>
@@ -232,6 +255,7 @@ h1,h2,h3{break-after:avoid}
       <h2>Ergebnis</h2>
       <div class="verdict" id="verdict"></div>
       <div class="tiles" id="tiles"></div>
+      <div class="hr" id="hr"></div>
       <h3 class="cumT" id="cumT"></h3>
       <div class="chart" id="cum"></div>
       <p class="note">Aufsummierte Kosten ab Einbau in Euro, mit Preisen des jeweiligen Jahres.</p>
@@ -279,7 +303,7 @@ const PFAD = {
   mzz: { txt: "Vorschlag aus dem Buch: 100 € ab 2028, 150 € ab 2030, 200 € ab 2035, 300 € ab 2040. Das Geld fließt als Klimageld zurück.", p: [[2026, 60], [2027, 65], [2028, 100], [2030, 150], [2035, 200], [2040, 300]] },
 };
 const V = {
-  waerme: 18000, jahr: 2026, wpTarif: "fest", dauer: 20, steig: 2, pfad: "ets",
+  waerme: 18000, jahr: 2026, wpTarif: "fest", zinsK: 3.5, wst: 2, reform: false, dauer: 20, steig: 2, pfad: "ets",
   wpPreis: 30000, wpJaz: 3.2, wpStrom: 0.27, wpGrund: 120, wpWart: 200,
   gasPreis: 12000, gasNutz: 92, gasKwh: 0.115, gasGrund: 180, gasWart: 300, gasBio: 0.06, gasNeu: "ja",
   oelPreis: 15000, oelNutz: 90, oelLiter: 1.00, oelWart: 370, oelBio: 0.06,
@@ -287,7 +311,7 @@ const V = {
 };
 const F = (k, lbl, u, step, sub, sel) => ({ k, lbl, u, step, sub, sel });
 const FELDER = {
-  haus: [F("waerme", "Wärme im Jahr für Heizung und Warmwasser", "kWh", 500, "ungefähr Gasverbrauch × 0,9; Einfamilienhaus meist 12.000 bis 25.000"), F("jahr", "Einbau im Jahr", "", 1), F("dauer", "Laufzeit", "Jahre", 1), F("steig", "Preissteigerung im Jahr", "%", 0.5, "für Gas, Öl und Strom, ohne CO₂-Preis"), F("gasNeu", "Gas oder Öl: Pflicht zur Bio-Beimischung", "", 0, "gilt für Heizungen, die nach dem 29.7.2026 eingebaut werden", [["ja", "Ja, neue Heizung"], ["nein", "Nein, alte Heizung weiter nutzen"]])],
+  haus: [F("waerme", "Wärme im Jahr für Heizung und Warmwasser", "kWh", 500, "ungefähr Gasverbrauch × 0,9; Einfamilienhaus meist 12.000 bis 25.000"), F("jahr", "Einbau im Jahr", "", 1), F("dauer", "Laufzeit", "Jahre", 1), F("steig", "Preissteigerung im Jahr", "%", 0.5, "für Gas, Öl und Strom, ohne CO₂-Preis"), F("zinsK", "Zins für einen Bankkredit", "%", 0.1, "Kauf und Dämmung über die Laufzeit finanziert; 0 = bar bezahlt, ohne Zinsen"), F("gasNeu", "Gas oder Öl: Pflicht zur Bio-Beimischung", "", 0, "gilt für Heizungen, die nach dem 29.7.2026 eingebaut werden", [["ja", "Ja, neue Heizung"], ["nein", "Nein, alte Heizung weiter nutzen"]])],
   g_wp: [F("wpPreis", "Kosten mit Einbau", "€", 500), F("wpJaz", "Jahresarbeitszahl", "", 0.1, "kWh Wärme je kWh Strom; Altbau 2,8 bis 3,5"), F("wpTarif", "Stromtarif", "", 0, "dynamisch: Börsenpreise 2024 und Netzentgelt nach § 14a Modul 3, die Wärmepumpe läuft gesteuert in billigen Stunden; stundengenau aus dem Energie-Rechner", [["fest", "Wärmepumpentarif, fester Preis"], ["dyn", "dynamisch, mit Steuerung"]]), F("wpStrom", "Strompreis (Wärmepumpentarif)", "€/kWh", 0.01, "mit dem Vorschlag aus dem Buch, 8 Stunden ohne Netzentgelt, eher 0,20 €"), F("wpGrund", "Grundpreis Zähler", "€/Jahr", 10), F("wpWart", "Wartung", "€/Jahr", 10)],
   g_gas: [F("gasPreis", "Kosten mit Einbau", "€", 500), F("gasNutz", "Nutzungsgrad", "%", 1), F("gasKwh", "Gaspreis heute (mit CO₂-Preis)", "€/kWh", 0.005), F("gasGrund", "Grundpreis", "€/Jahr", 10), F("gasWart", "Wartung und Schornsteinfeger", "€/Jahr", 10), F("gasBio", "Mehrpreis Biogas", "€/kWh", 0.01, "Biomethan kostet heute rund 5 bis 8 Cent mehr")],
   g_oel: [F("oelPreis", "Kosten mit Einbau", "€", 500), F("oelNutz", "Nutzungsgrad", "%", 1), F("oelLiter", "Heizölpreis heute (mit CO₂-Preis)", "€/Liter", 0.01, "1 Liter ≈ 10 kWh"), F("oelWart", "Wartung, Schornsteinfeger, Tank", "€/Jahr", 10), F("oelBio", "Mehrpreis Bioöl", "€/kWh", 0.01)],
@@ -319,21 +343,49 @@ function foerderung(v) {
   const satz = Math.min(R[0] + (v.foeEU === "ja" ? R[1] : 0) + (selbst && v.foeBonus === "ja" ? R[2] : 0) + (selbst ? +v.foeEink / 100 : 0), v.foeEink === "40" ? 0.8 : 0.7);
   return { satz, betrag: satz * Math.min(v.wpPreis, R[3]), max: R[3] };
 }
+// Vorschlag aus dem Buch: Strom 5 %, Gas und Öl 50 % Mehrwertsteuer, Dienstleistungen 5 %, Sanierung ohne Mehrwertsteuer.
+// Wärmepumpe: zinsloser Kredit über 20 Jahre, die ersten 3 ohne Tilgung; der Einbau (40 %) zählt zu den Bauteilen.
+// Bauteile (Einbau, Dämmung, Fenster): bezahlt der Staat gegen einen Anteil am Hauswert, abgelöst über 40 Jahre mit der Wertsteigerung.
+const RF = { strom: 1.05 / 1.19, fossil: 1.5 / 1.19, dienst: 1.05 / 1.19, einb: 0.4, mat: 0.5, tilgFrei: 3, lauf: 20, abl: 40 };
+function reformPreise(v) {
+  return { ...v, mwstF: 1.5, gasKwh: v.gasKwh * RF.fossil, gasBio: v.gasBio * RF.fossil, gasGrund: v.gasGrund * RF.fossil, oelLiter: v.oelLiter * RF.fossil, oelBio: v.oelBio * RF.fossil,
+    wpStrom: v.wpStrom * RF.strom, wpGrund: v.wpGrund * RF.strom, wpWart: v.wpWart * RF.dienst, gasWart: v.gasWart * RF.dienst, oelWart: v.oelWart * RF.dienst };
+}
+function bank(P, v) {   // Bankkredit über die Laufzeit, gleiche Raten; ohne Zins: bar beim Kauf
+  const N = Math.max(1, Math.round(v.dauer)), z = v.zinsK / 100, a = new Array(N + 1).fill(0);
+  if (P <= 0) return a; if (z <= 0) { a[0] = P; return a; }
+  const r = P * z / (1 - Math.pow(1 + z, -N)); for (let n = 1; n <= N; n++) a[n] = r; return a;
+}
+function kredit0(T, v) {   // zinslos, 20 Jahre, 3 Jahre ohne Tilgung; Rest am Ende der Laufzeit
+  const N = Math.max(1, Math.round(v.dauer)), a = new Array(N + 1).fill(0), t = RF.lauf - RF.tilgFrei;
+  for (let n = RF.tilgFrei + 1; n <= Math.min(N, RF.lauf); n++) a[n] = T / t;
+  if (N < RF.lauf) a[N] += T * (1 - Math.max(0, N - RF.tilgFrei) / t); return a;
+}
+function anteil(B, v) {   // Anteil am Hauswert, über 40 Jahre abgelöst; was nach der Laufzeit noch offen ist, zählt am Ende
+  const N = Math.max(1, Math.round(v.dauer)), w = v.wst / 100, a = new Array(N + 1).fill(0);
+  for (let n = 1; n <= Math.min(N, RF.abl); n++) a[n] = B / RF.abl * Math.pow(1 + w, n);
+  a[N] += Math.max(0, 1 - N / RF.abl) * B * Math.pow(1 + w, N); return a;
+}
+const summe = a => a.reduce((x, y) => x + y, 0);
 function rechne(v) {
+  if (v.reform) v = reformPreise(v);
   const foe = foerderung(v);
+  const zW = v.reform ? kredit0(v.wpPreis * (1 - RF.einb) / 1.19, v).map((x, i) => x + anteil(v.wpPreis * RF.einb / 1.19, v)[i]) : bank(v.wpPreis - foe.betrag, v);
+  const zG = bank(v.gasPreis, v), zO = bank(v.oelPreis, v);
   const c0 = co2(v.pfad, v.jahr);
   // Grundpreise ohne CO₂-Anteil (brutto, je kWh Brennstoff)
-  const gasBasis = v.gasKwh - EF.gas * c0 / 1000 * 1.19, oelBasis = v.oelLiter / 10 - EF.oel * c0 / 1000 * 1.19;
+  const mF = v.mwstF || 1.19, gasBasis = v.gasKwh - EF.gas * c0 / 1000 * mF, oelBasis = v.oelLiter / 10 - EF.oel * c0 / 1000 * mF;
   const kGas = v.waerme / (v.gasNutz / 100), kOel = v.waerme / (v.oelNutz / 100), kWp = v.waerme / v.wpJaz;
-  const S = { wp: { kauf: v.wpPreis - foe.betrag, energie: 0, co2: 0, bio: 0, fix: 0, t: 0 }, gas: { kauf: v.gasPreis, energie: 0, co2: 0, bio: 0, fix: 0, t: 0 }, oel: { kauf: v.oelPreis, energie: 0, co2: 0, bio: 0, fix: 0, t: 0 } };
+  const S = { wp: { kauf: zW[0], preis: v.reform ? v.wpPreis / 1.19 : v.wpPreis - foe.betrag, energie: 0, co2: 0, bio: 0, fix: 0, t: 0 }, gas: { kauf: zG[0], preis: v.gasPreis, energie: 0, co2: 0, bio: 0, fix: 0, t: 0 }, oel: { kauf: zO[0], preis: v.oelPreis, energie: 0, co2: 0, bio: 0, fix: 0, t: 0 } };
   const jahre = [{ n: 0, wp: S.wp.kauf, gas: S.gas.kauf, oel: S.oel.kauf }];
   let erst = null;
   for (let n = 1; n <= v.dauer; n++) {
     const j = v.jahr + n - 1, f = Math.pow(1 + v.steig / 100, n - 1), c = co2(v.pfad, j);
     const b = bio(j), bg = v.gasNeu === "ja" ? b : 0;
     const wpE = kWp * v.wpStrom * f;
-    const gE = kGas * (1 - bg) * gasBasis * f, gC = kGas * (1 - bg) * EF.gas * c / 1000 * 1.19, gB = kGas * bg * (gasBasis * f + v.gasBio);
-    const oE = kOel * (1 - bg) * oelBasis * f, oC = kOel * (1 - bg) * EF.oel * c / 1000 * 1.19, oB = kOel * bg * (oelBasis * f + v.oelBio);
+    const gE = kGas * (1 - bg) * gasBasis * f, gC = kGas * (1 - bg) * EF.gas * c / 1000 * mF, gB = kGas * bg * (gasBasis * f + v.gasBio);
+    const oE = kOel * (1 - bg) * oelBasis * f, oC = kOel * (1 - bg) * EF.oel * c / 1000 * mF, oB = kOel * bg * (oelBasis * f + v.oelBio);
+    S.wp.kauf += zW[n] || 0; S.gas.kauf += zG[n] || 0; S.oel.kauf += zO[n] || 0;
     S.wp.energie += wpE; S.wp.fix += v.wpGrund + v.wpWart;
     S.gas.energie += gE; S.gas.co2 += gC; S.gas.bio += gB; S.gas.fix += v.gasGrund + v.gasWart; S.gas.t += kGas * (1 - bg) * EF.gas / 1000;
     S.oel.energie += oE; S.oel.co2 += oC; S.oel.bio += oB; S.oel.fix += v.oelWart; S.oel.t += kOel * (1 - bg) * EF.oel / 1000;
@@ -342,7 +394,7 @@ function rechne(v) {
     if (n === 1) erst = { wp: wpE + v.wpGrund + v.wpWart, gas: gE + gC + gB + v.gasGrund + v.gasWart, oel: oE + oC + oB + v.oelWart };
   }
   const tot = k => jahre.at(-1)[k];
-  return { S, jahre, foe, erst, tot: { wp: tot("wp"), gas: tot("gas"), oel: tot("oel") }, kWp, kGas, kOel };
+  return { S, jahre, foe: v.reform ? { satz: 0, betrag: 0 } : foe, erst, tot: { wp: tot("wp"), gas: tot("gas"), oel: tot("oel") }, kWp, kGas, kOel };
 }
 
 
@@ -380,7 +432,7 @@ function dRechne(v) {
   const k = heiz0 / (dQ(H0, DV.fl) * DV.fl), kw0 = H0 * 0.032 * 1.1 * k, kw1 = H1 * 0.032 * 1.1 * k;
   const kosten = (DV.mWand ? DV.kWand : 0) + (DV.mDach ? DV.kDach : 0) + (DV.mFen ? DV.kFen : 0) + (DV.mKel ? DV.kKel : 0);
   const foe = DV.foe / 100 * Math.min(kosten, DV.foe >= 20 ? 60000 : 30000);
-  const rest = (kosten - foe) * Math.max(0, 1 - v.dauer / D.Lebensdauer);
+  const rest = kosten * Math.max(0, 1 - v.dauer / D.Lebensdauer) * Math.pow(1 + v.wst / 100, v.dauer);   // Restwert der Bauteile, in beiden Fällen gleich
   const wpKleiner = Math.min(0.4 * v.wpPreis, Math.max(0, kw0 - kw1) * D.WpKw);
   return { w0: v.waerme, w1, vl0: DV.vl0, vl1, kw0, kw1, kosten, foe, rest, wpKleiner, irgend };
 }
@@ -394,9 +446,13 @@ const f100 = x => fmt(Math.round(x / 100) * 100);
 function zeigeDaemmung() {
   const d = dRechne(V);
   const a = wpFall(V, d.w0, d.vl0), b = wpFall(V, d.w1, d.vl1);
-  const r0 = rechne({ ...V, wpJaz: a.jaz, wpStrom: a.preis }), r1 = rechne({ ...V, waerme: d.w1, wpJaz: b.jaz, wpStrom: b.preis, wpPreis: V.wpPreis - d.wpKleiner });
-  const dN = d.kosten - d.foe - d.rest;
-  const tot = { wp0: r0.tot.wp, wp1: r1.tot.wp + dN, gas0: r0.tot.gas, gas1: r1.tot.gas + dN };
+  const fall = ref => {
+    const r0 = rechne({ ...V, reform: ref, wpJaz: a.jaz, wpStrom: a.preis }), r1 = rechne({ ...V, reform: ref, waerme: d.w1, wpJaz: b.jaz, wpStrom: b.preis, wpPreis: V.wpPreis - d.wpKleiner });
+    const Bn = d.kosten / 1.19 * (RF.mat + (1 - RF.mat) * 1.05), zahl = ref ? summe(anteil(Bn, V)) : summe(bank(d.kosten - d.foe, V));
+    const dN = zahl - d.rest;
+    return { r0, r1, Bn, zahl, dN, tot: { wp0: r0.tot.wp, wp1: r1.tot.wp + dN, gas0: r0.tot.gas, gas1: r1.tot.gas + dN } };
+  };
+  const FH = fall(false), FR = fall(true), F0 = V.reform ? FR : FH, { r0, r1, tot } = F0;
   const s0 = d.w0 / a.jaz, s1 = d.w1 / b.jaz, g0 = r0.kGas, g1 = r1.kGas;
   const co2 = { wp0: s0 * D.StromCO2 / 1000, wp1: s1 * D.StromCO2 / 1000, gas0: g0 * EF.gas / 1000, gas1: g1 * EF.gas / 1000 };
   const nm = { wp0: "Wärmepumpe, ohne Dämmung", wp1: "Wärmepumpe mit Dämmung und Fenstern", gas0: "Gasheizung, ohne Dämmung", gas1: "Gasheizung mit Dämmung und Fenstern" };
@@ -405,12 +461,18 @@ function zeigeDaemmung() {
     $("d_aus").textContent = "Wähle links unter „Dämmen und Fenster“ aus, was gemacht wird.";
     ["d_bars", "d_tab", "d_note", "d_link"].forEach(id => $(id).innerHTML = ""); return;
   }
-  const spar = tot.wp0 - tot.wp1;
-  $("d_aus").textContent = `Die Vorlauftemperatur sinkt von ${fmt(d.vl0)} auf ${fmt(d.vl1)} °C. Die Wärmepumpe braucht ${f100(s1)} statt ${f100(s0)} kWh Strom im Jahr. ` +
-    (spar >= 0 ? `Über ${fmt(V.dauer)} Jahre ist sie mit Dämmung ${eur(spar)} günstiger, Dämmung eingerechnet.` : `Über ${fmt(V.dauer)} Jahre ist sie mit Dämmung ${eur(-spar)} teurer als ohne, Dämmung eingerechnet.`);
+  const sH = FH.tot.wp0 - FH.tot.wp1, sR = FR.tot.wp0 - FR.tot.wp1, gH = FH.tot.gas0 - FH.tot.gas1, gR = FR.tot.gas0 - FR.tot.gas1;
+  const hT = x => x >= 0 ? `spart die Dämmung heute ${eur(x)}` : `kostet die Dämmung heute ${eur(-x)} mehr, als sie spart`, rT = x => x >= 0 ? `spart sie ${eur(x)}` : `kostet sie ${eur(-x)} mehr`;
+  $("d_aus").textContent = (sH < 0 && sR >= 0 ? `Heute rechnet sich die Dämmung nicht, mit der Reform schon. ` : "") + `Mit Wärmepumpe ${hT(sH)}, mit der Reform ${rT(sR)}. Mit Gasheizung ${hT(gH).replace("die Dämmung ", "sie ")}, mit der Reform ${rT(gR)}. `;
+  const vlSatz = `<p class="note">Die Vorlauftemperatur sinkt von ${fmt(d.vl0)} auf ${fmt(d.vl1)} °C, der Strom der Wärmepumpe von ${f100(s0)} auf ${f100(s1)} kWh im Jahr. Gerechnet über ${fmt(V.dauer)} Jahre, mit Zinsen und Restwert.</p>`;
+  const mxD = Math.max(1, ...[sH, sR, gH, gR].map(Math.abs));
+  const dvRow = (t, x, h) => { const w = (Math.abs(x) / mxD * 100).toFixed(1), c = x >= 0 ? "gut" : "schlecht", lab = `<b class="${c}">${x >= 0 ? "spart " : "kostet "}${eur(Math.abs(x))}</b>`;
+    return `<div><div class="t${h ? " h" : ""}">${t}</div><div class="trk"><div class="neg">${x < 0 ? lab + `<i class="${c}" style="width:${w}%"></i>` : ""}</div><div class="pos">${x >= 0 ? `<i class="${c}" style="width:${w}%"></i>` + lab : ""}</div></div></div>`; };
+  const dvHtml = `<div class="dv"><div class="ax"><span>kostet mehr</span><span>spart</span></div>`
+    + dvRow("Mit Wärmepumpe, Recht heute", sH) + dvRow("Mit Wärmepumpe und der Reform", sR, true) + dvRow("Mit Gasheizung, Recht heute", gH) + dvRow("Mit Gasheizung und der Reform", gR) + `</div>`;
   const mx = Math.max(...keys.map(k => tot[k])), col = { wp0: "var(--wp)", wp1: "var(--wp)", gas0: "var(--gas)", gas1: "var(--gas)" };
-  $("d_bars").innerHTML = keys.map(k => `<div class="dbar${k === best ? " best" : ""}"><div class="t"><span>${nm[k]}${k === best ? " · am günstigsten" : ""}</span><b>${eur(tot[k])}</b></div><div class="trk"><i style="width:${(tot[k] / mx * 100).toFixed(1)}%;background:${col[k]};opacity:${k.endsWith("1") ? 1 : .45}"></i></div></div>`).join("")
-    + `<p class="note">Alle Kosten über ${fmt(V.dauer)} Jahre: Heizung, Energie, CO₂-Preis, Wartung und die Dämmung nach Förderung, abzüglich ihres Restwerts.</p>`;
+  $("d_bars").innerHTML = `<h3>Was Dämmen und Fenster über ${fmt(V.dauer)} Jahre unterm Strich bringen</h3>` + dvHtml + vlSatz + `<h3>Alle Kosten, ${V.reform ? "mit der Reform" : "Recht heute"}</h3>` + keys.map(k => `<div class="dbar${k === best ? " best" : ""}"><div class="t"><span>${nm[k]}${k === best ? " · am günstigsten" : ""}</span><b>${eur(tot[k])}</b></div><div class="trk"><i style="width:${(tot[k] / mx * 100).toFixed(1)}%;background:${col[k]};opacity:${k.endsWith("1") ? 1 : .45}"></i></div></div>`).join("")
+    + `<p class="note">Alle Kosten über ${fmt(V.dauer)} Jahre: Heizung, Energie, CO₂-Preis, Wartung und die Dämmung, ${V.reform ? "als Anteil am Hauswert abgelöst" : `nach Förderung${V.zinsK > 0 ? ", mit Zinsen" : ""}`}, abzüglich ihres Restwerts. Oben links lässt sich der Rechtsstand umschalten.</p>`;
   const row = (n, x, cls = "") => `<tr class="${cls}"><td>${n}</td>${x.map(c => `<td>${c}</td>`).join("")}</tr>`;
   $("d_tab").innerHTML = `<thead><tr><th></th><th>Wärme&shy;pumpe ohne</th><th>Wärme&shy;pumpe mit</th><th>Gas ohne</th><th>Gas mit</th></tr></thead><tbody>`
     + row("Wärme im Jahr, kWh", [f100(d.w0), f100(d.w1), f100(d.w0), f100(d.w1)])
@@ -422,8 +484,9 @@ function zeigeDaemmung() {
     + row("CO₂ im ersten Jahr", ["wp0", "wp1", "gas0", "gas1"].map(k => fmt(co2[k], 1) + " t"))
     + row(`Heizung über ${fmt(V.dauer)} Jahre`, [eur(r0.tot.wp), eur(r1.tot.wp), eur(r0.tot.gas), eur(r1.tot.gas)])
     + row("Dämmung und Fenster", ["", eur(d.kosten), "", eur(d.kosten)])
-    + row("Förderung", ["", "−" + eur(d.foe), "", "−" + eur(d.foe)])
-    + row(`Restwert nach ${fmt(V.dauer)} Jahren`, ["", "−" + eur(d.rest), "", "−" + eur(d.rest)])
+    + (V.reform ? row("ohne Mehrwertsteuer, Arbeit 5 %", ["", "−" + eur(d.kosten - F0.Bn), "", "−" + eur(d.kosten - F0.Bn)]) + row("Ablösung des Anteils mit Wertsteigerung", ["", "+" + eur(F0.zahl - F0.Bn), "", "+" + eur(F0.zahl - F0.Bn)])
+      : row("Förderung", ["", "−" + eur(d.foe), "", "−" + eur(d.foe)]) + (V.zinsK > 0 ? row("Zinsen", ["", "+" + eur(F0.zahl - d.kosten + d.foe), "", "+" + eur(F0.zahl - d.kosten + d.foe)]) : ""))
+    + row(`Restwert nach ${fmt(V.dauer)} Jahren, mit Wertsteigerung`, ["", "−" + eur(d.rest), "", "−" + eur(d.rest)])
     + row("Zusammen", ["wp0", "wp1", "gas0", "gas1"].map(k => eur(tot[k])), "sum") + "</tbody>";
   $("d_note").innerHTML = `Die Dämmung senkt den Wärmebedarf; die alten Heizkörper reichen dann mit niedrigerer Vorlauftemperatur. Das hebt die Jahresarbeitszahl. ${V.wpTarif === "dyn" ? `Im dynamischen Tarif kann ein gedämmtes Haus mehr Wärme in billige Stunden verschieben, der Strom kostet dann im Schnitt ${fmt(b.preis * 100, 1)} statt ${fmt(a.preis * 100, 1)} ct.` : "Mit dem dynamischen Tarif (oben bei der Wärmepumpe einstellbar) verschiebt ein gedämmtes Haus mehr Wärme in billige Stunden."} `
     + `Die kleinere Wärmepumpe kostet geschätzt ${eur(d.wpKleiner)} weniger. Dämmung hält rund ${D.Lebensdauer} Jahre; der Rest zählt als Restwert. CO₂ des Stroms: Strommix 2024 mit 363 g je kWh (Umweltbundesamt, Schätzung vom 9.4.2025); er sinkt mit jedem Jahr mehr Wind und Sonne. Die Jahresarbeitszahl stammt aus deiner Angabe oben, geändert nach dem Stundenmodell des Energie-Rechners (Luft-Wasser-Wärmepumpe, Wetterjahr Idstein). Grobe Schätzung; ein Energieberater rechnet genauer. Wie Mieter und Vermieter mit der Reform aus dem Buch dabei stehen, zeigt der <a href="../steuerrechner/#sanierung">Steuerrechner</a>.`;
@@ -437,28 +500,33 @@ function zeigeDaemmung() {
   ["mWand", "mDach", "mFen", "mKel"].forEach(k => { $("d_" + k).checked = DV[k]; $("d_" + k).onchange = e => { DV[k] = e.target.checked; run(); }; });
   ["bj", "fl", "g"].forEach(k => $("d_" + k).addEventListener(k === "bj" ? "change" : "input", e => { DV[k] = +e.target.value || DV[k]; dSchaetze(); run(); }));
   $("d_foe").onchange = e => { DV.foe = +e.target.value; run(); };
+  $("d_wst").value = V.wst; $("d_wst").addEventListener("input", e => { V.wst = +e.target.value || 0; run(); });
   DAUTO.forEach(k => $("d_" + k).addEventListener("input", e => { dHand.add(k); e.target.classList.remove("auto"); DV[k] = +e.target.value || 0; run(); }));
   $("d_auto").onclick = () => { dHand.clear(); dSchaetze(); run(); };
   dSchaetze();
 })();
 
 function run() {
-  const a0 = wpFall(V, V.waerme, DV.vl0), r = rechne({ ...V, wpJaz: a0.jaz, wpStrom: a0.preis });
+  const a0 = wpFall(V, V.waerme, DV.vl0), rH = rechne({ ...V, reform: false, wpJaz: a0.jaz, wpStrom: a0.preis }), rR = rechne({ ...V, reform: true, wpJaz: a0.jaz, wpStrom: a0.preis }), r = V.reform ? rR : rH;
+  $("r_txt").textContent = V.reform ? "Vorschlag aus dem Buch, kein geltendes Recht: Strom 5 % Mehrwertsteuer, Gas und Öl 50 %, Wartung 5 %. Wärmepumpe ohne Mehrwertsteuer, zinsloser Kredit über 20 Jahre, die ersten 3 ohne Tilgung. Einbau, Dämmung und Fenster bezahlt der Staat gegen einen Anteil am Hauswert, den du über 40 Jahre ablöst. Dafür entfällt die heutige Förderung." : "Heutige Förderung, Mehrwertsteuer 19 % auf alles, Kauf über einen Bankkredit.";
+  const hrRow = (n, k) => { const d = rR.tot[k] - rH.tot[k]; return `<tr><td>${n}</td><td>${eur(rH.tot[k])}</td><td>${eur(rR.tot[k])}</td><td class="${d <= 0 ? "gut" : "schlecht"}">${d <= 0 ? "−" : "+"}${eur(Math.abs(d))}</td></tr>`; };
+  $("hr").innerHTML = `<h3>Recht heute gegen die Reform, über ${fmt(V.dauer)} Jahre</h3><div class="tbl"><table><thead><tr><th></th><th>heute</th><th>Reform</th><th>±</th></tr></thead><tbody>${hrRow("Wärmepumpe", "wp")}${hrRow("Gasheizung", "gas")}${hrRow("Ölheizung", "oel")}</tbody></table></div>`;
   $("co2txt").textContent = PFAD[V.pfad].txt;
   const nm = { wp: "Wärmepumpe", gas: "Gasheizung", oel: "Ölheizung" };
   const rang = Object.entries(r.tot).sort((a, b) => a[1] - b[1]);
   const [best, zweit] = rang;
   // Ab wann ist die Wärmepumpe günstiger als Gas?
-  let ab = null; for (const q of r.jahre) if (q.wp <= q.gas) { ab = q.n; break; }
+  let ab = null; for (const q of r.jahre) if (!(q.n === 0 && q.wp === q.gas) && q.wp <= q.gas) { ab = q.n; break; }
   $("verdict").innerHTML = `Über ${fmt(V.dauer)} Jahre ist die <b>${nm[best[0]]}</b> am günstigsten: ${eur(best[1])}, das sind ${eur(zweit[1] - best[1])} weniger als die ${nm[zweit[0]]}.` +
-    (ab === 0 ? " Die Wärmepumpe ist nach Förderung schon beim Kauf günstiger als die Gasheizung." : ab ? ` Die Wärmepumpe hat den höheren Kaufpreis gegenüber Gas nach <b>${ab} Jahren</b> wieder herein.` : " Gegenüber Gas holt die Wärmepumpe den höheren Kaufpreis in dieser Zeit nicht herein.");
+    (ab === 0 ? " Die Wärmepumpe ist schon beim Kauf günstiger als die Gasheizung." : ab ? (ab === 1 ? " Mit Kredit zahlt die Wärmepumpe <b>vom ersten Jahr an</b> weniger als die Gasheizung." : ` Die Wärmepumpe liegt gegenüber Gas nach <b>${ab} Jahren</b> vorn.`) : " Gegenüber Gas holt die Wärmepumpe den höheren Kaufpreis in dieser Zeit nicht herein.");
   const tile = (k, c) => `<div class="tile"><span class="k"><i style="background:var(--${c})"></i>${nm[c]}</span><span class="v">${eur(r.tot[c])}</span><span class="s">${eur(r.erst[c])} Betriebskosten im ersten Jahr</span></div>`;
   $("tiles").innerHTML = tile("", "wp") + tile("", "gas") + tile("", "oel");
   drawCum(r);
   const S = r.S, row = (n, a, b, c, cls = "") => `<tr class="${cls}"><td>${n}</td><td>${a}</td><td>${b}</td><td>${c}</td></tr>`;
   $("tk").innerHTML = `<thead><tr><th>Über ${fmt(V.dauer)} Jahre</th><th>Wärmepumpe</th><th>Gas</th><th>Öl</th></tr></thead><tbody>`
     + row("Kauf und Einbau", eur(V.wpPreis), eur(V.gasPreis), eur(V.oelPreis))
-    + row(`Förderung (${fmt(r.foe.satz * 100)} %)`, "−" + eur(r.foe.betrag), "–", "–")
+    + (V.reform ? row("ohne Mehrwertsteuer (Reform)", "−" + eur(V.wpPreis - S.wp.preis), "–", "–") : row(`Förderung (${fmt(r.foe.satz * 100)} %)`, "−" + eur(r.foe.betrag), "–", "–"))
+    + row(V.reform ? "Zinsen, Wertzuwachs des Anteils" : "Zinsen", eur(S.wp.kauf - S.wp.preis), eur(S.gas.kauf - S.gas.preis), eur(S.oel.kauf - S.oel.preis))
     + row("Strom, Gas oder Öl", eur(S.wp.energie), eur(S.gas.energie), eur(S.oel.energie))
     + row("CO₂-Preis", "–", eur(S.gas.co2), eur(S.oel.co2))
     + row("Bio-Beimischung", "–", eur(S.gas.bio), eur(S.oel.bio))
@@ -466,7 +534,7 @@ function run() {
     + row("Zusammen", eur(r.tot.wp), eur(r.tot.gas), eur(r.tot.oel), "sum")
     + row("CO₂ aus dem Schornstein", "0 t", fmt(S.gas.t, 0) + " t", fmt(S.oel.t, 0) + " t") + `</tbody>`;
   zeigeDaemmung();
-  $("tknote").textContent = `${V.wpTarif === "dyn" ? `Dynamischer Tarif: Strom im Schnitt ${fmt(a0.preis * 100, 1)} ct je kWh, Jahresarbeitszahl ${fmt(a0.jaz, 1)}. ` : ""}Verbrauch im ersten Jahr: Wärmepumpe ${fmt(r.kWp)} kWh Strom, Gas ${fmt(r.kGas)} kWh, Öl ${fmt(r.kOel / 10)} Liter. Der Strom für die Wärmepumpe ist im Strommix nur teilweise CO₂-frei; sein CO₂ ist über den Emissionshandel im Strompreis enthalten.`;
+  $("tknote").textContent = `${V.reform ? "Reform: Am Ende der Laufzeit zählt der noch offene Anteil am Hauswert für den Einbau der Wärmepumpe, daher der Sprung im letzten Jahr. " : ""}${V.wpTarif === "dyn" ? `Dynamischer Tarif: Strom im Schnitt ${fmt(a0.preis * 100, 1)} ct je kWh, Jahresarbeitszahl ${fmt(a0.jaz, 1)}. ` : ""}Verbrauch im ersten Jahr: Wärmepumpe ${fmt(r.kWp)} kWh Strom, Gas ${fmt(r.kGas)} kWh, Öl ${fmt(r.kOel / 10)} Liter. Der Strom für die Wärmepumpe ist im Strommix nur teilweise CO₂-frei; sein CO₂ ist über den Emissionshandel im Strompreis enthalten.`;
 }
 
 
@@ -513,6 +581,7 @@ function drawCum(r) {
   svg.addEventListener("pointermove", mv); svg.addEventListener("pointerdown", mv);
   svg.addEventListener("pointerleave", () => { tip.hidden = true; cl.setAttribute("opacity", 0); });
 }
+["heute", "reform"].forEach(k => $("r_" + k).onclick = () => { V.reform = k === "reform"; $("r_heute").setAttribute("aria-pressed", !V.reform); $("r_reform").setAttribute("aria-pressed", V.reform); run(); });
 ["ets", "mzz"].forEach(p => $("p_" + p).onclick = () => { V.pfad = p; $("p_ets").setAttribute("aria-pressed", p === "ets"); $("p_mzz").setAttribute("aria-pressed", p === "mzz"); run(); });
 run();
 </script>
