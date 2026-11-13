@@ -205,14 +205,15 @@ h1,h2,h3{break-after:avoid}
         <small class="note" id="r_txt"></small>
       </div>
       <div class="grp"><h3>Ihr Haus</h3><div class="row2" id="haus"></div></div>
-      <div class="grp">
-        <h3>CO₂-Preis</h3>
+      <details class="more">
+        <summary>Erweitert: CO₂-Preis einzeln wählen</summary>
         <div class="seg" role="group" aria-label="CO₂-Preis">
-          <button type="button" id="p_ets" aria-pressed="true">Erwartung nach heutigem Recht</button>
+          <button type="button" id="p_auto" aria-pressed="true">passend zum Rechtsstand</button>
+          <button type="button" id="p_ets" aria-pressed="false">Erwartung nach heutigem Recht</button>
           <button type="button" id="p_mzz" aria-pressed="false">Vorschlag aus dem Buch</button>
         </div>
         <small class="note" id="co2txt"></small>
-      </div>
+      </details>
       <div class="three">
         <div class="grp" id="g_wp"><h3><i style="background:var(--wp)"></i>Wärmepumpe</h3></div>
         <div class="grp" id="g_gas"><h3><i style="background:var(--gas)"></i>Gasheizung</h3></div>
@@ -307,7 +308,7 @@ const PFAD = {
   mzz: { txt: "Vorschlag aus dem Buch: 100 € ab 2028, 150 € ab 2030, 200 € ab 2035, 300 € ab 2040. Das Geld fließt als Klimageld zurück.", p: [[2026, 60], [2027, 65], [2028, 100], [2030, 150], [2035, 200], [2040, 300]] },
 };
 const V = {
-  waerme: 18000, jahr: 2026, wpTarif: "fest", zinsK: 3.5, wst: 2, reform: false, dauer: 20, steig: 2, pfad: "ets",
+  waerme: 18000, jahr: 2026, wpTarif: "fest", pfadWahl: "auto", zinsK: 3.5, wst: 2, reform: false, dauer: 20, steig: 2, pfad: "ets",
   wpPreis: 30000, wpJaz: 3.2, wpStrom: 0.27, wpGrund: 120, wpWart: 200,
   gasPreis: 12000, gasNutz: 92, gasKwh: 0.115, gasGrund: 180, gasWart: 300, gasBio: 0.06, gasNeu: "ja",
   oelPreis: 15000, oelNutz: 90, oelLiter: 1.00, oelWart: 370, oelBio: 0.06,
@@ -371,7 +372,10 @@ function anteil(B, v) {   // Anteil am Hauswert, über 40 Jahre abgelöst; was n
   a[N] += Math.max(0, 1 - N / RF.abl) * B * Math.pow(1 + w, N); return a;
 }
 const summe = a => a.reduce((x, y) => x + y, 0);
+// Der Rechtsstand stellt auch den CO₂-Preis um, außer er ist unter „Erweitert“ einzeln gewählt
+const pfadVon = v => v.pfadWahl === "auto" ? (v.reform ? "mzz" : "ets") : v.pfadWahl;
 function rechne(v) {
+  v = { ...v, pfad: pfadVon(v) };
   if (v.reform) v = reformPreise(v);
   const foe = foerderung(v);
   const zW = v.reform ? kredit0(v.wpPreis * (1 - RF.einb) / 1.19, v).map((x, i) => x + anteil(v.wpPreis * RF.einb / 1.19, v)[i]) : bank(v.wpPreis - foe.betrag, v);
@@ -537,10 +541,10 @@ function zeigeDaemmung() {
 
 function run() {
   const a0 = wpFall(V, V.waerme, DV.vl0), rH = rechne({ ...V, reform: false, wpJaz: a0.jaz, wpStrom: a0.preis }), rR = rechne({ ...V, reform: true, wpJaz: a0.jaz, wpStrom: a0.preis }), r = V.reform ? rR : rH;
-  $("r_txt").textContent = V.reform ? "Vorschlag aus dem Buch, kein geltendes Recht: Strom 5 % Mehrwertsteuer, Gas und Öl 50 %, Wartung 5 %. Wärmepumpe ohne Mehrwertsteuer, zinsloser Kredit über 20 Jahre, die ersten 3 ohne Tilgung. Einbau, Dämmung und Fenster bezahlt der Staat gegen einen Anteil am Hauswert, den du über 40 Jahre ablöst. Dafür entfällt die heutige Förderung." : "Heutige Förderung, Mehrwertsteuer 19 % auf alles, Kauf über einen Bankkredit.";
+  $("r_txt").textContent = V.reform ? "Vorschlag aus dem Buch, kein geltendes Recht: CO₂-Preis 100 € ab 2028 bis 300 € ab 2040 (das Geld fließt als Klimageld zurück, hier nicht eingerechnet). Strom 5 % Mehrwertsteuer, Gas und Öl 50 %, Wartung 5 %. Wärmepumpe ohne Mehrwertsteuer, zinsloser Kredit über 20 Jahre, die ersten 3 ohne Tilgung. Einbau, Dämmung und Fenster bezahlt der Staat gegen einen Anteil am Hauswert, den du über 40 Jahre ablöst. Dafür entfällt die heutige Förderung." : "Heutige Förderung, Mehrwertsteuer 19 % auf alles, CO₂-Preis wie nach heutigem Recht erwartet, Kauf über einen Bankkredit.";
   const hrRow = (n, k) => { const d = rR.tot[k] - rH.tot[k]; return `<tr><td>${n}</td><td>${eur(rH.tot[k])}</td><td>${eur(rR.tot[k])}</td><td class="${d <= 0 ? "gut" : "schlecht"}">${d <= 0 ? "−" : "+"}${eur(Math.abs(d))}</td></tr>`; };
   $("hr").innerHTML = `<h3>Recht heute gegen die Reform, über ${fmt(V.dauer)} Jahre</h3><div class="tbl"><table><thead><tr><th></th><th>heute</th><th>Reform</th><th>±</th></tr></thead><tbody>${hrRow("Wärmepumpe", "wp")}${hrRow("Gasheizung", "gas")}${hrRow("Ölheizung", "oel")}</tbody></table></div>`;
-  $("co2txt").textContent = PFAD[V.pfad].txt;
+  $("co2txt").textContent = "CO₂-Preis: " + PFAD[pfadVon(V)].txt;
   const nm = { wp: "Wärmepumpe", gas: "Gasheizung", oel: "Ölheizung" };
   const rang = Object.entries(r.tot).sort((a, b) => a[1] - b[1]);
   const [best, zweit] = rang;
@@ -611,7 +615,7 @@ function drawCum(r) {
   svg.addEventListener("pointerleave", () => { tip.hidden = true; cl.setAttribute("opacity", 0); });
 }
 ["heute", "reform"].forEach(k => $("r_" + k).onclick = () => { V.reform = k === "reform"; $("r_heute").setAttribute("aria-pressed", !V.reform); $("r_reform").setAttribute("aria-pressed", V.reform); run(); });
-["ets", "mzz"].forEach(p => $("p_" + p).onclick = () => { V.pfad = p; $("p_ets").setAttribute("aria-pressed", p === "ets"); $("p_mzz").setAttribute("aria-pressed", p === "mzz"); run(); });
+["auto", "ets", "mzz"].forEach(p => $("p_" + p).onclick = () => { V.pfadWahl = p; ["auto", "ets", "mzz"].forEach(q => $("p_" + q).setAttribute("aria-pressed", q === p)); run(); });
 run();
 </script>
 
