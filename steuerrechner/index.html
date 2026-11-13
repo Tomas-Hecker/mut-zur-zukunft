@@ -128,11 +128,13 @@ details.more[open] summary { margin-bottom: 12px; }
 .verdict p { color: var(--fg); }
 
 .bars { display: grid; gap: 12px; }
-.barrow { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px; align-items: center; }
+.barrow { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px; align-items: start; }
 .barrow .lbl { font-weight: 600; font-size: .92rem; }
 .barrow .lbl small { display: block; font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
 .track { position: relative; height: 30px; display: flex; gap: 2px; }
 .seg { height: 100%; min-width: 0; }
+.segl { display: flex; flex-wrap: wrap; gap: 2px 12px; margin-top: 5px; font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.segl i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: 0; }
 .seg:first-child { border-radius: 4px 0 0 4px; }
 .seg:last-child { border-radius: 0 4px 4px 0; }
 .seg:only-child { border-radius: 4px; }
@@ -502,14 +504,15 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
       <div class="panel">
         <div class="tiles" id="tiles"></div>
         <div>
-          <h3>Prognose: Staatsschulden in % der Wirtschaftsleistung bis 2070</h3>
-          <p class="note" id="chartNote"></p>
+          <h3 id="chartT">Prognose: Staatsschulden bis 2070</h3>
+          <p class="note">Staatsschulden in % der Wirtschaftsleistung; unter null hat der Staat Vermögen.</p>
         </div>
         <div class="presets" id="szenarien" role="group" aria-label="Szenario wählen"></div>
         <label class="check" id="demoWrap"><input type="checkbox" id="demoAus"> Zum Vergleich: Schulden ohne die steigenden Kosten der Alterung</label>
         <p class="note" id="demoNote" hidden></p>
         <div id="chartBox"></div>
         <div class="legend" id="chartLegend"></div>
+        <details class="more"><summary>So ist gerechnet</summary><p class="note" id="chartNote"></p></details>
         <details class="more">
           <summary>Die ganze Gesamtrechnung in Milliarden Euro</summary>
           <div class="tbl-wrap"><table id="grTable"></table></div>
@@ -1604,9 +1607,12 @@ function updateHH() {
       sg.onpointermove = e => showTip(e, `<b>${name}</b><br>${lbl}: ${eur(o[k])}`); sg.onpointerleave = hideTip;
       tr.append(sg);
     });
-    row.append(tr); bars.append(row);
+    const sp = document.createElement("div"); sp.append(tr);
+    const sl = document.createElement("div"); sl.className = "segl";
+    sl.innerHTML = KAT.filter(([k]) => o[k] > 0.5).map(([k, n, c]) => `<span><i style="background:var(${c})"></i>${n} ${eur(o[k])}</span>`).join("");
+    sp.append(sl); row.append(sp); bars.append(row);
   });
-  $("legend").innerHTML = KAT.filter(([k]) => r.heute[k] > 0.5 || r.vorschlag[k] > 0.5).map(([, n, c]) => `<span><i style="background:var(${c})"></i>${n}</span>`).join("");
+  $("legend").innerHTML = "";
   // Tabelle
   const zeilen = [...KAT, ["gut", "Gegengerechnet: Arbeitgeberanteile als Lohn, höhere Rente oder Grundsicherung, Obergrenze, Bestandsschutz"]].filter(([k]) => k !== "gut" || r.gut > 0.5).map(([k, n]) => `<tr><td>${n}</td><td>${eur(r.heute[k])}</td><td>${k === "gut" ? "−" : ""}${eur(Math.abs(r.vorschlag[k]))}</td><td class="${r.vorschlag[k] - r.heute[k] < -0.5 ? "pos" : r.vorschlag[k] - r.heute[k] > 0.5 ? "neg" : ""}">${sign(r.vorschlag[k] - r.heute[k])} €</td></tr>`).join("");
   $("hhTable").innerHTML = `<thead><tr><th>Euro pro Jahr</th><th>Heute</th><th>Vorschlag</th><th>Differenz</th></tr></thead><tbody>${zeilen}
@@ -1800,8 +1806,11 @@ function updateGesamt() {
   $("grTable").innerHTML = h;
 }
 
+let chartRows = null;
+addEventListener("resize", () => { if (chartRows) drawChart(chartRows); });
 function drawChart(rows) {
-  const W = 640, H = 280, L = 44, R = 64, T = 14, B = 30;
+  chartRows = rows;
+  const W = clamp(Math.round($("chartBox").clientWidth || 640), 340, 640), H = W < 500 ? 300 : 290, L = 44, R = W < 500 ? 112 : 150, T = 14, B = 30;
   const hatDemo = rows[0].demo !== undefined;
   const hatPlan = rows[0].plan !== undefined;
   const maxY = Math.max(0.8, ...rows.map(r => Math.max(r.quote, r.ohne, hatDemo ? r.demo : 0))) * 1.05;
@@ -1812,8 +1821,9 @@ function drawChart(rows) {
   const yy = v => T + (1 - (v - lo) / (maxY - lo)) * (H - T - B);
   let g = "";
   for (let v = lo; v <= maxY + 1e-9; v += step) g += `<line class="gridl" x1="${L}" x2="${W - R}" y1="${yy(v)}" y2="${yy(v)}"/><text x="${L - 6}" y="${yy(v) + 4}" text-anchor="end">${fmt(v * 100)} %</text>`;
-  [y0, ...[2030, 2040, 2050, 2060, 2070].filter(y => y > y0 + 3 && y <= y1)].forEach(y => g += `<text x="${x(y)}" y="${H - 8}" text-anchor="middle">${y}</text>`);
-  g += `<line class="ref" x1="${L}" x2="${W - R}" y1="${yy(A.Schuld)}" y2="${yy(A.Schuld)}"/>`;
+  [y0, ...[2030, 2040, 2050, 2060, 2070].filter(y => y > y0 + (W < 500 ? 9 : 3) && y <= y1)].forEach(y => g += `<text x="${x(y)}" y="${H - 8}" text-anchor="middle">${y}</text>`);
+  g += `<line class="ref" x1="${L}" x2="${W - R}" y1="${yy(A.Schuld)}" y2="${yy(A.Schuld)}"/><text x="${L + 6}" y="${yy(A.Schuld) - 6}">heute ${pct(A.Schuld, 0)}</text>`;
+  if (minY < 0) g += `<line x1="${L}" x2="${W - R}" y1="${yy(0)}" y2="${yy(0)}" style="stroke:var(--fg);stroke-width:1"/>`;
   if (hatPlan && minY < 0) {
     // Vermögen im Zukunftsfonds: goldene Fläche zwischen null und der Linie mit Zukunftsplan, wo sie unter null liegt, wie im Buch
     const cross = (p, r) => x(p.jahr + p.plan / (p.plan - r.plan) * (r.jahr - p.jahr)).toFixed(1);
@@ -1827,22 +1837,28 @@ function drawChart(rows) {
       } else if (p && p.plan < 0) a += `L${cross(p, r)},${yy(0).toFixed(1)}Z`;
     });
     g += `<path d="${a}" style="fill:var(--accent-fill);fill-opacity:.45;stroke:none"/>`;
+    const tief = rows.reduce((m, r) => r.plan < m.plan ? r : m, rows[0]);
+    if (tief.plan < -0.15) g += `<text x="${x(tief.jahr - 9)}" y="${yy(tief.plan / 3) + 4}" text-anchor="middle" style="fill:var(--fg);font-weight:600">Vermögen</text>`;
   }
   const path = k => rows.map((r, i) => (i ? "L" : "M") + x(r.jahr).toFixed(1) + "," + yy(r[k]).toFixed(1)).join("");
-  g += `<path class="ln" d="${path("ohne")}" style="stroke:var(--muted)" stroke-dasharray="1 0"/>`;
+  g += `<path class="ln" d="${path("ohne")}" style="stroke:var(--bad)"/>`;
   if (hatDemo) g += `<path class="ln" d="${path("demo")}" style="stroke:var(--s1)" stroke-dasharray="5 4"/>`;
   g += `<path class="ln" d="${path("quote")}" style="stroke:var(--s3)"/>`;
-  if (hatPlan) g += `<path class="ln" d="${path("plan")}" style="stroke:var(--s2)"/>`;
+  if (hatPlan) g += `<path class="ln" d="${path("plan")}" style="stroke:var(--good);stroke-width:3"/>`;
   const last = rows[rows.length - 1];
-  const lab = (k, txt, col) => `<circle cx="${x(last.jahr)}" cy="${yy(last[k])}" r="4" style="fill:${col};stroke:var(--surface);stroke-width:2"/><text x="${x(last.jahr) + 8}" y="${yy(last[k]) + 4}" style="fill:var(--fg)">${txt}</text>`;
-  const sep = Math.abs(yy(last.quote) - yy(last.ohne)) < 16;
-  g += lab("ohne", "ohne", "var(--muted)");
-  g += lab("quote", sep ? "" : "mit", "var(--s3)");
-  if (hatPlan) g += lab("plan", Math.abs(yy(last.plan) - yy(last.quote)) < 16 ? "" : "Plan", "var(--s2)");
-  if (hatDemo) g += lab("demo", Math.abs(yy(last.demo) - yy(last.quote)) < 16 ? "" : "o. Alt.", "var(--s1)");
+  const sq = v => v < -0.005 ? pct(-v, 0) + " Vermögen" : pct(Math.max(0, v), 0) + " Schulden";
+  const labs = [["ohne", "Ohne Reform", "var(--bad)"], ["quote", hatPlan ? "Reform allein" : "Mit Reform", "var(--s3)"]];
+  if (hatPlan) labs.push(["plan", "Mit Zukunftsplan", "var(--good)"]);
+  if (hatDemo) labs.push(["demo", "Ohne Alterung", "var(--s1)"]);
+  const pos = labs.map(([k, t, c]) => ({ k, t, c, y: yy(last[k]) })).sort((p, q) => p.y - q.y);
+  for (let i = 1; i < pos.length; i++) if (pos[i].y - pos[i - 1].y < 30) pos[i].y = pos[i - 1].y + 30;
+  const unten = H - B + 4; if (pos.length && pos[pos.length - 1].y > unten) { const d = pos[pos.length - 1].y - unten; pos.forEach(p => p.y -= d); }
+  pos.forEach(p => g += `<circle cx="${x(last.jahr)}" cy="${yy(last[p.k])}" r="4" style="fill:${p.c};stroke:var(--surface);stroke-width:2"/><text x="${x(last.jahr) + 9}" y="${p.y - 2}" style="fill:${p.c};font-weight:700">${p.t}</text><text x="${x(last.jahr) + 9}" y="${p.y + 12}" style="fill:var(--fg)">${sq(last[p.k])}</text>`);
   g += `<line class="hair" id="hair" x1="0" x2="0" y1="${T}" y2="${H - B}" visibility="hidden"/><rect id="hit" x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent"/>`;
   $("chartBox").innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Staatsschuldenquote bis 2070, mit und ohne Reform">${g}</svg>`;
-  $("chartLegend").innerHTML = `${hatPlan ? `<span><i style="background:var(--s2)"></i>Mit Reform, Zukunftsplan und Schuldenregel</span>` : ""}${hatPlan && minY < 0 ? `<span><i style="background:var(--accent-fill);opacity:.6"></i>Unter null: Vermögen im Zukunftsfonds</span>` : ""}<span><i style="background:var(--s3)"></i>Mit Reform</span><span><i style="background:var(--muted)"></i>Ohne Reform</span>${hatDemo ? `<span><i style="background:var(--s1)"></i>Ohne Reform und ohne Alterung</span>` : ""}<span><i style="background:transparent;border-top:1px dashed var(--muted);height:0;border-radius:0;width:14px"></i>Ende 2023: ${pct(A.Schuld, 0)}</span>`;
+  $("chartLegend").innerHTML = "";
+  const frei = hatPlan ? rows.find(r => r.jahr >= A.Prognose.ReformStart && r.plan <= 1e-9) : rows.find(r => r.jahr >= A.Prognose.ReformStart && r.quote <= 1e-9);
+  $("chartT").textContent = frei ? `Mit der Reform ist der Staat ${frei.jahr} schuldenfrei, ohne Reform steigen die Schulden auf ${pct(last.ohne, 0)}` : last.quote < last.ohne ? `Mit der Reform sinken die Schulden bis 2070 auf ${pct(Math.max(0, hatPlan ? last.plan : last.quote), 0)}, ohne Reform steigen sie auf ${pct(last.ohne, 0)}` : `Prognose: Staatsschulden bis 2070`;
   const svg = $("chartBox").firstChild, hair = $("hair");
   $("hit").onpointermove = e => {
     const pt = svg.getBoundingClientRect(); const sx = (e.clientX - pt.left) / pt.width * W;
