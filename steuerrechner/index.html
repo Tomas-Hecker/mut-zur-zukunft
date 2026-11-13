@@ -302,6 +302,8 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
 #sanierung .field input.auto { background: var(--sunk); }
 #sanierung .massn { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
 #sanierung .sbars { display: grid; gap: 12px; }
+#sanierung .sgrp { font-weight: 700; font-size: .95rem; margin: 14px 0 6px; color: var(--muted); }
+#sanierung .snotiz { font-size: .85rem; color: var(--bad); margin-top: 3px; }
 #sanierung .srow .st { font-size: .95rem; margin-bottom: 4px; }
 #sanierung .srow.haupt .st { font-weight: 700; }
 #sanierung .strk { display: grid; grid-template-columns: 1fr 1fr; align-items: center; min-height: 30px; }
@@ -2058,8 +2060,8 @@ const SAN_BSP = [
   { name: "Wohnung aus dem Buch", text: "Das Beispiel aus Kapitel 8: eine Wohnung mit 70 m², Dämmung und Fenster für 28.000 €, Wärmepumpe für 10.000 €.",
     v: { bj: 1968, g: 3, n: 1, fl: 70, miete: 9, wert: 250000, trg: "gas", pg: 11.5, mWp: 1, mFen: 1, mWand: 1, mDach: 1, mKel: 1 },
     fest: { tech: 10000, hk: 0, fen: 0, bau: 28000, vor: 150, nach: 60, jaz: 3.2 } },
-  { name: "Denkmalgeschütztes Gebäude", text: "Ein denkmalgeschütztes Haus mit rund 400 m², gerechnet wie ein Mietshaus mit zwei Wohnungen. Es wird nicht gedämmt; Wärmepumpen und größere Heizkörper ersetzen die heiße Gasheizung. Kosten grob geschätzt, getrennt in Technik und Bauteile.",
-    v: { bj: 1918, g: 2, n: 2, fl: 400, miete: 8, wert: 1000000, trg: "gas", pg: 12, einb: 0, mWp: 1, mFen: 0, mWand: 0, mDach: 0, mKel: 0 },
+  { name: "Denkmalgeschütztes Gebäude", text: "Ein denkmalgeschütztes Haus mit rund 400 m², gerechnet wie ein Mietshaus mit vier Wohnungen zu je 100 m². Es wird nicht gedämmt; Wärmepumpen und größere Heizkörper ersetzen die heiße Gasheizung. Kosten grob geschätzt, getrennt in Technik und Bauteile.",
+    v: { bj: 1918, g: 2, n: 4, fl: 400, miete: 8, wert: 1000000, trg: "gas", pg: 12, einb: 0, mWp: 1, mFen: 0, mWand: 0, mDach: 0, mKel: 0 },
     fest: { tech: 110000, hk: 100000, fen: 0, bau: 0, vor: 240, nach: 215, jaz: 3.5, ps: 28 } },
 ];
 const SAN_F = ["einb", "g", "n", "fl", "miete", "wert", "pg", "tech", "hk", "fen", "bau", "uw", "ud", "uf", "uk", "vor", "nach", "jaz", "ps", "zt", "zb", "mat", "erh", "zins", "wst"];
@@ -2224,16 +2226,25 @@ function updateSan() {
       [`Reform, aber nicht sanieren (${traeger} bleibt)`, r.w0R / M - basis],
       ["Sanieren mit der Reform", mean("wR") / M - basis],
     ];
-    const mx = Math.max(10, ...bars.map(b => Math.abs(b[1])));
-    $("s_chart").innerHTML = `<div class="sbars" role="img" aria-label="Was der Mieter im Monat mehr oder weniger zahlt als heute">${bars.map(([t, d], i) => {
-      const gut = d <= 0.5, w = Math.max(1, Math.abs(d) / mx * 70), lab = `<b class="${gut ? "gut" : "schlecht"}">${sPlus(d)}</b>`;
+    // Balken: plus ist für den Mieter schlecht, für den Vermieter gut
+    const balken = (rows, mx, plusGut, haupt) => rows.map(([t, d, notiz], i) => {
+      const gut = plusGut ? d >= -0.5 : d <= 0.5, w = Math.max(1, Math.abs(d) / mx * 70), lab = `<b class="${gut ? "gut" : "schlecht"}">${sPlus(d)}</b>`;
       const bar = `<i class="${gut ? "gut" : "schlecht"}" style="width:${w.toFixed(1)}%"></i>`;
-      return `<div class="srow${i === 2 ? " haupt" : ""}"><div class="st">${t}</div><div class="strk"><div class="sneg">${d < 0 ? lab + bar : ""}</div><div class="spos">${d >= 0 ? bar + lab : ""}</div></div></div>`;
-    }).join("")}</div>`;
+      return `<div class="srow${i === haupt ? " haupt" : ""}"><div class="st">${t}</div><div class="strk"><div class="sneg">${d < 0 ? lab + bar : ""}</div><div class="spos">${d >= 0 ? bar + lab : ""}</div></div>${notiz ? `<div class="snotiz">${notiz}</div>` : ""}</div>`;
+    }).join("");
+    const verlust = vH < -1;
+    if (verlust) bars[0][2] = `geht nur, wenn der Vermieter ${sEur(-vH)} im Jahr drauflegt; deshalb wird heute meist nicht saniert`;
+    const vBars = [["Sanieren nach heutigem Recht", vH, verlust ? "Verlust: der Vermieter saniert nicht" : ""], ["Sanieren mit der Reform", vR, ""]];
+    $("s_chart").innerHTML = `<div class="sgrp">Mieter: Warmmiete im Monat${N > 1 ? `, Wohnung mit ${fmt(qm)} m²` : ""}, gegenüber heute ohne Sanierung</div>`
+      + `<div class="sbars" role="img" aria-label="Was der Mieter im Monat mehr oder weniger zahlt als heute">${balken(bars, Math.max(10, ...bars.map(b => Math.abs(b[1]))), false, 2)}</div>`
+      + `<div class="sgrp">Vermieter: was ihm im Jahr bleibt, ganzes Haus</div>`
+      + `<div class="sbars" role="img" aria-label="Was dem Vermieter im Jahr bleibt">${balken(vBars, Math.max(100, ...vBars.map(b => Math.abs(b[1]))), true, 1)}</div>`;
     const dR = bars[2][1], dH = bars[0][1];
-    $("s_chartT").textContent = `${dR <= 0 ? `Mit der Reform zahlt der Mieter ${sEur(-dR)} im Monat weniger` : `Mit der Reform zahlt der Mieter ${sEur(dR)} im Monat mehr`}${dH > 0.5 ? `, heute ${sEur(dH)} mehr` : ""}`;
+    const mT = dR <= 0 ? `der Mieter zahlt ${sEur(-dR)} im Monat weniger` : `der Mieter zahlt ${sEur(dR)} im Monat mehr`;
+    $("s_chartT").textContent = verlust && vR >= 0 ? `Heute verliert der Vermieter ${sEur(-vH)} im Jahr und saniert nicht. Mit der Reform lohnt es sich für ihn (${sPlus(vR)} im Jahr), ${mT}`
+      : `Mit der Reform: ${mT}, der Vermieter ${vR >= 0 ? "behält" : "verliert"} ${sEur(Math.abs(vR))} im Jahr${dH > 0.5 ? `; heute zahlt der Mieter ${sEur(dH)} mehr` : ""}`;
     $("s_legend").innerHTML = "";
-    $("s_chartNote").textContent = `Warmmiete ${N > 1 ? `einer Wohnung mit ${fmt(qm)} m² ` : ""}im Schnitt der 20 Jahre, verglichen mit heute ohne Sanierung (${sEur(basis)} im Monat).${vH < -1 ? ` Nach heutigem Recht legt der Vermieter ${sEur(-vH)} im Jahr drauf, deshalb saniert er heute meist nicht.` : ""} Nach 20 Jahren ist die Wärmepumpe bezahlt: Nach heutigem Recht bleibt der Aufschlag, mit der Reform entfällt er.`;
+    $("s_chartNote").textContent = `Warmmiete ${N > 1 ? `einer Wohnung mit ${fmt(qm)} m² ` : ""}im Schnitt der 20 Jahre, verglichen mit heute ohne Sanierung (${sEur(basis)} im Monat). Nach 20 Jahren ist die Wärmepumpe bezahlt: Nach heutigem Recht bleibt der Aufschlag, mit der Reform entfällt er.`;
   }
   // Vermieter
   const sH = r.sum("vH"), sR = r.sum("vR");
