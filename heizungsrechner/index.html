@@ -78,6 +78,8 @@ details.more { display: grid; gap: 10px }
 .btnk { justify-self: start; font: 600 13.5px var(--body); border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 999px; padding: 5px 12px; cursor: pointer; margin-top: 8px }
 .aussage { font: 700 17px/1.35 var(--display); max-width: none }
 .dbars { display: grid; gap: 10px }
+table.jem td.gut { color: var(--good); font-weight: 700 } table.jem td.schlecht { color: var(--bad); font-weight: 700 }
+table.jem td small { display: block; color: var(--muted); font-size: 12px; font-weight: 400 }
 .hr { display: grid; gap: 6px }
 .hr table td:first-child, .hr table th:first-child { text-align: left }
 @media (max-width: 560px) { .hr table { font-size: 13px } .hr th, .hr td { padding: 6px 4px } }
@@ -231,6 +233,7 @@ h1,h2,h3{break-after:avoid}
           <label class="check"><input type="checkbox" id="d_mFen"> Neue Fenster</label>
           <label class="check"><input type="checkbox" id="d_mKel"> Kellerdecke dämmen</label>
         </div>
+        <label class="check" style="font-size:14px"><input type="checkbox" id="d_hk"> Braucht die Wärmepumpe mehr als 55 °C, werden größere Heizkörper eingebaut</label>
         <details class="more">
           <summary>Kosten, Förderung und U-Werte: geschätzt, änderbar</summary>
           <div class="row2">
@@ -238,6 +241,7 @@ h1,h2,h3{break-after:avoid}
             <div class="f"><label for="d_kDach">Dach oder oberste Decke</label><div class="in"><input id="d_kDach" type="number" step="500" min="0"><span class="u">€</span></div><small>oberste Decke rund 60 € je m², ganzes Dach deutlich mehr</small></div>
             <div class="f"><label for="d_kFen">Fenster</label><div class="in"><input id="d_kFen" type="number" step="500" min="0"><span class="u">€</span></div></div>
             <div class="f"><label for="d_kKel">Kellerdecke</label><div class="in"><input id="d_kKel" type="number" step="500" min="0"><span class="u">€</span></div></div>
+            <div class="f"><label for="d_kHk">Größere Heizkörper, falls nötig</label><div class="in"><input id="d_kHk" type="number" step="500" min="0"><span class="u">€</span></div><small>senken den Vorlauf auf 55 °C; heute mit der Wärmepumpe gefördert</small></div>
             <div class="f"><label for="d_foe">Förderung</label><div class="in"><select id="d_foe"><option value="15">15 % (BEG Einzelmaßnahme)</option><option value="20">20 % mit Sanierungsfahrplan (iSFP)</option><option value="0">keine</option></select></div><small>förderfähig bis 30.000 €, mit iSFP 60.000 € je Wohnung und Jahr</small></div>
             <div class="f"><label for="d_wst">Wertsteigerung des Hauses im Jahr</label><div class="in"><input id="d_wst" type="number" step="0.5" min="-3"><span class="u">%</span></div><small>Reform: der Anteil des Staates am Hauswert wächst mit</small></div>
             <div class="f"><label for="d_uw">U-Wert Wand heute</label><div class="in"><input id="d_uw" type="number" step="0.05" min="0.1"><span class="u">W/(m²K)</span></div></div>
@@ -411,30 +415,41 @@ const D_U = { 1918: [1.7, 1.4, 2.8, 1.2], 1948: [1.7, 1.4, 2.8, 1.2], 1957: [1.4
 const D_VL = bj => bj <= 1978 ? 65 : bj <= 1994 ? 55 : bj <= 2009 ? 50 : 35;
 const D = { Ziel: { uw: 0.20, ud: 0.14, uf: 0.95, uk: 0.25 }, Preis: { wand: 220, fen: 900, dach: 60, kel: 50 }, HGT: 52, Gewinne: 20, WW: 15, Luft: 0.7, Hoehe: 2.5, WBalt: 0.10, WBneu: 0.05,
   WpKw: 1500, StromCO2: 0.363, Lebensdauer: 40 };
-const DV = { bj: 1968, fl: 140, g: 2, mWand: true, mDach: true, mFen: true, mKel: true, foe: 15 };
-const DAUTO = ["vl0", "uw", "ud", "uf", "uk", "kWand", "kDach", "kFen", "kKel"], dHand = new Set();
+const DV = { bj: 1968, fl: 140, g: 2, mWand: true, mDach: true, mFen: true, mKel: true, foe: 15, hk: true };
+const DAUTO = ["vl0", "uw", "ud", "uf", "uk", "kWand", "kDach", "kFen", "kKel", "kHk"], dHand = new Set();
 function dGeo(fl, g) { g = Math.max(1, Math.round(g)); const G = Math.max(30, fl) / (g * 0.8), umf = 4 * Math.sqrt(G) * 1.1, fass = umf * g * 2.9, af = 0.2 * fl; return { G, af, aw: Math.max(0, fass - af), ad: G, ak: G, ah: fass + 2 * G }; }
 const dH = (u, geo, wb, fl) => u.uw * geo.aw + u.uf * geo.af + u.ud * geo.ad * 0.8 + u.uk * geo.ak * 0.6 + wb * geo.ah + 0.34 * D.Luft * fl * D.Hoehe;
+// Behaglichkeit: kalte Außenflächen senken die Strahlungstemperatur; für dieselbe empfundene (operative) Temperatur muss die Luft wärmer sein.
+// Oberfläche innen: θsi = θi − Rsi·U·(θi − θe); Strahlung ≈ θi − f·Rsi·Ū·(θi − θe) mit f = Anteil der Außenflächen am Raum; operativ = (Luft + Strahlung)/2.
+const BH = { Rsi: 0.13, f: 0.4, op: 20, teMittel: 3, teKalt: -10, proK: 0.06 };
+const dUq = (u, geo) => (u.uw * geo.aw + u.uf * geo.af) / Math.max(1, geo.aw + geo.af);
+const dLuft = (u, geo, te) => { const c = BH.f * BH.Rsi * dUq(u, geo); return (BH.op - c / 2 * te) / (1 - c / 2); };
+const dOberfl = (U, te) => BH.op - BH.Rsi * U * (BH.op - te);
 const dQ = (H, fl) => Math.max(5, H * D.HGT / fl - D.Gewinne);
 function dSchaetze() {
   const geo = dGeo(DV.fl, DV.g), u = D_U[DV.bj] || D_U[1968];
-  const est = { vl0: D_VL(DV.bj), uw: u[0], ud: u[1], uf: u[2], uk: u[3], kWand: D.Preis.wand * geo.aw, kDach: D.Preis.dach * geo.ad, kFen: D.Preis.fen * geo.af, kKel: D.Preis.kel * geo.ak };
+  const est = { vl0: D_VL(DV.bj), uw: u[0], ud: u[1], uf: u[2], uk: u[3], kWand: D.Preis.wand * geo.aw, kDach: D.Preis.dach * geo.ad, kFen: D.Preis.fen * geo.af, kKel: D.Preis.kel * geo.ak, kHk: DV.fl * (D_VL(DV.bj) > 60 ? 60 : 30) };
   for (const k of DAUTO) if (!dHand.has(k)) { const x = k.startsWith("k") ? Math.round(est[k] / 100) * 100 : est[k]; DV[k] = x; $("d_" + k).value = x; $("d_" + k).classList.add("auto"); }
   $("d_flaechen").textContent = `Geschätzte Flächen: Wand ${fmt(geo.aw)} m², Fenster ${fmt(geo.af)} m², Dach oder oberste Decke ${fmt(geo.ad)} m², Kellerdecke ${fmt(geo.ak)} m². Nach der Dämmung: Wand ${fmt(D.Ziel.uw, 2)}, Dach ${fmt(D.Ziel.ud, 2)}, Fenster ${fmt(D.Ziel.uf, 2)}, Kellerdecke ${fmt(D.Ziel.uk, 2)} W/(m²K), wie in der Förderung verlangt. Preise mit Mehrwertsteuer: Fassade ${fmt(D.Preis.wand)} €, Fenster ${fmt(D.Preis.fen)} €, oberste Decke ${fmt(D.Preis.dach)} €, Kellerdecke ${fmt(D.Preis.kel)} € je m².`;
 }
-function dRechne(v) {
+function dRechne(v, m = DV) {
   const geo = dGeo(DV.fl, DV.g), u0 = { uw: DV.uw, ud: DV.ud, uf: DV.uf, uk: DV.uk };
-  const u1 = { uw: DV.mWand ? Math.min(u0.uw, D.Ziel.uw) : u0.uw, ud: DV.mDach ? Math.min(u0.ud, D.Ziel.ud) : u0.ud, uf: DV.mFen ? Math.min(u0.uf, D.Ziel.uf) : u0.uf, uk: DV.mKel ? Math.min(u0.uk, D.Ziel.uk) : u0.uk };
-  const irgend = DV.mWand || DV.mDach || DV.mFen || DV.mKel;
+  const u1 = { uw: m.mWand ? Math.min(u0.uw, D.Ziel.uw) : u0.uw, ud: m.mDach ? Math.min(u0.ud, D.Ziel.ud) : u0.ud, uf: m.mFen ? Math.min(u0.uf, D.Ziel.uf) : u0.uf, uk: m.mKel ? Math.min(u0.uk, D.Ziel.uk) : u0.uk };
+  const irgend = m.mWand || m.mDach || m.mFen || m.mKel;
   const H0 = dH(u0, geo, D.WBalt, DV.fl), H1 = dH(u1, geo, irgend ? D.WBneu : D.WBalt, DV.fl);
-  const ww = Math.min(D.WW * DV.fl, 0.4 * v.waerme), heiz0 = v.waerme - ww, heiz1 = heiz0 * dQ(H1, DV.fl) / dQ(H0, DV.fl), w1 = ww + heiz1;
+  const tL0 = dLuft(u0, geo, BH.teMittel), tL1 = dLuft(u1, geo, BH.teMittel);   // nötige Lufttemperatur im Mittel der Heizzeit
+  const ww = Math.min(D.WW * DV.fl, 0.4 * v.waerme), heiz0 = v.waerme - ww, heiz1 = heiz0 * dQ(H1, DV.fl) / dQ(H0, DV.fl) * (1 - BH.proK * (tL0 - tL1)), w1 = ww + heiz1;
+  const beh = { tL0, tL1, tK0: dLuft(u0, geo, BH.teKalt), tK1: dLuft(u1, geo, BH.teKalt), wand0: dOberfl(u0.uw, BH.teKalt), wand1: dOberfl(u1.uw, BH.teKalt), fen0: dOberfl(u0.uf, BH.teKalt), fen1: dOberfl(u1.uf, BH.teKalt) };
   const vl1 = Math.max(35, 20 + (DV.vl0 - 20) * Math.pow(H1 / H0, 1 / 1.3));
   const k = heiz0 / (dQ(H0, DV.fl) * DV.fl), kw0 = H0 * 0.032 * 1.1 * k, kw1 = H1 * 0.032 * 1.1 * k;
-  const kosten = (DV.mWand ? DV.kWand : 0) + (DV.mDach ? DV.kDach : 0) + (DV.mFen ? DV.kFen : 0) + (DV.mKel ? DV.kKel : 0);
+  const kosten = (m.mWand ? DV.kWand : 0) + (m.mDach ? DV.kDach : 0) + (m.mFen ? DV.kFen : 0) + (m.mKel ? DV.kKel : 0);
+  // Heizkörper: braucht die Wärmepumpe mehr als 55 °C, werden sie vergrößert; der Vorlauf sinkt dann auf 55 °C
+  const hk0 = DV.hk && DV.vl0 > 55 ? DV.kHk : 0, hk1 = DV.hk && vl1 > 55 ? DV.kHk : 0, vlE0 = hk0 ? 55 : DV.vl0, vlE1 = hk1 ? 55 : vl1;
+  const rf = Math.max(0, 1 - v.dauer / D.Lebensdauer) * Math.pow(1 + v.wst / 100, v.dauer);
   const foe = DV.foe / 100 * Math.min(kosten, DV.foe >= 20 ? 60000 : 30000);
   const rest = kosten * Math.max(0, 1 - v.dauer / D.Lebensdauer) * Math.pow(1 + v.wst / 100, v.dauer);   // Restwert der Bauteile, in beiden Fällen gleich
   const wpKleiner = Math.min(0.4 * v.wpPreis, Math.max(0, kw0 - kw1) * D.WpKw);
-  return { w0: v.waerme, w1, vl0: DV.vl0, vl1, kw0, kw1, kosten, foe, rest, wpKleiner, irgend };
+  return { beh, w0: v.waerme, w1, vl0: DV.vl0, vl1, vlE0, vlE1, hk0, hk1, rf, kw0, kw1, kosten, foe, rest, wpKleiner, irgend };
 }
 // Jahresarbeitszahl und Preis für einen Fall: eigene Angabe als Grundlage, Kennfeld für die Änderung
 function wpFall(v, w, vl) {
@@ -443,16 +458,19 @@ function wpFall(v, w, vl) {
   return { jaz, preis: dyn ? kf("pD", w, vl) : v.wpStrom };
 }
 const f100 = x => fmt(Math.round(x / 100) * 100);
+function dFall(d, ref) {
+  const a = wpFall(V, d.w0, d.vlE0), b = wpFall(V, d.w1, d.vlE1);
+  // Heizkörper: heute Teil der geförderten Wärmepumpe, mit der Reform ein Bauteil (Anteil am Hauswert); Restwert wie die Dämmung
+  const r0 = rechne({ ...V, reform: ref, wpJaz: a.jaz, wpStrom: a.preis, wpPreis: V.wpPreis + (ref ? 0 : d.hk0) }), r1 = rechne({ ...V, reform: ref, waerme: d.w1, wpJaz: b.jaz, wpStrom: b.preis, wpPreis: V.wpPreis - d.wpKleiner + (ref ? 0 : d.hk1) });
+  const hkZ = h => (ref ? summe(anteil(h / 1.19, V)) : 0) - h * d.rf;
+  const Bn = d.kosten / 1.19 * (RF.mat + (1 - RF.mat) * 1.05), zahl = ref ? summe(anteil(Bn, V)) : summe(bank(d.kosten - d.foe, V));
+  const dN = zahl - d.rest;
+  return { a, b, r0, r1, Bn, zahl, dN, hkZ0: hkZ(d.hk0), hkZ1: hkZ(d.hk1), tot: { wp0: r0.tot.wp + hkZ(d.hk0), wp1: r1.tot.wp + hkZ(d.hk1) + dN, gas0: r0.tot.gas, gas1: r1.tot.gas + dN } };
+}
 function zeigeDaemmung() {
   const d = dRechne(V);
-  const a = wpFall(V, d.w0, d.vl0), b = wpFall(V, d.w1, d.vl1);
-  const fall = ref => {
-    const r0 = rechne({ ...V, reform: ref, wpJaz: a.jaz, wpStrom: a.preis }), r1 = rechne({ ...V, reform: ref, waerme: d.w1, wpJaz: b.jaz, wpStrom: b.preis, wpPreis: V.wpPreis - d.wpKleiner });
-    const Bn = d.kosten / 1.19 * (RF.mat + (1 - RF.mat) * 1.05), zahl = ref ? summe(anteil(Bn, V)) : summe(bank(d.kosten - d.foe, V));
-    const dN = zahl - d.rest;
-    return { r0, r1, Bn, zahl, dN, tot: { wp0: r0.tot.wp, wp1: r1.tot.wp + dN, gas0: r0.tot.gas, gas1: r1.tot.gas + dN } };
-  };
-  const FH = fall(false), FR = fall(true), F0 = V.reform ? FR : FH, { r0, r1, tot } = F0;
+  const fall = ref => dFall(d, ref);
+  const FH = fall(false), FR = fall(true), F0 = V.reform ? FR : FH, { r0, r1, tot, a, b } = F0;
   const s0 = d.w0 / a.jaz, s1 = d.w1 / b.jaz, g0 = r0.kGas, g1 = r1.kGas;
   const co2 = { wp0: s0 * D.StromCO2 / 1000, wp1: s1 * D.StromCO2 / 1000, gas0: g0 * EF.gas / 1000, gas1: g1 * EF.gas / 1000 };
   const nm = { wp0: "Wärmepumpe, ohne Dämmung", wp1: "Wärmepumpe mit Dämmung und Fenstern", gas0: "Gasheizung, ohne Dämmung", gas1: "Gasheizung mit Dämmung und Fenstern" };
@@ -464,19 +482,29 @@ function zeigeDaemmung() {
   const sH = FH.tot.wp0 - FH.tot.wp1, sR = FR.tot.wp0 - FR.tot.wp1, gH = FH.tot.gas0 - FH.tot.gas1, gR = FR.tot.gas0 - FR.tot.gas1;
   const hT = x => x >= 0 ? `spart die Dämmung heute ${eur(x)}` : `kostet die Dämmung heute ${eur(-x)} mehr, als sie spart`, rT = x => x >= 0 ? `spart sie ${eur(x)}` : `kostet sie ${eur(-x)} mehr`;
   $("d_aus").textContent = (sH < 0 && sR >= 0 ? `Heute rechnet sich die Dämmung nicht, mit der Reform schon. ` : "") + `Mit Wärmepumpe ${hT(sH)}, mit der Reform ${rT(sR)}. Mit Gasheizung ${hT(gH).replace("die Dämmung ", "sie ")}, mit der Reform ${rT(gR)}. `;
-  const vlSatz = `<p class="note">Die Vorlauftemperatur sinkt von ${fmt(d.vl0)} auf ${fmt(d.vl1)} °C, der Strom der Wärmepumpe von ${f100(s0)} auf ${f100(s1)} kWh im Jahr. Gerechnet über ${fmt(V.dauer)} Jahre, mit Zinsen und Restwert.</p>`;
+  const behSatz = `<p class="note"><b>Behaglicher:</b> Bei −10 °C draußen ist die Wand innen ${fmt(d.beh.wand1, 1)} statt ${fmt(d.beh.wand0, 1)} °C warm, das Fenster ${fmt(d.beh.fen1, 1)} statt ${fmt(d.beh.fen0, 1)} °C. Kalte Flächen strahlen Kälte ab und erzeugen Zug. Für dasselbe Wohlgefühl muss die Luft im ungedämmten Haus an kalten Tagen ${fmt(d.beh.tK0 - d.beh.tK1, 1)} Grad wärmer sein, im Mittel der Heizzeit ${fmt(d.beh.tL0 - d.beh.tL1, 1)} Grad. Je Grad braucht es rund 6 % mehr Heizwärme; das ist in der Rechnung enthalten. Weniger Zug und gleichmäßig warme Räume zählen dazu, haben aber keinen Preis.</p>`;
+  const vlSatz = `<p class="note">Die Vorlauftemperatur sinkt von ${fmt(d.vl0)} auf ${fmt(d.vlE1)} °C${d.hk0 && !d.hk1 ? ` (ohne Dämmung bräuchte es größere Heizkörper für ${eur(d.hk0)}, um auf 55 °C zu kommen)` : ""}, der Strom der Wärmepumpe von ${f100(s0)} auf ${f100(s1)} kWh im Jahr. Gerechnet über ${fmt(V.dauer)} Jahre, mit Zinsen und Restwert.</p>`;
   const mxD = Math.max(1, ...[sH, sR, gH, gR].map(Math.abs));
   const dvRow = (t, x, h) => { const w = (Math.abs(x) / mxD * 100).toFixed(1), c = x >= 0 ? "gut" : "schlecht", lab = `<b class="${c}">${x >= 0 ? "spart " : "kostet "}${eur(Math.abs(x))}</b>`;
     return `<div><div class="t${h ? " h" : ""}">${t}</div><div class="trk"><div class="neg">${x < 0 ? lab + `<i class="${c}" style="width:${w}%"></i>` : ""}</div><div class="pos">${x >= 0 ? `<i class="${c}" style="width:${w}%"></i>` + lab : ""}</div></div></div>`; };
   const dvHtml = `<div class="dv"><div class="ax"><span>kostet mehr</span><span>spart</span></div>`
     + dvRow("Mit Wärmepumpe, Recht heute", sH) + dvRow("Mit Wärmepumpe und der Reform", sR, true) + dvRow("Mit Gasheizung, Recht heute", gH) + dvRow("Mit Gasheizung und der Reform", gR) + `</div>`;
   const mx = Math.max(...keys.map(k => tot[k])), col = { wp0: "var(--wp)", wp1: "var(--wp)", gas0: "var(--gas)", gas1: "var(--gas)" };
-  $("d_bars").innerHTML = `<h3>Was Dämmen und Fenster über ${fmt(V.dauer)} Jahre unterm Strich bringen</h3>` + dvHtml + vlSatz + `<h3>Alle Kosten, ${V.reform ? "mit der Reform" : "Recht heute"}</h3>` + keys.map(k => `<div class="dbar${k === best ? " best" : ""}"><div class="t"><span>${nm[k]}${k === best ? " · am günstigsten" : ""}</span><b>${eur(tot[k])}</b></div><div class="trk"><i style="width:${(tot[k] / mx * 100).toFixed(1)}%;background:${col[k]};opacity:${k.endsWith("1") ? 1 : .45}"></i></div></div>`).join("")
+  const MS = [["Fassade", { mWand: true }], ["Dach oder oberste Decke", { mDach: true }], ["Fenster", { mFen: true }], ["Kellerdecke", { mKel: true }], ["Deine Auswahl zusammen", DV]];
+  const zelle = x => `<td class="${x >= 0 ? "gut" : "schlecht"}">${x >= 0 ? "+" : "−"}${eur(Math.abs(x))}</td>`;
+  const jeM = MS.map(([n, m]) => { const dd = dRechne(V, m), h = dFall(dd, false), r = dFall(dd, true);
+    return `<tr${m === DV ? ' class="sum"' : ""}><td>${n}<small>${eur(dd.kosten)}, Vorlauf ${fmt(dd.vlE1)} °C</small></td>${zelle(h.tot.wp0 - h.tot.wp1)}${zelle(r.tot.wp0 - r.tot.wp1)}${zelle(h.tot.gas0 - h.tot.gas1)}${zelle(r.tot.gas0 - r.tot.gas1)}</tr>`; }).join("");
+  const jeHtml = `<h3>Jede Maßnahme für sich: was sie über ${fmt(V.dauer)} Jahre spart (+) oder kostet (−)</h3><div class="tbl"><table class="jem"><thead><tr><th></th><th>Wärme&shy;pumpe heute</th><th>Wärme&shy;pumpe Reform</th><th>Gas heute</th><th>Gas Reform</th></tr></thead><tbody>${jeM}</tbody></table></div><p class="note">Jede Zeile rechnet die Maßnahme allein. Schon eine Maßnahme kann den Vorlauf unter 55 °C bringen; dann zählen die gesparten Heizkörper und die kleinere Wärmepumpe bei ihr voll. Zusammen zählen sie nur einmal, deshalb ist die Summe der Zeilen größer als die Auswahl zusammen.</p>`;
+  $("d_bars").innerHTML = `<h3>Was Dämmen und Fenster über ${fmt(V.dauer)} Jahre unterm Strich bringen</h3>` + dvHtml + vlSatz + behSatz + jeHtml + `<h3>Alle Kosten, ${V.reform ? "mit der Reform" : "Recht heute"}</h3>` + keys.map(k => `<div class="dbar${k === best ? " best" : ""}"><div class="t"><span>${nm[k]}${k === best ? " · am günstigsten" : ""}</span><b>${eur(tot[k])}</b></div><div class="trk"><i style="width:${(tot[k] / mx * 100).toFixed(1)}%;background:${col[k]};opacity:${k.endsWith("1") ? 1 : .45}"></i></div></div>`).join("")
     + `<p class="note">Alle Kosten über ${fmt(V.dauer)} Jahre: Heizung, Energie, CO₂-Preis, Wartung und die Dämmung, ${V.reform ? "als Anteil am Hauswert abgelöst" : `nach Förderung${V.zinsK > 0 ? ", mit Zinsen" : ""}`}, abzüglich ihres Restwerts. Oben links lässt sich der Rechtsstand umschalten.</p>`;
   const row = (n, x, cls = "") => `<tr class="${cls}"><td>${n}</td>${x.map(c => `<td>${c}</td>`).join("")}</tr>`;
   $("d_tab").innerHTML = `<thead><tr><th></th><th>Wärme&shy;pumpe ohne</th><th>Wärme&shy;pumpe mit</th><th>Gas ohne</th><th>Gas mit</th></tr></thead><tbody>`
     + row("Wärme im Jahr, kWh", [f100(d.w0), f100(d.w1), f100(d.w0), f100(d.w1)])
-    + row("Vorlauf am kältesten Tag", [fmt(d.vl0) + " °C", fmt(d.vl1) + " °C", "", ""])
+    + row("Vorlauf am kältesten Tag", [fmt(d.vlE0) + " °C", fmt(d.vlE1) + " °C", "", ""])
+    + (d.hk0 || d.hk1 ? row("Größere Heizkörper", [d.hk0 ? eur(d.hk0) : "nicht nötig", d.hk1 ? eur(d.hk1) : "nicht nötig", "", ""]) : "")
+    + row("Wand innen bei −10 °C draußen", [fmt(d.beh.wand0, 1) + " °C", fmt(d.beh.wand1, 1) + " °C", fmt(d.beh.wand0, 1) + " °C", fmt(d.beh.wand1, 1) + " °C"])
+    + row("Fenster innen bei −10 °C draußen", [fmt(d.beh.fen0, 1) + " °C", fmt(d.beh.fen1, 1) + " °C", fmt(d.beh.fen0, 1) + " °C", fmt(d.beh.fen1, 1) + " °C"])
+    + row("Lufttemperatur für 20 °C gefühlt, an kalten Tagen", [fmt(d.beh.tK0, 1) + " °C", fmt(d.beh.tK1, 1) + " °C", fmt(d.beh.tK0, 1) + " °C", fmt(d.beh.tK1, 1) + " °C"])
     + row("Heizlast, grob", [fmt(d.kw0, 1) + " kW", fmt(d.kw1, 1) + " kW", "", ""])
     + row("Jahres&shy;arbeits&shy;zahl", [fmt(a.jaz, 1), fmt(b.jaz, 1), "", ""])
     + row("Strom oder Gas im Jahr, kWh", [f100(s0), f100(s1), f100(g0), f100(g1)])
@@ -489,7 +517,7 @@ function zeigeDaemmung() {
     + row(`Restwert nach ${fmt(V.dauer)} Jahren, mit Wertsteigerung`, ["", "−" + eur(d.rest), "", "−" + eur(d.rest)])
     + row("Zusammen", ["wp0", "wp1", "gas0", "gas1"].map(k => eur(tot[k])), "sum") + "</tbody>";
   $("d_note").innerHTML = `Die Dämmung senkt den Wärmebedarf; die alten Heizkörper reichen dann mit niedrigerer Vorlauftemperatur. Das hebt die Jahresarbeitszahl. ${V.wpTarif === "dyn" ? `Im dynamischen Tarif kann ein gedämmtes Haus mehr Wärme in billige Stunden verschieben, der Strom kostet dann im Schnitt ${fmt(b.preis * 100, 1)} statt ${fmt(a.preis * 100, 1)} ct.` : "Mit dem dynamischen Tarif (oben bei der Wärmepumpe einstellbar) verschiebt ein gedämmtes Haus mehr Wärme in billige Stunden."} `
-    + `Die kleinere Wärmepumpe kostet geschätzt ${eur(d.wpKleiner)} weniger. Dämmung hält rund ${D.Lebensdauer} Jahre; der Rest zählt als Restwert. CO₂ des Stroms: Strommix 2024 mit 363 g je kWh (Umweltbundesamt, Schätzung vom 9.4.2025); er sinkt mit jedem Jahr mehr Wind und Sonne. Die Jahresarbeitszahl stammt aus deiner Angabe oben, geändert nach dem Stundenmodell des Energie-Rechners (Luft-Wasser-Wärmepumpe, Wetterjahr Idstein). Grobe Schätzung; ein Energieberater rechnet genauer. Wie Mieter und Vermieter mit der Reform aus dem Buch dabei stehen, zeigt der <a href="../steuerrechner/#sanierung">Steuerrechner</a>.`;
+    + `Die kleinere Wärmepumpe kostet geschätzt ${eur(d.wpKleiner)} weniger.${d.hk0 && !d.hk1 ? ` Ohne Dämmung braucht die Wärmepumpe größere Heizkörper für ${eur(d.hk0)}, mit Dämmung nicht; auch das zählt für die Dämmung.` : ""} Dämmung hält rund ${D.Lebensdauer} Jahre; der Rest zählt als Restwert. CO₂ des Stroms: Strommix 2024 mit 363 g je kWh (Umweltbundesamt, Schätzung vom 9.4.2025); er sinkt mit jedem Jahr mehr Wind und Sonne. Die Jahresarbeitszahl stammt aus deiner Angabe oben, geändert nach dem Stundenmodell des Energie-Rechners (Luft-Wasser-Wärmepumpe, Wetterjahr Idstein). Grobe Schätzung; ein Energieberater rechnet genauer. Wie Mieter und Vermieter mit der Reform aus dem Buch dabei stehen, zeigt der <a href="../steuerrechner/#sanierung">Steuerrechner</a>.`;
   const q = new URLSearchParams({ waerme: Math.round(d.w1), vl: Math.round(d.vl1) });
   $("d_link").innerHTML = `Stundengenau mit Solarstrom, Speicher und E-Auto: <a href="../energie-rechner/?${q}">im Energie-Rechner mit dem gedämmten Haus weiterrechnen</a>.`;
 }
@@ -500,6 +528,7 @@ function zeigeDaemmung() {
   ["mWand", "mDach", "mFen", "mKel"].forEach(k => { $("d_" + k).checked = DV[k]; $("d_" + k).onchange = e => { DV[k] = e.target.checked; run(); }; });
   ["bj", "fl", "g"].forEach(k => $("d_" + k).addEventListener(k === "bj" ? "change" : "input", e => { DV[k] = +e.target.value || DV[k]; dSchaetze(); run(); }));
   $("d_foe").onchange = e => { DV.foe = +e.target.value; run(); };
+  $("d_hk").checked = DV.hk; $("d_hk").onchange = e => { DV.hk = e.target.checked; run(); };
   $("d_wst").value = V.wst; $("d_wst").addEventListener("input", e => { V.wst = +e.target.value || 0; run(); });
   DAUTO.forEach(k => $("d_" + k).addEventListener("input", e => { dHand.add(k); e.target.classList.remove("auto"); DV[k] = +e.target.value || 0; run(); }));
   $("d_auto").onclick = () => { dHand.clear(); dSchaetze(); run(); };
