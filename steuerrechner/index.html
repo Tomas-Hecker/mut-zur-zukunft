@@ -301,17 +301,18 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
 #sanierung .grp { font-size: .85rem; font-weight: 700; margin: 6px 0 -2px; }
 #sanierung .field input.auto { background: var(--sunk); }
 #sanierung .massn { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
-#sanierung .sbars { display: grid; gap: 12px; }
-#sanierung .sgrp { font-weight: 700; font-size: .95rem; margin: 14px 0 6px; color: var(--muted); }
-#sanierung .snotiz { font-size: .85rem; color: var(--bad); margin-top: 3px; }
-#sanierung .srow .st { font-size: .95rem; margin-bottom: 4px; }
+#sanierung .sbars { display: grid; gap: 0; border-top: 1px solid var(--line); }
+#sanierung .sgrp { font-weight: 700; font-size: .95rem; margin: 18px 0 6px; }
+#sanierung .srow { display: grid; grid-template-columns: minmax(96px, 32%) 1fr; align-items: center; column-gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+#sanierung .srow .st { font-size: .92rem; line-height: 1.25; }
 #sanierung .srow.haupt .st { font-weight: 700; }
-#sanierung .strk { display: grid; grid-template-columns: 1fr 1fr; align-items: center; min-height: 30px; }
-#sanierung .sneg { display: flex; justify-content: flex-end; align-items: center; gap: 8px; border-right: 2px solid var(--fg); min-height: 30px; }
-#sanierung .spos { display: flex; justify-content: flex-start; align-items: center; gap: 8px; min-height: 30px; }
-#sanierung .strk i { display: block; height: 26px; border-radius: 3px; }
+#sanierung .snotiz { grid-column: 1 / -1; font-size: .82rem; color: var(--bad); margin-top: 4px; }
+#sanierung .strk { display: grid; grid-template-columns: 1fr 1fr; align-items: center; min-height: 28px; }
+#sanierung .sneg { display: flex; justify-content: flex-end; align-items: center; gap: 6px; border-right: 2px solid var(--fg); min-height: 28px; }
+#sanierung .spos { display: flex; justify-content: flex-start; align-items: center; gap: 6px; min-height: 28px; }
+#sanierung .strk i { display: block; height: 22px; border-radius: 3px; flex-shrink: 1; min-width: 2px; }
 #sanierung .strk i.gut { background: var(--good); } #sanierung .strk i.schlecht { background: var(--bad); }
-#sanierung .strk b { font-size: 1.05rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+#sanierung .strk b { font-size: .98rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
 #sanierung .strk b.gut { color: var(--good); } #sanierung .strk b.schlecht { color: var(--bad); }
 @media (max-width: 420px) { #sanierung .massn { grid-template-columns: 1fr; } }
 </style>
@@ -636,6 +637,7 @@ h1,h2,h3{break-after:avoid}
           <div class="field"><label for="s_erh">Anteil Erhaltung, %</label><input id="s_erh" type="number" min="0" max="100" step="5"><span class="hint">was ohnehin fällig war, darf nicht auf die Miete</span></div>
           <div class="field"><label for="s_zins">Zins des Bankkredits heute, %</label><input id="s_zins" type="number" min="0" max="10" step="0.1"><span class="hint">über 20 Jahre</span></div>
           <div class="field"><label for="s_wst">Wertsteigerung des Hauses im Jahr, %</label><input id="s_wst" type="number" min="-3" max="8" step="0.5"></div>
+          <div class="field"><label for="s_kuehl">Zusätzlich kühlen: Klimageräte, Kosten</label><input id="s_kuehl" type="number" min="0" step="1000"><span class="hint">Komfort im Sommer, nicht in der Rechnung oben</span></div>
             <label class="check field wide"><input id="s_abl" type="checkbox"> Vermieter löst den Anteil am Hauswert über 40 Jahre ab (dann darf die Miete um ein Vierzigstel des Betrags im Jahr steigen)</label>
           </div>
         </details>
@@ -2062,12 +2064,12 @@ const SAN_BSP = [
     fest: { tech: 10000, hk: 0, fen: 0, bau: 28000, vor: 150, nach: 60, jaz: 3.2 } },
   { name: "Denkmalgeschütztes Gebäude", text: "Ein denkmalgeschütztes Haus mit rund 400 m², gerechnet wie ein Mietshaus mit vier Wohnungen zu je 100 m². Es wird nicht gedämmt; Wärmepumpen und größere Heizkörper ersetzen die heiße Gasheizung. Kosten grob geschätzt, getrennt in Technik und Bauteile.",
     v: { bj: 1918, g: 2, n: 4, fl: 400, miete: 8, wert: 1000000, trg: "gas", pg: 12, einb: 0, mWp: 1, mFen: 0, mWand: 0, mDach: 0, mKel: 0 },
-    fest: { tech: 110000, hk: 100000, fen: 0, bau: 0, vor: 240, nach: 215, jaz: 3.5, ps: 28 } },
+    fest: { tech: 82500, hk: 100000, fen: 0, bau: 0, vor: 240, nach: 215, jaz: 3.5, ps: 28 } },
 ];
-const SAN_F = ["einb", "g", "n", "fl", "miete", "wert", "pg", "tech", "hk", "fen", "bau", "uw", "ud", "uf", "uk", "vor", "nach", "jaz", "ps", "zt", "zb", "mat", "erh", "zins", "wst"];
+const SAN_F = ["einb", "g", "n", "fl", "miete", "wert", "pg", "tech", "hk", "fen", "bau", "uw", "ud", "uf", "uk", "vor", "nach", "jaz", "ps", "zt", "zb", "mat", "erh", "zins", "wst", "kuehl"];
 const SAN_M = ["mWp", "mFen", "mWand", "mDach", "mKel"];
 const SAN_AUTO = ["uw", "ud", "uf", "uk", "vor", "nach", "jaz", "tech", "hk", "fen", "bau"];
-const SAN_STD = { einb: 40, ps: 27, zt: 30, zb: 15, mat: 50, erh: 0, zins: 3.5, wst: 2, abl: 0 };
+const SAN_STD = { kuehl: 0, einb: 40, ps: 27, zt: 30, zb: 15, mat: 50, erh: 0, zins: 3.5, wst: 2, abl: 0 };
 let sanAktiv = 0; const sanHand = new Set();
 
 function sanGeo(v) {   // Flächen aus Wohnfläche und Geschossen, Haus frei stehend
@@ -2222,9 +2224,9 @@ function updateSan() {
   {
     const basis = mean("w0") / M;
     const bars = [
-      ["Sanieren nach heutigem Recht", mean("wH") / M - basis],
-      [`Reform, aber nicht sanieren (${traeger} bleibt)`, r.w0R / M - basis],
-      ["Sanieren mit der Reform", mean("wR") / M - basis],
+      ["Heute sanieren", mean("wH") / M - basis],
+      [`Reform, ${traeger} bleibt`, r.w0R / M - basis],
+      ["Reform und sanieren", mean("wR") / M - basis],
     ];
     // Balken: plus ist für den Mieter schlecht, für den Vermieter gut
     const balken = (rows, mx, plusGut, haupt) => rows.map(([t, d, notiz], i) => {
@@ -2233,8 +2235,8 @@ function updateSan() {
       return `<div class="srow${i === haupt ? " haupt" : ""}"><div class="st">${t}</div><div class="strk"><div class="sneg">${d < 0 ? lab + bar : ""}</div><div class="spos">${d >= 0 ? bar + lab : ""}</div></div>${notiz ? `<div class="snotiz">${notiz}</div>` : ""}</div>`;
     }).join("");
     const verlust = vH < -1;
-    if (verlust) bars[0][2] = `geht nur, wenn der Vermieter ${sEur(-vH)} im Jahr drauflegt; deshalb wird heute meist nicht saniert`;
-    const vBars = [["Sanieren nach heutigem Recht", vH, verlust ? "Verlust: der Vermieter saniert nicht" : ""], ["Sanieren mit der Reform", vR, ""]];
+    if (verlust) bars[0][2] = `nur, wenn der Vermieter ${sEur(-vH)} im Jahr drauflegt; deshalb wird heute meist nicht saniert`;
+    const vBars = [["Heute sanieren", vH, verlust ? "Verlust: der Vermieter saniert nicht" : ""], ["Reform und sanieren", vR, ""]];
     $("s_chart").innerHTML = `<div class="sgrp">Mieter: Warmmiete im Monat${N > 1 ? `, Wohnung mit ${fmt(qm)} m²` : ""}, gegenüber heute ohne Sanierung</div>`
       + `<div class="sbars" role="img" aria-label="Was der Mieter im Monat mehr oder weniger zahlt als heute">${balken(bars, Math.max(10, ...bars.map(b => Math.abs(b[1]))), false, 2)}</div>`
       + `<div class="sgrp">Vermieter: was ihm im Jahr bleibt, ganzes Haus</div>`
@@ -2266,7 +2268,8 @@ function updateSan() {
     + (r.Bn > 0 ? z("Anteil am Hauswert", "–", `${sEur(-r.Bn)} ausgelegt<small>${v.abl ? `über 40 Jahre abgelöst, in 20 Jahren rund ${sEur(r.ablSum)} zurück` : `kommt bei Verkauf oder Erbe zurück, in 20 Jahren rund ${sEur(r.anteilJ)}`}</small>`) : "")
     + (r.wp ? z("Mehrwertsteuer auf den Heizstrom im Jahr", sPlus(r.mwstStromH), sPlus(r.mwstStromR)) : "")
     + `</tbody>`;
-  $("s_note").innerHTML = `Heute: ${pct(r.satzT, 0)} der Heizungskosten nach Abzug des Zuschusses im Jahr (§ 559e BGB, ohne Zuschuss 8 % nach § 559 BGB), höchstens ${fmt(SAN.KappungHz, 2)} € je m² im Monat, dazu 8 % der Kosten für Dämmung und Fenster nach Abzug des Zuschusses, zusammen höchstens ${fmt(v.miete < SAN.KappungGrenze ? SAN.KappungKlein : SAN.Kappung)} € je m² (§ 559 Abs. 3a BGB). Der Aufschlag bleibt auf Dauer. Zuschuss nach KfW 458 und BEG, förderfähig für die erste Wohnung ${eur(SAN.CapH1)} (Heizung) und ${eur(SAN.CapB1)} (Hülle), ${eur(SAN.Cap2)} für die zweite bis sechste und ${eur(SAN.Cap7)} ab der siebten. Reform: Die Wärmepumpe ohne Einbau bezahlt der zinslose Kredit, rund 40 % für Einbau, Rohre und Leitungen zählen wie Heizkörper, Fenster und Dämmung zum Anteil am Hauswert. Umgelegt wird die ganze Tilgung, die Grenze von 0,50 € je m² für Heizungen entfällt, die von 3 € je m² gilt weiter. Mehrwertsteuer auf Strom 5 %, auf ${traeger} 50 %: Ohne Sanierung kostete das Heizen mit der Reform ${sEur((r.e0R - r.c0 * r.fG) / M)} statt ${sEur((r.e0 - r.c0) / M)} im Monat. Vom CO₂-Preis (${eur(SAN.CO2Preis)} je Tonne) trägt der Vermieter je nach Verbrauch bis zu 95 % (CO2KostAufG); spart die Sanierung CO₂, spart er diesen Anteil. Energiepreise bleiben gleich, die Einkommensteuer ist nicht gerechnet. Regeln: <a class="ql" href="https://tomas-hecker.github.io/mut-zur-zukunft/buch/kapitel-8.html" target="_blank" rel="noopener">Kapitel 8</a>, Werte: <a href="#quellen">Annahmen und Quellen</a>.`;
+  const kue = v.kuehl > 0 ? `<b>Kühlen:</b> Klimageräte für ${sEur(v.kuehl)} sind nicht in der Rechnung oben. Sie heizen nicht billiger, sondern kühlen im Sommer: ein Gewinn an Komfort, der etwas kosten darf. Über 20 Jahre verteilt sind das rund ${sEur(v.kuehl / 240 / Math.max(1, Math.round(v.n)))} je Wohnung im Monat, plus Strom fürs Kühlen. ` : "";
+  $("s_note").innerHTML = kue + `Heute: ${pct(r.satzT, 0)} der Heizungskosten nach Abzug des Zuschusses im Jahr (§ 559e BGB, ohne Zuschuss 8 % nach § 559 BGB), höchstens ${fmt(SAN.KappungHz, 2)} € je m² im Monat, dazu 8 % der Kosten für Dämmung und Fenster nach Abzug des Zuschusses, zusammen höchstens ${fmt(v.miete < SAN.KappungGrenze ? SAN.KappungKlein : SAN.Kappung)} € je m² (§ 559 Abs. 3a BGB). Der Aufschlag bleibt auf Dauer. Zuschuss nach KfW 458 und BEG, förderfähig für die erste Wohnung ${eur(SAN.CapH1)} (Heizung) und ${eur(SAN.CapB1)} (Hülle), ${eur(SAN.Cap2)} für die zweite bis sechste und ${eur(SAN.Cap7)} ab der siebten. Reform: Die Wärmepumpe ohne Einbau bezahlt der zinslose Kredit, rund 40 % für Einbau, Rohre und Leitungen zählen wie Heizkörper, Fenster und Dämmung zum Anteil am Hauswert. Umgelegt wird die ganze Tilgung, die Grenze von 0,50 € je m² für Heizungen entfällt, die von 3 € je m² gilt weiter. Mehrwertsteuer auf Strom 5 %, auf ${traeger} 50 %: Ohne Sanierung kostete das Heizen mit der Reform ${sEur((r.e0R - r.c0 * r.fG) / M)} statt ${sEur((r.e0 - r.c0) / M)} im Monat. Vom CO₂-Preis (${eur(SAN.CO2Preis)} je Tonne) trägt der Vermieter je nach Verbrauch bis zu 95 % (CO2KostAufG); spart die Sanierung CO₂, spart er diesen Anteil. Energiepreise bleiben gleich, die Einkommensteuer ist nicht gerechnet. Regeln: <a class="ql" href="https://tomas-hecker.github.io/mut-zur-zukunft/buch/kapitel-8.html" target="_blank" rel="noopener">Kapitel 8</a>, Werte: <a href="#quellen">Annahmen und Quellen</a>.`;
   postHeight();
 }
 $("sanForm").addEventListener("input", e => {
