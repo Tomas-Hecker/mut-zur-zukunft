@@ -61,6 +61,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .tile .v { font: 800 22px/1.15 var(--display); font-variant-numeric: tabular-nums }
 .tile .s { font-size: 12.5px; color: var(--muted) }
 .chart { position: relative }
+.cumT { margin: 6px 0 -4px; font-size: 17px; line-height: 1.3 }
 .chart svg { width: 100%; height: auto; display: block }
 .chart text { fill: var(--muted); font: 12px var(--body); font-variant-numeric: tabular-nums }
 .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13.5px; color: var(--muted) }
@@ -164,7 +165,7 @@ a { color: var(--wp) }
       <h2>Ergebnis</h2>
       <div class="verdict" id="verdict"></div>
       <div class="tiles" id="tiles"></div>
-      <div class="legend"><span><i style="border-color:var(--wp)"></i>Wärmepumpe</span><span><i style="border-color:var(--gas)"></i>Gas</span><span><i style="border-color:var(--oel)"></i>Öl</span></div>
+      <h3 class="cumT" id="cumT"></h3>
       <div class="chart" id="cum"></div>
       <p class="note">Aufsummierte Kosten ab Einbau in Euro, mit Preisen des jeweiligen Jahres.</p>
     </div>
@@ -292,8 +293,19 @@ function run() {
   $("tknote").textContent = `Verbrauch im ersten Jahr: Wärmepumpe ${fmt(r.kWp)} kWh Strom, Gas ${fmt(r.kGas)} kWh, Öl ${fmt(r.kOel / 10)} Liter. Der Strom für die Wärmepumpe ist im Strommix nur teilweise CO₂-frei; sein CO₂ ist über den Emissionshandel im Strompreis enthalten.`;
 }
 
+
+function endLabels(items, xEnd, yMin, yMax) {   // items: {t, v, c, y}; gibt SVG zurück
+  const pos = items.slice().sort((a, b) => a.y - b.y);
+  for (let i = 1; i < pos.length; i++) if (pos[i].y - pos[i - 1].y < 30) pos[i].y = pos[i - 1].y + 30;
+  if (pos.length && pos[pos.length - 1].y > yMax) { const d = pos[pos.length - 1].y - yMax; pos.forEach(p => p.y -= d); }
+  if (pos.length && pos[0].y < yMin) { const d = yMin - pos[0].y; pos.forEach(p => p.y += d); }
+  return pos.map(p => `<circle cx="${xEnd}" cy="${p.y0}" r="4" fill="var(--${p.c})" stroke="var(--panel)" stroke-width="2"/><text x="${xEnd + 9}" y="${p.y - 2}" style="fill:var(--${p.c});font-weight:700">${p.t}</text><text x="${xEnd + 9}" y="${p.y + 12}" style="fill:var(--fg)">${p.v}</text>`).join("");
+}
+let cumR = null;
+addEventListener("resize", () => { if (cumR) drawCum(cumR); });
 function drawCum(r) {
-  const W = 560, H = 260, L = 58, R = 12, T = 12, B = 28, keys = ["wp", "gas", "oel"];
+  cumR = r;
+  const W = Math.max(340, Math.min(640, Math.round($("cum").clientWidth || 560))), H = W < 500 ? 280 : 260, L = 50, R = W < 500 ? 104 : 130, T = 12, B = 28, keys = ["wp", "gas", "oel"];
   const max = Math.max(...r.jahre.flatMap(q => keys.map(k => q[k])));
   const mag = Math.pow(10, Math.floor(Math.log10(max))), step = max / mag > 5 ? 2 * mag : max / mag > 2 ? mag : mag / 2;
   const ymax = Math.ceil(max / step) * step, n = r.jahre.length - 1;
@@ -301,8 +313,17 @@ function drawCum(r) {
   let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Aufsummierte Heizkosten über die Jahre">`;
   for (let v = 0; v <= ymax + 1; v += step) s += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${fmt(v / 1000)} T€</text>`;
   const tick = n > 12 ? 5 : 2;
-  for (let j = 0; j <= n; j += tick) s += `<text x="${x(j)}" y="${H - 8}" text-anchor="middle">${j === 0 ? "Einbau" : V.jahr + j}</text>`;
-  keys.forEach(k => s += `<path d="${r.jahre.map((q, j) => (j ? "L" : "M") + x(j).toFixed(1) + " " + y(q[k]).toFixed(1)).join(" ")}" fill="none" stroke="var(--${k})" stroke-width="2.5" stroke-linejoin="round"/>`);
+  for (let j = 0; j <= n; j += tick) s += `<text x="${x(j)}" y="${H - 8}" text-anchor="middle">${j === 0 ? "Einbau" : W < 500 && j % 10 ? "" : V.jahr + j}</text>`;
+  keys.forEach(k => s += `<path d="${r.jahre.map((q, j) => (j ? "L" : "M") + x(j).toFixed(1) + " " + y(q[k]).toFixed(1)).join(" ")}" fill="none" stroke="var(--${k})" stroke-width="${k === "wp" ? 3.5 : 2.5}" stroke-linejoin="round"/>`);
+  // Wo die Wärmepumpe die günstigere fossile Heizung einholt
+  const fos = "gas";   // wie im Ergebnissatz: gegenüber Gas
+  let be = null;
+  for (let j = 1; j <= n && be === null; j++) { const a = r.jahre[j - 1], b = r.jahre[j], da = a.wp - a[fos], db = b.wp - b[fos]; if (da > 0 && db <= 0) be = j - 1 + da / (da - db); }
+  if (be !== null) { const j0 = Math.floor(be), a = r.jahre[j0], b = r.jahre[Math.min(n, j0 + 1)], v = a.wp + (b.wp - a.wp) * (be - j0); s += `<circle cx="${x(be)}" cy="${y(v)}" r="5" fill="var(--panel)" stroke="var(--fg)" stroke-width="2"/><text x="${x(be) + 10}" y="${y(v) + 20}" style="fill:var(--fg);font-weight:600">bezahlt nach ${fmt((r.jahre.find(q => q.wp <= q.gas) || {}).n ?? Math.ceil(be))} Jahren</text>`; }
+  const last = r.jahre[n], nmK = { wp: "Wärmepumpe", gas: "Gas", oel: "Öl" };
+  s += endLabels(keys.map(k => ({ t: nmK[k], v: eur(last[k]), c: k, y: y(last[k]), y0: y(last[k]) })), x(n), T + 10, H - B);
+  const rang = keys.slice().sort((a, b) => last[a] - last[b]);
+  $("cumT").textContent = rang[0] === "wp" ? `Nach ${fmt(n)} Jahren spart die Wärmepumpe ${eur(last[rang[1]] - last.wp)} gegenüber ${rang[1] === "gas" ? "Gas" : "Öl"}` : `Nach ${fmt(n)} Jahren ist ${nmK[rang[0]]} am günstigsten`;
   s += `<line id="cl" y1="${T}" y2="${H - B}" stroke="var(--muted)" opacity="0"/></svg><div class="tip" id="ctip" hidden></div>`;
   $("cum").innerHTML = s;
   const svg = $("cum").querySelector("svg"), tip = $("ctip"), cl = $("cl");

@@ -62,6 +62,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, td[tabindex]:fo
 .chart { position: relative }
 .chart svg { width: 100%; height: auto; display: block; touch-action: pan-y }
 .chart text { fill: var(--muted); font: 12px var(--body); font-variant-numeric: tabular-nums }
+.chart text.lab { font-weight: 700; paint-order: stroke; stroke: var(--panel); stroke-width: 3px; stroke-linejoin: round }
+.aussage { font-weight: 700; font-size: 16px; margin: 4px 0 0 }
 .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13.5px; color: var(--muted) }
 .legend span { display: inline-flex; align-items: center; gap: 6px }
 .legend i { width: 12px; height: 12px; border-radius: 2px; display: inline-block }
@@ -187,7 +189,6 @@ a { color: var(--wp) }
     <div class="panel">
       <h2>Wirtschaftlichste Speichergröße</h2>
       <p class="note" id="battxt"></p>
-      <div class="legend"><span><i class="l" style="border-color:var(--wp)"></i>Ersparnis über die Lebensdauer</span><span><i class="l" style="border-color:var(--ev)"></i>Kosten des Speichers</span><span><i class="l" style="border-color:var(--hh)"></i>Gewinn (Ersparnis minus Kosten)</span></div>
       <div class="chart" id="bchart"></div>
     </div>
     <div class="panel">
@@ -201,7 +202,7 @@ a { color: var(--wp) }
   <div class="panel">
     <h2>Eine Woche Stunde für Stunde</h2>
     <div class="seg" role="group" aria-label="Woche" id="wk"></div>
-    <div class="legend"><span><i style="background:var(--hh)"></i>Haushalt</span><span><i style="background:var(--wp)"></i>Wärmepumpe</span><span><i style="background:var(--ev)"></i>E-Auto</span><span><i style="background:var(--pvf);border:1.5px solid var(--pv)"></i>PV-Erzeugung</span><span><i class="d" style="border-color:var(--muted)"></i>Strompreis (rechte Achse)</span></div>
+    <p class="aussage" id="waus"></p>
     <div class="chart" id="wchart"></div>
     <p class="note" id="wnote"></p>
   </div>
@@ -209,8 +210,8 @@ a { color: var(--wp) }
   <div class="cols">
     <div class="panel">
       <h2>Süd, Ost oder West?</h2>
+      <p class="aussage" id="oaus"></p>
       <p class="note">Ertrag je kWp im Monat bei der eingestellten Neigung, mit dem Wetterjahr für Idstein.</p>
-      <div class="legend"><span><i class="l" style="border-color:var(--pv)"></i>Süd</span><span><i class="l" style="border-color:var(--hh)"></i>Ost</span><span><i class="l" style="border-color:var(--ev)"></i>West</span></div>
       <div class="chart" id="ochart"></div>
       <div class="tbl"><table id="ot"></table></div>
     </div>
@@ -619,13 +620,16 @@ function zeigeVerdict(v) {
 }
 
 /* Diagramme */
-const W_ = 720;
+let W_ = 720;
+function cw(id) { W_ = Math.max(340, Math.min(720, Math.round($(id).clientWidth || 720))); return W_; }
+let cwT; addEventListener("resize", () => { clearTimeout(cwT); cwT = setTimeout(() => { if (R && R.selZ) { zeigeBatterie(V); zeigeWoche(V); zeigeAusrichtung(V); } }, 150); });
 function achse(max, n = 4) { const roh = max / n, p = Math.pow(10, Math.floor(Math.log10(roh || 1))), st = [1, 2, 2.5, 5, 10].map(x => x * p).find(x => x >= roh) || p * 10; return { st, max: st * Math.ceil(max / st || 1) }; }
 function zeigeBatterie(v) {
   const z = R.zellen[2][SEL.t];
   const el = $("bchart");
   if (!z || !z.kurve) { el.innerHTML = ""; $("battxt").textContent = "Ohne PV-Anlage rechnet der Rechner keinen Speicher."; return; }
-  const k = z.kurve, H = 260, L = 64, Rr = 12, T = 12, B = 34;
+  cw("bchart");
+  const k = z.kurve, H = 260, L = 50, Rr = W_ < 500 ? 78 : 92, T = 12, B = 34;
   const ymax = achse(Math.max(...k.map(p => Math.max(p.spar, p.kost)), 1000)).max, ymin = Math.min(0, ...k.map(p => p.gew));
   const ax = achse(ymax - ymin);
   const lo = ymin < 0 ? -ax.st * Math.ceil(-ymin / ax.st) : 0;
@@ -638,7 +642,10 @@ function zeigeBatterie(v) {
   const pfad = f => k.map((p, i) => `${i ? "L" : "M"}${x(p.c).toFixed(1)},${y(f(p)).toFixed(1)}`).join("");
   s += `<path d="${pfad(p => p.spar)}" fill="none" stroke="var(--wp)" stroke-width="2.5"/><path d="${pfad(p => p.kost)}" fill="none" stroke="var(--ev)" stroke-width="2.5"/><path d="${pfad(p => p.gew)}" fill="none" stroke="var(--hh)" stroke-width="2.5"/>`;
   const b = z.best;
-  if (v.batMod === "auto") s += `<line x1="${x(b.c)}" x2="${x(b.c)}" y1="${T}" y2="${H - B}" stroke="var(--fg)" stroke-dasharray="3 3"/><circle cx="${x(b.c)}" cy="${y(b.gew)}" r="4.5" fill="var(--hh)"/>`;
+  if (v.batMod === "auto") s += `<line x1="${x(b.c)}" x2="${x(b.c)}" y1="${T}" y2="${H - B}" stroke="var(--fg)" stroke-dasharray="3 3"/><circle cx="${x(b.c)}" cy="${y(b.gew)}" r="4.5" fill="var(--hh)"/>${b.c > 0 ? `<text class="lab" x="${x(b.c) + 6}" y="${y(b.gew) + 18}" style="fill:var(--fg)">am besten: ${fmt(b.c)} kWh</text>` : ""}`;
+  { const e = k.at(-1), pos = [["Ersparnis", e.spar, "--wp"], ["Kosten", e.kost, "--ev"], ["Gewinn", e.gew, "--hh"]].map(([t, val, c]) => ({ t, c, y: y(val) })).sort((a, b2) => a.y - b2.y);
+    for (let i = 1; i < pos.length; i++) if (pos[i].y - pos[i - 1].y < 16) pos[i].y = pos[i - 1].y + 16;
+    pos.forEach(q => s += `<text class="lab" x="${W_ - Rr + 6}" y="${q.y + 4}" style="fill:var(${q.c})">${q.t}</text>`); }
   s += `<line id="bl" y1="${T}" y2="${H - B}" stroke="var(--muted)" opacity="0"/></svg><div class="tip" id="btip" hidden></div>`;
   el.innerHTML = s;
   const svg = el.querySelector("svg"), tip = $("btip"), bl = $("bl");
@@ -660,7 +667,8 @@ function zeigeWoche(v) {
   $("wk").innerHTML = WOCHEN.map(([k, n]) => `<button type="button" data-k="${k}" aria-pressed="${WOCHE === k}">${n}</button>`).join("");
   $("wk").querySelectorAll("button").forEach(b => b.onclick = () => { WOCHE = b.dataset.k; zeigeWoche(V); });
   const z = R.selZ, start = (WOCHEN.find(w => w[0] === WOCHE)[2]) * 24, n = 168;
-  const H = 300, L = 44, Rr = 46, T = 12, B = 30, lz = z.lz;
+  cw("wchart");
+  const H = 300, L = 40, Rr = 44, T = 12, B = 30, lz = z.lz;
   let ym = 0; for (let i = start; i < start + n; i++) ym = Math.max(ym, lz.hh[i] + lz.wp[i] + lz.ev[i], z.pv[i]);
   const ax = achse(ym), pm = z.P.pD, pr = []; for (let i = start; i < start + n; i++) pr.push(pm[i], z.P.pH[i]);
   const pax = achse(Math.max(0.4, ...pr)), pmin = Math.min(0, ...pr), plo = pmin < 0 ? -pax.st * Math.ceil(-pmin / pax.st) : 0;
@@ -680,6 +688,14 @@ function zeigeWoche(v) {
   s += `<path d="${pp}" fill="var(--pvf)" stroke="var(--pv)" stroke-width="1.5"/>`;
   let ppr = ""; for (let j = 0; j < n; j++) ppr += `${j ? "L" : "M"}${(x(j) + bw / 2).toFixed(1)},${yp(pm[start + j]).toFixed(1)}`;
   s += `<path d="${ppr}" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  { const arg = f => { let bj = 0, bv = -Infinity; for (let j = 0; j < n; j++) { const q = f(start + j); if (q > bv) { bv = q; bj = j; } } return [bj, bv]; };
+    const xa = j => Math.max(L + 4, Math.min(W_ - Rr - 4, x(j) + bw / 2)), anc = j => x(j) > W_ * 0.75 ? "end" : x(j) < W_ * 0.2 ? "start" : "middle";
+    const lab = (j, yy, t, c) => `<text class="lab" x="${xa(j)}" y="${yy}" text-anchor="${anc(j)}" style="fill:var(${c})">${t}</text>`;
+    const [je, ve] = arg(i => lz.ev[i]); if (ve > 0.01) s += lab(je, y(lz.hh[start + je] + lz.wp[start + je] + ve) - 6, "E-Auto", "--ev");
+    const [jp, vp] = arg(i => z.pv[i]); if (vp > 0.05) s += lab(jp, y(vp) - 6, "Sonne", "--pv");
+    const [jw, vw] = arg(i => lz.wp[i] - (lz.ev[i] > 0.01 ? 99 : 0)); if (vw > 0.05) s += lab(jw, y(lz.hh[start + jw] + vw) - 6, "Wärmepumpe", "--wp");
+    const [jh] = arg(i => lz.hh[i] - z.pv[i] - lz.wp[i]); s += lab(jh, y(lz.hh[start + jh] + lz.wp[start + jh]) - 6, "Haushalt", "--hh");
+    const [jm, vm] = arg(i => pm[i]); s += lab(jm, yp(vm) - 6, "Strompreis", "--muted"); }
   s += `<line id="wl" y1="${T}" y2="${H - B}" stroke="var(--fg)" opacity="0"/></svg><div class="tip" id="wtip" hidden></div>`;
   $("wchart").innerHTML = s;
   const svg = $("wchart").querySelector("svg"), tip = $("wtip"), wl = $("wl");
@@ -689,19 +705,28 @@ function zeigeWoche(v) {
     tip.innerHTML = `<b>${tage[wtag(i)]} ${i % 24}–${i % 24 + 1} Uhr · ${fmt(W.t[i], 1)} °C</b>` + r2("PV", fmt(z.pv[i], 2) + " kW") + r2("Haushalt", fmt(lz.hh[i], 2) + " kW") + r2("Wärmepumpe", fmt(lz.wp[i], 2) + " kW") + r2("E-Auto", fmt(lz.ev[i], 2) + " kW") + r2("Preis WP/Wallbox", ct(pm[i])) + (z.P.frei ? r2("Netzentgelt", z.P.frei[i] ? "frei" : "normal") : "");
     const left = (x(j) + bw / 2) * r.width / W_; tip.style.left = (left > r.width / 2 ? left - tip.offsetWidth - 12 : left + 12) + "px"; tip.style.top = "6px"; };
   svg.addEventListener("pointermove", mv); svg.addEventListener("pointerdown", mv); svg.addEventListener("pointerleave", () => { tip.hidden = true; wl.setAttribute("opacity", 0); });
+  { let tE = 0, tN = 0, pE = 0, pN = 0; for (let j = 0; j < n; j++) { const i = start + j, q = lz.wp[i] + lz.ev[i]; tE += q * pm[i]; tN += q; pN += pm[i]; } pE = tN > 0 ? tE / tN : 0; pN /= n;
+    $("waus").textContent = pE < pN * 0.97 ? `Wärmepumpe und E-Auto laufen vor allem, wenn der Strom billig ist: im Schnitt ${ct(pE)} statt ${ct(pN)}` : `Wärmepumpe und E-Auto zahlen im Schnitt ${ct(pE)} je kWh, so viel wie der Strom im Mittel kostet`; }
   $("wnote").textContent = `${PVN[SEL.pv]}, Tarif ${TARIFE[SEL.t].n}${STEUERUNG ? ", mit Steuerung" : ", ohne Steuerung"}. Säulen: Verbrauch je Stunde. ` + (z.P.frei ? "Grüne Striche unten: Stunden ohne Netzentgelt." : "") + (z.kap > 0 ? ` Der Speicher (${fmt(z.kap)} kWh) deckt abends einen Teil des Verbrauchs; die Säulen zeigen den Verbrauch, nicht den Netzbezug.` : "");
 }
 
 function zeigeAusrichtung(v) {
   const mon = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31], namen = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
   const reihen = [["Süd", 180, "--pv"], ["Ost", 90, "--hh"], ["West", 270, "--ev"]].map(([n, az, c]) => { const p = pvProfil(az, v.neig, v.pvVerl); const m = []; let i = 0; mon.forEach(t => { let s = 0; for (let k = 0; k < t * 24; k++) s += p[i++]; m.push(s); }); return { n, c, m, j: m.reduce((a, b) => a + b, 0), p }; });
-  const H = 220, L = 44, Rr = 10, T = 10, B = 26, ax = achse(Math.max(...reihen.flatMap(r => r.m)));
+  cw("ochart");
+  const H = 220, L = 40, Rr = W_ < 500 ? 96 : 110, T = 10, B = 26, ax = achse(Math.max(...reihen.flatMap(r => r.m)));
   const x = k => L + (W_ - L - Rr) * (k + 0.5) / 12, y = val => T + (H - T - B) * (1 - val / ax.max);
   let s = `<svg viewBox="0 0 ${W_} ${H}" role="img" aria-label="Monatsertrag je kWp nach Ausrichtung">`;
   for (let g = 0; g <= ax.max; g += ax.st) s += `<line x1="${L}" x2="${W_ - Rr}" y1="${y(g)}" y2="${y(g)}" stroke="var(--grid)"/><text x="${L - 6}" y="${y(g) + 4}" text-anchor="end">${fmt(g)}</text>`;
   namen.forEach((m, k) => s += `<text x="${x(k)}" y="${H - 8}" text-anchor="middle">${m}</text>`);
   reihen.forEach(r => s += `<path d="${r.m.map((val, k) => `${k ? "L" : "M"}${x(k).toFixed(1)},${y(val).toFixed(1)}`).join("")}" fill="none" stroke="var(${r.c})" stroke-width="2.5"/>`);
-  $("ochart").innerHTML = s + `<text x="${L}" y="${T}" style="font-size:11px"></text></svg>`;
+  { const pos = reihen.map(r => ({ r, y: y(r.m[11]) })).sort((a, b) => a.y - b.y);
+    for (let i = 1; i < pos.length; i++) if (pos[i].y - pos[i - 1].y < 28) pos[i].y = pos[i - 1].y + 28;
+    const d = pos.at(-1).y + 12 - (H - B); if (d > 0) pos.forEach(q => q.y -= d);
+    pos.forEach(q => s += `<text class="lab" x="${x(11) + 8}" y="${q.y - 2}" style="fill:var(${q.r.c})">${q.r.n}</text><text x="${x(11) + 8}" y="${q.y + 12}" style="fill:var(--fg)">${fmt(q.r.j)} kWh/kWp</text>`); }
+  $("ochart").innerHTML = s + `</svg>`;
+  const beste = reihen.slice().sort((a, b) => b.j - a.j);
+  $("oaus").textContent = `${beste[0].n} bringt am meisten, ${beste[1].n} ${fmt(beste[1].j / beste[0].j * 100)} %, ${beste[2].n} ${fmt(beste[2].j / beste[0].j * 100)} % davon`;
   // typische Tagesverteilung im Juni
   const juni = h => r => { let s = 0; for (let d = 151; d < 181; d++) s += r.p[d * 24 + h]; return s / 30; };
   const spitze = r => { let b = 0, bh = 0; for (let h = 0; h < 24; h++) { const val = juni(h)(r); if (val > b) { b = val; bh = h; } } return bh; };

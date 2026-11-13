@@ -60,6 +60,10 @@ button:focus-visible, input:focus-visible, select:focus-visible, td[tabindex]:fo
 .chart { position: relative }
 .chart svg { width: 100%; height: auto; display: block; touch-action: pan-y }
 .chart text { fill: var(--muted); font: 12px var(--body); font-variant-numeric: tabular-nums }
+.chart text.lab { font-weight: 700; paint-order: stroke; stroke: var(--panel); stroke-width: 3px; stroke-linejoin: round }
+.aussage { font-weight: 700; font-size: 16px; margin: 4px 0 0 }
+.schluessel { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0; font-size: 14px }
+.schluessel b { font-weight: 700 }
 .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13.5px; color: var(--muted) }
 .legend span { display: inline-flex; align-items: center; gap: 6px }
 .legend i { width: 12px; height: 12px; border-radius: 2px; display: inline-block }
@@ -175,13 +179,14 @@ a { color: var(--wp) }
   <div class="cols">
     <div class="panel">
       <h2>Strom vom Balkon, Monat für Monat</h2>
-      <div class="legend"><span><i style="background:var(--pv)"></i>selbst genutzt</span><span><i style="background:var(--wp)"></i>über den Speicher genutzt</span><span><i style="background:var(--pvf)"></i>ins Netz verschenkt</span></div>
+      <p class="aussage" id="maus"></p>
+      <p class="schluessel" id="mkey"></p>
       <div class="chart" id="mchart"></div>
     </div>
     <div class="panel">
       <h2>Ein Sommertag und ein Wintertag</h2>
       <div class="seg" role="group" aria-label="Tag" id="tagw"></div>
-      <div class="legend"><span><i class="l" style="border-color:var(--hh)"></i>Verbrauch</span><span><i style="background:var(--pvf)"></i>Sonne am Modul</span><span><i style="background:var(--pv)"></i>vom Balkon genutzt</span><span><i class="d" style="border-color:var(--wp)"></i>Speicher gefüllt</span></div>
+      <p class="aussage" id="taus"></p>
       <div class="chart" id="tchart"></div>
       <p class="note" id="tnote"></p>
     </div>
@@ -390,8 +395,12 @@ function run() {
   zeigeAusrichtung();
 }
 
+function bw0(id) { return Math.max(340, Math.min(640, Math.round($(id).clientWidth || 640))); }
+let gMon = null, gHs = null, gT; addEventListener("resize", () => { clearTimeout(gT); gT = setTimeout(() => { if (gMon) zeigeMonate(gMon); if (gHs) zeigeTag(gHs); }, 150); });
+const MNL = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 function zeigeMonate(mon) {
-  const W0 = 640, H0 = 260, l = 46, rr = 8, t = 12, b = 26, max = Math.max(...mon.map(m => m.self + m.bat + m.exp), 1);
+  gMon = mon;
+  const W0 = bw0("mchart"), H0 = 260, l = 46, rr = 8, t = 12, b = 26, max = Math.max(...mon.map(m => m.self + m.bat + m.exp), 1);
   const st = Math.pow(10, Math.floor(Math.log10(max / 4))), step = [1, 2, 2.5, 5, 10].map(x => x * st).find(x => max / x <= 5), top = Math.ceil(max / step) * step;
   const y = v => t + (H0 - t - b) * (1 - v / top), bw = (W0 - l - rr) / 12;
   let s = `<svg viewBox="0 0 ${W0} ${H0}" role="img" aria-label="Strom vom Balkon je Monat">`;
@@ -403,6 +412,11 @@ function zeigeMonate(mon) {
   });
   s += `<text x="4" y="${t}" >kWh</text></svg>`;
   $("mchart").innerHTML = s;
+  const sum = k => mon.reduce((a, m) => a + m[k], 0), ges = Math.max(1e-9, sum("self") + sum("bat") + sum("exp"));
+  const kM = mon.reduce((bi, m, k) => m.exp > mon[bi].exp ? k : bi, 0), dz = mon[11], dzG = dz.self + dz.bat + dz.exp;
+  $("maus").textContent = `${fmt((sum("self") + sum("bat")) / ges * 100)} % des Balkonstroms nutzt der Haushalt selbst${mon[kM].exp > 1 ? `, am meisten geht im ${MNL[kM]} ins Netz` : ""}`;
+  const k1 = (c, t, v) => `<span><b><span style="color:${c}">■</span> ${t}</b> ${fmt(v / ges * 100)} %</span>`;
+  $("mkey").innerHTML = k1("var(--pv)", "selbst genutzt", sum("self")) + (sum("bat") > 0.5 ? k1("var(--wp)", "über den Speicher", sum("bat")) : "") + k1("var(--pvf)", "ins Netz", sum("exp"));
 }
 
 function besterTag(hs, m0, m1) { let best = 0, bv = -1; for (let d = MS[m0 - 1] || 0; d < MS[m1]; d++) { let s = 0; for (let h = 0; h < 24; h++) s += hs.G[d * 24 + h]; if (s > bv) { bv = s; best = d; } } return best; }
@@ -410,7 +424,8 @@ function zeigeTag(hs) {
   $("tagw").innerHTML = [["sommer", "Sonniger Sommertag"], ["herbst", "Sonniger Herbsttag"], ["winter", "Wintertag"]].map(([k, n]) => `<button type="button" data-t="${k}" aria-pressed="${k === TAG}">${n}</button>`).join("");
   $("tagw").querySelectorAll("button").forEach(b => b.onclick = () => { TAG = b.dataset.t; zeigeTag(hs); });
   const d = TAG === "sommer" ? besterTag(hs, 5, 6) : TAG === "herbst" ? besterTag(hs, 9, 9) : besterTag(hs, 11, 11);
-  const W0 = 640, H0 = 240, l = 46, rr = 8, t = 12, b = 26, i0 = d * 24;
+  gHs = hs;
+  const W0 = bw0("tchart"), H0 = 240, l = 46, rr = 8, t = 12, b = 26, i0 = d * 24;
   const max = Math.max(...Array.from({ length: 24 }, (_, h) => Math.max(hs.G[i0 + h], hs.L[i0 + h]))) * 1000 || 1;
   const top = Math.ceil(max / 100) * 100, x = h => l + (W0 - l - rr) * h / 24, y = v => t + (H0 - t - b) * (1 - v / top);
   let s = `<svg viewBox="0 0 ${W0} ${H0}" role="img" aria-label="Verlauf eines Tages">`;
@@ -419,14 +434,23 @@ function zeigeTag(hs) {
   for (let h = 0; h < 24; h++) {
     const g = hs.G[i0 + h] * 1000, u = hs.use[i0 + h] * 1000;
     s += `<rect x="${x(h) + 2}" y="${y(g)}" width="${bw - 4}" height="${y(0) - y(g)}" fill="var(--pvf)"/><rect x="${x(h) + 2}" y="${y(u)}" width="${bw - 4}" height="${y(0) - y(u)}" fill="var(--pv)"><title>${h} bis ${h + 1} Uhr: Verbrauch ${fmt(hs.L[i0 + h] * 1000)} W, vom Balkon ${fmt(u)} W</title></rect>`;
-    if (h % 3 === 0) s += `<text x="${x(h)}" y="${H0 - 8}" text-anchor="middle">${h}</text>`;
+    if (h % (W0 < 500 ? 6 : 3) === 0) s += `<text x="${x(h)}" y="${H0 - 8}" text-anchor="middle">${h} Uhr</text>`;
   }
   s += `<polyline fill="none" stroke="var(--hh)" stroke-width="2.5" points="${Array.from({ length: 24 }, (_, h) => `${x(h + 0.5)},${y(hs.L[i0 + h] * 1000)}`).join(" ")}"/>`;
   if (V.batKwh > 0) { const sk = top / (V.batKwh * 1000); s += `<polyline fill="none" stroke="var(--wp)" stroke-width="2" stroke-dasharray="5 4" points="${Array.from({ length: 24 }, (_, h) => `${x(h + 1)},${y(hs.soc[i0 + h] * 1000 * sk)}`).join(" ")}"/>`; }
+  { const hr = Array.from({ length: 24 }, (_, h) => h), am = f => hr.reduce((bi, h) => f(h) > f(bi) ? h : bi, 0);
+    const anc = h => h > 17 ? "end" : h < 5 ? "start" : "middle", lab = (h, yy, tx, c) => `<text class="lab" x="${x(h + 0.5)}" y="${yy}" text-anchor="${anc(h)}" style="fill:var(${c})">${tx}</text>`;
+    const hg = am(h => hs.G[i0 + h]), gmax = hs.G[i0 + hg] * 1000;
+    const hl = am(h => hs.L[i0 + h] - hs.G[i0 + h]);
+    if (gmax > top * 0.08) s += lab(hg, y(gmax) - 6, "Sonne", "--pv");
+    s += lab(hl, y(hs.L[i0 + hl] * 1000) - 8, "Verbrauch", "--hh");
+    if (V.batKwh > 0) { const sk = top / (V.batKwh * 1000), hs2 = am(h => hs.soc[i0 + h]); if (hs.soc[i0 + hs2] > 0.01) s += `<text class="lab" x="${x(hs2 + 1)}" y="${y(hs.soc[i0 + hs2] * 1000 * sk) - 6}" text-anchor="${hs2 > 17 ? "end" : "middle"}" style="fill:var(--wp)">Speicher voll</text>`; } }
   s += `<text x="4" y="${t}">Watt</text></svg>`;
   $("tchart").innerHTML = s;
+  { let L = 0, U = 0, G = 0; for (let h = 0; h < 24; h++) { L += hs.L[i0 + h]; U += hs.use[i0 + h]; G += hs.G[i0 + h]; }
+    $("taus").textContent = `An diesem Tag kommt ${fmt(U / Math.max(L, 1e-9) * 100)} % des Stroms vom Balkon`; }
   const dt = new Date(2024, 0, 1 + d);
-  $("tnote").textContent = `${dt.toLocaleDateString("de-DE", { day: "numeric", month: "long" })} im Wetterjahr. Stundenmittel: Kurze Spitzen beim Kochen oder Waschen sind höher, als die Linie zeigt.${V.batKwh > 0 ? " Die gestrichelte Linie zeigt, wie voll der Speicher ist (oben = voll)." : ""}`;
+  $("tnote").textContent = `${dt.toLocaleDateString("de-DE", { day: "numeric", month: "long" })} im Wetterjahr. Hellgelb: Sonne am Modul, dunkler: davon selbst genutzt. Stundenmittel: Kurze Spitzen beim Kochen oder Waschen sind höher, als die Linie zeigt.${V.batKwh > 0 ? " Die gestrichelte Linie zeigt, wie voll der Speicher ist (oben = voll)." : ""}`;
 }
 
 function zeigeAusrichtung() {

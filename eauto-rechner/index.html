@@ -66,6 +66,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .legend i { width: 18px; height: 0; border-top: 2.5px solid; display: inline-block }
 .legend i.sq { width: 12px; height: 12px; border: 0; border-radius: 2px }
 .chart { position: relative }
+.cumT { margin: 6px 0 -4px; font-size: 17px; line-height: 1.3 }
 .tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 4px 16px rgb(0 0 0 / .12); min-width: 170px; font-variant-numeric: tabular-nums }
 .tip .r { display: flex; justify-content: space-between; gap: 12px }
 .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; align-items: start }
@@ -163,7 +164,7 @@ a { color: var(--ev) }
       <h2>Ergebnis</h2>
       <div class="verdict" id="verdict"></div>
       <div class="tiles" id="tiles"></div>
-      <div class="legend"><span><i style="border-color:var(--ice)"></i>Verbrenner</span><span><i style="border-color:var(--ev)"></i>Elektroauto</span></div>
+      <h3 class="cumT" id="cumT"></h3>
       <div class="chart" id="cum"></div>
       <p class="note">Aufsummierte Kosten ab Kauf, in Euro. Wo sich die Linien kreuzen, hat sich das Elektroauto bezahlt gemacht.</p>
     </div>
@@ -318,8 +319,19 @@ function run() {
   }
 }
 
+
+function endLabels(items, xEnd, yMin, yMax) {   // items: {t, v, c, y}; gibt SVG zurück
+  const pos = items.slice().sort((a, b) => a.y - b.y);
+  for (let i = 1; i < pos.length; i++) if (pos[i].y - pos[i - 1].y < 30) pos[i].y = pos[i - 1].y + 30;
+  if (pos.length && pos[pos.length - 1].y > yMax) { const d = pos[pos.length - 1].y - yMax; pos.forEach(p => p.y -= d); }
+  if (pos.length && pos[0].y < yMin) { const d = yMin - pos[0].y; pos.forEach(p => p.y += d); }
+  return pos.map(p => `<circle cx="${xEnd}" cy="${p.y0}" r="4" fill="var(--${p.c})" stroke="var(--panel)" stroke-width="2"/><text x="${xEnd + 9}" y="${p.y - 2}" style="fill:var(--${p.c});font-weight:700">${p.t}</text><text x="${xEnd + 9}" y="${p.y + 12}" style="fill:var(--fg)">${p.v}</text>`).join("");
+}
+let cumR = null;
+addEventListener("resize", () => { if (cumR) drawCum(cumR); });
 function drawCum(r) {
-  const W = 560, H = 260, L = 58, R = 12, T = 12, B = 28;
+  cumR = r;
+  const W = Math.max(340, Math.min(640, Math.round($("cum").clientWidth || 560))), H = W < 500 ? 280 : 260, L = 50, R = W < 500 ? 104 : 130, T = 12, B = 28;
   const all = r.jahre.flatMap(x => [x.i, x.e]), max = Math.max(...all);
   const step = Math.pow(10, Math.floor(Math.log10(max))) * (max / Math.pow(10, Math.floor(Math.log10(max))) > 5 ? 2 : 1);
   const ymax = Math.ceil(max / step) * step;
@@ -328,12 +340,16 @@ function drawCum(r) {
   let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Aufsummierte Kosten über die Jahre">`;
   for (let v = 0; v <= ymax; v += step) s += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${fmt(v / 1000)} T€</text>`;
   const tick = n > 12 ? 3 : n > 6 ? 2 : 1;
-  for (let j = 0; j <= n; j += tick) s += `<text x="${x(j)}" y="${H - 8}" text-anchor="middle">${j === 0 ? "Kauf" : j + ". J."}</text>`;
+  for (let j = 0; j <= n; j += tick) s += `<text x="${x(j)}" y="${H - 8}" text-anchor="middle">${j === 0 ? "Kauf" : W < 500 && j % (tick * 2) ? "" : j + ". J."}</text>`;
   const p = (k, c) => `<path d="${r.jahre.map((q, j) => (j ? "L" : "M") + x(j).toFixed(1) + " " + y(q[k]).toFixed(1)).join(" ")}" fill="none" stroke="var(--${c})" stroke-width="2.5" stroke-linejoin="round"/>`;
-  s += p("i", "ice") + p("e", "ev");
+  s += p("i", "ice") + p("e", "ev").replace('stroke-width="2.5"', 'stroke-width="3.5"');
+  const last = r.jahre[n];
+  s += endLabels([{ t: "Verbrenner", v: eur(last.i), c: "ice", y: y(last.i), y0: y(last.i) }, { t: "Elektroauto", v: eur(last.e), c: "ev", y: y(last.e), y0: y(last.e) }], x(n), T + 10, H - B);
+  const sp = last.i - last.e;
+  $("cumT").textContent = sp > 0 ? `Nach ${fmt(n)} Jahren spart das Elektroauto ${eur(sp)}${r.be > 0 ? `, bezahlt nach ${fmt(r.be, 1)} Jahren` : ""}` : `Nach ${fmt(n)} Jahren ist der Verbrenner ${eur(-sp)} günstiger`;
   if (r.be && r.be > 0) {
     const j0 = Math.floor(r.be), a = r.jahre[j0], b = r.jahre[Math.min(n, j0 + 1)], t = r.be - j0, v = a.i + (b.i - a.i) * t;
-    s += `<circle cx="${x(r.be)}" cy="${y(v)}" r="5" fill="var(--panel)" stroke="var(--fg)" stroke-width="2"/><text x="${x(r.be) + 10}" y="${y(v) + 18}" style="fill:var(--fg)">bezahlt nach ${fmt(r.be, 1)} J.</text>`;
+    s += `<circle cx="${x(r.be)}" cy="${y(v)}" r="5" fill="var(--panel)" stroke="var(--fg)" stroke-width="2"/><text x="${x(r.be) + 10}" y="${y(v) + 20}" style="fill:var(--fg);font-weight:600">bezahlt nach ${fmt(r.be, 1)} Jahren</text>`;
   }
   s += `<line id="cl" y1="${T}" y2="${H - B}" stroke="var(--muted)" opacity="0"/></svg><div class="tip" id="ctip" hidden></div>`;
   $("cum").innerHTML = s;
