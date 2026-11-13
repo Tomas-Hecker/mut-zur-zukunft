@@ -1454,7 +1454,8 @@ function updateHH() {
   // Version 28: Mehr oder weniger bei gleichem Einkauf wie heute, dazu die Kaufkraft, wenn alles ausgegeben wird
   const plus = r.vgl + r.entfall, dh = aktiv >= 0;
   const kauf = `Gibt ${dh ? "dieser Haushalt" : "man"} alles aus, ${r.kk >= 0 ? "kann " + (dh ? "er" : "man") + " sich " + pct(r.kk) + " mehr kaufen" : "kann " + (dh ? "er" : "man") + " sich " + pct(-r.kk) + " weniger kaufen"} als heute.`;
-  const warum = `Ohne die Mehrwertsteuer gerechnet ${r.bv >= 0 ? "sinken Steuern und Abgaben um " + eur(r.bv) : "steigen Steuern und Abgaben um " + eur(-r.bv)} im Jahr${r.alt > 0 ? ", mit dem Altvermögenskonto" : ""}. Derselbe Einkauf kostet wegen der höheren Mehrwertsteuer ${eur(r.pw)} mehr, darauf fallen ${eur(r.atg)} Ausgabensteuer.${r.entfall > 0.5 ? " Dazu entfallen " + eur(r.entfall) + " Unterhalt, weil der Staat das Existenzminimum der Kinder in Studium oder Ausbildung übernimmt." : ""}`;
+  const bvR = Math.round(plus) + Math.round(r.pw) + Math.round(r.atg) - Math.round(r.entfall);   // aus den gerundeten Beträgen, damit die Summe aufgeht
+  const warum = `Ohne die Mehrwertsteuer gerechnet ${bvR >= 0 ? "sinken Steuern und Abgaben um " + eur(bvR) : "steigen Steuern und Abgaben um " + eur(-bvR)} im Jahr${r.alt > 0 ? ", mit dem Altvermögenskonto" : ""}. Derselbe Einkauf kostet wegen der höheren Mehrwertsteuer ${eur(r.pw)} mehr, darauf fallen ${eur(r.atg)} Ausgabensteuer.${r.entfall > 0.5 ? " Dazu entfallen " + eur(r.entfall) + " Unterhalt, weil der Staat das Existenzminimum der Kinder in Studium oder Ausbildung übernimmt." : ""}`;
   if (Math.abs(plus) < 50) {
     vd.className = "verdict neutral";
     vd.innerHTML = `<span class="big">Kaum Unterschied</span><p>${dh ? "Dieser Haushalt hat" : "Sie haben"} bei gleichem Einkauf etwa so viel Geld wie heute. ${kauf}</p><p class="note">${warum}</p>`;
