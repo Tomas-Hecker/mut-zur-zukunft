@@ -344,7 +344,7 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
   <div class="wrap">
     <svg class="logo" viewBox="0 0 360 100" role="img" aria-label="Mut zur Zukunft"><g transform="translate(4,4) scale(0.92)"><circle cx="50" cy="50" r="44" fill="none" stroke="#f2b33d" stroke-width="1.6"/><line x1="27.5" y1="51.0" x2="21.4" y2="47.5" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="37.0" y1="41.5" x2="33.5" y2="35.4" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="63.0" y1="41.5" x2="66.5" y2="35.4" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="72.5" y1="51.0" x2="78.6" y2="47.5" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><path d="M30,64 A20,20 0 0 1 70,64 Z" fill="#f2b33d"/><path d="M50,64 L50,33" stroke="#fbf8f1" stroke-width="3.2" stroke-linecap="round"/><path d="M50,47 C41,46 33,39 31,28 C41,29 48,36 50,47 Z" fill="#9fd8b0"/><path d="M50,40 C57,37 65,30 68,19 C58,20 51,28 50,40 Z" fill="#9fd8b0"/><line x1="17" y1="64" x2="83" y2="64" stroke="#fbf8f1" stroke-width="2.4" stroke-linecap="round"/><line x1="28" y1="71" x2="72" y2="71" stroke="#fbf8f1" stroke-width="1.6" stroke-linecap="round" opacity="0.6"/><line x1="38" y1="77" x2="62" y2="77" stroke="#fbf8f1" stroke-width="1.2" stroke-linecap="round" opacity="0.35"/></g><text x="110" y="50" font-family="system-ui, sans-serif" font-weight="800" font-size="25" letter-spacing="1" fill="#fbf8f1">MUT ZUR</text><text x="110" y="80" font-family="system-ui, sans-serif" font-weight="800" font-size="30" letter-spacing="1.5" fill="#f2b33d">ZUKUNFT</text></svg>
     <h1>Es ist egal, woher ein Einkommen kommt. <em>Entscheidend ist, was damit geschieht.</em></h1>
-    <p>Dieser Rechner zeigt, wie das einheitliche Steuersystem aus dem Buch „Wir können uns die Zukunft leisten“ wirkt: für Ihren eigenen Haushalt und für den Staat als Ganzes. Alles läuft direkt im Browser. Es wird nichts gespeichert und nichts übertragen.</p>
+    <p>Dieser Rechner zeigt, wie das einheitliche Steuersystem aus dem Buch „Wir können uns die Zukunft leisten“ wirkt: für deinen eigenen Haushalt und für den Staat als Ganzes. Alles läuft direkt im Browser. Es wird nichts gespeichert und nichts übertragen.</p>
     <nav class="jump" aria-label="Abschnitte">
       <a class="primary" href="#haushalt">Meinen Haushalt rechnen</a>
       <a href="#idee">Die Idee</a>
@@ -378,9 +378,9 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
 
 <section class="block" id="haushalt">
   <div class="wrap">
-    <div class="eyebrow">Ihr Haushalt</div>
+    <div class="eyebrow">Dein Haushalt</div>
     <h2>Was ändert sich für mich?</h2>
-    <p class="lead">Wählen Sie ein Beispiel aus dem Buch oder tragen Sie Ihre eigenen Zahlen ein. Verglichen werden alle Steuern und Abgaben, die ein Haushalt heute zahlt, mit denen im Vorschlag. Damit der Vergleich fair ist, gibt der Haushalt in beiden Fällen gleich viel aus.</p>
+    <p class="lead">Wähle ein Beispiel aus dem Buch oder trage deine eigenen Zahlen ein. Verglichen werden alle Steuern und Abgaben, die ein Haushalt heute zahlt, mit denen im Vorschlag. Damit der Vergleich fair ist, gibt der Haushalt in beiden Fällen gleich viel aus.</p>
     <ol class="howto"><li>Beispiel wählen oder eigene Zahlen eintragen</li><li>Ergebnis ablesen: heute und im Vorschlag</li><li>Vorschlag verändern und vergleichen</li></ol>
     <div class="calc cockpit">
       <form class="panel" id="hhForm" autocomplete="off">
@@ -399,7 +399,7 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
           <div class="field"><label for="kid3">davon unter 3 Jahren</label><input id="kid3" type="number" min="0" max="10" step="1"></div>
           <div class="field"><label for="pg">Person 1 pflegt einen Angehörigen</label><select id="pg"><option value="0">nein</option><option value="2">Pflegegrad 2</option><option value="3">Pflegegrad 3</option><option value="4">Pflegegrad 4 oder Merkzeichen H</option><option value="5">Pflegegrad 5</option></select><span class="hint">senkt die Schwelle für steuerfreie Mehrarbeit</span></div>
           <div class="field"><label for="vollj">Kinder ab 18 in Studium oder Ausbildung</label><input id="vollj" type="number" min="0" max="10" step="1"><span class="hint">auch wenn sie woanders wohnen</span></div>
-          <div class="field"><label for="unterhalt">Unterhalt je Kind im Monat</label><input id="unterhalt" type="number" min="0" step="10"><span class="hint">was Sie selbst zahlen, ohne Kindergeld</span></div>
+          <div class="field"><label for="unterhalt">Unterhalt je Kind im Monat</label><input id="unterhalt" type="number" min="0" step="10"><span class="hint">was du selbst zahlst, ohne Kindergeld</span></div>
           <div class="field"><label for="lohn1">Bruttolohn Person 1</label><input id="lohn1" type="number" min="0" step="100"></div>
           <div class="field"><label for="std1">Wochenstunden Person 1</label><input id="std1" type="number" min="0" max="80" step="0.5"></div>
           <div class="field p2"><label for="lohn2">Bruttolohn Person 2</label><input id="lohn2" type="number" min="0" step="100"></div>
@@ -471,7 +471,7 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
   <div class="wrap">
     <div class="eyebrow">Der Staat</div>
     <h2>Rechnet sich das?</h2>
-    <p class="lead">Sieben Steuern fallen weg, neue Leistungen kommen dazu. Dafür gibt es die Steuer auf das, was ins Private fließt, und den Staatsanteil an Erbschaften. Drehen Sie an den Stellschrauben und sehen Sie, ob die Rechnung aufgeht. Die Änderungen wirken auch oben auf Ihren Haushalt.</p>
+    <p class="lead">Sieben Steuern fallen weg, neue Leistungen kommen dazu. Dafür gibt es die Steuer auf das, was ins Private fließt, und den Staatsanteil an Erbschaften. Dreh an den Stellschrauben und sieh, ob die Rechnung aufgeht. Die Änderungen wirken auch oben auf deinen Haushalt.</p>
     <div class="calc">
       <div class="panel knobs" id="knobs"></div>
       <div class="panel">
@@ -506,7 +506,7 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
           <div class="slider"><div class="row"><label for="c_Preis">CO₂-Preis</label><output id="co_Preis"></output></div><input type="range" id="c_Preis" min="20" max="400" step="5"><div class="sub">Vorschlag: 100 € ab 2028, 150 € ab 2030, 200 € ab 2035, 300 € ab 2040. Zum Vergleich: im Emissionshandel 2025 rund 70 bis 80 €, Klimaschäden nach dem Umweltbundesamt rund 300 € je Tonne</div></div>
           <div class="slider"><div class="row"><label for="c_Menge">CO₂ ohne Preis</label><output id="co_Menge"></output></div><input type="range" id="c_Menge" min="0" max="1" step="0.05"><div class="sub" id="cs_Menge"></div></div>
           <div class="slider"><div class="row"><label for="c_Rueck">Davon als Klimageld zurück</label><output id="co_Rueck"></output></div><input type="range" id="c_Rueck" min="0.5" max="1" step="0.05"><div class="sub">der Rest geht als Bonus an bessere Hersteller</div></div>
-          <div class="slider"><div class="row"><label for="c_Personen">Personen in Ihrem Haushalt</label><output id="co_Personen"></output></div><input type="range" id="c_Personen" min="1" max="8" step="1"></div>
+          <div class="slider"><div class="row"><label for="c_Personen">Personen in deinem Haushalt</label><output id="co_Personen"></output></div><input type="range" id="c_Personen" min="1" max="8" step="1"></div>
         </fieldset>
       </div>
       <div class="panel">
@@ -546,19 +546,19 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
       </div></details>
       <details><summary>Warum zählt der Mietwert der eigenen Wohnung mit?</summary><div>
         <p>Ein Mieter bezahlt seine Miete aus versteuertem Geld. Ein Eigentümer wohnt mietfrei und spart diese Ausgabe. Damit beide gleich behandelt werden, zählt der Mietwert der eigenen Wohnung zu den privaten Ausgaben.</p>
-        <p>Wer beim Start im eigenen Haus wohnt, hat es aus versteuertem Geld bezahlt und zahlt nicht doppelt: Auf den Teil, der beim Start bezahlt ist, fällt keine Steuer auf den Mietwert an, bis das Haus verkauft oder vererbt wird, für bis zu 200 m² Wohnfläche. Das gilt für die Rentnerin genauso wie für den Handwerksmeister. Wer verkauft und neu kauft, nimmt den freien Teil mit. Den bezahlten Teil stellt das Finanzamt aus dem Wert des Hauses wie bei einer Erbschaft fest, abzüglich der Restschuld laut Bank. Wer im geerbten Haus wohnt, zahlt. Auf den Teil, der noch nicht bezahlt ist, können Eigentümer mit wenig Bargeld die Steuer bis zum Verkauf oder Erbfall stunden. Tragen Sie oben ein, wie viel Prozent Ihres Hauses beim Start bezahlt sind.</p>
+        <p>Wer beim Start im eigenen Haus wohnt, hat es aus versteuertem Geld bezahlt und zahlt nicht doppelt: Auf den Teil, der beim Start bezahlt ist, fällt keine Steuer auf den Mietwert an, bis das Haus verkauft oder vererbt wird, für bis zu 200 m² Wohnfläche. Das gilt für die Rentnerin genauso wie für den Handwerksmeister. Wer verkauft und neu kauft, nimmt den freien Teil mit. Den bezahlten Teil stellt das Finanzamt aus dem Wert des Hauses wie bei einer Erbschaft fest, abzüglich der Restschuld laut Bank. Wer im geerbten Haus wohnt, zahlt. Auf den Teil, der noch nicht bezahlt ist, können Eigentümer mit wenig Bargeld die Steuer bis zum Verkauf oder Erbfall stunden. Trag oben ein, wie viel Prozent deines Hauses beim Start bezahlt sind.</p>
       </div></details>
       <details><summary>Was gilt für heutige Rentner und Beamte?</summary><div>
-        <p>Wer beim Start schon Rente bezieht, kann mit seiner Rente so viel einkaufen wie heute. Was derselbe Einkauf mit der Rente im Vorschlag mehr kostet, samt Steuer darauf, kommt als Zuschlag mit der Rente, höchstens so viel, wie der Rente allein fehlt. Ausgaben aus Kapitalerträgen und Vermögen zählen dabei nicht. Der Zuschlag wird beim Start einmal festgestellt und sinkt bei jeder Rentenerhöhung um die Hälfte der Erhöhung; in Euro sinkt die Rente nie. Setzen Sie oben unter „Weitere Angaben“ das Häkchen „Bezieht beim Start schon Rente“.</p>
-        <p>Heutige Beamte und Pensionäre bekommen eine Ausgleichszulage nach derselben Regel. Sie ist nach rund 15 Jahren aufgebraucht. Wer neu Beamter wird, bekommt seine Besoldung nach neuem Recht. Mit künstlicher Intelligenz braucht die Verwaltung rund 7 % weniger Stellen.</p>
+        <p>Wer beim Start schon Rente bezieht, kann mit seiner Rente so viel einkaufen wie heute. Was derselbe Einkauf mit der Rente im Vorschlag mehr kostet, samt Steuer darauf, kommt als Zuschlag mit der Rente, höchstens so viel, wie der Rente allein fehlt. Ausgaben aus Kapitalerträgen und Vermögen zählen dabei nicht. Der Zuschlag wird beim Start einmal festgestellt und sinkt bei jeder Rentenerhöhung um die Hälfte der Erhöhung; in Euro sinkt die Rente nie. Setz oben unter „Weitere Angaben“ das Häkchen „Bezieht beim Start schon Rente“.</p>
+        <p>Heutige Beamte und Pensionäre bekommen eine Ausgleichszulage nach derselben Regel. Sie ist nach rund 19 Jahren aufgebraucht. Wer neu Beamter wird, bekommt seine Besoldung nach neuem Recht. Mit künstlicher Intelligenz braucht die Verwaltung rund 7 % weniger Stellen.</p>
         <p>Für jeden neuen Rentnerjahrgang bleibt der Teil der Rente frei, der nach heutigem Recht steuerfrei wäre, für den Jahrgang 2028 rund 15 %, für jeden späteren Jahrgang 0,5 Punkte weniger. Wer sonst weniger hätte als heute, vor allem Selbständige, bekommt auf Antrag einen Härteausgleich, berechnet aus dem letzten Steuerbescheid vor dem Start; er schmilzt über zehn Jahre ab.</p>
       </div></details>
       <details><summary>Was ist mit Kindern in Studium oder Ausbildung und mit Unterhalt?</summary><div>
         <p>Heute bekommen nur rund 443.000 der 2,9 Millionen Studierenden BAföG, weil das Einkommen der Eltern angerechnet wird. Meist zahlen die Eltern den Unterhalt selbst, zum Beispiel 990 € im Monat für ein Kind mit eigener Wohnung nach der Düsseldorfer Tabelle, abzüglich des Kindergelds. Steuerlich absetzen können sie den Unterhalt für eigene Kinder nicht, nur einen Ausbildungsfreibetrag von 1.200 € im Jahr, wenn das Kind auswärts wohnt. Das gilt auch für getrennt lebende Eltern.</p>
-        <p>Im Vorschlag bekommt jeder, der studiert, eine Ausbildung macht oder sich in Vollzeit weiterbildet, das Existenzminimum von 1.066 € im Monat zum Leben und die Prämie der Krankenkasse selbst, unabhängig vom Einkommen der Eltern. BAföG und Kindergeld für Volljährige gehen darin auf, ein Nebenjob wird nicht angerechnet. Der Unterhalt der Eltern entfällt damit bis zu dieser Höhe. Tragen Sie oben Ihre Kinder ab 18 und den Unterhalt ein, den Sie selbst zahlen, ohne das Kindergeld.</p>
+        <p>Im Vorschlag bekommt jeder, der studiert, eine Ausbildung macht oder sich in Vollzeit weiterbildet, das Existenzminimum von 1.066 € im Monat zum Leben und die Prämie der Krankenkasse selbst, unabhängig vom Einkommen der Eltern. BAföG und Kindergeld für Volljährige gehen darin auf, ein Nebenjob wird nicht angerechnet. Der Unterhalt der Eltern entfällt damit bis zu dieser Höhe. Trag oben deine Kinder ab 18 und den Unterhalt ein, den du selbst zahlen, ohne das Kindergeld.</p>
       </div></details>
       <details><summary>Was gilt für Erspartes, das heute schon versteuert ist?</summary><div>
-        <p>Wer aus Vermögen lebt, das er schon unter dem alten Recht versteuert hat, soll nicht doppelt zahlen. Deshalb gibt es das Altvermögenskonto: Zum Stichtag melden die Banken Guthaben und Wertpapiere jedes Erwachsenen, vermietete Immobilien stellt das Finanzamt fest, jeweils zu dem Wert, zu dem er sie nach altem Recht steuerfrei verkaufen könnte. Bis zu diesem Betrag gibt er ohne Frist und ohne Grenze im Jahr steuerfrei aus, gedeckelt mit einem Lebensbetrag. Der Rechner zeigt diesen Fall gesondert an, wenn Sie „Verbrauch aus vorhandenem Vermögen“ eintragen.</p>
+        <p>Wer aus Vermögen lebt, das er schon unter dem alten Recht versteuert hat, soll nicht doppelt zahlen. Deshalb gibt es das Altvermögenskonto: Zum Stichtag melden die Banken Guthaben und Wertpapiere jedes Erwachsenen, vermietete Immobilien stellt das Finanzamt fest, jeweils zu dem Wert, zu dem er sie nach altem Recht steuerfrei verkaufen könnte. Bis zu diesem Betrag gibt er ohne Frist und ohne Grenze im Jahr steuerfrei aus, gedeckelt mit einem Lebensbetrag. Der Rechner zeigt diesen Fall gesondert an, wenn du „Verbrauch aus vorhandenem Vermögen“ einträgst.</p>
       </div></details>
       <details><summary>Was sind die Bausteine?</summary><div>
         <p>Zum Grundsystem kommen einzeln schaltbare Ideen aus dem Buch: Lebensmittel, Wasser und Nahverkehr ohne Mehrwertsteuer, Rente und Pflege aus der Steuer, Strom mit 5 % Mehrwertsteuer und ohne Umlagen, das Existenzminimum für Studium, Ausbildung und Weiterbildung, ein Bürgerjob mit Recht auf Arbeit für 1.400 € im Monat (200 € mehr als die Grundsicherung, wer stattdessen lernt, bekommt 1.200 €), ein Berufscoach für alle, die Familienrente mit 6 statt 3 Entgeltpunkten je Kind, zinslose Darlehen für Elektroauto und Wallbox sowie für Dämmung, Wärmepumpe, größere Heizkörper, PV und Speicher. Steuerfreie Mehrarbeit lässt sich unter „Alle Stellschrauben“ dazuschalten; im Gesamtpaket ist sie aus.</p>
@@ -575,7 +575,7 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
   <div class="wrap">
     <div class="eyebrow">Annahmen und Quellen</div>
     <h2>Woher die Zahlen kommen</h2>
-    <p class="lead">Hier steht jede Zahl, mit der das Rechenmodell zum Buch arbeitet: wie sie hergeleitet ist, woher sie stammt und wo das Buch sie erklärt. Die Liste ist dieselbe wie im Buch in Anhang C10. Wenn Sie oben an den Stellschrauben drehen, steht hier Ihr Wert und darunter der Wert aus dem Buch.</p>
+    <p class="lead">Hier steht jede Zahl, mit der das Rechenmodell zum Buch arbeitet: wie sie hergeleitet ist, woher sie stammt und wo das Buch sie erklärt. Die Liste ist dieselbe wie im Buch in Anhang C10. Wenn du oben an den Stellschrauben drehst, steht hier dein Wert und darunter der Wert aus dem Buch.</p>
     <div class="facts">
       <div class="fact"><b>540,9 Mrd. €</b><span>bringen heute die Steuern auf Einkommen, Gewinne und Erbschaften und die Gewerbesteuer, die im Vorschlag wegfallen.</span><small>Steuerschätzung 2025, sozialpolitik-aktuell.de, Tabelle II.8; Gewerbesteuer 2025: 76,4 Mrd. €, Statistisches Bundesamt</small></div>
       <div class="fact"><b>2.370 Mrd. €</b><span>geben die privaten Haushalte im Jahr für ihren Konsum aus. Das ist die Grundlage der neuen Steuer.</span><small>Statistische Ämter des Bundes und der Länder: 2.283 Mrd. € im Jahr 2024, für 2025 mit 3,8 % fortgeschrieben</small></div>
@@ -1434,7 +1434,7 @@ function renderPresets() {
   c.setAttribute("aria-pressed", aktiv === -1);
   c.onclick = () => { aktiv = -1; setForm({ lohn1: 3500 * 12, std1: 40, spar: 0.1, kinderlos: 1 }); renderPresets(); updateHH(); $("lohn1").focus(); };
   presetBox.append(c);
-  $("presetNote").textContent = aktiv >= 0 ? BEISPIELE[aktiv].text : "Tragen Sie Ihre Zahlen ein. Das Ergebnis rechnet sofort mit.";
+  $("presetNote").textContent = aktiv >= 0 ? BEISPIELE[aktiv].text : "Trag deine Zahlen ein. Das Ergebnis rechnet sofort mit.";
 }
 
 function updateHH() {
@@ -1446,7 +1446,7 @@ function updateHH() {
   const entl = r.entfall > 0.5;
   const H = r.sumH + (entl ? r.unterhalt : 0), V = r.sumV + (entl ? r.unterhalt - r.entfall : 0);
   const was = entl ? "Steuern, Abgaben und Unterhalt" : "Steuern und Abgaben";
-  $("duo").innerHTML = `<div><span class="k">Heute</span><span class="v">${eur(H)}</span><span class="s">${eur(H / 12)} im Monat</span><span class="s">${was}, bei gleichen Euro</span></div><div class="neu"><span class="k">Reform wie im Buch</span><span class="v">${eur(V)}</span><span class="s">${eur(V / 12)} im Monat</span><span class="s">${tarifGeaendert() ? "mit Ihren geänderten Sätzen" : "wie im Buch"}, bei gleichen Euro</span></div>`;
+  $("duo").innerHTML = `<div><span class="k">Heute</span><span class="v">${eur(H)}</span><span class="s">${eur(H / 12)} im Monat</span><span class="s">${was}, bei gleichen Euro</span></div><div class="neu"><span class="k">Reform wie im Buch</span><span class="v">${eur(V)}</span><span class="s">${eur(V / 12)} im Monat</span><span class="s">${tarifGeaendert() ? "mit deinen geänderten Sätzen" : "wie im Buch"}, bei gleichen Euro</span></div>`;
   const plusM = (r.vgl + r.entfall) / 12;
   mbarText = `<span>Bei gleichem Einkauf <b>${plusM > 0.5 ? "+" : plusM < -0.5 ? "−" : "±"}${eur(Math.abs(plusM))}</b> im Monat</span><span>Kaufkraft <b>${r.kk >= 0 ? "+" : "−"}${pct(Math.abs(r.kk))}</b></span>`;
   $("mbar").innerHTML = mbarText;
@@ -1458,10 +1458,10 @@ function updateHH() {
   const warum = `Ohne die Mehrwertsteuer gerechnet ${bvR >= 0 ? "sinken Steuern und Abgaben um " + eur(bvR) : "steigen Steuern und Abgaben um " + eur(-bvR)} im Jahr${r.alt > 0 ? ", mit dem Altvermögenskonto" : ""}. Derselbe Einkauf kostet wegen der höheren Mehrwertsteuer ${eur(r.pw)} mehr, darauf fallen ${eur(r.atg)} Ausgabensteuer.${r.entfall > 0.5 ? " Dazu entfallen " + eur(r.entfall) + " Unterhalt, weil der Staat das Existenzminimum der Kinder in Studium oder Ausbildung übernimmt." : ""}`;
   if (Math.abs(plus) < 50) {
     vd.className = "verdict neutral";
-    vd.innerHTML = `<span class="big">Kaum Unterschied</span><p>${dh ? "Dieser Haushalt hat" : "Sie haben"} bei gleichem Einkauf etwa so viel Geld wie heute. ${kauf}</p><p class="note">${warum}</p>`;
+    vd.innerHTML = `<span class="big">Kaum Unterschied</span><p>${dh ? "Dieser Haushalt hat" : "Du hast"} bei gleichem Einkauf etwa so viel Geld wie heute. ${kauf}</p><p class="note">${warum}</p>`;
   } else {
     vd.className = plus > 0 ? "verdict good" : "verdict bad";
-    vd.innerHTML = `<span class="big num">${eur(Math.abs(plus) / 12)} im Monat ${plus > 0 ? "mehr" : "weniger"}</span><p>${dh ? "Dieser Haushalt hat" : "Sie haben"} ${eur(Math.abs(plus))} im Jahr ${plus > 0 ? "mehr" : "weniger"} Geld, wenn ${dh ? "er" : "Sie"} so viel ${dh ? "einkauft" : "einkaufen"} wie heute${r.bjPlus > 0.5 ? ", im Bürgerjob statt in der Grundsicherung" : ""}. ${kauf}</p><p class="note">${warum}</p>`;
+    vd.innerHTML = `<span class="big num">${eur(Math.abs(plus) / 12)} im Monat ${plus > 0 ? "mehr" : "weniger"}</span><p>${dh ? "Dieser Haushalt hat" : "Du hast"} ${eur(Math.abs(plus))} im Jahr ${plus > 0 ? "mehr" : "weniger"} Geld, wenn ${dh ? "er" : "du"} so viel ${dh ? "einkauft" : "einkaufst"} wie heute${r.bjPlus > 0.5 ? ", im Bürgerjob statt in der Grundsicherung" : ""}. ${kauf}</p><p class="note">${warum}</p>`;
   }
   if (r.alt > 0) {
     vd.innerHTML += `<p class="note">Eingerechnet ist das Altvermögenskonto: Ausgaben aus Vermögen, das schon nach altem Recht versteuert ist, bleiben steuerfrei, soweit das Konto reicht, hier ${eur(r.alt)} im Jahr.</p>`;
@@ -1504,7 +1504,7 @@ function updateHH() {
   // Schritte
   const st = [];
   st.push(`<li><div><b>Privater Verbrauch: ${eur(r.konsum)}</b><div class="why">Das ist, was der Haushalt heute nach Steuern${r.unterhalt > 0 ? ", Unterhalt" : ""} und Sparen für sich ausgibt${h.verm > 0 ? ", einschließlich " + eur(h.verm) + " aus Vermögen" : ""}. ${r.bjPlus > 0.5 ? `Im Bürgerjob gibt er im Vorschlag alles aus, was nach der Prämie bleibt: ${eur(r.konsumV + r.ausg)}, davon ${eur(r.konsumV)} für Waren und Dienste und ${eur(r.ausg)} Ausgabensteuer.` : "Im Vergleich gibt er im Vorschlag genauso viel aus."}${h.miet > 0 && A.Nutzwert > 0 ? (r.mietw > 0.5 ? " Dazu kommt der Mietwert der eigenen Wohnung von " + eur(r.mietw) + ", damit Eigentümer und Mieter gleich behandelt werden." + (h.hb > 0 && A.HausFrei ? " Der Teil, der beim Start bezahlt war (" + pct(h.hb, 0) + " von " + eur(h.miet) + "), bleibt frei, bis das Haus verkauft oder vererbt wird." : "") : " Das eigene Haus war beim Start bezahlt, deshalb fällt auf den Mietwert keine Steuer an, bis es verkauft oder vererbt wird.") : ""}</div></div></li>`);
-  if (r.unterhalt > 0) st.push(`<li><div><b>Unterhalt für Kinder in Studium oder Ausbildung: ${r.entfall > 0.5 ? eur(r.entfall) + " entfallen" : "bleibt"}</b><div class="why">${r.entfall > 0.5 ? `Heute zahlen Sie ${eur(r.unterhalt)} im Jahr selbst, weil es BAföG nur bei geringem Elterneinkommen gibt. Im Vorschlag bekommt jedes Kind in Studium, Ausbildung oder Weiterbildung das Existenzminimum von ${eur(A.GFB / 12)} im Monat vom Staat, unabhängig vom Einkommen der Eltern. BAföG und Kindergeld für Volljährige gehen darin auf. ${r.unterhalt > r.entfall ? "Was Sie darüber hinaus zahlen (" + eur(r.unterhalt - r.entfall) + "), bleibt freiwillig. " : ""}Im Vergleich gibt der Haushalt trotzdem gleich viel für sich aus; der frei gewordene Betrag bleibt zusätzlich.` : "Der Baustein „Existenzminimum in der Bildung“ ist unten ausgeschaltet, deshalb zahlen Sie den Unterhalt weiter."}</div></div></li>`);
+  if (r.unterhalt > 0) st.push(`<li><div><b>Unterhalt für Kinder in Studium oder Ausbildung: ${r.entfall > 0.5 ? eur(r.entfall) + " entfallen" : "bleibt"}</b><div class="why">${r.entfall > 0.5 ? `Heute zahlst du ${eur(r.unterhalt)} im Jahr selbst, weil es BAföG nur bei geringem Elterneinkommen gibt. Im Vorschlag bekommt jedes Kind in Studium, Ausbildung oder Weiterbildung das Existenzminimum von ${eur(A.GFB / 12)} im Monat vom Staat, unabhängig vom Einkommen der Eltern. BAföG und Kindergeld für Volljährige gehen darin auf. ${r.unterhalt > r.entfall ? "Was du darüber hinaus zahlst (" + eur(r.unterhalt - r.entfall) + "), bleibt freiwillig. " : ""}Im Vergleich gibt der Haushalt trotzdem gleich viel für sich aus; der frei gewordene Betrag bleibt zusätzlich.` : "Der Baustein „Existenzminimum in der Bildung“ ist unten ausgeschaltet, deshalb zahlst du den Unterhalt weiter."}</div></div></li>`);
   let freiTxt = `Existenzminimum ${eur(r.existenz)} (${h.erw} × ${eur(A.GFB)}${h.kinder ? " und " + h.kinder + " × " + eur(A.KIDA + 12 * A.KIDM) + " je Kind" : ""})`;
   if (r.mehr > 0) freiTxt += `, dazu ${eur(r.mehr)} Lohn für Mehrarbeit über ${fmt(mehrSchwelle(h.kinder, h.kid6, h.kid3, h.pg), 1)} Wochenstunden`;
   if (r.rentFrei > 0) freiTxt += `, dazu ${eur(r.rentFrei)} Arbeitslohn im Rentenalter`;
@@ -1615,7 +1615,7 @@ function updateGesamt() {
   let t = tile("Saldo am Start", mrd(g.saldoS) + " Mrd. €", g.saldoS < 0 && -g.saldoS / A.BIP <= A.SBRaum ? `${pct(-g.saldoS / A.BIP, 2)} des BIP; passt in die Schuldenbremse (${pct(A.SBRaum, 2)})` : (g.saldoS >= 0 ? `${pct(g.saldoS / A.BIP, 2)} des BIP; Überschuss vom ersten Jahr an` : `${pct(g.saldoS / A.BIP, 2)} des BIP; negativ heißt Lücke`), cl(g.saldoS));
   t += tile("Saldo langfristig", mrd(g.saldoL) + " Mrd. €", `${pct(g.saldoL / A.BIP, 1)} des BIP, nach ${A.Jahre} Jahren`, cl(g.saldoL));
   let tilg;
-  if (kr.unendlich) tilg = tile("Kredit am Start", "nicht getilgt", "Der Überschuss reicht nicht aus. Erhöhen Sie Sätze oder schalten Sie Ausgaben ab.", "bad");
+  if (kr.unendlich) tilg = tile("Kredit am Start", "nicht getilgt", "Der Überschuss reicht nicht aus. Erhöhe die Sätze oder schalte Ausgaben ab.", "bad");
   else if (kr.peak <= 0.05) tilg = tile("Kredit am Start", "keiner", "Das System trägt sich von Anfang an.", "good");
   else if (kr.peakJ === 1 && kr.peak / A.BIP <= A.SBRaum) tilg = tile("Kredit am Start", `${mrd(kr.peak, 0)} Mrd. €`, `nur im ersten Jahr, in der Schuldenbremse; getilgt ${A.Prognose.ReformStart - 1 + kr.getilgt}`, "good");
   else tilg = tile("Kredit am Start", `${mrd(kr.peak, 0)} Mrd. €`, `höchstens, im Jahr ${A.Prognose.ReformStart - 1 + kr.peakJ}; getilgt ${A.Prognose.ReformStart - 1 + kr.getilgt}`, kr.getilgt <= 30 ? "good" : "bad");
