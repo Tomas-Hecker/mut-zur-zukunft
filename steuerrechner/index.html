@@ -1454,7 +1454,7 @@ function updateHH() {
   // Version 28: Mehr oder weniger bei gleichem Einkauf wie heute, dazu die Kaufkraft, wenn alles ausgegeben wird
   const plus = r.vgl + r.entfall, dh = aktiv >= 0;
   const kauf = `Gibt ${dh ? "dieser Haushalt" : "man"} alles aus, ${r.kk >= 0 ? "kann " + (dh ? "er" : "man") + " sich " + pct(r.kk) + " mehr kaufen" : "kann " + (dh ? "er" : "man") + " sich " + pct(-r.kk) + " weniger kaufen"} als heute.`;
-  const warum = `Bei gleichen Ausgaben in Euro ${diff <= 0 ? "sinken Steuern und Abgaben um " + eur(-diff) : "steigen Steuern und Abgaben um " + eur(diff)} im Jahr. Derselbe Einkauf kostet wegen der höheren Mehrwertsteuer ${eur(r.pw)} mehr, darauf fallen ${eur(r.atg)} Ausgabensteuer.${r.entfall > 0.5 ? " Dazu entfallen " + eur(r.entfall) + " Unterhalt, weil der Staat das Existenzminimum der Kinder in Studium oder Ausbildung übernimmt." : ""}`;
+  const warum = `Ohne die Mehrwertsteuer gerechnet ${r.bv >= 0 ? "sinken Steuern und Abgaben um " + eur(r.bv) : "steigen Steuern und Abgaben um " + eur(-r.bv)} im Jahr${r.alt > 0 ? ", mit dem Altvermögenskonto" : ""}. Derselbe Einkauf kostet wegen der höheren Mehrwertsteuer ${eur(r.pw)} mehr, darauf fallen ${eur(r.atg)} Ausgabensteuer.${r.entfall > 0.5 ? " Dazu entfallen " + eur(r.entfall) + " Unterhalt, weil der Staat das Existenzminimum der Kinder in Studium oder Ausbildung übernimmt." : ""}`;
   if (Math.abs(plus) < 50) {
     vd.className = "verdict neutral";
     vd.innerHTML = `<span class="big">Kaum Unterschied</span><p>${dh ? "Dieser Haushalt hat" : "Sie haben"} bei gleichem Einkauf etwa so viel Geld wie heute. ${kauf}</p><p class="note">${warum}</p>`;
@@ -1463,8 +1463,7 @@ function updateHH() {
     vd.innerHTML = `<span class="big num">${eur(Math.abs(plus) / 12)} im Monat ${plus > 0 ? "mehr" : "weniger"}</span><p>${dh ? "Dieser Haushalt hat" : "Sie haben"} ${eur(Math.abs(plus))} im Jahr ${plus > 0 ? "mehr" : "weniger"} Geld, wenn ${dh ? "er" : "Sie"} so viel ${dh ? "einkauft" : "einkaufen"} wie heute${r.bjPlus > 0.5 ? ", im Bürgerjob statt in der Grundsicherung" : ""}. ${kauf}</p><p class="note">${warum}</p>`;
   }
   if (r.alt > 0) {
-    const d2 = diff - r.ausg + r.ausgUeb;
-    vd.innerHTML += `<p class="note">Mit dem Altvermögenskonto bleiben Ausgaben aus Vermögen, das schon nach altem Recht versteuert ist, steuerfrei, soweit das Konto reicht. Dann ${d2 < 0 ? "beträgt die Entlastung " + eur(-d2) : "beträgt die Mehrbelastung " + eur(d2)} im Jahr.</p>`;
+    vd.innerHTML += `<p class="note">Eingerechnet ist das Altvermögenskonto: Ausgaben aus Vermögen, das schon nach altem Recht versteuert ist, bleiben steuerfrei, soweit das Konto reicht, hier ${eur(r.alt)} im Jahr.</p>`;
   }
   if (r.s4 > 0.5) vd.innerHTML += `<p class="note">In den ersten ${fmt(A.Stufe4Jahre)} Jahren kommt die befristete Stufe 4 dazu (${pct(A.Satz4, 0)} Aufschlag auf Ausgaben über ${eur(A.Stufe4Monat)} im Monat je Erwachsenem): ${eur(r.s4)} mehr im Jahr.</p>`;
   teilenUpdate(r.vgl + r.entfall);
