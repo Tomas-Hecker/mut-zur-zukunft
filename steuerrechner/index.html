@@ -299,6 +299,16 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
 #sanierung .grp { font-size: .85rem; font-weight: 700; margin: 6px 0 -2px; }
 #sanierung .field input.auto { background: var(--sunk); }
 #sanierung .massn { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
+#sanierung .sbars { display: grid; gap: 12px; }
+#sanierung .srow .st { font-size: .95rem; margin-bottom: 4px; }
+#sanierung .srow.haupt .st { font-weight: 700; }
+#sanierung .strk { display: grid; grid-template-columns: 1fr 1fr; align-items: center; min-height: 30px; }
+#sanierung .sneg { display: flex; justify-content: flex-end; align-items: center; gap: 8px; border-right: 2px solid var(--fg); min-height: 30px; }
+#sanierung .spos { display: flex; justify-content: flex-start; align-items: center; gap: 8px; min-height: 30px; }
+#sanierung .strk i { display: block; height: 26px; border-radius: 3px; }
+#sanierung .strk i.gut { background: var(--good); } #sanierung .strk i.schlecht { background: var(--bad); }
+#sanierung .strk b { font-size: 1.05rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+#sanierung .strk b.gut { color: var(--good); } #sanierung .strk b.schlecht { color: var(--bad); }
 @media (max-width: 420px) { #sanierung .massn { grid-template-columns: 1fr; } }
 </style>
 <style id="sitenav-css">
@@ -613,7 +623,7 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
         <div class="tbl-wrap"><table class="san" id="s_wer"></table></div>
         <div><h3 id="s_mieterT">Mieter: Warmmiete im Monat</h3></div>
         <div class="tbl-wrap"><table class="san" id="s_mieter"></table></div>
-        <div><h3>Warmmiete über 20 Jahre</h3></div>
+        <div><h3 id="s_chartT">Was der Mieter im Monat mehr oder weniger zahlt</h3></div>
         <div id="s_chart"></div>
         <div class="legend" id="s_legend"></div>
         <p class="note" id="s_chartNote"></p>
@@ -2170,21 +2180,25 @@ function updateSan() {
     + z(`Gegenüber dem Haus, das mit der Reform bei ${traeger} bleibt`, "", "", sPlus((r1.wR - r.w0R) / M), sPlus((r4.wR - r.w0R) / M))
     + z("Nach 20 Jahren", "", r.uH > 0 ? "Aufschlag bleibt" : "–", "", r.uBr > 0 ? `Aufschlag sinkt auf ${sPlus(r.uBr / M)} bis Jahr 40` : "Aufschlag entfällt")
     + `</tbody>`;
-  // Grafik
-  const W = 640, H = 240, L = 54, R = 16, T = 12, B = 28;
-  const serien = [["w0", "Heute, ohne Sanierung", "var(--muted)"], ["w0R", `Reform, Haus bleibt bei ${traeger}`, "var(--s1)", "6 4"], ["wH", vH < -1 ? `Saniert, heutiges Recht (Vermieter legt ${sEur(-vH)} im Jahr drauf)` : "Saniert, heutiges Recht", "var(--s2)"], ["wR", "Saniert, Reform", "var(--s3)"]];
-  const vals = r.rows.flatMap(x => serien.map(([k]) => x[k] / M));
-  let lo = Math.min(...vals), hi = Math.max(...vals); const pad = Math.max(10, (hi - lo) * 0.15); lo -= pad; hi += pad;
-  const st = [10, 20, 25, 50, 100, 200, 250, 500, 1000].find(s => (hi - lo) / s <= 6) || 2000; lo = Math.floor(lo / st) * st; hi = Math.ceil(hi / st) * st;
-  const xx = t => L + (t - 1) / (J - 1) * (W - L - R), yy = y => T + (1 - (y - lo) / (hi - lo)) * (H - T - B);
-  let g = "";
-  for (let y = lo; y <= hi + 1e-9; y += st) g += `<line class="gridl" x1="${L}" x2="${W - R}" y1="${yy(y)}" y2="${yy(y)}"/><text x="${L - 6}" y="${yy(y) + 4}" text-anchor="end">${fmt(y)} €</text>`;
-  [1, 5, 10, 15, 20].forEach(t => g += `<text x="${xx(t)}" y="${H - 8}" text-anchor="middle">Jahr ${t}</text>`);
-  serien.forEach(([k, , c, d]) => g += `<path class="ln" d="${r.rows.map((x, i) => (i ? "L" : "M") + xx(x.t).toFixed(1) + "," + yy(x[k] / M).toFixed(1)).join("")}" style="stroke:${c}"${d ? ` stroke-dasharray="${d}"` : ""}/>`);
-  const r20 = r.rows[J - 1];
-  $("s_chartNote").textContent = `Grau und Rot gelten mit den Preisen von heute, Blau und Grün mit der Reform: Dort kosten Gas und Öl 50 % Mehrwertsteuer, Strom 5 %. Wer mit der Reform nicht saniert, zahlt also mehr fürs Heizen (blau). ${vH < -1 ? `Rot liegt nur deshalb niedrig, weil der Vermieter heute höchstens 0,50 € je m² für die Heizung umlegen darf und den Rest selbst trägt, ${sEur(-vH)} im Jahr. Deshalb saniert er heute meist nicht, und die Mieter bleiben auf der grauen Linie. ` : ""}Nach Jahr ${SAN.LaufT} ist die Wärmepumpe bezahlt, dann fällt ihr Aufschlag weg${r.uTr > 0 || r20.umlR > 0 ? ` und die Warmmiete mit der Reform sinkt auf ${sEur((r20.wR - r20.umlR + r.uBr) / M)}` : ""}${r.uH > 0 ? `; nach heutigem Recht bleibt der Aufschlag für immer` : ""}.`;
-  $("s_chart").innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Warmmiete im Monat über 20 Jahre: heute ohne Sanierung, saniert mit heutigem Recht und mit der Reform">${g}</svg>`;
-  $("s_legend").innerHTML = serien.map(([, t, c]) => `<span><i style="background:${c}"></i>${t}</span>`).join("");
+  // Grafik: was der Mieter im Monat mehr oder weniger zahlt als heute ohne Sanierung, Schnitt der 20 Jahre
+  {
+    const basis = mean("w0") / M;
+    const bars = [
+      ["Sanieren nach heutigem Recht", mean("wH") / M - basis],
+      [`Reform, aber nicht sanieren (${traeger} bleibt)`, r.w0R / M - basis],
+      ["Sanieren mit der Reform", mean("wR") / M - basis],
+    ];
+    const mx = Math.max(10, ...bars.map(b => Math.abs(b[1])));
+    $("s_chart").innerHTML = `<div class="sbars" role="img" aria-label="Was der Mieter im Monat mehr oder weniger zahlt als heute">${bars.map(([t, d], i) => {
+      const gut = d <= 0.5, w = Math.max(1, Math.abs(d) / mx * 70), lab = `<b class="${gut ? "gut" : "schlecht"}">${sPlus(d)}</b>`;
+      const bar = `<i class="${gut ? "gut" : "schlecht"}" style="width:${w.toFixed(1)}%"></i>`;
+      return `<div class="srow${i === 2 ? " haupt" : ""}"><div class="st">${t}</div><div class="strk"><div class="sneg">${d < 0 ? lab + bar : ""}</div><div class="spos">${d >= 0 ? bar + lab : ""}</div></div></div>`;
+    }).join("")}</div>`;
+    const dR = bars[2][1], dH = bars[0][1];
+    $("s_chartT").textContent = `${dR <= 0 ? `Mit der Reform zahlt der Mieter ${sEur(-dR)} im Monat weniger` : `Mit der Reform zahlt der Mieter ${sEur(dR)} im Monat mehr`}${dH > 0.5 ? `, heute ${sEur(dH)} mehr` : ""}`;
+    $("s_legend").innerHTML = "";
+    $("s_chartNote").textContent = `Warmmiete ${N > 1 ? `einer Wohnung mit ${fmt(qm)} m² ` : ""}im Schnitt der 20 Jahre, verglichen mit heute ohne Sanierung (${sEur(basis)} im Monat).${vH < -1 ? ` Nach heutigem Recht legt der Vermieter ${sEur(-vH)} im Jahr drauf, deshalb saniert er heute meist nicht.` : ""} Nach 20 Jahren ist die Wärmepumpe bezahlt: Nach heutigem Recht bleibt der Aufschlag, mit der Reform entfällt er.`;
+  }
   // Vermieter
   const sH = r.sum("vH"), sR = r.sum("vR");
   const kred = r.Tn > 0 ? `Wärmepumpe ${sEur(r.Tn)} über 20 Jahre` : "";
