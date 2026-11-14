@@ -76,7 +76,24 @@ for (const k of sortiert) { kum += H[k].w; if (kum > 0.99 * gesamt) { top1.sh +=
 // Haushalte mit mehr und weniger (gleicher Einkauf, mit Ausgleich)
 let nMehr = 0, nWen = 0, nAll = 0;
 for (const r of e.R) { if (sp.typ[r.i] === "kind_erw") continue; const m = (r.plus + ausgleich(r)) / 12; nAll += sp.w[r.i]; if (m > 0.5) nMehr += sp.w[r.i]; else if (m < -0.5) nWen += sp.w[r.i]; }
-const out = { stand: new Date().toISOString().slice(0, 10), wahl: WAHL, hausregel_alle: HAUS, mehr_prozent: +(100 * nMehr / nAll).toFixed(1), weniger_mio: +(nWen / 1e6).toFixed(1), probe_max_abweichung_eur: +maxFehler.toFixed(2), zehntel_grenzen_monat: grenzen, gesamt: tot,
+// Einkommen × Vermögen: 10 × 10 Felder (Zehntel nach Haushaltseinkommen und nach Nettovermögen)
+const sortW = H.map((h, k) => k).sort((a, b) => H[a].W - H[b].W);
+const vz = new Array(H.length); const vgrenzen = []; kum = 0; next = 1;
+for (const k of sortW) { vz[k] = Math.min(9, Math.floor(10 * kum / gesamt)); kum += H[k].w; if (next < 10 && kum >= next * gesamt / 10) { vgrenzen.push(Math.round(H[k].W)); next++; } }
+const leer = () => ({ hh: 0, n: 0, plus: 0, mehr: 0, wen: 0, ek: 0, W: 0, dl: 0, dlL: 0 });
+const M = Array.from({ length: 10 }, () => Array.from({ length: 10 }, leer));
+const randE = Array.from({ length: 10 }, leer), randV = Array.from({ length: 10 }, leer), alle = leer();
+H.forEach((h, k) => { for (const c of [M[zehntel[k]][vz[k]], randE[zehntel[k]], randV[vz[k]], alle]) {
+  c.hh += h.w; c.n++; c.plus += h.w * h.netto; c.ek += h.w * h.ek; c.W += h.w * h.W; c.dl += h.w * (h.sh - h.sr); c.dlL += h.w * (h.sh - h.srL);
+  if (h.netto > 0.5) c.mehr += h.w; else if (h.netto < -0.5) c.wen += h.w; } });
+const feld = c => ({ haushalte_mio: +(c.hh / 1e6).toFixed(3), faelle: c.n, plus_monat: c.hh ? Math.round(c.plus / c.hh) : null,
+  mehr_prozent: c.hh ? +(100 * c.mehr / c.hh).toFixed(1) : null, weniger_prozent: c.hh ? +(100 * c.wen / c.hh).toFixed(1) : null,
+  einkommen_monat: c.hh ? Math.round(c.ek / c.hh / 12) : null, vermoegen: c.hh ? Math.round(c.W / c.hh) : null,
+  // weniger Last in % des Einkommens (positiv = mehr Geld), mit Erbe im ersten Jahr und voll wirksam
+  entlastung_prozent: c.ek > 0 ? +(100 * c.dl / c.ek).toFixed(1) : null, entlastung_lang_prozent: c.ek > 0 ? +(100 * c.dlL / c.ek).toFixed(1) : null,
+  entlastung_monat: c.hh ? Math.round(c.dl / c.hh / 12) : null, entlastung_lang_monat: c.hh ? Math.round(c.dlL / c.hh / 12) : null });
+const matrix = { zeilen_einkommen_spalten_vermoegen: M.map(z => z.map(feld)), einkommen: randE.map(feld), vermoegen: randV.map(feld), alle: feld(alle), vermoegen_grenzen: vgrenzen };
+const out = { stand: new Date().toISOString().slice(0, 10), wahl: WAHL, hausregel_alle: HAUS, mehr_prozent: +(100 * nMehr / nAll).toFixed(1), weniger_mio: +(nWen / 1e6).toFixed(1), probe_max_abweichung_eur: +maxFehler.toFixed(2), zehntel_grenzen_monat: grenzen, matrix, gesamt: tot,
   oberstes_prozent: { anteil_heute: +(100 * top1.sh / (tot.heute_mrd * 1e9)).toFixed(1), anteil_reform: +(100 * top1.sr / (tot.reform_mrd * 1e9)).toFixed(1), anteil_reform_lang: +(100 * top1.srL / (tot.reform_lang_mrd * 1e9)).toFixed(1) },
   zehntel: z, vermoegen: vs };
 fs.writeFileSync(__dirname + "/steuerlast.json", JSON.stringify(out, null, 1));

@@ -8,14 +8,18 @@
   --bg: #f6f7f8; --surface: #ffffff; --fg: #15181c; --fg2: #4a515b; --muted: #6b7380; --line: #dfe3e8; --grid: #eceff2;
   --heute: #b8322a; --reform: #2fa463; --minus: #c9502f;
   --o1: #86b6ef; --o2: #3987e5; --o3: #184f95;
+  --g3: #0f7356; --g2: #45a982; --g1: #9fd8bf; --n0: #ebece9; --r1: #f5ae9a; --r2: #df6a51; --r3: #a52a1c;
+  --tx-hell: #ffffff; --tx-dunkel: #15181c;
   --display: "Space Grotesk", "Inter", system-ui, sans-serif; --text: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #121417; --surface: #1a1d21; --fg: #eef0f2; --fg2: #c2c7ce; --muted: #9aa1ab; --line: #2c3138; --grid: #24282e;
-  --heute: #c0382e; --reform: #38ad6b; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4; color-scheme: dark } }
+  --heute: #c0382e; --reform: #38ad6b; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4;
+  --g3: #5cc49a; --g2: #2f8a66; --g1: #1f5541; --n0: #2f3439; --r1: #6b2a20; --r2: #b34a37; --r3: #ee7f68; --tx-hell: #121417; --tx-dunkel: #eef0f2; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #121417; --surface: #1a1d21; --fg: #eef0f2; --fg2: #c2c7ce; --muted: #9aa1ab; --line: #2c3138; --grid: #24282e;
-  --heute: #c0382e; --reform: #38ad6b; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4; color-scheme: dark }
+  --heute: #c0382e; --reform: #38ad6b; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4;
+  --g3: #5cc49a; --g2: #2f8a66; --g1: #1f5541; --n0: #2f3439; --r1: #6b2a20; --r2: #b34a37; --r3: #ee7f68; --tx-hell: #121417; --tx-dunkel: #eef0f2; color-scheme: dark }
 * { box-sizing: border-box }
 body { background: var(--bg); color: var(--fg); font-family: var(--text); font-size: 15px; line-height: 1.55; margin: 0 }
 .wrap { max-width: 880px; margin: 0 auto; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px }
@@ -44,6 +48,11 @@ svg text { fill: var(--fg2); font-size: 12px; font-variant-numeric: tabular-nums
 svg .stark { fill: var(--fg); font-weight: 600 }
 svg .leise { fill: var(--muted) }
 .hinweis { font-size: 13px; color: var(--muted) }
+.skala { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; font-size: 12px; color: var(--fg2); max-width: 640px }
+.skala div { display: grid; gap: 4px; text-align: center }
+.skala i { display: block; height: 14px; border-radius: 3px }
+.skala-enden { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); max-width: 640px; margin-top: -8px }
+.zelle-text { font-size: 11px; font-weight: 600; pointer-events: none }
 details { border-top: 1px solid var(--line); padding-top: 10px; min-width: 0 }
 .karte > * { min-width: 0 }
 summary { cursor: pointer; font-weight: 600; font-size: 14px }
@@ -66,12 +75,27 @@ ul.quellen { margin: 0; padding-left: 18px; color: var(--fg2); font-size: 13px; 
     <p class="lead" id="mehrZeile"></p>
   </header>
 
+  <section class="karte" aria-labelledby="t0" id="feld">
+    <div class="steuer">
+      <h2 id="t0">Wer hat mehr Geld, wer weniger: Einkommen und Vermögen zusammen</h2>
+      <div class="segment" role="group" aria-label="Erbschaft rechnen">
+        <button type="button" data-erb="0" aria-pressed="true">Erbe im ersten Jahr</button>
+        <button type="button" data-erb="1" aria-pressed="false">Erbe voll wirksam</button>
+      </div>
+    </div>
+    <p>Jedes Feld ist eine Gruppe von Haushalten. Nach rechts steigt das Einkommen, nach oben das Vermögen. Die Farbe zeigt, wie viel Prozent ihres Einkommens die Haushalte im Mittel mehr oder weniger haben als heute.</p>
+    <div class="skala" id="skala"></div>
+    <div class="skala-enden"><span>← mehr Geld als heute</span><span>weniger Geld als heute →</span></div>
+    <div class="diagramm" id="d0"></div>
+    <p class="hinweis">Zehntel nach Haushaltseinkommen vor Steuern (Spalten) und nach Nettovermögen (Zeilen); jedes Zehntel hat 4,1 Mio. Haushalte, die Felder sind unterschiedlich groß. „Alle“ ist der Mittelwert der ganzen Zeile oder Spalte. Gerechnet bei gleichem Einkauf wie heute, mit dem gewählten Ausgleich, die Erbschaft als erwartete Steuer im Jahr. Auch in grünen Feldern haben einzelne Haushalte weniger; die Zahl steht beim Antippen. Schraffierte Felder: zu wenige Haushalte in der Stichprobe für eine Aussage.</p>
+  </section>
+
   <section class="karte" aria-labelledby="t1">
     <div class="steuer">
       <h2 id="t1">Anteil am Einkommen nach Einkommen</h2>
       <div class="segment" role="group" aria-label="Erbschaft rechnen">
-        <button type="button" id="erbStart" aria-pressed="true">Erbe im ersten Jahr</button>
-        <button type="button" id="erbLang" aria-pressed="false">Erbe voll wirksam</button>
+        <button type="button" data-erb="0" aria-pressed="true">Erbe im ersten Jahr</button>
+        <button type="button" data-erb="1" aria-pressed="false">Erbe voll wirksam</button>
       </div>
     </div>
     <div class="legende"><span><i style="background:var(--heute)"></i>heute</span><span><i style="background:var(--reform)"></i>mit der Reform</span></div>
@@ -175,6 +199,67 @@ function hantel(ziel, zeilen, beschrift) {
   ziel.replaceChildren(svg);
 }
 
+// Farbfeld Einkommen × Vermögen: Stufen in Prozent des Einkommens (positiv = mehr Geld)
+const STUFEN = [
+  { ab: 6, farbe: "var(--g3)", text: "var(--tx-hell)", name: "6 % und mehr" },
+  { ab: 3, farbe: "var(--g2)", text: "var(--tx-dunkel)", name: "3 bis 6 %" },
+  { ab: 1, farbe: "var(--g1)", text: "var(--tx-dunkel)", name: "1 bis 3 %" },
+  { ab: -1, farbe: "var(--n0)", text: "var(--tx-dunkel)", name: "fast gleich" },
+  { ab: -3, farbe: "var(--r1)", text: "var(--tx-dunkel)", name: "1 bis 3 %" },
+  { ab: -6, farbe: "var(--r2)", text: "var(--tx-dunkel)", name: "3 bis 6 %" },
+  { ab: -Infinity, farbe: "var(--r3)", text: "var(--tx-hell)", name: "6 % und mehr" },
+];
+const stufe = v => STUFEN.find(s => v >= s.ab);
+const MIN_FAELLE = 30;
+function geld(x) { const r = x < 1000 ? Math.round(x / 100) * 100 : x < 100000 ? Math.round(x / 1000) * 1000 : Math.round(x / 10000) * 10000; return de(r) + " €"; }
+function feld() {
+  const m = D.matrix, M = m.zeilen_einkommen_spalten_vermoegen, g = m.vermoegen_grenzen;
+  const W = Math.max(320, Math.round($("d0").clientWidth || 800)), eng = W < 600;
+  const links = eng ? 34 : 172, oben = eng ? 48 : 40, lucke = 8, unten = 30;
+  const zw = (W - links - lucke) / 11, zh = eng ? Math.max(24, zw) : 34;
+  const H = oben + 11 * zh + lucke + unten;
+  const wert = c => lang ? c.entlastung_lang_prozent : c.entlastung_prozent;
+  const vText = v => (v > 0.05 ? "+" : v < -0.05 ? "−" : "") + de(Math.abs(v), eng ? 0 : 1);
+  const vZeile = j => j === 0 ? "bis " + geld(g[0]) : j === 9 ? "über " + geld(g[8]) : geld(g[j - 1]) + " bis " + geld(g[j]);
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Mehr oder weniger Geld als heute in Prozent des Einkommens, nach Einkommens- und Vermögenszehntel" });
+  const defs = el("defs"), pat = el("pattern", { id: "schraffur", width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" });
+  pat.append(el("line", { x1: 0, y1: 0, x2: 0, y2: 6, stroke: "var(--line)", "stroke-width": 2 })); defs.append(pat); svg.append(defs);
+  const x = e => e < 10 ? links + e * zw : links + 10 * zw + lucke;
+  const y = v => v < 10 ? oben + (9 - v) * zh : oben + 10 * zh + lucke;
+  const zelle = (e, v, c, tipKopf) => {
+    const g0 = el("g"); const zu = !c || c.faelle < MIN_FAELLE || wert(c) == null;
+    const st = zu ? null : stufe(wert(c));
+    const r = el("rect", { x: x(e) + 1.5, y: y(v) + 1.5, width: zw - 3, height: zh - 3, rx: 3, fill: zu ? "url(#schraffur)" : st.farbe, ...(zu ? { stroke: "var(--line)", "stroke-width": 1 } : {}) });
+    g0.append(r);
+    if (!zu && zw >= 22) g0.append(el("text", { x: x(e) + zw / 2, y: y(v) + zh / 2 + 4, "text-anchor": "middle", class: "zelle-text", style: `fill:${st.text}` }, vText(wert(c))));
+    g0.addEventListener("pointermove", ev => zeigeTip(ev, zu ? `<b>${tipKopf}</b><br>zu wenige Haushalte in der Stichprobe` :
+      `<b>${tipKopf}</b><br>${de(c.haushalte_mio, 2)} Mio. Haushalte<br>Einkommen ${de(c.einkommen_monat)} € im Monat, Vermögen ${geld(c.vermoegen)}<br>im Mittel ${vText(wert(c))} % des Einkommens (${(lang ? c.entlastung_lang_monat : c.entlastung_monat) >= 0 ? "+" : "−"}${de(Math.abs(lang ? c.entlastung_lang_monat : c.entlastung_monat))} € im Monat)<br>${de(c.mehr_prozent, 0)} % haben mehr, ${de(c.weniger_prozent, 0)} % weniger`));
+    g0.addEventListener("pointerleave", versteckeTip);
+    svg.append(g0);
+  };
+  for (let e = 0; e < 10; e++) for (let v = 0; v < 10; v++) zelle(e, v, M[e][v], `Einkommen ${e + 1}. Zehntel, Vermögen ${v + 1}. Zehntel`);
+  for (let e = 0; e < 10; e++) zelle(e, 10, m.einkommen[e], `Einkommen ${e + 1}. Zehntel, alle Vermögen`);
+  for (let v = 0; v < 10; v++) zelle(10, v, m.vermoegen[v], `Vermögen ${v + 1}. Zehntel, alle Einkommen`);
+  zelle(10, 10, m.alle, "Alle Haushalte");
+  // Achsen
+  for (let e = 0; e < 11; e++) {
+    svg.append(el("text", { x: x(e) + zw / 2, y: oben - 22, "text-anchor": "middle", class: "stark" }, e < 10 ? (e + 1) + "." : "alle"));
+    if (!eng && e < 10) svg.append(el("text", { x: x(e) + zw / 2, y: oben - 7, "text-anchor": "middle", class: "leise", style: "font-size:11px" }, de(m.einkommen[e].einkommen_monat) + " €"));
+  }
+  for (let v = 0; v < 11; v++) {
+    const yy = y(v) + zh / 2 + 4;
+    if (eng) svg.append(el("text", { x: links - 6, y: yy, "text-anchor": "end", class: "stark" }, v < 10 ? (v + 1) + "." : "alle"));
+    else {
+      svg.append(el("text", { x: 0, y: yy, class: "stark" }, v < 10 ? (v + 1) + "." : "alle"));
+      if (v < 10) svg.append(el("text", { x: 30, y: yy, class: "leise", style: "font-size:11px" }, vZeile(v)));
+    }
+  }
+  svg.append(el("text", { x: links + 5 * zw, y: H - 6, "text-anchor": "middle", class: "leise" }, "Einkommen: Zehntel, mittleres Einkommen im Monat →"));
+  svg.append(el("text", { x: 0, y: 12, class: "leise" }, eng ? "Vermögen ↑" : "Vermögen ↑ (Zehntel)"));
+  $("d0").replaceChildren(svg);
+  $("skala").innerHTML = STUFEN.map(s => `<div><i style="background:${s.farbe}"></i>${s.name}</div>`).join("");
+}
+
 function anteile() {
   const k = lang ? "anteil_reform_lang" : "anteil_reform";
   const s = (a, f) => a.reduce((x, z) => x + z[f], 0);
@@ -217,15 +302,16 @@ function tabelle(ziel, zeilen, erste) {
 }
 
 function zeichne() {
+  feld();
   hantel($("d1"), D.zehntel, z => de(z.einkommen_monat) + " €");
   hantel($("d3"), D.vermoegen, z => de(z.einkommen_monat) + " €");
   anteile();
   tabelle($("tab1"), D.zehntel, "Zehntel");
   tabelle($("tab2"), D.vermoegen, "Vermögen");
 }
-function setze(l) { lang = l; $("erbStart").setAttribute("aria-pressed", String(!l)); $("erbLang").setAttribute("aria-pressed", String(l)); zeichne(); }
-$("erbStart").addEventListener("click", () => setze(false));
-$("erbLang").addEventListener("click", () => setze(true));
+const erbKnoepfe = [...document.querySelectorAll("[data-erb]")];
+function setze(l) { lang = l; for (const b of erbKnoepfe) b.setAttribute("aria-pressed", String((b.dataset.erb === "1") === l)); zeichne(); }
+for (const b of erbKnoepfe) b.addEventListener("click", () => setze(b.dataset.erb === "1"));
 zeichne();
 let zuletzt = innerWidth;
 addEventListener("resize", () => { if (Math.abs(innerWidth - zuletzt) > 20) { zuletzt = innerWidth; zeichne(); } });
