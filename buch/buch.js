@@ -99,7 +99,7 @@
 (() => {
   const BASE = "https://tomas-hecker.github.io/mut-zur-zukunft/";
   const seite = location.pathname.split("/").pop() || "index.html";
-  document.querySelectorAll('.rechnerlink a[href^="' + BASE + '"]').forEach(a => {
+  document.querySelectorAll('.rechnerlink a[href^="' + BASE + '"], a.rl-url[href^="' + BASE + '"]').forEach(a => {
     const u = new URL(a.getAttribute("href"));
     let h = a.closest(".rechnerlink"), id = "";
     for (let el = h; el && !id; el = el.previousElementSibling || el.parentElement) {   // nächste Überschrift davor

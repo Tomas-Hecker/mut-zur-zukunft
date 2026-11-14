@@ -424,7 +424,7 @@ h1,h2,h3{break-after:avoid}
       <div class="rule"><b>Alle Einkommen gleich</b><span>Lohn, Gewinn, Zinsen, Dividenden, Mieten, Kursgewinne und Erbschaften folgen denselben Regeln und demselben Tarif. Keine Sonderrechte für bestimmte Einkunftsarten.</span></div>
       <div class="rule"><b>Besteuert wird, was ins Private fließt</b><span>Was investiert bleibt und für die Wirtschaft arbeitet, bleibt vorerst steuerfrei. Erst der private Verbrauch wird besteuert.</span></div>
       <div class="rule"><b>Beim Tod wird abgerechnet</b><span>Was bis zum Lebensende unversteuert investiert blieb, gehört zu 50 % der Gemeinschaft. Frei bleiben 400.000 € je Nachlass für Kinder und Enkel, Ehegatten erben frei bis zum zweiten Erbgang. Die Erben verwalten diesen Anteil, solange er investiert bleibt.</span></div>
-      <div class="rule"><b>Das Existenzminimum ist immer frei</b><span>Bis 14.400 € Ausgaben im Jahr (1.200 € im Monat) je Erwachsenem und 589 € je Kind fällt keine Steuer an, Beiträge gibt es außer der Prämie der Krankenkasse keine mehr, der Grundbedarf ist frei von Mehrwertsteuer. Das gilt für jedes Einkommen, auch für ein Erbe.</span></div>
+      <div class="rule"><b>Das Existenzminimum ist immer frei</b><span>Bis 13.800 € Ausgaben im Jahr (1.150 € im Monat) je Erwachsenem und 589 € je Kind fällt keine Steuer an, Beiträge gibt es außer der Prämie der Krankenkasse keine mehr, der Grundbedarf ist frei von Mehrwertsteuer. Das gilt für jedes Einkommen, auch für ein Erbe.</span></div>
     </div>
   </div>
 </section>
@@ -678,7 +678,7 @@ h1,h2,h3{break-after:avoid}
         <p>Im Vorschlag zählt nur noch, was jemand für sich verbraucht. Wer viel verdient und viel ausgibt, zahlt viel. Wer verdient und investiert, schafft Arbeitsplätze und zahlt erst, wenn er das Geld privat nutzt, spätestens beim Erbgang.</p>
       </div></details>
       <details><summary>Wie hoch ist der Steuersatz?</summary><div>
-        <p>Bis zu Ausgaben von 1.200 € im Monat je Erwachsenem (und 589 € je Kind) bleibt alles frei. Darüber gibt es nur einen Satz: Von 100 €, die ins Private fließen, gehen 50 € an die Steuer, für 50 € wird eingekauft. Das ist ein Aufschlag von 100 % auf die Ausgaben. Der Freibetrag ist an das Existenzminimum gekoppelt und steigt mit jedem Punkt Mehrwertsteuer über 50 % um 32 € im Jahr.</p>
+        <p>Bis zu Ausgaben von 1.150 € im Monat je Erwachsenem (und 589 € je Kind) bleibt alles frei. Darüber gibt es nur einen Satz: Von 100 €, die ins Private fließen, gehen 50 € an die Steuer, für 50 € wird eingekauft. Das ist ein Aufschlag von 100 % auf die Ausgaben. Der Freibetrag ist an das Existenzminimum gekoppelt und steigt mit jedem Punkt Mehrwertsteuer über 50 % um 32 € im Jahr.</p>
         <p>Bezogen auf das, was insgesamt ins Private fließt (Ausgaben plus Steuer), also wie im Preis, sind das 50 %, nie mehr. Beides ist rechnerisch dasselbe. Bei Paaren werden die Ausgaben wie beim Ehegattensplitting auf beide verteilt.</p>
       </div></details>
       <details><summary>Was ändert sich bei Krankenkasse, Arbeitslosengeld und Rente?</summary><div>
@@ -782,7 +782,9 @@ const ANNAHMEN = {
   BBGKV: 69750, BBGRV: 101400, Mini: 603, Midi: 2000, FreiGrenze: 1000,   // Version 24: Verdienst im Rentenalter und Minijob neben voller Arbeit bis 1.000 € im Monat frei
   // Neues System: Ausgabensteuer je Erwachsenem, Satz auf die Ausgaben über dem Existenzminimum
   // Modell 2.4 (Stand 08.11.2026, 11:26): im Preis 35 / 45 / 50 %, Aufschlag 53,8 / 81,8 / 100 %; Stufe 1 bis 2.000 €, Stufe 2 bis 3.000 € Ausgaben im Monat
-  Satz1: 0, Grenze1: 2052, Satz2: 50 / 50, Grenze2: 2052, Satz3: 50 / 50,   // Version 29: frei bis 14.400 € je Erwachsenem im Jahr (1.200 € im Monat), darüber 50 %
+  Satz1: 0, Grenze1: 1452, Satz2: 50 / 50, Grenze2: 1452, Satz3: 50 / 50,   // Version 32: frei bis 13.800 € je Erwachsenem im Jahr (1.150 € im Monat), darüber 50 %
+  FISIM: 35.5,   // Version 32: unterstellte Bankgebühren im Konsum (VGR 2025), zahlt kein Haushalt bar, daher nicht in der Basis der Ausgabensteuer
+  AusgAn: 1, AusgBonusEur: 10, AusgRentKap: 300,   // Version 32: Ausgleich 10 € im Monat je Erwachsenem; heutige Rentner bekommen ihr Minus bis 300 € im Monat ersetzt
   FBKopp: 32, FBKoppMrd: 2,   // Freibetrag steigt mit jedem Punkt Mehrwertsteuer über 50 % um 32 € im Jahr, kostet je Punkt 2,09 Mrd. € (Zukunftsplan B13)
   // Stufe 4 (125 % Aufschlag über 5.000 € im Monat) ist im Vorschlag aus; mit Stufe4Jahre > 0 wirkt sie in den ersten Jahren
   Stufe4Monat: 5000, Grenze3: 47652, Satz4: 1.25, Stufe4Jahre: 0,   // keine Stufe 4: höchstens 50 % Steuer (Tomas, November 2026)
@@ -822,7 +824,7 @@ const ANNAHMEN = {
     SubvAbbau: 1,           // Kerosin Inland 0,6 und Agrardiesel 0,4; das Dieselprivileg endet schon im Gesamtpaket
     // Version 11 (Tomas, 11.11.2026): Mehrwertsteuer bleibt bei 50 %; Einsparungen (SecFH, SecAuto, SecGruend) und für den Rest ein Sicherheitszuschlag
     // auf die Ausgabensteuer, ausgewiesen wie der Soli (Blatt Sicherheit, SecZStart, SecZLang)
-    SichPkt: 0, GSMwStJ: 1010, Grenze1: 2052, Grenze2: 2052,
+    SichPkt: 0, GSMwStJ: 1010, Grenze1: 1452, Grenze2: 1452,
   },
   Verteidigung: 0, SubvAbbau: 0, SichPkt: 0, SecZ: 0,
   FinHilfen: 127.3, SecFH: 0.2, SecAuto: 0, SecGruend: 0,   // Neuwagen und Gründungszuschuss stehen schon in ihrer endgültigen Form im Modell
@@ -1134,12 +1136,18 @@ function haushalt(h) {
   // Version 28: mehr Geld bei gleichem Einkauf (vgl, Euro im Jahr) und Kaufkraft, wenn alles ausgegeben wird (kk)
   const netto = verf - unterhalt;
   const atg = stZ(Math.max(0, konsum + pw + mietw - alt - frei)) - ausgUeb;
-  const bv = -(sumV - sumH - ausg + ausgUeb) + mwstNeu - mwst;
-  const vgl = bv - pw - atg;
+  let bv = -(sumV - sumH - ausg + ausgUeb) + mwstNeu - mwst;
+  let vgl = bv - pw - atg;
+  // Version 32: Ausgleich, 10 € im Monat je Erwachsenem; wer beim Start schon Rente bezieht, bekommt sein Minus bis 300 € im Monat ersetzt
+  const ausgB = A.AusgAn ? 12 * A.AusgBonusEur * h.erw : 0;
+  const ausgR = A.AusgAn && h.bs && h._cap !== false ? Math.min(12 * A.AusgRentKap, Math.max(0, -vgl)) : 0;
+  const ausgl = ausgB + ausgR;
+  if (ausgl > 0) { gut += ausgl; vorschlag.gut = -gut; bv += ausgl; vgl += ausgl; }
+  const sumV2 = sum(vorschlag);
   const pq = konsum ? pw / konsum : 0;
   const kx = xtInv(netto + alt + ausgUeb + bv, h.erw, frei + alt - mietw);
   const kk = netto + alt > 0 ? kx / ((1 + pq) * (netto + alt)) - 1 : 0;
-  return { heute, vorschlag, sumH, sumV, korb, pw, mb, atg, bv, vgl, pq, kk, einkommen, konsum, verf, existenz, mehr, rentFrei, frei, mietw, ueber, ausg, fz, secZB: secAdd(ueber), secKB, gb, fbSum, senkSum, mwstNeu, mwst, alt, ausgUeb, s4, kg, sv, svRente, svNeu, unterhalt, entfall,
+  return { heute, vorschlag, sumH, sumV: sumV2, ausgB, ausgR, korb, pw, mb, atg, bv, vgl, pq, kk, einkommen, konsum, verf, existenz, mehr, rentFrei, frei, mietw, ueber, ausg, fz, secZB: secAdd(ueber), secKB, gb, fbSum, senkSum, mwstNeu, mwst, alt, ausgUeb, s4, kg, sv, svRente, svNeu, unterhalt, entfall,
     praemie, pvPriv, ausSum, agRP, svRP, rentePlus, gsPlus, bjPlus, konsumV, anr, x3s, gut, bsz, njThr, njFrei, njAnt };
 }
 
@@ -1158,7 +1166,7 @@ function normsinv(p) {
 const Z = Array.from({ length: 1000 }, (_, i) => normsinv((i + 0.5) / 1000));
 
 function aufkommen(mitMiete) { // Ausgabensteuer über die Konsumverteilung, Mrd. €
-  const avg = (A.Konsum - A.Miete + (mitMiete ? A.Nutzwert : 0) + A.KonsMehr) * 1e9 / (A.Erw * 1e6);
+  const avg = (A.Konsum - A.Miete - (A.FISIM || 0) + (mitMiete ? A.Nutzwert : 0) + A.KonsMehr) * 1e9 / (A.Erw * 1e6);
   const exm = A.GFB + A.Kinder * (A.KIDA + 12 * A.KIDM) / A.Erw;
   const mu = Math.log(avg) - A.Sigma * A.Sigma / 2;
   let s = 0;
@@ -1167,7 +1175,7 @@ function aufkommen(mitMiete) { // Ausgabensteuer über die Konsumverteilung, Mrd
 }
 
 function stufe4(mitMiete) { // Mehreinnahmen der befristeten Stufe 4, Mrd. €
-  const avg = (A.Konsum - A.Miete + (mitMiete ? A.Nutzwert : 0) + A.KonsMehr) * 1e9 / (A.Erw * 1e6);
+  const avg = (A.Konsum - A.Miete - (A.FISIM || 0) + (mitMiete ? A.Nutzwert : 0) + A.KonsMehr) * 1e9 / (A.Erw * 1e6);
   const exm = A.GFB + A.Kinder * (A.KIDA + 12 * A.KIDM) / A.Erw, mu = Math.log(avg) - A.Sigma * A.Sigma / 2;
   let s = 0;
   for (const z of Z) s += (A.Satz4 - A.Satz3) * Math.max(0, Math.max(0, Math.exp(mu + A.Sigma * z) - exm) - A.Grenze3);
@@ -1657,7 +1665,7 @@ function updateHH() {
   });
   $("legend").innerHTML = "";
   // Tabelle
-  const zeilen = [...KAT, ["gut", "Gegengerechnet: Arbeitgeberanteile als Lohn, höhere Rente oder Grundsicherung, Obergrenze, Bestandsschutz"]].filter(([k]) => k !== "gut" || r.gut > 0.5).map(([k, n]) => `<tr><td>${n}</td><td>${eur(r.heute[k])}</td><td>${k === "gut" ? "−" : ""}${eur(Math.abs(r.vorschlag[k]))}</td><td class="${r.vorschlag[k] - r.heute[k] < -0.5 ? "pos" : r.vorschlag[k] - r.heute[k] > 0.5 ? "neg" : ""}">${sign(r.vorschlag[k] - r.heute[k])} €</td></tr>`).join("");
+  const zeilen = [...KAT, ["gut", "Gegengerechnet: Arbeitgeberanteile als Lohn, höhere Rente oder Grundsicherung, Obergrenze, Bestandsschutz, Ausgleich"]].filter(([k]) => k !== "gut" || r.gut > 0.5).map(([k, n]) => `<tr><td>${n}</td><td>${eur(r.heute[k])}</td><td>${k === "gut" ? "−" : ""}${eur(Math.abs(r.vorschlag[k]))}</td><td class="${r.vorschlag[k] - r.heute[k] < -0.5 ? "pos" : r.vorschlag[k] - r.heute[k] > 0.5 ? "neg" : ""}">${sign(r.vorschlag[k] - r.heute[k])} €</td></tr>`).join("");
   $("hhTable").innerHTML = `<thead><tr><th>Euro pro Jahr</th><th>Heute</th><th>Vorschlag</th><th>Differenz</th></tr></thead><tbody>${zeilen}
     <tr class="sum"><td>Zusammen</td><td>${eur(r.sumH)}</td><td>${eur(r.sumV)}</td><td class="${diff < -0.5 ? "pos" : diff > 0.5 ? "neg" : ""}">${sign(diff)} €</td></tr>
     ${r.unterhalt > 0 ? `<tr><td>Unterhalt für Kinder in Studium oder Ausbildung</td><td>${eur(r.unterhalt)}</td><td>${eur(r.unterhalt - r.entfall)}</td><td class="${r.entfall > 0.5 ? "pos" : ""}">${sign(-r.entfall)} €</td></tr>
@@ -1687,6 +1695,7 @@ function updateHH() {
     if (r.rentePlus > 0.5) t.push(`die Rentenversicherung zahlt ihren Anteil an der Krankenkasse als höhere Rente aus: ${eur(r.rentePlus)}`);
     if (r.gsPlus > 0.5) t.push(r.bjPlus > 0.5 ? `statt der Grundsicherung gibt es den Lohn im Bürgerjob, ${eur((h.transfer + r.gsPlus) / h.erw / 12)} im Monat: ${eur(r.gsPlus)} mehr (Prämie, Ausgleich der Mehrwertsteuer und ${eur(r.bjPlus / h.erw / 12)} im Monat für die Arbeit)` : `die Grundsicherung steigt um die Prämie und den Ausgleich der Mehrwertsteuer: ${eur(r.gsPlus)}`);
     if (r.bsz > 0.5) t.push(`Bestandsschutz: Wer beim Start schon Rente bezieht, kann mit seiner Rente so viel einkaufen wie heute. Der Zuschlag zur Rente beträgt ${eur(r.bsz)} im Jahr; er wird beim Start einmal festgestellt und sinkt bei jeder Rentenerhöhung um die Hälfte der Erhöhung${r.fz > 1 ? `. Den Sicherheitszuschlag zahlen alle` : ``}`);
+    if (r.ausgB + r.ausgR > 0.5) t.push(`Ausgleich: ${eur(A.AusgBonusEur)} im Monat für ${h.erw === 2 ? "jeden Erwachsenen" : "jeden Erwachsenen"}${r.ausgR > 0.5 ? `, dazu für heutige Rentner das Minus bis ${eur(A.AusgRentKap)} im Monat, solange sie leben` : ""}: ${eur(r.ausgB + r.ausgR)} im Jahr`);
     if (r.anr > 0.5) t.push(`Steuer und Beiträge zusammen sind auf ${pct(A.AnrGrenze, 0)} je Euro Lohn begrenzt; angerechnet werden ${eur(r.anr)}`);
     st.push(`<li><div><b>Gegengerechnet: ${eur(r.gut)}</b><div class="why">${t.join("; ")}.</div></div></li>`); }
   st.push(`<li><div><b>Weg fallen ${eur(r.heute.est + r.heute.kap)}${h.pkv > 0 ? " und die private Krankenversicherung" : ""}</b><div class="why">Einkommensteuer, Soli, Abgeltungsteuer und Körperschaftsteuer gibt es nicht mehr. Was nicht privat ausgegeben wird, bleibt steuerfrei, bis es ins Private fließt oder vererbt wird.</div></div></li>`);
