@@ -784,7 +784,13 @@ const ANNAHMEN = {
   // Modell 2.4 (Stand 08.11.2026, 11:26): im Preis 35 / 45 / 50 %, Aufschlag 53,8 / 81,8 / 100 %; Stufe 1 bis 2.000 €, Stufe 2 bis 3.000 € Ausgaben im Monat
   Satz1: 0, Grenze1: 1452, Satz2: 50 / 50, Grenze2: 1452, Satz3: 50 / 50,   // Version 32: frei bis 13.800 € je Erwachsenem im Jahr (1.150 € im Monat), darüber 50 %
   FISIM: 35.5,   // Version 32: unterstellte Bankgebühren im Konsum (VGR 2025), zahlt kein Haushalt bar, daher nicht in der Basis der Ausgabensteuer
-  AusgAn: 1, AusgBonusEur: 10, AusgRentKap: 300,   // Version 32: Ausgleich 10 € im Monat je Erwachsenem; heutige Rentner bekommen ihr Minus bis 300 € im Monat ersetzt
+  AusgAn: 1, AusgBonusEur: 10, AusgRentKap: 300,
+  // Version 32, Rechenkern 2.8: Ausgleich in der Gesamtrechnung (Blatt Ausgleich) und Verhalten der Haushalte (Blatt Verhalten)
+  AusgRent0: 15.528, AusgRentA: [0.82356, 0.59654, 0.37226, 0.18726, 0.06745, 0.01475, 0.00186, 0.00029, 0.00004], AusgBonusPlus: 0.743,
+  SparAn: 1, Spar1: 3.1, Spar3: 5.1, SparVoll: 7.1, Spar2045: 1.5,
+  HRAn: 1, HRNurNeu: 1, HRSatz: 0.02, HRW: 72.999, HRStart: 6.731, HRMietQ: 0.0348, HRWachs: 0.034, HRWeiter: 0.025, HRErbe: 0.04, HRVerkR: 0.5, HRVerkE: 0.6, HRPlus: 0.428,
+  VhAn: 1, VhPlus0: 110.644, VhMinus0: 88.723, VhPlusSofort: 0.5, VhSteuerM: 0.584, VhJahreRuhe: 23, VhAusRuhe: 0.05, VhErbM: 0.05, VhSteuerR: 0.379, VhStaatM: 0.05,
+  VhMinusSofort: 0.25, VhMinusSpaeter: 0.04, VhErbW: 0.04, VhSteuerW: 0.6, VhStaatW: 0.125,   // Version 32: Ausgleich 10 € im Monat je Erwachsenem; heutige Rentner bekommen ihr Minus bis 300 € im Monat ersetzt
   FBKopp: 32, FBKoppMrd: 2,   // Freibetrag steigt mit jedem Punkt Mehrwertsteuer über 50 % um 32 € im Jahr, kostet je Punkt 2,09 Mrd. € (Zukunftsplan B13)
   // Stufe 4 (125 % Aufschlag über 5.000 € im Monat) ist im Vorschlag aus; mit Stufe4Jahre > 0 wirkt sie in den ersten Jahren
   Stufe4Monat: 5000, Grenze3: 47652, Satz4: 1.25, Stufe4Jahre: 0,   // keine Stufe 4: höchstens 50 % Steuer (Tomas, November 2026)
@@ -792,7 +798,7 @@ const ANNAHMEN = {
   TaperEnd: 72000,          // dieser Freibetrag ist bei 6.000 € im Monat aufgebraucht
   // Grundschutz aus der Steuer (Modell 2.4)
   KVAus: 0.0875,            // Arbeitgeberanteil Krankenkasse, wird als Lohn ausgezahlt (bis zur heutigen Grenze)
-  KVPausch: 363.6, KVPraem: 600, ExMinPlus: 444, BJPlus: 2400, BJArb: 0.75, KVBZ: 14.5, BGKV: 10.5, ExMinPraem: 4.8, PVPriv: 0.10,
+  KVPausch: 363.6, KVPraem: 600, ExMinPlus: 444, BJPlus: 2400, BJArb: 0.75, KVBZ: 14.5, BGKV: 10.5, ExMinPraem: 5.1, PVPriv: 0.10,
   AVKost: 45, ALGLuecke: 2.5, BodenKost: 15, GSAlter: 7, AnrGrenze: 0.5, AnrKost: 12, GSMwStJ: 1010, GSMwStN: 8, BeamtAusgl: 8.9, BZJahre: 17.2, BeamtKI: 0.07, BeamtAktiv: 0.641,   // Ausgleichszulage nur für heutige Beamte und Pensionäre, aufgebraucht nach rund 17 Jahren
   EgAn: 1, EgKost: 0.55,   // Elterngeld besser (Tomas, 08.11.2026)
   StartAn: 1, StartN: 0.2, StartGrund: 15000, StartSatz: 0.20, StartAb: 30000, StartLohn: 53000,
@@ -1394,6 +1400,48 @@ const zulageBeamte = k => A.BeamtAusgl * Math.max(0, 1 - (k - 1) / A.BZJahre) **
 const stundungStart = miet => miet * A.Stundung * (A.StundRent * (1 - A.HausFrei) + (1 - A.StundRent) * (1 - A.HausFrei * A.HFBez));
 // Zins für Bundesanleihen im Reformjahr y (1 = 2028): linear von ZinsStart bis Zins nach ZinsJahre Jahren
 const zinsJ = y => A.ZinsStart + (A.Zins - A.ZinsStart) * Math.min(1, (y - 1) / A.ZinsJahre);
+// Version 32 (Rechenkern 2.8): Ausgleich für heutige Rentner, solange sie leben; Hausregel für Käufe nach dem Start; neue Einsparungen; Verhalten
+function rentnerAnteil(n) { const t = [1, ...A.AusgRentA], j = Math.floor(n / 5); return j >= t.length - 1 ? 0 : t[j] + (t[j + 1] - t[j]) * (n - 5 * j) / 5; }
+function hausregelPfad(ny) {
+  const nn = A.HRNurNeu, f0 = A.HRSatz / A.HRMietQ, rest = 1 - A.HFRent - A.HFErw, g = A.HRWachs, h = A.HRWeiter;
+  const kR = [A.HFR10, A.HFR20, A.HFR30], kE = [A.HFE10, A.HFE20, A.HFE30, A.HFE40];
+  const rho = a => a < 50 ? f0 * Math.exp(-g * a) : 0;
+  let koh = nn ? {} : { 0: rest }, O = nn ? rest : 0, M = 0; const teile = [];
+  for (let i = 0; i < ny; i++) {
+    const fr = freiAnteil(i, kR), fe = freiAnteil(i, kE);
+    const as = nn ? 0 : A.HFErw * (1 - A.HFBez) * fe * (1 - rho(i));
+    teile.push([as, Object.entries(koh).reduce((x, [c, m]) => x + m * (1 - rho(i - c)), 0)]);
+    const dR = A.HFRent * (fr - freiAnteil(i + 1, kR)), dE = A.HFErw * (fe - freiAnteil(i + 1, kE));
+    const neu = A.HRVerkR * dR + A.HRVerkE * dE + A.HRErbe * M + h * (Object.values(koh).reduce((x, m) => x + m, 0) + O);
+    M = M * (1 - A.HRErbe) + (1 - A.HRVerkR) * dR + (1 - A.HRVerkE) * dE;
+    O = O * (1 - h);
+    const k2 = {}; for (const [c, m] of Object.entries(koh)) k2[c] = m * (1 - h); k2[i + 1] = (k2[i + 1] || 0) + neu; koh = k2;
+  }
+  const sk = nn ? 1 : A.HRStart / (A.HRW * (teile[0][0] + teile[0][1]));
+  return teile.map(([a, l], i) => A.HRAn * A.HRW * (a * sk + l * (i === 0 ? sk : 1)));
+}
+function ausgleichPfad(ny) {
+  const hr = hausregelPfad(ny), bon = A.AusgAn * A.Erw * A.AusgBonusEur * 12 / 1000, out = [];
+  for (let i = 0; i < ny; i++) {
+    const k = i + 1, jahr = A.Prognose.ReformStart + i;
+    const sp = A.SparAn * (jahr >= 2045 ? A.Spar2045 : k === 1 ? A.Spar1 : k === 2 ? (A.Spar1 + A.Spar3) / 2 : k === 3 ? A.Spar3 : A.SparVoll);
+    const rent = A.AusgAn * A.AusgRent0 * rentnerAnteil(i);
+    out.push({ rentner: rent, bonus: bon, haus: hr[i], sparen: sp, plus: A.AusgBonusPlus * bon + A.HRPlus * hr[i], minus: rent + (1 - A.AusgBonusPlus) * bon + (1 - A.HRPlus) * hr[i] });
+  }
+  return out;
+}
+function verhalten(stat, ag) {
+  const out = []; let ang = 0, ruhe = 0, fehl = 0;
+  for (let k = 0; k < stat.length; k++) {
+    const plus = A.VhPlus0 - (stat[k] - stat[0]) + ag[k].plus, minus = A.VhMinus0 - ag[k].minus;
+    const jp = A.VhSteuerM * A.VhPlusSofort * plus, sp = (A.VhSteuerR * A.VhAusRuhe + A.VhStaatM * A.VhErbM) * ruhe;
+    const jm = -A.VhSteuerW * A.VhMinusSofort * minus, sm = -(A.VhSteuerW * A.VhMinusSpaeter + A.VhStaatW * A.VhErbW) * fehl;
+    out.push(A.VhAn * (jp + sp + jm + sm));
+    const ueb = ang / A.VhJahreRuhe;
+    [ang, ruhe, fehl] = [ang + (1 - A.VhPlusSofort) * plus - ueb, ruhe + ueb - (A.VhAusRuhe + A.VhStaatM * A.VhErbM) * ruhe, fehl + (1 - A.VhMinusSofort) * minus - (A.VhMinusSpaeter + A.VhErbW) * fehl];
+  }
+  return out;
+}
 function kredit(saldoS, saldoL, jahre = 45, s4 = [0, 0]) {
   let D = 0, J = 0, peak = 0, peakJ = 0, getilgt = null, altFrei = null, Bil = 0, bilFrei = null;
   const rows = [];
@@ -1401,10 +1449,17 @@ function kredit(saldoS, saldoL, jahre = 45, s4 = [0, 0]) {
   const miet = A.Nutzwert > 0 ? aufkommen(true) - aufkommen(false) : 0;
   const nj1 = njKost() * A.NJErst;   // Minijob: Erstattung erst nach Jahresende, im ersten Jahr noch keine
   const u1 = uebergang(1, miet), sb = saldoS + u1.hf + u1.bs + zulageBeamte(1) + neueRegeln(1).sum - nj1;
-  for (let y = 1; y <= jahre; y++) {
+  const ny = Math.max(jahre, 45), steuer = [];
+  for (let y = 1; y <= ny; y++) {
     const u = uebergang(y, miet);
-    const B = ((y - 1 >= A.Jahre) ? saldoL : sb + (saldoL - sb) * (y - 1) / A.Jahre) - u.hf - u.bs - zulageBeamte(y) - neueRegeln(y).sum + (y === 1 ? nj1 : 0)
-      + (y <= A.Stufe4Jahre ? s4[0] + (s4[1] - s4[0]) * (y - 1) / A.Jahre : 0);   // befristete Stufe 4
+    steuer.push(((y - 1 >= A.Jahre) ? saldoL : sb + (saldoL - sb) * (y - 1) / A.Jahre) - u.hf - u.bs - zulageBeamte(y) - neueRegeln(y).sum + (y === 1 ? nj1 : 0)
+      + (y <= A.Stufe4Jahre ? s4[0] + (s4[1] - s4[0]) * (y - 1) / A.Jahre : 0));   // befristete Stufe 4
+  }
+  // Version 32: Ausgleich, Hausregel und Einsparungen ergeben den Saldo bei gleichem Einkauf, dazu das Verhalten der Haushalte
+  const ag = ausgleichPfad(ny), vh = verhalten(steuer, ag);
+  const gleich = steuer.map((x, i) => x - ag[i].rentner - ag[i].bonus - ag[i].haus + ag[i].sparen);
+  for (let y = 1; y <= jahre; y++) {
+    const B = gleich[y - 1] + vh[y - 1];
     const C = D * zinsJ(y);
     const Dn = Math.max(0, D - B + C);
     const G = Math.max(0, B - C - D);
@@ -1420,7 +1475,7 @@ function kredit(saldoS, saldoL, jahre = 45, s4 = [0, 0]) {
     Bil = Bil * (1 + A.Wachstum) + (175 * erbFamLang() * (1 - (0.25 + 0.25 * f)) + stundungStart(miet) * (1 - f)) * Math.pow(1 + A.Wachstum, y - 1);   // gestundete Steuer auf den Mietwert: mit freiem Haus nur noch der Teil, der beim Start nicht bezahlt war
     if (bilFrei === null && J <= Bil) bilFrei = y;
     D = Dn;
-    rows.push({ y, jahr: A.Prognose.ReformStart - 1 + y, saldo: B, quote: (J + D) / E, ohne: null });
+    rows.push({ y, jahr: A.Prognose.ReformStart - 1 + y, saldo: B, steuer: steuer[y - 1], gleich: gleich[y - 1], verhalten: vh[y - 1], ausgl: ag[y - 1], quote: (J + D) / E, ohne: null });
   }
   // Vergleich ohne Reform: heutige Schulden wachsen mit dem Zins, BIP mit dem Wachstum
   let J0 = A.BIP * A.Schuld;
@@ -1784,8 +1839,10 @@ function updateGesamt() {
   const g = gesamt(); const kr = kredit(g.saldoS, g.saldoL, 45, g.s4);
   const tile = (k, v, s, cls) => `<div class="tile ${cls}"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
   const cl = x => x >= 0 ? "good" : "bad";
-  let t = tile("Saldo am Start", mrd(g.saldoS) + " Mrd. €", g.saldoS < 0 && -g.saldoS / A.BIP <= A.SBRaum ? `${pct(-g.saldoS / A.BIP, 2)} des BIP; passt in die Schuldenbremse (${pct(A.SBRaum, 2)})` : (g.saldoS >= 0 ? `${pct(g.saldoS / A.BIP, 2)} des BIP; Überschuss vom ersten Jahr an` : `${pct(g.saldoS / A.BIP, 2)} des BIP; negativ heißt Lücke`), cl(g.saldoS));
-  t += tile("Saldo langfristig", mrd(g.saldoL) + " Mrd. €", `${pct(g.saldoL / A.BIP, 1)} des BIP, nach ${A.Jahre} Jahren`, cl(g.saldoL));
+  const s0 = kr.rows[0].saldo, j70 = kr.rows.find(r => r.jahr === 2070);
+  const ohneA = `Bei gleichem Einkauf und ohne Ausgleich wären es ${mrd(g.saldoS)} Mrd. €.`;
+  let t = tile("Saldo am Start", mrd(s0) + " Mrd. €", (s0 < 0 && -s0 / A.BIP <= A.SBRaum ? `${pct(-s0 / A.BIP, 2)} des BIP; passt in die Schuldenbremse (${pct(A.SBRaum, 2)}).` : (s0 >= 0 ? `${pct(s0 / A.BIP, 2)} des BIP; Überschuss vom ersten Jahr an.` : `${pct(s0 / A.BIP, 2)} des BIP; negativ heißt Lücke.`)) + ` Mit Ausgleich, Einsparungen und Verhalten der Haushalte. ${ohneA}`, cl(s0));
+  t += tile("Saldo langfristig", mrd(g.saldoL) + " Mrd. €", `${pct(g.saldoL / A.BIP, 1)} des BIP, nach ${A.Jahre} Jahren, bei gleichem Einkauf` + (j70 ? `; mit Verhalten der Haushalte 2070 rund ${mrd(j70.saldo)} Mrd. €` : ""), cl(g.saldoL));
   let tilg;
   if (kr.unendlich) tilg = tile("Kredit am Start", "nicht getilgt", "Der Überschuss reicht nicht aus. Erhöhe die Sätze oder schalte Ausgaben ab.", "bad");
   else if (kr.peak <= 0.05) tilg = tile("Kredit am Start", "keiner", "Das System trägt sich von Anfang an.", "good");
@@ -1853,7 +1910,7 @@ function updateGesamt() {
   h += `<tr class="group"><td colspan="3">Neue Einnahmen</td></tr>`;
   g.einnahmen.filter(r => r[1] || r[2] || !/Luxus/.test(r[0])).forEach(r => h += row(r[0], r[1], r[2]));
   h += row("Einnahmen zusammen", g.einS, g.einL, "sum");
-  h += `<tr class="sum"><td>Saldo</td><td class="${g.saldoS >= 0 ? "pos" : "neg"}">${mrd(g.saldoS)}</td><td class="${g.saldoL >= 0 ? "pos" : "neg"}">${mrd(g.saldoL)}</td></tr>`;
+  h += `<tr class="sum"><td>Saldo bei gleichem Einkauf, ohne Ausgleich</td><td class="${g.saldoS >= 0 ? "pos" : "neg"}">${mrd(g.saldoS)}</td><td class="${g.saldoL >= 0 ? "pos" : "neg"}">${mrd(g.saldoL)}</td></tr>`;
   h += `<tr><td colspan="3" class="note" style="text-align:left;white-space:normal">Zweckgebunden und nicht im Saldo: ${fmt(A.RVPkt)} Punkte der Mehrwertsteuer bringen rund ${mrd(g.normE)} Mrd. € für die Rentenversicherung und senken den Rentenbeitrag um ${fmt(g.svsenk, 1)} Punkte. Die Zuckerabgabe fließt als Gesundheitsbonus zurück.${g.eaBestand + g.enBestand > 0 ? ` Die zinslosen Darlehen für Elektroautos, Dämmung, Wärmepumpen, PV und Speicher wachsen auf rund ${mrd(g.eaBestand + g.enBestand)} Mrd. € an. Sie erhöhen die Bruttoschuld, stehen aber als Forderung gegenüber und sind kein Defizit. Im Saldo stehen nur die entgangenen Zinsen.` : ""}</td></tr></tbody>`;
   $("grTable").innerHTML = h;
 }
