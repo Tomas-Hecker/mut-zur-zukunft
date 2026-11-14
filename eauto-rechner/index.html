@@ -190,7 +190,7 @@ h1,h2,h3{break-after:avoid}
   </div>
 
   <div class="panel" id="p_dw" hidden>
-    <h2>Dienstwagen: Ihre Steuer auf den geldwerten Vorteil</h2>
+    <h2>Dienstwagen: deine Steuer auf den geldwerten Vorteil</h2>
     <div class="tbl"><table id="t_dw"></table></div>
     <p class="note" id="n_dw"></p>
   </div>
@@ -306,8 +306,8 @@ function run() {
   const diff = r.iTCO - r.eTCO;
   let txt;
   if (r.be === null) txt = `Über ${fmt(V.jahre)} Jahre und ${fmt(r.lebKm)} km ist das <b>Elektroauto ${eur(-diff)} teurer</b>. Es holt den höheren Kaufpreis in dieser Zeit nicht wieder herein.`;
-  else if (r.be === 0) txt = `Das Elektroauto ist von Anfang an günstiger. Über ${fmt(V.jahre)} Jahre und ${fmt(r.lebKm)} km sparen Sie <b>${eur(diff)}</b>.`;
-  else txt = `Das Elektroauto hat sich nach <b>${fmt(r.be, 1)} Jahren</b> bezahlt gemacht, das sind rund ${fmt(Math.round(r.be * V.km / 100) * 100)} km. Über ${fmt(V.jahre)} Jahre und ${fmt(r.lebKm)} km sparen Sie <b>${eur(diff)}</b>.`;
+  else if (r.be === 0) txt = `Das Elektroauto ist von Anfang an günstiger. Über ${fmt(V.jahre)} Jahre und ${fmt(r.lebKm)} km sparst du <b>${eur(diff)}</b>.`;
+  else txt = `Das Elektroauto hat sich nach <b>${fmt(r.be, 1)} Jahren</b> bezahlt gemacht, das sind rund ${fmt(Math.round(r.be * V.km / 100) * 100)} km. Über ${fmt(V.jahre)} Jahre und ${fmt(r.lebKm)} km sparst du <b>${eur(diff)}</b>.`;
   if (dienst) txt = "Kosten für den Halter, also den Arbeitgeber. " + txt;
   $("verdict").innerHTML = txt;
   const tile = (k, v, s, c) => `<div class="tile"><span class="k">${c ? `<i style="background:var(--${c})"></i>` : ""}${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
@@ -332,10 +332,10 @@ function run() {
       + row("Geldwerter Vorteil", eur(g.monI), eur(g.monE), "sum")
       + row(`Steuer und Abgaben (${fmt(V.satz)} %)`, eur(g.stI), eur(g.stE))
       + row("Eigener Ladestrom", "–", eur(g.stromE))
-      + row("Ihre Belastung im Monat", eur(g.stI), eur(g.stE + g.stromE), "sum")
+      + row("Deine Belastung im Monat", eur(g.stI), eur(g.stE + g.stromE), "sum")
       + row(`Über ${fmt(V.dJahre)} Jahre`, eur(g.stI * m), eur((g.stE + g.stromE) * m), "sum") + `</tbody>`;
     const sp = (g.stI - g.stE - g.stromE) * m;
-    $("n_dw").textContent = `Mit dem Elektroauto haben Sie über ${fmt(V.dJahre)} Jahre ${sp >= 0 ? eur(sp) + " mehr netto" : eur(-sp) + " weniger netto"}. Beim Verbrenner ist angenommen, dass der Arbeitgeber den Sprit zahlt (Tankkarte).` + (V.agLaden === "nein" ? " Beim Elektroauto zahlen Sie den Strom selbst; zahlt der Arbeitgeber ihn, ist das steuerfrei." : "");
+    $("n_dw").textContent = `Mit dem Elektroauto hast du über ${fmt(V.dJahre)} Jahre ${sp >= 0 ? eur(sp) + " mehr netto" : eur(-sp) + " weniger netto"}. Beim Verbrenner ist angenommen, dass der Arbeitgeber den Sprit zahlt (Tankkarte).` + (V.agLaden === "nein" ? " Beim Elektroauto zahlst du den Strom selbst; zahlt der Arbeitgeber ihn, ist das steuerfrei." : "");
   }
 }
 

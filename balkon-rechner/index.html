@@ -171,7 +171,7 @@ h1,h2,h3{break-after:avoid}
   <header>
     <div class="eyebrow">Für Mieter · Stündliche Simulation · Idstein im Taunus</div>
     <h1>Balkonkraftwerk und Speicher: Was bringt es, und rechnet es sich?</h1>
-    <p class="lead">Der Rechner spielt ein ganzes Jahr Stunde für Stunde durch: Sonne auf dem Balkon, Ihr Stromverbrauch zu jeder Tageszeit und, wenn Sie wollen, ein kleiner Speicher, der den Mittagsstrom in den Abend bringt. Am Ende steht, wie viel Strom Sie selbst nutzen, wie viel Sie sparen und nach wie vielen Jahren sich die Anlage bezahlt macht.</p>
+    <p class="lead">Der Rechner spielt ein ganzes Jahr Stunde für Stunde durch: Sonne auf dem Balkon, dein Stromverbrauch zu jeder Tageszeit und, wenn du willst, ein kleiner Speicher, der den Mittagsstrom in den Abend bringt. Am Ende steht, wie viel Strom du selbst nutzt, wie viel du sparst und nach wie vielen Jahren sich die Anlage bezahlt macht.</p>
   </header>
 
   <div class="main">
@@ -188,7 +188,7 @@ h1,h2,h3{break-after:avoid}
       <h2>Ergebnis</h2>
       <div class="verdict" id="verdict"></div>
       <div class="tiles" id="tiles"></div>
-      <p class="note">Der Rechner arbeitet mit Stundenmitteln. Kurze Spitzen beim Kochen oder Waschen zieht der Haushalt in Wirklichkeit zum Teil aus dem Netz, auch wenn die Sonne scheint. Der wirkliche Eigenverbrauch liegt deshalb meist etwas niedriger, grob um ein Zehntel. Rechnen Sie im Zweifel mit etwas weniger Ersparnis.</p>
+      <p class="note">Der Rechner arbeitet mit Stundenmitteln. Kurze Spitzen beim Kochen oder Waschen zieht der Haushalt in Wirklichkeit zum Teil aus dem Netz, auch wenn die Sonne scheint. Der wirkliche Eigenverbrauch liegt deshalb meist etwas niedriger, grob um ein Zehntel. Rechne im Zweifel mit etwas weniger Ersparnis.</p>
       <h3>Mit oder ohne Speicher?</h3>
       <div class="tbl"><table id="vgl"></table></div>
       <p class="note" id="vglnote"></p>
@@ -255,7 +255,7 @@ const FELDER = {
     F("netz", "Netzentgelt (dynamisch)", "€/kWh", 0.001, "netto"), F("abg", "Steuern, Abgaben, Umlagen (dynamisch)", "€/kWh", 0.001, "netto"), F("aufs", "Aufschlag des Anbieters (dynamisch)", "€/kWh", 0.001, "netto"),
     F("einsp", "Vergütung für eingespeisten Strom", "€/kWh", 0.001, "meist 0: Mieter verschenken den Überschuss")],
   g_wi: [F("zins", "Zins (statt Sparbuch)", "%", 0.5), F("steig", "Strompreisanstieg", "%/Jahr", 0.5),
-    F("foerd", "Zuschuss der Stadt", "€", 10, "Idstein hat Balkonkraftwerke mit 30 %, höchstens 150 € gefördert, auch für Mieter mit Zustimmung des Eigentümers. Fragen Sie nach, ob das Programm noch läuft.")],
+    F("foerd", "Zuschuss der Stadt", "€", 10, "Idstein hat Balkonkraftwerke mit 30 %, höchstens 150 € gefördert, auch für Mieter mit Zustimmung des Eigentümers. Frag nach, ob das Programm noch läuft.")],
 };
 function feld(f) {
   const d = document.createElement("div"); d.className = "f";
@@ -389,13 +389,13 @@ function run() {
   const r0 = sim(V, 0, V.batKwh <= 0), r = V.batKwh > 0 ? sim(V, V.batKwh, true) : r0, w = wirtschaft(V, r, r0);
   R = r;
   const anteil = r.self / Math.max(1, r.out), deck = r.self / V.hh;
-  $("verdict").innerHTML = `Ihr Balkonkraftwerk liefert <b>${kwh(r.out)}</b> im Jahr. Davon nutzen Sie <b>${kwh(r.self)}</b> selbst (${pct(anteil)}), ${r.exp > 0.5 ? `${kwh(r.exp)} gehen ${V.einsp > 0 ? "gegen Vergütung" : "ohne Vergütung"} ins Netz` : "fast nichts geht ins Netz"}. `
+  $("verdict").innerHTML = `Dein Balkonkraftwerk liefert <b>${kwh(r.out)}</b> im Jahr. Davon nutzt du <b>${kwh(r.self)}</b> selbst (${pct(anteil)}), ${r.exp > 0.5 ? `${kwh(r.exp)} gehen ${V.einsp > 0 ? "gegen Vergütung" : "ohne Vergütung"} ins Netz` : "fast nichts geht ins Netz"}. `
     + `Das spart im ersten Jahr <b>${eur(r.spar)}</b>. ${w.amort === null ? "Innerhalb der Lebensdauer macht sich die Anlage nicht bezahlt." : `Nach <b>${jahre(w.amort)}</b> hat sich die Anlage bezahlt gemacht, die Rendite liegt bei <b>${pct(w.irr, 1)}</b> im Jahr.`}`;
-  const grenze = V.wr > 800 ? `Achtung: Ein Steckersolargerät darf höchstens 800 W einspeisen, Ihr Wechselrichter hat ${fmt(V.wr)} W. ` : "";
+  const grenze = V.wr > 800 ? `Achtung: Ein Steckersolargerät darf höchstens 800 W einspeisen, dein Wechselrichter hat ${fmt(V.wr)} W. ` : "";
   const modul = V.wp > 2000 ? `Achtung: Erlaubt sind höchstens 2.000 Wp Module. ` : V.wp > 960 ? `Über 960 Wp braucht es statt des Schukosteckers eine Energiesteckvorrichtung (Spezialsteckdose). ` : "";
   $("verdict").innerHTML += (grenze || modul) ? `<br><b>${grenze}${modul}</b>` : "";
   $("tiles").innerHTML = tile("Ertrag am Modul", kwh(r.G), `${fmt(r.G / (V.wp / 1000))} kWh je kWp`, "var(--pvf)")
-    + tile("Selbst genutzt", kwh(r.self), `${pct(deck)} Ihres Verbrauchs${r.bat > 0.5 ? `, ${kwh(r.bat)} über den Speicher` : ""}`, "var(--pv)")
+    + tile("Selbst genutzt", kwh(r.self), `${pct(deck)} deines Verbrauchs${r.bat > 0.5 ? `, ${kwh(r.bat)} über den Speicher` : ""}`, "var(--pv)")
     + tile("Ins Netz", kwh(r.exp), r.clip > 0.5 ? `${kwh(r.clip)} kappt der Wechselrichter` : "", "var(--pvf)")
     + tile("Ersparnis im 1. Jahr", eur(r.spar), `${fmt(r.spar / 12)} € im Monat`)
     + tile("Kosten", eur(w.inv), V.batKwh > 0 ? `davon Speicher ${eur(V.batFix + V.batKwhKost * V.batKwh)}` : "")
@@ -487,12 +487,12 @@ run();
 $("quellen").innerHTML = [
   "<b>Wetter:</b> Idstein (50,22° N, 8,27° O). Typisches meteorologisches Jahr aus <a href=\"https://re.jrc.ec.europa.eu/pvg_tools/de/\" target=\"_blank\" rel=\"noopener\">PVGIS 5.3</a> der Europäischen Kommission, Strahlung SARAH-3 und Wetter ERA5 2005 bis 2023, © Europäische Union, CC BY 4.0. Stunde für Stunde, Zeit in MEZ.",
   "<b>Börsenpreise für den dynamischen Tarif:</b> Day-Ahead-Preise Deutschland/Luxemburg 2024, Stunde für Stunde (<a href=\"https://transparency.entsoe.eu/\" target=\"_blank\" rel=\"noopener\">ENTSO-E Transparency Platform</a>).",
-  "<b>Verbrauch:</b> Haushaltsprofil je Stunde für Werktag und Wochenende, im Winter rund 18 % höher als im Sommer, auf Ihren Jahresverbrauch skaliert. Wie im <a href=\"../energie-rechner/\">Energie-Rechner</a>.",
+  "<b>Verbrauch:</b> Haushaltsprofil je Stunde für Werktag und Wochenende, im Winter rund 18 % höher als im Sommer, auf deinen Jahresverbrauch skaliert. Wie im <a href=\"../energie-rechner/\">Energie-Rechner</a>.",
   "<b>Modul und Wechselrichter:</b> Strahlung auf die geneigte Fläche aus direktem und diffusem Licht, 20 % Bodenreflexion, Leistung sinkt um 0,37 % je Grad Modultemperatur über 25 °C. Was über die Leistung des Wechselrichters hinausgeht, wird gekappt oder vom Speicher aufgenommen.",
   "<b>Speicher:</b> Er sitzt zwischen Modulen und Wechselrichter, wie bei den meisten Balkonspeichern. Mit Zählersensor gibt er genau so viel ab, wie die Wohnung gerade braucht, ohne Sensor eine feste Leistung.",
   "<b>Wirtschaftlichkeit:</b> Ersparnis = selbst genutzter Strom × Strompreis der jeweiligen Stunde, steigt jedes Jahr mit dem Strompreis. Bezahlt nach: Jahre, bis die Ersparnis den Kaufpreis erreicht. Rendite: interner Zinsfuß über die Lebensdauer. Nach dem Ende des Speichers rechnet der Rechner ohne ihn weiter.",
-  "<b>Was erlaubt ist:</b> Wechselrichter höchstens 800 VA. Module bis 960 Wp an der normalen Schukosteckdose, bis 2.000 Wp mit Energiesteckvorrichtung. Eine Elektrofachkraft sollte den Stromkreis prüfen, keine Mehrfachsteckdosen. Anmelden müssen Sie das Gerät nur im Marktstammdatenregister, innerhalb eines Monats. Ein alter Zähler, der rückwärts läuft, wird danach getauscht; der Rechner zählt das Rückwärtslaufen nicht als Ersparnis (<a href=\"https://www.vde.com/fnn-pv-stecker\" target=\"_blank\" rel=\"noopener\">VDE FNN, Stand März 2026</a>, <a href=\"https://www.verbraucherzentrale.de/wissen/energie/erneuerbare-energien/steckersolar-solarstrom-vom-balkon-direkt-in-die-steckdose-8189\" target=\"_blank\" rel=\"noopener\">Verbraucherzentrale</a>).",
-  "<b>Vermieter:</b> Seit Oktober 2024 ist ein Balkonkraftwerk eine privilegierte bauliche Veränderung. Der Vermieter muss zustimmen, außer es ist ihm nicht zuzumuten; nur aus optischen Gründen darf er nicht ablehnen (<a href=\"https://www.gesetze-im-internet.de/bgb/__554.html\" target=\"_blank\" rel=\"noopener\">§ 554 BGB</a>). Ob das auch für einen Speicher gilt, ist umstritten, manche Vermieter verbieten ihn aus Brandschutzgründen. Fragen Sie vorher.",
+  "<b>Was erlaubt ist:</b> Wechselrichter höchstens 800 VA. Module bis 960 Wp an der normalen Schukosteckdose, bis 2.000 Wp mit Energiesteckvorrichtung. Eine Elektrofachkraft sollte den Stromkreis prüfen, keine Mehrfachsteckdosen. Anmelden musst du das Gerät nur im Marktstammdatenregister, innerhalb eines Monats. Ein alter Zähler, der rückwärts läuft, wird danach getauscht; der Rechner zählt das Rückwärtslaufen nicht als Ersparnis (<a href=\"https://www.vde.com/fnn-pv-stecker\" target=\"_blank\" rel=\"noopener\">VDE FNN, Stand März 2026</a>, <a href=\"https://www.verbraucherzentrale.de/wissen/energie/erneuerbare-energien/steckersolar-solarstrom-vom-balkon-direkt-in-die-steckdose-8189\" target=\"_blank\" rel=\"noopener\">Verbraucherzentrale</a>).",
+  "<b>Vermieter:</b> Seit Oktober 2024 ist ein Balkonkraftwerk eine privilegierte bauliche Veränderung. Der Vermieter muss zustimmen, außer es ist ihm nicht zuzumuten; nur aus optischen Gründen darf er nicht ablehnen (<a href=\"https://www.gesetze-im-internet.de/bgb/__554.html\" target=\"_blank\" rel=\"noopener\">§ 554 BGB</a>). Ob das auch für einen Speicher gilt, ist umstritten, manche Vermieter verbieten ihn aus Brandschutzgründen. Frag vorher.",
   "<b>Einspeisung:</b> Für den Überschuss bekommen Mieter in aller Regel nichts, deshalb steht die Vergütung auf 0 ct (<a href=\"https://www.vde.com/fnn-pv-stecker\" target=\"_blank\" rel=\"noopener\">VDE FNN</a>).",
   "<b>Preise:</b> Set mit zwei Modulen und Wechselrichter 200 bis 300 €, Halterung 50 bis 100 € je Modul, zusammen 300 bis 500 €; beim privaten Kauf ohne Umsatzsteuer. Ein Speicher kostet 500 bis 1.000 € Aufpreis (<a href=\"https://www.verbraucherzentrale.de/wissen/energie/erneuerbare-energien/steckersolar-solarstrom-vom-balkon-direkt-in-die-steckdose-8189\" target=\"_blank\" rel=\"noopener\">Verbraucherzentrale, Stand Juli 2026</a>). Voreinstellung: 400 € für das Set und 700 € für 2 kWh Speicher.",
   "<b>Lebensdauer:</b> Module rund 30 Jahre und 0,25 % Leistungsverlust im Jahr, Wirkungsgrad eines Speichers 90 % (<a href=\"https://www.ise.fraunhofer.de/de/presse-und-medien/presseinformationen/2024/photovoltaik-mit-batteriespeicher-guenstiger-als-konventionelle-kraftwerke.html\" target=\"_blank\" rel=\"noopener\">Fraunhofer ISE, Stromgestehungskosten 2024</a>). Eigene Annahmen: Der Speicher hält 10 Jahre, der Wechselrichter 15 Jahre und kostet dann rund 100 €, die Elektronik des Speichers braucht 5 W. Für diesen Bereitschaftsverbrauch habe ich keine unabhängige Messung gefunden; er entscheidet bei kleinen Anlagen oft darüber, ob sich der Speicher lohnt.",

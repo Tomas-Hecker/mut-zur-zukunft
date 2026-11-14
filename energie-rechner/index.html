@@ -199,7 +199,7 @@ h1,h2,h3{break-after:avoid}
       </div>
       <div class="seg" role="group" aria-label="Kennzahl" id="kz"></div>
       <div class="tbl"><table id="mx"></table></div>
-      <p class="note">Spalten: Festpreis, dynamischer Tarif, dynamischer Tarif mit zeitvariablem Netzentgelt nach § 14a (Modul 3) für Wärmepumpe und Wallbox, und in der letzten Spalte der Vorschlag aus dem Buch, 8 Stunden am Tag ohne Netzentgelt, der heute noch nicht gilt. Kosten im Jahr: Strom, Einspeisevergütung abgezogen, dazu Abschreibung und Zins für PV und Speicher, als Mittel über die Laufzeit mit steigendem Strompreis. Ohne Grundpreise. Tippen Sie auf ein Feld. Die Kacheln, die Beispielwoche und die Strompreise darunter zeigen dann diese Variante.</p>
+      <p class="note">Spalten: Festpreis, dynamischer Tarif, dynamischer Tarif mit zeitvariablem Netzentgelt nach § 14a (Modul 3) für Wärmepumpe und Wallbox, und in der letzten Spalte der Vorschlag aus dem Buch, 8 Stunden am Tag ohne Netzentgelt, der heute noch nicht gilt. Kosten im Jahr: Strom, Einspeisevergütung abgezogen, dazu Abschreibung und Zins für PV und Speicher, als Mittel über die Laufzeit mit steigendem Strompreis. Ohne Grundpreise. Tipp auf ein Feld. Die Kacheln, die Beispielwoche und die Strompreise darunter zeigen dann diese Variante.</p>
       <div class="tiles" id="tiles"></div>
     </div>
   </div>
@@ -235,7 +235,7 @@ h1,h2,h3{break-after:avoid}
       <div class="tbl"><table id="ot"></table></div>
     </div>
     <div class="panel">
-      <h2>Die Formeln aus dem Vortrag, mit Ihren Zahlen</h2>
+      <h2>Die Formeln aus dem Vortrag, mit deinen Zahlen</h2>
       <div class="fl" id="formeln"></div>
     </div>
   </div>
@@ -758,7 +758,7 @@ function zeigeAusrichtung(v) {
 
 function zeigeFormeln(v) {
   const z1 = R.zellen[1][0], z2 = R.zellen[2][SEL.t], ref = R.zellen[0][0];
-  if (R.kwp <= 0) { $("formeln").innerHTML = `<p class="note">Tragen Sie eine PV-Leistung ein, dann rechnet der Rechner die Formeln mit Ihren Zahlen.</p>`; return; }
+  if (R.kwp <= 0) { $("formeln").innerHTML = `<p class="note">Trag eine PV-Leistung ein, dann rechnet der Rechner die Formeln mit deinen Zahlen.</p>`; return; }
   const a = z1.a, spez = a.pvSum / R.kwp, evq = a.eig / a.pvSum;
   const ersp = ref.a.netto - a.netto;
   const amort = R.pvInv / Math.max(1, ersp - R.pvInv * 0.01);
