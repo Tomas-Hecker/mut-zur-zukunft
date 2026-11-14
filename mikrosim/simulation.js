@@ -41,7 +41,7 @@ const STANDARD = {
   ausgleichRentnerMonat: 0,    // heutige Rentner: Minus wird bis zu diesem Betrag im Monat ausgeglichen, läuft mit ihnen aus
   pauschaleErwMonat: 0,        // jeder Erwachsene bekommt diesen Betrag im Monat
   // Wer nur von Arbeitslosen-, Kranken- oder Elterngeld lebt, für den zahlt der Träger die Prämie der Krankenkasse, wie heute die Beiträge
-  // (§ 251 und § 224 SGB V); in der Grundsicherung, im Bürgerjob und in der Bildung ist sie schon eingerechnet
+  // (§ 251 und § 224 SGB V; Tomas 14.11.2026); in der Grundsicherung, im Bürgerjob und in der Bildung ist sie schon eingerechnet
   praemieLeistung: true,
 };
 
