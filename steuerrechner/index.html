@@ -843,7 +843,7 @@ const ANNAHMEN = {
     KI: { dg: 0.008, von: 2027, jahre: 15 },
     // Anhang C6/C7 (Sicherheit): zuversichtlich nur mit den Anreizen des Steuermodells, ohne KI-Schub
     zuversichtlichC7: { wachs: 0.07538457286086185, ki: 0 },
-    Plan: { Rente: 0.015, Ges: 0.01, Subv: 0.0035, AusgBasis: 0.12, AusgMax: 0.02, AusgBis: 0.0, RegelAb: 2030, RegelZiel: 0.63, RegelBis: 2035, Rendite: 1.03 * 1.02 - 1, NJP: 10.89, Ueb: 0.5, VarB: 1 },   // Version 28: nach der Tilgung senkt die Hälfte des Überschusses die Steuern (Variante B)
+    Plan: { Rente: 0.015, Ges: 0.01, Subv: 0.0035, AusgBasis: 0.12, AusgMax: 0.02, AusgBis: 0.0, RegelAb: 2035, RegelZiel: 0.63, RegelBis: 2040, FixAb: 2030, KeinAnstieg: 1, Rendite: 1.03 * 1.02 - 1, NJP: 10.89, Ueb: 0.5, VarB: 1 },   // Version 28: nach der Tilgung senkt die Hälfte des Überschusses die Steuern (Variante B)
     DefMehr: 0.015, DefStart: 2026, DefJahre: 4,
   },
   RenditeReal: 0.03,
@@ -1453,7 +1453,7 @@ function prognose(sz, fall, saldoPfad, fixPkt = 0) {
       if (y >= 2030 && (d > Q.AusgBis || d > dprev + 1e-9 || nprev > 1e-9)) b = Math.max(Q.AusgBasis - Q.AusgMax, b * (1 + P.Infl) / (1 + nom));
       pb += Q.AusgBasis - b + Q.Subv * ramp(y, 2028, 2031) + c.ern * ramp(y, 2030, 2050);
     }
-    if (regel && fixPkt > 0 && y >= Q.RegelAb) pb += fixMrd(fixPkt) / A.BIP;   // fester Aufschlag auf den Normalsatz
+    if (regel && fixPkt > 0 && y >= (Q.FixAb || Q.RegelAb)) pb += fixMrd(fixPkt) / A.BIP;   // fester Aufschlag auf den Normalsatz
     // Version 28: Verteidigung (1,5 % des BIP) zahlt der Staat aus Kürzungen und dem Überschuss der Reform (Blatt Sicherheit)
     if (reform && y >= P.ReformStart) pb -= Math.max(0, P.DefMehr * clamp((y - P.DefStart + 1) / P.DefJahre, 0, 1) - (A.SicherheitWerte.SubvAbbau + A.SecAuto * A.AutoKost + A.SecGruend * A.Gruend + A.SecFH * A.FinHilfen * ramp(y, 2028, 2031)) / A.BIP);
     const r = (d > 0 || !plan) ? g : Q.Rendite;
@@ -1461,7 +1461,7 @@ function prognose(sz, fall, saldoPfad, fixPkt = 0) {
     const ent = plan && Q.VarB && d <= 0 ? -d * ((1 + Q.Rendite) / (1 + P.Infl) - 1) / (1 + nom) + Q.Ueb * Math.max(0, pb) : 0;
     let dn = d * (1 + r) / (1 + nom) - pb + ent, need = 0;
     if (y === Q.RegelAb) dab = d;
-    if (regel && y >= Q.RegelAb) { const tgt = dab > Q.RegelZiel && y < Q.RegelBis ? dab - (dab - Q.RegelZiel) * (y - Q.RegelAb + 1) / (Q.RegelBis - Q.RegelAb + 1) : Q.RegelZiel; if (dn > tgt) { need = dn - tgt; dn = tgt; } }
+    if (regel && y >= Q.RegelAb) { const tgt = Q.KeinAnstieg ? (y < Q.RegelBis ? Math.max(Q.RegelZiel, d) : Q.RegelZiel) : dab > Q.RegelZiel && y < Q.RegelBis ? dab - (dab - Q.RegelZiel) * (y - Q.RegelAb + 1) / (Q.RegelBis - Q.RegelAb + 1) : Q.RegelZiel; if (dn > tgt) { need = dn - tgt; dn = tgt; } }
     dprev = d; nprev = need; d = dn;
     out.push({ jahr: y, v: d, mw: need * A.BIP / (Q.NJP - A.FBKoppMrd), ent });
   }
@@ -1827,7 +1827,7 @@ function updateGesamt() {
   $("szenarien").querySelectorAll("button").forEach(b => b.onclick = () => { szenario = b.dataset.sz; updateGesamt(); });
   $("chartNote").textContent = szenario === "basis"
     ? `Die einfache Rechnung aus Kapitel 6: Der Überschuss tilgt die heutigen Schulden. ${kr.bilFrei ? "In der Bilanz ist der Staat " + (A.Prognose.ReformStart - 1 + kr.bilFrei) + " schuldenfrei: Dann sind die Anteile der Gemeinschaft an Erbschaften und Häusern mehr wert als die heutigen Schulden. " : ""}${kr.altFrei ? "In Geld getilgt sind die Schulden " + (A.Prognose.ReformStart - 1 + kr.altFrei) + "." : ""} Nicht eingerechnet sind die steigenden Kosten durch die Alterung und mehr Wachstum durch die Reform.`
-    : `Mit den steigenden Kosten für Rente, Pflege und Gesundheit nach dem Tragfähigkeitsbericht des Finanzministeriums (2024). ${{ vorsichtig: "Vorsichtig: ungünstige Entwicklung, wenig zusätzliches Wachstum durch die Reform.", mittel: "Mittel: zwischen günstiger und ungünstiger Entwicklung, mittleres Wachstum durch die Reform.", zuversichtlich: "Zuversichtlich: günstige Entwicklung, mehr Wachstum durch die Reform." }[szenario]} Die Reform beginnt 2028. Der Zukunftsplan aus Kapitel 6 setzt dazu: Rente für 20 Jahre, Gesundheit, Bildung, weniger Finanzhilfen, gesunde Ernährung, EU-Binnenmarkt und eine Ausgabenregel, solange der Staat Schulden hat. Die Schuldenregel: ab 2030 nie über 63 % der Wirtschaftsleistung; liegen die Schulden 2029 höher, sinken sie bis 2035 gleichmäßig auf 63 %. Reicht der Plan nicht, steigt der Normalsatz der Mehrwertsteuer um die nötigen Punkte. Die höheren Ausgaben für Verteidigung (1,5 % der Wirtschaftsleistung) sind eingerechnet, bezahlt aus Kürzungen und dem Überschuss der Reform. Nach der Tilgung senkt die Hälfte des Überschusses die Steuern, die andere Hälfte wächst im Zukunftsfonds; unter null hat der Staat Vermögen.${A.Sicherheit ? " Mit Sicherheitszuschlag: die Verteidigung bis 2027 auf Kredit, danach aus Einsparungen und dem Sicherheitszuschlag." : ""}`;
+    : `Mit den steigenden Kosten für Rente, Pflege und Gesundheit nach dem Tragfähigkeitsbericht des Finanzministeriums (2024). ${{ vorsichtig: "Vorsichtig: ungünstige Entwicklung, wenig zusätzliches Wachstum durch die Reform.", mittel: "Mittel: zwischen günstiger und ungünstiger Entwicklung, mittleres Wachstum durch die Reform.", zuversichtlich: "Zuversichtlich: günstige Entwicklung, mehr Wachstum durch die Reform." }[szenario]} Die Reform beginnt 2028. Der Zukunftsplan aus Kapitel 6 setzt dazu: Rente für 20 Jahre, Gesundheit, Bildung, weniger Finanzhilfen, gesunde Ernährung, EU-Binnenmarkt und eine Ausgabenregel, solange der Staat Schulden hat. Die Schuldenregel: ab 2035 steigen die Schulden nicht mehr gegenüber dem Vorjahr, ab 2040 liegen sie nie über 63 % der Wirtschaftsleistung; die Defizite der ersten Jahre erlauben Schuldenbremse und Verteidigungsausnahme. Reicht der Plan nicht, steigt der Normalsatz der Mehrwertsteuer um die nötigen Punkte. Die höheren Ausgaben für Verteidigung (1,5 % der Wirtschaftsleistung) sind eingerechnet, bezahlt aus Kürzungen und dem Überschuss der Reform. Nach der Tilgung senkt die Hälfte des Überschusses die Steuern, die andere Hälfte wächst im Zukunftsfonds; unter null hat der Staat Vermögen.${A.Sicherheit ? " Mit Sicherheitszuschlag: die Verteidigung bis 2027 auf Kredit, danach aus Einsparungen und dem Sicherheitszuschlag." : ""}`;
   drawChart(reihen);
   // Tabelle
   const row = (n, s, l, cls = "") => `<tr class="${cls}"><td>${n}</td><td>${mrd(s)}</td><td>${mrd(l)}</td></tr>`;
