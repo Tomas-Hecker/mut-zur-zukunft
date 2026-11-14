@@ -110,7 +110,8 @@ th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: 
       <div class="gruppe">
         <h3>Eichung des Konsums</h3>
         <div class="feld"><label for="eich">Konsum ergibt sich aus</label>
-          <select id="eich"><option value="sparquote">den Einkommen und der Sparquote 10,4 %</option><option value="konsum">der Summe von Version 31 (2.086 Mrd. €)</option></select></div>
+          <select id="eich"><option value="konsum">der amtlichen Summe 2025 (2.086 Mrd. € ohne Mietwert)</option><option value="sparquote">den Einkommen und der Sparquote 10,4 %</option></select>
+          <small>Beide Wege liegen seit der Eichung an der VGR 2025 nah beieinander.</small></div>
       </div>
       <button class="knopf" id="los" type="submit">Neu rechnen</button>
       <div class="status" id="status" aria-live="polite">Lädt die Haushalte …</div>
@@ -144,7 +145,8 @@ th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: 
       </section>
       <section class="karte hinweis">
         <h2>Was das Modell kann und was nicht</h2>
-        <p>Die Haushalte sind künstlich, aber auf amtliche Eckwerte geeicht: 41,25 Mio. Haushalte, Vermögen 16,6 Bio. € nach dem Eichpunkt (PHF 2023 der Bundesbank plus fehlende Reiche), Einkommensteuer rund 400 Mrd. €, Mietwert 214,5 Mrd. €. Jede Annahme steht in der Datei Annahmen.md mit Quelle.</p>
+        <p>Die Haushalte sind künstlich, aber auf amtliche Zahlen geeicht: 41,25 Mio. Haushalte, Bruttolöhne 2.036 Mrd. € (VGR 2025), Lohn- und Einkommensteuer 405 Mrd. € (Kassenstatistik 2025), Konsum 2.086 Mrd. € ohne Mietwert (VGR 2025), Vermögen 16,6 Bio. € (PHF 2023 der Bundesbank plus fehlende Reiche), Mietwert 214,5 Mrd. €. Wie stark Rentner, Arbeitnehmer und Selbständige sparen, folgt der Einkommens- und Verbrauchsstichprobe (EVS). Jede Zahl steht mit Quelle und Abweichung in Annahmen.md und abgleich.md.</p>
+        <p>Ehrliche Spanne: Mit anderen vertretbaren Eichungen haben 18,5 bis 22 Mio. Haushalte zum Start weniger. Den Haushalten fehlen gegenüber der VGR noch rund 150 Mrd. € Gewinne und Entnahmen aus Firmen.</p>
         <p>Nicht drin sind bisher: Wie viel Menschen arbeiten (Arbeitsangebot), Firmen und Preise, Wanderung, die Jahre bis 2070. Die Erwachsenen sind rund 66 statt 69,6 Mio., weil Menschen in Heimen und manche erwachsene Kinder fehlen. Leistungen wie Arbeitslosen- und Elterngeld sind für die Haushalte neutral gerechnet.</p>
       </section>
     </main>
@@ -877,8 +879,10 @@ module.exports = { A, A0, haushalt, gesamt, abgeleitet, tarif, xtInv, sicherheit
 const STANDARD = {
   // Rechenkern wie Version 31: Konsum 2.300,2, Miete und Mietwert 214,5, Härteausgleich aus
   kern: { Konsum: 2300.2, Miete: 214.5, Nutzwert: 214.5, HAAn: 0 },
-  eichung: "sparquote",        // "sparquote": Konsum folgt aus den Einkommen und der Sparquote der VGR; "konsum": Konsum genau wie Version 31
+  eichung: "konsum",           // "konsum" (Standard seit 14.11.): Konsum genau wie VGR 2025 und Version 31; "sparquote": Konsum aus Einkommen und Sparquote der VGR
   sparquoteZiel: 0.104,        // Sparquote der privaten Haushalte 2025 (Statistisches Bundesamt, VGR): rund 10,4 %
+  sparRentner: -0.10, sparSelbst: 0.06,   // Versatz der Sparquote für Rentner- und Selbständigenhaushalte: geeicht mit eichen_sparen.js auf
+                               // den Abstand der Konsumquoten in der EVS 2018 (Fachserie 15 Heft 4, Tabelle 1.2)
   konsumZiel: 2085.7,          // Mrd. €: Konsum ohne Mietwert, 2.300,2 − 214,5 wie im Blatt Verteilung; die Sparquoten werden darauf geeicht
   kapKonsum: [0.5, 0.25],      // Anteil der Kapitalerträge nach Steuer, der ausgegeben wird (unter / ab 1 Mio. € Vermögen); der Rest
                                // wird wieder angelegt (Baker, Nagel, Wurgler 2007; Di Maggio, Kermani, Majlesi 2020)
@@ -925,7 +929,7 @@ function eingabe(sp, i, spar) {
     lohn1: sp.lohn1[i], std1: sp.std1[i], lohn2: sp.lohn2[i], std2: sp.std2[i], mini: sp.mini[i], rente: sp.rente[i],
     gewinn: sp.gewinn[i], kap: sp.kap[i], gmbh: sp.gmbh[i], aus: sp.aus[i], transfer: sp.transfer[i], verm: sp.verm[i],
     vermiet: sp.vermiet[i] + pens, vermietCash: sp.vermietCash[i] + pens, _frei: sp.leist ? sp.leist[i] : 0,
-    miet: sp.miet[i], hb: sp.hb[i], kinderlos: sp.kinderlos[i], spar, pkv: sp.pkv[i], vorsorge: 0,
+    miet: sp.miet[i], hb: sp.hb[i], kinderlos: sp.kinderlos[i], spar, pkv: sp.pkv[i], vorsorge: sp.abzug ? sp.abzug[i] : 0,
     rentner: sp.rentner[i], bs: sp.bs[i], allein: sp.allein[i], vollj: sp.vollj[i], unterhalt: sp.unterhalt[i], pg: 0, bjob: 0, vz: 0,
   };
 }
@@ -962,7 +966,7 @@ function rechne(K, pop, optIn = {}) {
   const kq = i => (sp.W[i] >= 1e6 ? opt.kapKonsum[1] : opt.kapKonsum[0]);
   const plan = (i, a0) => {
     const basis = verf0[i] - kapN[i];
-    const s = sparquote(basis, sp.rentner[i], sp.transfer[i], a0);
+    const s = sparquote(basis, sp.rentner[i], sp.transfer[i], a0 + (sp.rentner[i] ? opt.sparRentner : sp.selbst[i] ? opt.sparSelbst : 0));
     let konsum = basis * (1 - s) + kapN[i] * kq(i) + sp.verm[i];
     const entspar = s < 0 ? Math.min(-s * basis, Math.max(0, sp.geld[i]) * opt.entsparGrenze) : 0;
     // Leistungen wie Arbeitslosen-, Kranken- und Elterngeld: Die Reform müsste sie so anpassen, dass derselbe Einkauf möglich bleibt.
@@ -1001,7 +1005,7 @@ function rechne(K, pop, optIn = {}) {
     const tauLang = (r.konsum + r.pw + r.mietw - r.frei) > 0 ? (A.Satz3 + mwstSatzNeu) / (1 + A.Satz3) : mwstSatzNeu;
     R.push({ i, plus, zulage, bsz: r.bsz, heute: r.heute, vorschlag: r.vorschlag, sumH: r.sumH, ausg: r.ausg, ausgUeb: r.ausgUeb,
       mwst: r.mwst + pl.leist * A.MwStQ, mwstNeu: r.mwstNeu + pl.leist * mwstSatzNeu, konsum: r.konsum + pl.leist, konsumLeist: pl.leist, verf: verf0[i], einkommen: r.einkommen + extra, tauM, tauLang,
-      mietw: r.mietw, alt: r.alt, pw: r.pw, atg: r.atg, kk: r.kk });
+      mietw: r.mietw, alt: r.alt, pw: r.pw, atg: r.atg, kk: r.kk, pq: r.pq, kapKons: kapN[i] * kq(i), ueberS: ueber2 > 0 });
   }
   // 3) Erbschaften: Nachlässe aus Vermögen und Sterblichkeit, heute und mit Staatsanteil (Dauerzustand, Mrd. € im Jahr)
   const erbe = erbschaften(opt, sp, n);

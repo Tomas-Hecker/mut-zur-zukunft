@@ -25,6 +25,8 @@ ECKWERTE = {
     "mietwert_mrd": 214.5,           # Mietwert selbst genutzter Wohnungen nach Eurostat, wie Version 31 (Nutzwert)
     "vermoegen_bio": 16.6,           # Eichpunkt „Vermögen heute“ (PHF 2023 plus fehlende Reiche), Thread Kurzfassung
     "eigentuemer_quote": 0.42,       # Mikrozensus 2022: 41,9 % der Haushalte wohnen im Eigentum
+    "bruttoloehne_mrd": 2036.3,      # VGR 2025 (Destatis, Fachserie 18 Reihe 1.4, Tabelle 2.1.8): Bruttolöhne und -gehälter der Inländer
+    "nebenjob_mio": 3.3,             # Minijob als Nebenjob (Minijob-Zentrale, Quartalsbericht 2025: rund 3,3 Mio.)
 }
 
 # Haushaltstypen: Anzahl in Mio. (Mikrozensus 2024/25, gerundet und vereinfacht), Stichprobengröße
@@ -419,6 +421,21 @@ def main():
             d["hauswert"][m] *= f
         # Haushaltszahl je Stufe genau
         d["w"][m] *= s[2] / d["w"][m].sum()
+    # Löhne auf die VGR: Minijobs als Nebenjob, dann alle Löhne und Besoldungen gleichmäßig so, dass die Summe den Bruttolöhnen
+    # der VGR 2025 entspricht (enthält Sonderzahlungen, Lohnstand 2025 und Löhne, die Umfragen untererfassen)
+    besch = (d["std1"] > 0) | (d["std2"] > 0)
+    anzahl = (d["w"] * ((d["std1"] > 0).astype(float) + (d["std2"] > 0))).sum()
+    p_nj = ECKWERTE["nebenjob_mio"] * 1e6 / anzahl
+    nj = besch & (rng.random(len(d["w"])) < p_nj * (((d["std1"] > 0).astype(float) + (d["std2"] > 0)) / np.maximum(1, ((d["std1"] > 0).astype(float) + (d["std2"] > 0)))))
+    d["mini"][nj] += 12 * 603 * rng.uniform(0.3, 1.0, nj.sum())
+    aktivB = (d["beamter"] > 0) & (d["rentner"] == 0)
+    blg_ist = (d["w"] * (d["lohn1"] + d["lohn2"] + d["mini"] + np.where(aktivB, d["pension"], 0))).sum() / 1e9
+    blg_sv = (d["w"] * (d["lohn1"] + d["lohn2"] + np.where(aktivB, d["pension"], 0))).sum() / 1e9
+    f_lohn = 1 + (ECKWERTE["bruttoloehne_mrd"] - blg_ist) / blg_sv
+    for k in ["lohn1", "lohn2"]:
+        d[k] *= f_lohn
+    d["pension"] = np.where(aktivB, d["pension"] * f_lohn, d["pension"])
+    print("Lohnfaktor auf VGR", round(f_lohn, 4), "Nebenjobs Mio", round(d["w"][nj].sum() / 1e6, 2))
     d = ertraege(d)
     # Mietwert genau auf 214,5 Mrd. €
     d["miet"] *= ECKWERTE["mietwert_mrd"] * 1e9 / (d["w"] * d["miet"]).sum()

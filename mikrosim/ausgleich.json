@@ -1,0 +1,308 @@
+[
+ {
+  "name": "ohne Ausgleich (Version 32)",
+  "kosten_mrd": 0,
+  "kosten_rentner_mrd": 0,
+  "kosten_uebrige_mrd": 0,
+  "auslauf_rentneranteil_mrd": {
+   "0": 0,
+   "5": 0,
+   "10": 0,
+   "15": 0,
+   "20": 0,
+   "30": 0
+  },
+  "plus_nach_mrd": 99.1,
+  "minus_nach_mrd": 129.4,
+  "weniger_mio": 19.7,
+  "anteil": 48,
+  "monat": 539,
+  "ueber100_mio": 13.5,
+  "rentner": {
+   "haushalte_mio": 11.5,
+   "weniger_mio": 8.4,
+   "anteil_prozent": 73,
+   "mittel_monat": 247,
+   "ueber100_mio": 5
+  },
+  "uebrige": {
+   "haushalte_mio": 29.7,
+   "weniger_mio": 11.3,
+   "anteil_prozent": 38,
+   "mittel_monat": 756,
+   "ueber100_mio": 8.6
+  }
+ },
+ {
+  "name": "A: Erspartes kauft so viel wie heute (Konto um den Preisanstieg aufgestockt)",
+  "kosten_mrd": 11.1,
+  "kosten_rentner_mrd": 9.5,
+  "kosten_uebrige_mrd": 1.6,
+  "auslauf_rentneranteil_mrd": {
+   "0": 9.5,
+   "5": 7.7,
+   "10": 5.4,
+   "15": 3.3,
+   "20": 1.6,
+   "30": 0.1
+  },
+  "plus_nach_mrd": 102.4,
+  "minus_nach_mrd": 121.7,
+  "weniger_mio": 19.2,
+  "anteil": 47,
+  "monat": 520,
+  "ueber100_mio": 11.9,
+  "rentner": {
+   "haushalte_mio": 11.5,
+   "weniger_mio": 8.2,
+   "anteil_prozent": 71,
+   "mittel_monat": 181,
+   "ueber100_mio": 3.4
+  },
+  "uebrige": {
+   "haushalte_mio": 29.7,
+   "weniger_mio": 11,
+   "anteil_prozent": 37,
+   "mittel_monat": 772,
+   "ueber100_mio": 8.5
+  }
+ },
+ {
+  "name": "B1: Zinsen und Mieten bis 1.000 € je Erwachsenem frei",
+  "kosten_mrd": 12.9,
+  "kosten_rentner_mrd": 3.8,
+  "kosten_uebrige_mrd": 9.1,
+  "auslauf_rentneranteil_mrd": {
+   "0": 3.8,
+   "5": 3.2,
+   "10": 2.4,
+   "15": 1.5,
+   "20": 0.8,
+   "30": 0.1
+  },
+  "plus_nach_mrd": 104.2,
+  "minus_nach_mrd": 121.8,
+  "weniger_mio": 19.1,
+  "anteil": 46,
+  "monat": 523,
+  "ueber100_mio": 12.6,
+  "rentner": {
+   "haushalte_mio": 11.5,
+   "weniger_mio": 8.3,
+   "anteil_prozent": 72,
+   "mittel_monat": 220,
+   "ueber100_mio": 4.4
+  },
+  "uebrige": {
+   "haushalte_mio": 29.7,
+   "weniger_mio": 10.8,
+   "anteil_prozent": 36,
+   "mittel_monat": 756,
+   "ueber100_mio": 8.2
+  }
+ },
+ {
+  "name": "B2: Zinsen und Mieten bis 3.000 € je Erwachsenem frei",
+  "kosten_mrd": 23.9,
+  "kosten_rentner_mrd": 7,
+  "kosten_uebrige_mrd": 17,
+  "auslauf_rentneranteil_mrd": {
+   "0": 7,
+   "5": 5.9,
+   "10": 4.3,
+   "15": 2.7,
+   "20": 1.4,
+   "30": 0.1
+  },
+  "plus_nach_mrd": 108.1,
+  "minus_nach_mrd": 114.5,
+  "weniger_mio": 18.7,
+  "anteil": 45,
+  "monat": 502,
+  "ueber100_mio": 12.3,
+  "rentner": {
+   "haushalte_mio": 11.5,
+   "weniger_mio": 8.3,
+   "anteil_prozent": 72,
+   "mittel_monat": 196,
+   "ueber100_mio": 4.4
+  },
+  "uebrige": {
+   "haushalte_mio": 29.7,
+   "weniger_mio": 10.4,
+   "anteil_prozent": 35,
+   "mittel_monat": 744,
+   "ueber100_mio": 7.9
+  }
+ },
+ {
+  "name": "C: Rentner beim Start: voller Ausgleich",
+  "kosten_mrd": 24.9,
+  "kosten_rentner_mrd": 24.9,
+  "kosten_uebrige_mrd": 0,
+  "auslauf_rentneranteil_mrd": {
+   "0": 24.9,
+   "5": 20.7,
+   "10": 15,
+   "15": 9.3,
+   "20": 4.7,
+   "30": 0.4
+  },
+  "plus_nach_mrd": 99.1,
+  "minus_nach_mrd": 104.5,
+  "weniger_mio": 11.3,
+  "anteil": 27,
+  "monat": 756,
+  "ueber100_mio": 8.6,
+  "rentner": {
+   "haushalte_mio": 11.5,
+   "weniger_mio": 0,
+   "anteil_prozent": 0,
+   "mittel_monat": 0,
+   "ueber100_mio": 0
+  },
+  "uebrige": {
+   "haushalte_mio": 29.7,
+   "weniger_mio": 11.3,
+   "anteil_prozent": 38,
+   "mittel_monat": 756,
+   "ueber100_mio": 8.6
+  }
+ },
+ {
+  "name": "D1: Härteausgleich bis 500 € im Monat",
+  "kosten_mrd": 64.3,
+  "kosten_rentner_mrd": 19.4,
+  "kosten_uebrige_mrd": 44.9,
+  "auslauf_rentneranteil_mrd": {
+   "0": 19.4,
+   "5": 16,
+   "10": 11.6,
+   "15": 7.3,
+   "20": 3.6,
+   "30": 0.3
+  },
+  "plus_nach_mrd": 99.1,
+  "minus_nach_mrd": 65.1,
+  "weniger_mio": 6.1,
+  "anteil": 15,
+  "monat": 878,
+  "ueber100_mio": 5.4,
+  "rentner": {
+   "haushalte_mio": 11.5,
+   "weniger_mio": 1.1,
+   "anteil_prozent": 10,
+   "mittel_monat": 416,
+   "ueber100_mio": 0.9
+  },
+  "uebrige": {
+   "haushalte_mio": 29.7,
+   "weniger_mio": 5,
+   "anteil_prozent": 17,
+   "mittel_monat": 978,
+   "ueber100_mio": 4.5
+  }
+ },
+ {
+  "name": "D2: Härteausgleich bis 1.000 € im Monat (wie Version 30)",
+  "kosten_mrd": 91.4,
+  "kosten_rentner_mrd": 23.2,
+  "kosten_uebrige_mrd": 68.2,
+  "auslauf_rentneranteil_mrd": {
+   "0": 23.2,
+   "5": 19.2,
+   "10": 14,
+   "15": 8.7,
+   "20": 4.4,
+   "30": 0.4
+  },
+  "plus_nach_mrd": 99.1,
+  "minus_nach_mrd": 38,
+  "weniger_mio": 3.1,
+  "anteil": 8,
+  "monat": 1003,
+  "ueber100_mio": 2.8,
+  "rentner": {
+   "haushalte_mio": 11.5,
+   "weniger_mio": 0.3,
+   "anteil_prozent": 2,
+   "mittel_monat": 522,
+   "ueber100_mio": 0.2
+  },
+  "uebrige": {
+   "haushalte_mio": 29.7,
+   "weniger_mio": 2.9,
+   "anteil_prozent": 10,
+   "mittel_monat": 1047,
+   "ueber100_mio": 2.6
+  }
+ },
+ {
+  "name": "E: A + B1",
+  "kosten_mrd": 23.9,
+  "kosten_rentner_mrd": 13.3,
+  "kosten_uebrige_mrd": 10.7,
+  "auslauf_rentneranteil_mrd": {
+   "0": 13.3,
+   "5": 10.9,
+   "10": 7.7,
+   "15": 4.8,
+   "20": 2.4,
+   "30": 0.2
+  },
+  "plus_nach_mrd": 107.7,
+  "minus_nach_mrd": 114.2,
+  "weniger_mio": 18.7,
+  "anteil": 45,
+  "monat": 502,
+  "ueber100_mio": 11.1,
+  "rentner": {
+   "haushalte_mio": 11.5,
+   "weniger_mio": 8.1,
+   "anteil_prozent": 70,
+   "mittel_monat": 154,
+   "ueber100_mio": 3
+  },
+  "uebrige": {
+   "haushalte_mio": 29.7,
+   "weniger_mio": 10.6,
+   "anteil_prozent": 36,
+   "mittel_monat": 769,
+   "ueber100_mio": 8.1
+  }
+ },
+ {
+  "name": "F: A + B1, dazu Rest bis 50 € im Monat ohne Antrag",
+  "kosten_mrd": 25.7,
+  "kosten_rentner_mrd": 14.1,
+  "kosten_uebrige_mrd": 11.6,
+  "auslauf_rentneranteil_mrd": {
+   "0": 14.1,
+   "5": 11.5,
+   "10": 8.2,
+   "15": 5.1,
+   "20": 2.5,
+   "30": 0.2
+  },
+  "plus_nach_mrd": 107.7,
+  "minus_nach_mrd": 112.4,
+  "weniger_mio": 13.4,
+  "anteil": 33,
+  "monat": 690,
+  "ueber100_mio": 11.1,
+  "rentner": {
+   "haushalte_mio": 11.5,
+   "weniger_mio": 4.4,
+   "anteil_prozent": 38,
+   "mittel_monat": 267,
+   "ueber100_mio": 3
+  },
+  "uebrige": {
+   "haushalte_mio": 29.7,
+   "weniger_mio": 9,
+   "anteil_prozent": 30,
+   "mittel_monat": 897,
+   "ueber100_mio": 8.1
+  }
+ }
+]

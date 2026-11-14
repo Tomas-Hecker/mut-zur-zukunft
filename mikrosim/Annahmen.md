@@ -1,4 +1,4 @@
-# Mikrosimulation: Annahmen und Quellen (Entwurf 0.1, 14.11.2026)
+# Mikrosimulation: Annahmen und Quellen (Entwurf 0.2, 14.11.2026, geeicht an VGR 2025, Kassenstatistik 2025 und EVS)
 
 Das Modell rechnet rund 49.000 künstliche Haushalte. Sie stehen mit Gewichten für die 41,25 Mio. Haushalte in Deutschland.
 Jeder Haushalt wird mit dem **Rechenkern des Steuerrechners** gerechnet, also nach denselben Regeln wie die Beispielhaushalte im
@@ -18,14 +18,16 @@ Art der Werte: **Statistik** (amtliche Zahl), **Studie** (Fachliteratur), **Eich
 | Erwachsene zusammen | 65,6 Mio. (amtlich 69,6) | Abweichung | Menschen in Heimen und Teile der erwachsenen Kinder fehlen |
 | Löhne in Vollzeit | Median 3.950 € im Monat, Streuung 0,40, obere 5 % Pareto ab 100.000 € | Statistik/Annahme | Entgeltstatistik der BA; Rechenmodell Blatt SV-Freibetrag |
 | Löhne in Teilzeit | Median 1.650 € im Monat | Statistik | wie oben |
+| Minijobs als Nebenjob | 3,3 Mio. Beschäftigte (im Modell 2,5 Mio. Haushalte) | Statistik | Minijob-Zentrale, Quartalsbericht 2025 |
+| **Eichung der Löhne** | alle Löhne und Besoldungen × 1,11, so dass die Summe 2.036,3 Mrd. € ergibt | Statistik | VGR 2025, Bruttolöhne und -gehälter (Destatis, Fachserie 18 Reihe 1.4, Tabelle 2.1.8). Der Faktor deckt Sonderzahlungen, den Lohnstand 2025 und Löhne, die Umfragen untererfassen |
+| **Abzüge in der Einkommensteuer** | 6,8 % des Erwerbseinkommens (zusammen 154 Mrd. €) | Eichung | Der Rechenkern kennt nur die Werbungskostenpauschale und die Sozialbeiträge. Werbungskosten darüber, Kirchensteuer, Spenden, Riester und Rürup, außergewöhnliche Belastungen und steuerfreie Lohnteile (Zuschläge, Entgeltumwandlung) stehen in diesem einen Anteil. Er ist so gewählt, dass die Lohn- und Einkommensteuer samt Soli 405 Mrd. € ergibt (Kassenstatistik 2025: Lohnsteuer 262,7 + Kindergeld 54,6 + veranlagte Einkommensteuer 78,2 + Soli rund 9,5). Ohne diese Abzüge wären es 458 Mrd. € |
 | Gewinne Selbständiger | Median 45.000 €, Streuung 0,95; KV 40 % privat, sonst rund 20 % freiwillig gesetzlich | Annahme | Summe der Gewinne 271 Mrd. € |
 | Beamte und Pensionäre | Besoldung Median 4.200 €, Pension Median 3.400 € | Annahme | Summe 170 Mrd. € (Beihilfe 22,6 Mrd. = 13 %) |
 | Renten | Rentnerinnen allein Median 1.550 €, Rentner 1.800 €, Paare 1.850 + 1.100 €, dazu Betriebs- und Zusatzrenten bei der Hälfte | Statistik, gerundet | Alterssicherungsbericht 2024; Summe 355 Mrd. € |
 | Bürgergeld | Regelbedarf plus Miete und Heizung | Recht | Summe 41 Mrd. € |
 | Andere Leistungen in Geld (Arbeitslosen-, Kranken-, Elterngeld, BAföG) | 54 Mrd. € | Annahme | für die Haushalte neutral gerechnet (die Reform müsste sie anpassen) |
 
-**Abgleich:** Lohn- und Einkommensteuer samt Soli nach heutigem Recht 397–402 Mrd. € (Steuerschätzung 2025: Lohnsteuer vor Kindergeld
-316,8 + veranlagte 79,4 + Soli 13 ≈ 409). Bestandsschutz der Rentner 50–54 Mrd. € für 7,3–7,6 Mio. Haushalte (Version 31: 78,4 für 8,73 Mio.).
+**Abgleich:** Alle Summen mit Soll, Ist und Abweichung stehen in [abgleich.md](abgleich.md) (erzeugt mit `node abgleich.js`).
 
 ## 2. Vermögen
 
@@ -45,15 +47,19 @@ Art der Werte: **Statistik** (amtliche Zahl), **Studie** (Fachliteratur), **Eich
 
 | Was | Wert | Art | Quelle |
 |---|---|---|---|
-| Eichung | Sparquote 10,4 % des verfügbaren Einkommens, oder wahlweise Konsum genau 2.085,7 Mrd. € (2.300,2 − 214,5 Mietwert, wie Version 31) | Statistik | VGR 2025 |
+| Eichung (Standard) | Konsum genau 2.085,7 Mrd. € ohne Mietwert (VGR 2025: Konsum der Haushalte 2.305,4, Version 31: 2.300,2, jeweils − 214,5 Mietwert); wahlweise Sparquote 10,4 % | Statistik | VGR 2025 |
+| Sparen nach Gruppen | Rentnerhaushalte sparen 10 Punkte weniger, Selbständige 6 Punkte mehr als Arbeitnehmer bei gleichem Einkommen | Statistik | EVS 2018 (Fachserie 15 Heft 4, Tabelle 1.2): Konsum je Nettoeinkommen Arbeitnehmer 71,0 %, Ruhestand 83,3 %, Selbständige 62,4 %. Geeicht wird der Abstand zu den Arbeitnehmern (`node eichen_sparen.js`); das Verhältnis statt des Abstands verlangte von Rentnern mehr Konsum, als Einkommen und Erspartes hergeben |
 | Sparquote nach Einkommen | rund 7 Punkte mehr je Verdopplung des Einkommens: + 0,10 × ln(Einkommen/30.000), über 100.000 € zusätzlich + 0,08 × ln(Einkommen/100.000) | Studie | EVS 2018: unten Entsparen, oben 20–40 % |
 | Kapitalerträge | nach Steuer zur Hälfte ausgegeben (ab 1 Mio. € zu einem Viertel), der Rest wieder angelegt | Studie | Baker, Nagel, Wurgler 2007; Di Maggio, Kermani, Majlesi 2020 |
 | Verzehr von Erspartem im Alter | 1 % (65 Jahre) bis 3,5 % (90 Jahre) des Geldvermögens | Annahme | PHF: Ältere entsparen langsam |
 
-**Wichtige Abweichung:** Mit den Einkommen der künstlichen Haushalte und der amtlichen Sparquote ergibt sich ein Konsum von rund
-1.910 Mrd. € ohne Mietwert, 8 % weniger als die 2.086 Mrd. €, auf denen Version 31 die Ausgabensteuer rechnet. Entweder fehlen den
-künstlichen Haushalten Einkommen (Umfragen erfassen Einkommen aus Vermögen nur teilweise), oder die Grundlage von Version 31 ist zu
-hoch. Das ist zu klären, bevor Zahlen ins Buch gehen. Auf der Seite lässt sich beides wählen.
+**Geklärte Abweichung (Stand 14.11.):** Vor der Eichung ergab die amtliche Sparquote nur 1.910 Mrd. € Konsum. Der Grund waren
+fehlende Löhne (1.825 statt 2.036 Mrd. €). Seit der Eichung liegen beide Wege nah beieinander: Mit der Sparquote ergibt sich 2.068 Mrd. €
+Konsum, 1 % unter der amtlichen Summe. Offen bleibt: Gewinne und Entnahmen aus Firmen liegen im Modell bei 389 Mrd. €, in der VGR bei
+540 Mrd. € (Selbständigeneinkommen 175,6 + Ausschüttungen und Entnahmen 364,3). Rechnet man sie hinzu, ändert sich die Zahl der
+Haushalte mit weniger um weniger als 1,5 Mio.
+
+**Ehrliche Spanne der Haushalte mit weniger:** Standard 19,7 Mio. (48 %). Mit anderen vertretbaren Eichungen 18,5 bis 22 Mio.
 
 ## 4. Verhalten (alle einstellbar)
 

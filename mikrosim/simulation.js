@@ -6,8 +6,10 @@
 const STANDARD = {
   // Rechenkern wie Version 31: Konsum 2.300,2, Miete und Mietwert 214,5, Härteausgleich aus
   kern: { Konsum: 2300.2, Miete: 214.5, Nutzwert: 214.5, HAAn: 0 },
-  eichung: "sparquote",        // "sparquote": Konsum folgt aus den Einkommen und der Sparquote der VGR; "konsum": Konsum genau wie Version 31
+  eichung: "konsum",           // "konsum" (Standard seit 14.11.): Konsum genau wie VGR 2025 und Version 31; "sparquote": Konsum aus Einkommen und Sparquote der VGR
   sparquoteZiel: 0.104,        // Sparquote der privaten Haushalte 2025 (Statistisches Bundesamt, VGR): rund 10,4 %
+  sparRentner: -0.10, sparSelbst: 0.06,   // Versatz der Sparquote für Rentner- und Selbständigenhaushalte: geeicht mit eichen_sparen.js auf
+                               // den Abstand der Konsumquoten in der EVS 2018 (Fachserie 15 Heft 4, Tabelle 1.2)
   konsumZiel: 2085.7,          // Mrd. €: Konsum ohne Mietwert, 2.300,2 − 214,5 wie im Blatt Verteilung; die Sparquoten werden darauf geeicht
   kapKonsum: [0.5, 0.25],      // Anteil der Kapitalerträge nach Steuer, der ausgegeben wird (unter / ab 1 Mio. € Vermögen); der Rest
                                // wird wieder angelegt (Baker, Nagel, Wurgler 2007; Di Maggio, Kermani, Majlesi 2020)
@@ -54,7 +56,7 @@ function eingabe(sp, i, spar) {
     lohn1: sp.lohn1[i], std1: sp.std1[i], lohn2: sp.lohn2[i], std2: sp.std2[i], mini: sp.mini[i], rente: sp.rente[i],
     gewinn: sp.gewinn[i], kap: sp.kap[i], gmbh: sp.gmbh[i], aus: sp.aus[i], transfer: sp.transfer[i], verm: sp.verm[i],
     vermiet: sp.vermiet[i] + pens, vermietCash: sp.vermietCash[i] + pens, _frei: sp.leist ? sp.leist[i] : 0,
-    miet: sp.miet[i], hb: sp.hb[i], kinderlos: sp.kinderlos[i], spar, pkv: sp.pkv[i], vorsorge: 0,
+    miet: sp.miet[i], hb: sp.hb[i], kinderlos: sp.kinderlos[i], spar, pkv: sp.pkv[i], vorsorge: sp.abzug ? sp.abzug[i] : 0,
     rentner: sp.rentner[i], bs: sp.bs[i], allein: sp.allein[i], vollj: sp.vollj[i], unterhalt: sp.unterhalt[i], pg: 0, bjob: 0, vz: 0,
   };
 }
@@ -91,7 +93,7 @@ function rechne(K, pop, optIn = {}) {
   const kq = i => (sp.W[i] >= 1e6 ? opt.kapKonsum[1] : opt.kapKonsum[0]);
   const plan = (i, a0) => {
     const basis = verf0[i] - kapN[i];
-    const s = sparquote(basis, sp.rentner[i], sp.transfer[i], a0);
+    const s = sparquote(basis, sp.rentner[i], sp.transfer[i], a0 + (sp.rentner[i] ? opt.sparRentner : sp.selbst[i] ? opt.sparSelbst : 0));
     let konsum = basis * (1 - s) + kapN[i] * kq(i) + sp.verm[i];
     const entspar = s < 0 ? Math.min(-s * basis, Math.max(0, sp.geld[i]) * opt.entsparGrenze) : 0;
     // Leistungen wie Arbeitslosen-, Kranken- und Elterngeld: Die Reform müsste sie so anpassen, dass derselbe Einkauf möglich bleibt.
@@ -130,7 +132,7 @@ function rechne(K, pop, optIn = {}) {
     const tauLang = (r.konsum + r.pw + r.mietw - r.frei) > 0 ? (A.Satz3 + mwstSatzNeu) / (1 + A.Satz3) : mwstSatzNeu;
     R.push({ i, plus, zulage, bsz: r.bsz, heute: r.heute, vorschlag: r.vorschlag, sumH: r.sumH, ausg: r.ausg, ausgUeb: r.ausgUeb,
       mwst: r.mwst + pl.leist * A.MwStQ, mwstNeu: r.mwstNeu + pl.leist * mwstSatzNeu, konsum: r.konsum + pl.leist, konsumLeist: pl.leist, verf: verf0[i], einkommen: r.einkommen + extra, tauM, tauLang,
-      mietw: r.mietw, alt: r.alt, pw: r.pw, atg: r.atg, kk: r.kk });
+      mietw: r.mietw, alt: r.alt, pw: r.pw, atg: r.atg, kk: r.kk, pq: r.pq, kapKons: kapN[i] * kq(i), ueberS: ueber2 > 0 });
   }
   // 3) Erbschaften: Nachlässe aus Vermögen und Sterblichkeit, heute und mit Staatsanteil (Dauerzustand, Mrd. € im Jahr)
   const erbe = erbschaften(opt, sp, n);

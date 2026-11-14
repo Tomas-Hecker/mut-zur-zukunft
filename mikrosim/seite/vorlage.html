@@ -110,7 +110,8 @@ th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: 
       <div class="gruppe">
         <h3>Eichung des Konsums</h3>
         <div class="feld"><label for="eich">Konsum ergibt sich aus</label>
-          <select id="eich"><option value="sparquote">den Einkommen und der Sparquote 10,4 %</option><option value="konsum">der Summe von Version 31 (2.086 Mrd. €)</option></select></div>
+          <select id="eich"><option value="konsum">der amtlichen Summe 2025 (2.086 Mrd. € ohne Mietwert)</option><option value="sparquote">den Einkommen und der Sparquote 10,4 %</option></select>
+          <small>Beide Wege liegen seit der Eichung an der VGR 2025 nah beieinander.</small></div>
       </div>
       <button class="knopf" id="los" type="submit">Neu rechnen</button>
       <div class="status" id="status" aria-live="polite">Lädt die Haushalte …</div>
@@ -144,7 +145,8 @@ th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: 
       </section>
       <section class="karte hinweis">
         <h2>Was das Modell kann und was nicht</h2>
-        <p>Die Haushalte sind künstlich, aber auf amtliche Eckwerte geeicht: 41,25 Mio. Haushalte, Vermögen 16,6 Bio. € nach dem Eichpunkt (PHF 2023 der Bundesbank plus fehlende Reiche), Einkommensteuer rund 400 Mrd. €, Mietwert 214,5 Mrd. €. Jede Annahme steht in der Datei Annahmen.md mit Quelle.</p>
+        <p>Die Haushalte sind künstlich, aber auf amtliche Zahlen geeicht: 41,25 Mio. Haushalte, Bruttolöhne 2.036 Mrd. € (VGR 2025), Lohn- und Einkommensteuer 405 Mrd. € (Kassenstatistik 2025), Konsum 2.086 Mrd. € ohne Mietwert (VGR 2025), Vermögen 16,6 Bio. € (PHF 2023 der Bundesbank plus fehlende Reiche), Mietwert 214,5 Mrd. €. Wie stark Rentner, Arbeitnehmer und Selbständige sparen, folgt der Einkommens- und Verbrauchsstichprobe (EVS). Jede Zahl steht mit Quelle und Abweichung in Annahmen.md und abgleich.md.</p>
+        <p>Ehrliche Spanne: Mit anderen vertretbaren Eichungen haben 18,5 bis 22 Mio. Haushalte zum Start weniger. Den Haushalten fehlen gegenüber der VGR noch rund 150 Mrd. € Gewinne und Entnahmen aus Firmen.</p>
         <p>Nicht drin sind bisher: Wie viel Menschen arbeiten (Arbeitsangebot), Firmen und Preise, Wanderung, die Jahre bis 2070. Die Erwachsenen sind rund 66 statt 69,6 Mio., weil Menschen in Heimen und manche erwachsene Kinder fehlen. Leistungen wie Arbeitslosen- und Elterngeld sind für die Haushalte neutral gerechnet.</p>
       </section>
     </main>
