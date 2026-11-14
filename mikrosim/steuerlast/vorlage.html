@@ -137,11 +137,18 @@ ul.quellen { margin: 0; padding-left: 18px; color: var(--fg2); font-size: 13px; 
   </section>
 
   <section class="karte" aria-labelledby="t7">
-    <h2 id="t7">Wie Vermögen wächst: Sparen heute und mit der Reform</h2>
+    <div class="steuer">
+      <h2 id="t7">Wie Vermögen wächst: Sparen heute und mit der Reform</h2>
+      <div class="segment" role="group" aria-label="Sparen messen">
+        <button type="button" data-mass="v" aria-pressed="true">in % des Vermögens</button>
+        <button type="button" data-mass="e" aria-pressed="false">in % des Einkommens</button>
+      </div>
+    </div>
+    <p id="text7"></p>
     <div class="zahlen" id="zahlen7"></div>
     <div class="legende"><span><i style="background:var(--heute)"></i>heute</span><span><i style="background:var(--reform)"></i>mit der Reform</span></div>
     <div class="diagramm" id="d7"></div>
-    <p class="hinweis">Gespart wird, was vom Einkommen nach Steuern und Abgaben bleibt, wenn der Haushalt so viel einkauft wie heute. Was ein Haushalt mit der Reform mehr hat, legt er in dieser Rechnung ganz zurück; was er weniger hat, fehlt beim Sparen. Gruppen nach Nettovermögen. Die Zahlen in Euro sind das Sparen je Haushalt im Monat, heute und mit der Reform.</p>
+    <p class="hinweis">Gespart wird, was vom Einkommen nach Steuern und Abgaben bleibt, wenn der Haushalt so viel einkauft wie heute. Was ein Haushalt mit der Reform mehr hat, legt er in dieser Rechnung ganz zurück; was er weniger hat, fehlt beim Sparen. Gruppen nach Nettovermögen. Die Zahlen in Euro sind das Sparen je Haushalt im Monat, heute und mit der Reform. Nicht enthalten: Wertsteigerung von Häusern und Aktien, Erbschaften und Schenkungen.</p>
   </section>
 
   <section class="karte" aria-labelledby="t4">
@@ -188,6 +195,17 @@ function zeigeTip(ev, html) { tip.innerHTML = html; tip.hidden = false; const r 
   tip.style.left = x + "px"; tip.style.top = y + "px"; }
 const versteckeTip = () => { tip.hidden = true; };
 
+// Zwei Punkte: liegen sie fast aufeinander, wird „heute“ als Ring um den Reform-Punkt gezeichnet, damit beide sichtbar bleiben
+function punkte(g, xh, xr, y) {
+  if (Math.abs(xh - xr) < 12) {
+    g.append(el("circle", { cx: xh, cy: y, r: 9, fill: "var(--surface)", stroke: "var(--heute)", "stroke-width": 3 }));
+    g.append(el("circle", { cx: xr, cy: y, r: 5, fill: "var(--reform)" }));
+  } else {
+    g.append(el("circle", { cx: xh, cy: y, r: 6, fill: "var(--heute)", stroke: "var(--surface)", "stroke-width": 2 }));
+    g.append(el("circle", { cx: xr, cy: y, r: 6, fill: "var(--reform)", stroke: "var(--surface)", "stroke-width": 2 }));
+  }
+}
+
 function hantel(ziel, zeilen, beschrift) {
   const W = Math.max(320, Math.round(ziel.clientWidth || 800)), eng = W < 600;
   const links = eng ? 150 : 230, rechts = eng ? 44 : 170, zh = eng ? 42 : 34, oben = 26, H = oben + zeilen.length * zh + 10;
@@ -211,8 +229,7 @@ function hantel(ziel, zeilen, beschrift) {
       g.append(el("text", { x: links - 14, y: y + 4, "text-anchor": "end" }, beschrift(z)));
     }
     g.append(el("line", { x1: sx(Math.min(h, r)), x2: sx(Math.max(h, r)), y1: y, y2: y, stroke: "var(--line)", "stroke-width": 4, "stroke-linecap": "round" }));
-    g.append(el("circle", { cx: sx(h), cy: y, r: 6, fill: "var(--heute)", stroke: "var(--surface)", "stroke-width": 2 }));
-    g.append(el("circle", { cx: sx(r), cy: y, r: 6, fill: "var(--reform)", stroke: "var(--surface)", "stroke-width": 2 }));
+    punkte(g, sx(h), sx(r), y);
     const d = r - h;
     g.append(el("text", { x: eng ? W - 4 : W - 96, y: y + 4, "text-anchor": "end", class: "stark" }, (d > 0 ? "+" : d < 0 ? "−" : "±") + de(Math.abs(d), 1)));
     if (!eng) g.append(el("text", { x: W - 4, y: y + 4, "text-anchor": "end" }, de(z.weniger_prozent, 0) + " %"));
@@ -357,29 +374,32 @@ function quellen() {
     A.einkommen.map(a => `<tr><td>${a.name}</td><td>${de(a.einkommen_mrd, 0)} Mrd. €</td><td>${de(a.je100_heute, 1)} €</td><td>${de(a.je100_reform, 1)} €</td></tr>`).join("") + "</tbody>";
 }
 
+let mass = "v";
 function aufbau() {
   const Z = D.aufbau, ziel = $("d7");
+  const qH = z => mass === "v" ? z.wachstum_heute : z.sparquote_heute, qR = z => mass === "v" ? z.wachstum_reform : z.sparquote_reform;
+  $("text7").textContent = mass === "v" ? "Um wie viel Prozent das Vermögen der Haushalte im Jahr durch Sparen wächst." : "Wie viel Prozent ihres Einkommens die Haushalte im Jahr sparen.";
   const W = Math.max(320, Math.round(ziel.clientWidth || 800)), eng = W < 600;
   const links = eng ? 150 : 230, rechts = eng ? 8 : 130, zh = eng ? 42 : 34, oben = 26, H = oben + Z.length * zh + 10;
-  const werte = Z.flatMap(z => [z.sparquote_heute, z.sparquote_reform]);
-  const lo = Math.floor(Math.min(0, ...werte) / 5) * 5, hi = Math.ceil(Math.max(...werte) / 5) * 5;
+  const werte = Z.flatMap(z => [qH(z), qR(z)]);
+  const schritt = mass === "v" ? 2 : 5;
+  const lo = Math.floor(Math.min(0, ...werte) / schritt) * schritt, hi = Math.ceil(Math.max(...werte) / schritt) * schritt;
   const sx = v => links + (W - links - rechts) * (v - lo) / (hi - lo);
   const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Sparen in Prozent des Einkommens nach Vermögen, heute und mit der Reform" });
-  for (let t = lo; t <= hi; t += (eng ? 10 : 5)) {
+  for (let t = lo; t <= hi; t += (eng ? 2 * schritt : schritt)) {
     svg.append(el("line", { x1: sx(t), x2: sx(t), y1: oben - 8, y2: H - 6, stroke: t === 0 ? "var(--muted)" : "var(--grid)", "stroke-width": 1 }));
     svg.append(el("text", { x: sx(t), y: 12, "text-anchor": "middle", class: "leise" }, (t < 0 ? "−" : "") + Math.abs(t) + " %"));
   }
   if (!eng) svg.append(el("text", { x: W - 4, y: 12, "text-anchor": "end", class: "leise" }, "€ im Monat"));
   Z.forEach((z, k) => {
-    const y = oben + k * zh + zh / 2, h = z.sparquote_heute, r = z.sparquote_reform, g = el("g");
+    const y = oben + k * zh + zh / 2, h = qH(z), r = qR(z), g = el("g");
     g.append(el("rect", { x: 0, y: y - zh / 2, width: W, height: zh, fill: "transparent" }));
     if (eng) { g.append(el("text", { x: 0, y: y - 3, class: "stark" }, z.name)); g.append(el("text", { x: 0, y: y + 13, class: "leise" }, `${de(z.sparen_heute_monat)} → ${de(z.sparen_reform_monat)} € im Monat`)); }
     else g.append(el("text", { x: 0, y: y + 4, class: "stark" }, z.name));
     g.append(el("line", { x1: sx(Math.min(h, r)), x2: sx(Math.max(h, r)), y1: y, y2: y, stroke: "var(--line)", "stroke-width": 4, "stroke-linecap": "round" }));
-    g.append(el("circle", { cx: sx(h), cy: y, r: 6, fill: "var(--heute)", stroke: "var(--surface)", "stroke-width": 2 }));
-    g.append(el("circle", { cx: sx(r), cy: y, r: 6, fill: "var(--reform)", stroke: "var(--surface)", "stroke-width": 2 }));
+    punkte(g, sx(h), sx(r), y);
     if (!eng) g.append(el("text", { x: W - 4, y: y + 4, "text-anchor": "end" }, `${de(z.sparen_heute_monat)} → ${de(z.sparen_reform_monat)}`));
-    g.addEventListener("pointermove", ev => zeigeTip(ev, `<b>${z.name}</b><br>${de(z.haushalte_mio, 1)} Mio. Haushalte, Einkommen ${de(z.einkommen_monat)} € im Monat<br>Sparen heute ${de(z.sparen_heute_monat)} € (${de(h, 1)} %), mit der Reform ${de(z.sparen_reform_monat)} € (${de(r, 1)} %)<br>Erbe an den Staat im Jahr: heute ${de(z.erbe_heute_mrd, 1)} Mrd. €, mit der Reform ${de(z.erbe_reform_mrd, 1)} Mrd. € (voll wirksam ${de(z.erbe_reform_lang_mrd, 1)})`));
+    g.addEventListener("pointermove", ev => zeigeTip(ev, `<b>${z.name}</b><br>${de(z.haushalte_mio, 1)} Mio. Haushalte, Einkommen ${de(z.einkommen_monat)} € im Monat<br>Vermögen im Mittel ${geld(z.vermoegen_mittel)}<br>Sparen im Monat heute ${de(z.sparen_heute_monat)} €, mit der Reform ${de(z.sparen_reform_monat)} €<br>das sind ${de(z.wachstum_heute, 1)} % → ${de(z.wachstum_reform, 1)} % des Vermögens, ${de(z.sparquote_heute, 1)} % → ${de(z.sparquote_reform, 1)} % des Einkommens<br>Erbe an den Staat im Jahr: heute ${de(z.erbe_heute_mrd, 1)} Mrd. €, mit der Reform ${de(z.erbe_reform_mrd, 1)} Mrd. € (voll wirksam ${de(z.erbe_reform_lang_mrd, 1)})`));
     g.addEventListener("pointerleave", versteckeTip);
     svg.append(g);
   });
@@ -413,6 +433,8 @@ function zeichne() {
 const erbKnoepfe = [...document.querySelectorAll("[data-erb]")];
 function setze(l) { lang = l; for (const b of erbKnoepfe) b.setAttribute("aria-pressed", String((b.dataset.erb === "1") === l)); zeichne(); }
 for (const b of erbKnoepfe) b.addEventListener("click", () => setze(b.dataset.erb === "1"));
+const massKnoepfe = [...document.querySelectorAll("[data-mass]")];
+for (const b of massKnoepfe) b.addEventListener("click", () => { mass = b.dataset.mass; for (const c of massKnoepfe) c.setAttribute("aria-pressed", String(c === b)); aufbau(); });
 zeichne();
 let zuletzt = innerWidth;
 addEventListener("resize", () => { if (Math.abs(innerWidth - zuletzt) > 20) { zuletzt = innerWidth; zeichne(); } });
