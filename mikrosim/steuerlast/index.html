@@ -46,6 +46,9 @@ svg text { fill: var(--fg2); font-size: 12px; font-variant-numeric: tabular-nums
 svg .stark { fill: var(--fg); font-weight: 600 }
 svg .leise { fill: var(--muted) }
 .hinweis { font-size: 13px; color: var(--muted) }
+a { color: var(--fg); text-decoration-color: var(--muted); text-underline-offset: 2px }
+a:hover { text-decoration-color: currentColor }
+.weiter { font-size: 14px; color: var(--fg2); display: flex; flex-wrap: wrap; gap: 4px 14px }
 .skala { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; font-size: 12px; color: var(--fg2); max-width: 640px }
 .skala div { display: grid; gap: 4px; text-align: center }
 .skala i { display: block; height: 14px; border-radius: 3px }
@@ -71,6 +74,7 @@ ul.quellen { margin: 0; padding-left: 18px; color: var(--fg2); font-size: 13px; 
     <h1>Wer trägt die Steuerlast, heute und mit der Reform</h1>
     <p class="lead">Alle Steuern und Abgaben eines Haushalts im Jahr, geteilt durch sein Einkommen vor Steuern. Gerechnet für das erste Jahr der Reform (Version 32), wenn jeder Haushalt genau so viel einkauft wie heute. Mit dem gewählten Ausgleich: heutige Rentner bis 300 € im Monat und 10 € im Monat für jeden Erwachsenen. Die Hausregel (2 % des Kaufpreises statt Mietwert) gilt nur für Häuser, die nach dem Start gekauft werden, und wirkt im ersten Jahr deshalb noch bei keinem Haushalt.</p>
     <p class="lead" id="mehrZeile"></p>
+    <p class="weiter"><span>Im Buch nachlesen:</span><a href="https://tomas-hecker.github.io/mut-zur-zukunft/buch/kapitel-4.html#wer-heute-wie-viel-zahlt-und-wie-es-im-vorschlag-waere">Wer heute wie viel zahlt (Kapitel 4)</a><a href="https://tomas-hecker.github.io/mut-zur-zukunft/buch/kapitel-6.html#was-sich-fuer-die-haushalte-aendert">Was sich für die Haushalte ändert (Kapitel 6)</a><a href="https://tomas-hecker.github.io/mut-zur-zukunft/steuerrechner/">Den eigenen Haushalt im Steuerrechner rechnen</a></p>
   </header>
 
   <section class="karte" aria-labelledby="t0" id="feld">
@@ -127,7 +131,7 @@ ul.quellen { margin: 0; padding-left: 18px; color: var(--fg2); font-size: 13px; 
     <div class="legende"><span><i style="background:var(--g2);border-radius:2px"></i>trägt weniger als heute</span><span><i style="background:var(--r2);border-radius:2px"></i>trägt mehr als heute</span></div>
     <div class="diagramm" id="d6"></div>
     <p id="summe6"></p>
-    <p class="hinweis">Einkommen: Die Steuern und Abgaben eines Haushalts sind nach dem Anteil jeder Einkommensart an seinem Einkommen verteilt. Vermögen: die Erbschaftsteuer heute und der Staatsanteil am Erbe mit der Reform, verteilt nach dem Anteil jeder Vermögensart am Nachlass. Heute zählen Häuser beim Erbe im Mittel nur zu drei Vierteln, Firmen sind zu 85 % verschont; mit der Reform zählt alles voll.</p>
+    <p class="hinweis">Einkommen: Die Steuern und Abgaben eines Haushalts sind nach dem Anteil jeder Einkommensart an seinem Einkommen verteilt. Vermögen: die Erbschaftsteuer heute und der Staatsanteil am Erbe mit der Reform, verteilt nach dem Anteil jeder Vermögensart am Nachlass. Heute zählen Häuser beim Erbe im Mittel nur zu drei Vierteln, Firmen sind zu 85 % verschont; mit der Reform zählt alles voll. Im Buch: <a href="https://tomas-hecker.github.io/mut-zur-zukunft/buch/kapitel-4.html#der-staatsanteil-bleibt-im-betrieb-erben-als-treuhaender">Der Staatsanteil bleibt im Betrieb (Kapitel 4)</a>.</p>
     <details>
       <summary>Tabelle: von 100 € Einkommen an Steuern und Abgaben</summary>
       <div class="tabelle"><table id="tab6"></table></div>
@@ -146,7 +150,7 @@ ul.quellen { margin: 0; padding-left: 18px; color: var(--fg2); font-size: 13px; 
     <div class="zahlen" id="zahlen7"></div>
     <div class="legende"><span><i style="background:var(--heute)"></i>heute</span><span><i style="background:var(--reform)"></i>mit der Reform</span></div>
     <div class="diagramm" id="d7"></div>
-    <p class="hinweis">Gespart wird, was vom Einkommen nach Steuern und Abgaben bleibt, wenn der Haushalt so viel einkauft wie heute. Was ein Haushalt mit der Reform mehr hat, legt er in dieser Rechnung ganz zurück; was er weniger hat, fehlt beim Sparen. Gruppen nach Nettovermögen. Die Zahlen in Euro sind das Sparen je Haushalt im Monat, heute und mit der Reform. Nicht enthalten: Wertsteigerung von Häusern und Aktien, Erbschaften und Schenkungen.</p>
+    <p class="hinweis">Gespart wird, was vom Einkommen nach Steuern und Abgaben bleibt, wenn der Haushalt so viel einkauft wie heute. Was ein Haushalt mit der Reform mehr hat, legt er in dieser Rechnung ganz zurück; was er weniger hat, fehlt beim Sparen. Gruppen nach Nettovermögen. Die Zahlen in Euro sind das Sparen je Haushalt im Monat, heute und mit der Reform. Nicht enthalten: Wertsteigerung von Häusern und Aktien, Erbschaften und Schenkungen. Im Buch: <a href="https://tomas-hecker.github.io/mut-zur-zukunft/buch/kapitel-4.html#sparen-kann-jeder-auch-mit-kleinem-lohn">Sparen kann jeder, auch mit kleinem Lohn (Kapitel 4)</a>.</p>
   </section>
 
   <section class="karte" aria-labelledby="t4">
@@ -171,7 +175,7 @@ ul.quellen { margin: 0; padding-left: 18px; color: var(--fg2); font-size: 13px; 
       <li>Der Ausgleich für heutige Rentner läuft mit ihnen aus. Wer später in Rente geht, hat schon unter der Reform gearbeitet und gespart. Einen echten Dauerzustand mit den Haushalten von morgen rechnet das Modell noch nicht; die Ansicht „Erbe voll wirksam“ ändert nur das Erbe.</li>
       <li>Erbschaft als erwartete Steuer im Jahr: Sterbewahrscheinlichkeit mal Steuer auf den Nachlass. Im ersten Jahr ist ein Viertel des Staatsanteils fällig, auf Dauer die Hälfte (wie Version 31).</li>
       <li>Nicht enthalten: Steuern der Firmen, die nicht den Haushalten gehören, Gewerbesteuer, Verhalten (mehr oder weniger arbeiten, sparen, ausgeben) und 4 Mio. erwachsene Kinder mit eigenem Einkommen.</li>
-      <li>Alle Zahlen, Quellen und Abweichungen: Annahmen.md und abgleich.md im Ordner rechenmodell-mikrosim.</li>
+      <li>Alle Zahlen, Quellen und Abweichungen: Annahmen.md und abgleich.md im Ordner rechenmodell-mikrosim. Im Buch: <a href="https://tomas-hecker.github.io/mut-zur-zukunft/buch/kapitel-6.html#wie-belastbar-ist-die-rechnung">Wie belastbar ist die Rechnung (Kapitel 6)</a>.</li>
     </ul>
   </section>
 </div>

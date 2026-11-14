@@ -72,6 +72,7 @@ th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: 
     <h3>Wir können uns die Zukunft leisten · Mikrosimulation, Entwurf 0.1</h3>
     <h1>Haushalte im Rechenmodell</h1>
     <p>Rund 49.000 künstliche Haushalte mit Einkommen, Vermögen und Konsum stehen für die gut 41 Mio. Haushalte in Deutschland. Jeder wird mit dem Rechenkern des Steuerrechners nach heutigem Recht und mit der Reform gerechnet. Stell die Annahmen links ein und rechne neu.</p>
+    <p>Im Buch nachlesen: <a href="https://tomas-hecker.github.io/mut-zur-zukunft/buch/kapitel-4.html#wer-heute-wie-viel-zahlt-und-wie-es-im-vorschlag-waere">Wer heute wie viel zahlt (Kapitel 4)</a> · <a href="https://tomas-hecker.github.io/mut-zur-zukunft/buch/kapitel-6.html#wie-belastbar-ist-die-rechnung">Wie belastbar ist die Rechnung (Kapitel 6)</a> · <a href="https://tomas-hecker.github.io/mut-zur-zukunft/steuerrechner/">Den eigenen Haushalt im Steuerrechner rechnen</a></p>
   </header>
   <div class="raster">
     <form class="regler" id="regler">
@@ -1005,7 +1006,8 @@ function rechne(K, pop, optIn = {}) {
     const tauLang = (r.konsum + r.pw + r.mietw - r.frei) > 0 ? (A.Satz3 + mwstSatzNeu) / (1 + A.Satz3) : mwstSatzNeu;
     R.push({ i, plus, zulage, bsz: r.bsz, heute: r.heute, vorschlag: r.vorschlag, sumH: r.sumH, ausg: r.ausg, ausgUeb: r.ausgUeb,
       mwst: r.mwst + pl.leist * A.MwStQ, mwstNeu: r.mwstNeu + pl.leist * mwstSatzNeu, konsum: r.konsum + pl.leist, konsumLeist: pl.leist, verf: verf0[i], einkommen: r.einkommen + extra, tauM, tauLang,
-      mietw: r.mietw, alt: r.alt, pw: r.pw, atg: r.atg, kk: r.kk, pq: r.pq, kapKons: kapN[i] * kq(i), ueberS: ueber2 > 0 });
+      mietw: r.mietw, alt: r.alt, pw: r.pw, atg: r.atg, kk: r.kk, pq: r.pq, kapKons: kapN[i] * kq(i), ueberS: ueber2 > 0,
+      svNeu: r.svNeu, gut: r.gut, teile: { ausSum: r.ausSum, agRP: r.agRP, rentePlus: r.rentePlus, gsPlus: r.gsPlus, anr: r.anr, bsz: r.bsz } });
   }
   // 3) Erbschaften: Nachlässe aus Vermögen und Sterblichkeit, heute und mit Staatsanteil (Dauerzustand, Mrd. € im Jahr)
   const erbe = erbschaften(opt, sp, n);
