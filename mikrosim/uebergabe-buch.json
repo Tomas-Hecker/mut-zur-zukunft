@@ -306,5 +306,5 @@
    }
   }
  ],
- "spanne": "Mit anderen vertretbaren Eichungen 17 bis 20,7 Mio. Haushalte mit weniger (Sparquote statt Konsum als Anker, höhere Ausschüttungen, höhere Kapitalerträge)"
+ "spanne": "Mit anderen vertretbaren Eichungen (Sparquote statt Konsum als Anker, höhere Ausschüttungen, höhere Kapitalerträge; node spanne.js): ohne Ausgleich 17 bis 20,7 Mio. Haushalte mit weniger (Standard 18,3), mit dem Ausgleich von Version 32 10,6 bis 14,2 Mio. (Standard 11,9)"
 }

@@ -59,7 +59,14 @@ Konsum, 1 % unter der amtlichen Summe. Offen bleibt: Gewinne und Entnahmen aus F
 540 Mrd. € (Selbständigeneinkommen 175,6 + Ausschüttungen und Entnahmen 364,3). Rechnet man sie hinzu, ändert sich die Zahl der
 Haushalte mit weniger um weniger als 1,5 Mio.
 
-**Ehrliche Spanne der Haushalte mit weniger:** Standard 18,3 Mio. (44 %). Mit anderen vertretbaren Eichungen 17 bis 20,7 Mio.
+**Ehrliche Spanne der Haushalte mit weniger** (`node spanne.js`, alle Zeilen in `spanne.json`): Gerechnet wird mit beiden Ankern der Eichung
+(Konsum oder Sparquote) und mit mehr Gewinnen und Kapitalerträgen bei den Haushalten (Ausschüttungen × 2, Ausschüttungen × 1,5 und Gewinne × 1,2,
+Kapitalerträge × 1,5), weil offen ist, wo die fehlenden rund 150 Mrd. € liegen.
+
+| | Standard | Spanne |
+|---|---|---|
+| ohne Ausgleich | 18,3 Mio. (44 %) | 17 bis 20,7 Mio. |
+| mit dem Ausgleich von Version 32 (Rentner bis 300 €, 10 € je Erwachsenem) | 11,9 Mio. (29 %) | 10,6 bis 14,2 Mio. |
 
 ## 4. Verhalten (alle einstellbar)
 
@@ -74,6 +81,31 @@ Haushalte mit weniger um weniger als 1,5 Mio.
 Steuer aus einem zusätzlich ausgegebenen Euro: über dem Freibetrag rund 60 Cent (50 Cent Ausgabensteuer und 10 Cent Mehrwertsteuer),
 darunter rund 20 Cent Mehrwertsteuer. Vererbtes bringt den Staatsanteil nur, soweit der Nachlass über dem Familienfreibetrag liegt,
 und nur zur Hälfte fällig (langfristig, wie Version 31).
+
+## 4a. Ausgleich (Version 32, Tomas 14.11.2026)
+
+| Was | Wert | Art | Quelle |
+|---|---|---|---|
+| Ausgleich für heutige Rentner | Wer heute Rente oder Pension bezieht und mit der Reform weniger hätte, bekommt das Minus bis 300 € im Monat ersetzt; läuft mit den heutigen Rentnern aus | Vorschlag | Version 32; `ausgleichRentnerMonat` in `simulation.js`, auf der Seite einstellbar |
+| Für jeden Erwachsenen | 10 € im Monat | Vorschlag | Version 32; `pauschaleErwMonat` |
+| Kosten im ersten Jahr | 22,7 Mrd. € | Rechnung | `node steuerlast.js` (Feld `ausgleich_mrd`); das Buch rechnet die 10 € mit 69,6 Mio. Erwachsenen (8,35 Mrd. €), das Modell kennt 65,6 Mio. |
+
+In `simulation.js` stehen beide Werte auf 0, damit die Grundrechnung die Reform ohne Ausgleich zeigt. Die Seite und `steuerlast.js` setzen sie
+auf Version 32. Ergebnis: 71 % der Haushalte haben mehr, 11,9 Mio. weniger (im Mittel 516 € im Monat).
+
+## 4b. Wer heute wie viel zahlt und wie es mit der Reform wäre (steuerlast.js)
+
+- **Last heute:** Einkommensteuer mit Soli, Sozialbeiträge der Haushalte, Steuer auf Kapitalerträge, Mehrwertsteuer und Erbschaftsteuer.
+- **Last mit der Reform:** Ausgabensteuer und Mehrwertsteuer, neue Sozialbeiträge, Staatsanteil am Erbe; abgezogen werden Auszahlungen,
+  Bestandsschutz und Ausgleich. Probe: Last heute minus Last mit Reform ergibt für jeden Haushalt genau sein Plus (Abweichung 0,00 €).
+- **Erstes Jahr:** Staatsanteil am Erbe zu 25 % fällig, langfristig 50 %. Die Hausregel gilt nur für Häuser, die nach dem Start gekauft werden,
+  wirkt im ersten Jahr also nicht (`node steuerlast.js haus` rechnet sie zum Vergleich trotzdem ein).
+- **Farbfeld:** Einkommenszehntel mal Vermögenszehntel; Farbe = Plus oder Minus in % des Einkommens, mit Erbe. Felder mit weniger als
+  30 künstlichen Haushalten sind schraffiert.
+- **Welche Einkommen zahlen:** Die Last ohne Erbe wird jedem Haushalt nach den Anteilen seiner Einkommensarten (Lohn, Rente, Firmengewinn,
+  Zinsen, Mieten, Sozialleistungen) zugeordnet. Die Erbschaftsteuer nach der Zusammensetzung des Nachlasses: heute Haus und vermietete
+  Immobilien zu drei Vierteln bewertet und Betriebe zu 15 %, mit der Reform voll.
+- **Sparen:** verfügbares Einkommen minus Konsum minus Unterhalt; mit der Reform zusätzlich das Plus. Wachstum = Sparen in % des Vermögens.
 
 ## 5. Erbschaften
 
