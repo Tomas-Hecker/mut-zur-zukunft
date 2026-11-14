@@ -6,7 +6,7 @@
 /* Layout: eine ruhige Spalte, je Frage eine Karte mit einer Grafik; Zahlen in Tabellenziffern */
 :root {
   --bg: #f6f7f8; --surface: #ffffff; --fg: #15181c; --fg2: #4a515b; --muted: #6b7380; --line: #dfe3e8; --grid: #eceff2;
-  --heute: #C8532C; --reform: #3F8F63; --minus: #c9502f;
+  --heute: #C8532C; --reform: #3F8F63; --minus: #c9502f; --anteil: #2F5D8C;
   --o1: #86b6ef; --o2: #3987e5; --o3: #184f95;
   --g3: #1F5A43; --g2: #3F8F63; --g1: #9FD8B0; --n0: #EDEBE4; --r1: #E9A58A; --r2: #C8532C; --r3: #8E3417;
   --tx-hell: #ffffff; --tx-dunkel: #15181c;
@@ -14,10 +14,10 @@
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #121417; --surface: #1a1d21; --fg: #eef0f2; --fg2: #c2c7ce; --muted: #9aa1ab; --line: #2c3138; --grid: #24282e;
-  --heute: #D2643C; --reform: #4C9C70; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4; color-scheme: dark } }
+  --anteil: #8DB4E2; --heute: #D2643C; --reform: #4C9C70; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #121417; --surface: #1a1d21; --fg: #eef0f2; --fg2: #c2c7ce; --muted: #9aa1ab; --line: #2c3138; --grid: #24282e;
-  --heute: #D2643C; --reform: #4C9C70; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4; color-scheme: dark }
+  --anteil: #8DB4E2; --heute: #D2643C; --reform: #4C9C70; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4; color-scheme: dark }
 * { box-sizing: border-box }
 body { background: var(--bg); color: var(--fg); font-family: var(--text); font-size: 15px; line-height: 1.55; margin: 0 }
 .wrap { max-width: 880px; margin: 0 auto; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px }
@@ -44,6 +44,7 @@ p { margin: 0; max-width: 68ch }
 svg { display: block; width: 100%; height: auto; font-family: var(--text) }
 svg text { fill: var(--fg2); font-size: 12px; font-variant-numeric: tabular-nums }
 svg .stark { fill: var(--fg); font-weight: 600 }
+svg .anteil { fill: var(--anteil); font-size: 12px; font-weight: 600 }
 svg .leise { fill: var(--muted) }
 .hinweis { font-size: 13px; color: var(--muted) }
 a { color: var(--fg); text-decoration-color: var(--muted); text-underline-offset: 2px }
@@ -209,9 +210,11 @@ function punkte(g, xh, xr, y) {
   }
 }
 
-function hantel(ziel, zeilen, beschrift) {
+// Anteil der Haushalte einer Gruppe an allen Haushalten, als zweite Zeile unter dem Gruppennamen (Wunsch Tomas 14.11.)
+function anteilText(z, zeilen) { const n = zeilen.reduce((a, x) => a + x.haushalte_mio, 0); return de(100 * z.haushalte_mio / n, 0) + " % der Haushalte"; }
+function hantel(ziel, zeilen, beschrift, mitAnteil = false) {
   const W = Math.max(320, Math.round(ziel.clientWidth || 800)), eng = W < 600;
-  const links = eng ? 150 : 230, rechts = eng ? 44 : 170, zh = eng ? 42 : 34, oben = 26, H = oben + zeilen.length * zh + 10;
+  const links = eng ? 150 : 230, rechts = eng ? 44 : 170, zh = mitAnteil ? (eng ? 56 : 44) : (eng ? 42 : 34), oben = 26, H = oben + zeilen.length * zh + 10;
   const qR = z => lang ? z.quote_reform_lang : z.quote_reform;
   const max = Math.ceil(Math.max(...zeilen.map(z => Math.max(z.quote_heute, qR(z), z.quote_reform_lang))) / 10) * 10;
   const sx = v => links + (W - links - rechts) * v / max;
@@ -225,10 +228,12 @@ function hantel(ziel, zeilen, beschrift) {
     const g = el("g");
     g.append(el("rect", { x: 0, y: y - zh / 2, width: W, height: zh, fill: "transparent" }));
     if (eng) {
-      g.append(el("text", { x: 0, y: y - 3, class: "stark" }, z.name));
-      g.append(el("text", { x: 0, y: y + 13, class: "leise" }, beschrift(z) + " im Monat"));
+      g.append(el("text", { x: 0, y: y - (mitAnteil ? 10 : 3), class: "stark" }, z.name));
+      if (mitAnteil) g.append(el("text", { x: 0, y: y + 5, class: "anteil" }, anteilText(z, zeilen)));
+      g.append(el("text", { x: 0, y: y + (mitAnteil ? 19 : 13), class: "leise" }, beschrift(z) + " im Monat"));
     } else {
-      g.append(el("text", { x: 0, y: y + 4, class: "stark" }, z.name));
+      g.append(el("text", { x: 0, y: y + (mitAnteil ? -3 : 4), class: "stark" }, z.name));
+      if (mitAnteil) g.append(el("text", { x: 0, y: y + 13, class: "anteil" }, anteilText(z, zeilen)));
       g.append(el("text", { x: links - 14, y: y + 4, "text-anchor": "end" }, beschrift(z)));
     }
     g.append(el("line", { x1: sx(Math.min(h, r)), x2: sx(Math.max(h, r)), y1: y, y2: y, stroke: "var(--line)", "stroke-width": 4, "stroke-linecap": "round" }));
@@ -383,7 +388,7 @@ function aufbau() {
   const qH = z => mass === "v" ? z.wachstum_heute : z.sparquote_heute, qR = z => mass === "v" ? z.wachstum_reform : z.sparquote_reform;
   $("text7").textContent = mass === "v" ? "Um wie viel Prozent das Vermögen der Haushalte im Jahr durch Sparen wächst. Die Zeilen sind die Haushalte nach ihrem Vermögen: Haus, Wohnungen, Geld und Firmen, abzüglich Schulden." : "Wie viel Prozent ihres Einkommens die Haushalte im Jahr sparen. Die Zeilen sind die Haushalte nach ihrem Vermögen: Haus, Wohnungen, Geld und Firmen, abzüglich Schulden.";
   const W = Math.max(320, Math.round(ziel.clientWidth || 800)), eng = W < 600;
-  const links = eng ? 150 : 230, rechts = eng ? 8 : 130, zh = eng ? 42 : 34, oben = 26, H = oben + Z.length * zh + 10;
+  const links = eng ? 150 : 230, rechts = eng ? 8 : 130, zh = eng ? 56 : 44, oben = 26, H = oben + Z.length * zh + 10;
   const werte = Z.flatMap(z => [qH(z), qR(z)]);
   const schritt = mass === "v" ? 2 : 5;
   const lo = Math.floor(Math.min(0, ...werte) / schritt) * schritt, hi = Math.ceil(Math.max(...werte) / schritt) * schritt;
@@ -394,12 +399,12 @@ function aufbau() {
     svg.append(el("text", { x: sx(t), y: 12, "text-anchor": "middle", class: "leise" }, (t < 0 ? "−" : "") + Math.abs(t) + " %"));
   }
   if (!eng) svg.append(el("text", { x: W - 4, y: 12, "text-anchor": "end", class: "leise" }, "€ im Monat"));
-  svg.append(el("text", { x: 0, y: 12, class: "leise" }, "Vermögen des Haushalts"));
+  svg.append(el("text", { x: 0, y: 12, class: "leise" }, eng ? "Vermögen" : "Vermögen des Haushalts"));
   Z.forEach((z, k) => {
     const y = oben + k * zh + zh / 2, h = qH(z), r = qR(z), g = el("g");
     g.append(el("rect", { x: 0, y: y - zh / 2, width: W, height: zh, fill: "transparent" }));
-    if (eng) { g.append(el("text", { x: 0, y: y - 3, class: "stark" }, z.name)); g.append(el("text", { x: 0, y: y + 13, class: "leise" }, `${de(z.sparen_heute_monat)} → ${de(z.sparen_reform_monat)} € im Monat`)); }
-    else g.append(el("text", { x: 0, y: y + 4, class: "stark" }, z.name));
+    if (eng) { g.append(el("text", { x: 0, y: y - 10, class: "stark" }, z.name)); g.append(el("text", { x: 0, y: y + 5, class: "anteil" }, anteilText(z, Z))); g.append(el("text", { x: 0, y: y + 19, class: "leise" }, `${de(z.sparen_heute_monat)} → ${de(z.sparen_reform_monat)} € im Monat`)); }
+    else { g.append(el("text", { x: 0, y: y - 3, class: "stark" }, z.name)); g.append(el("text", { x: 0, y: y + 13, class: "anteil" }, anteilText(z, Z))); }
     g.append(el("line", { x1: sx(Math.min(h, r)), x2: sx(Math.max(h, r)), y1: y, y2: y, stroke: "var(--line)", "stroke-width": 4, "stroke-linecap": "round" }));
     punkte(g, sx(h), sx(r), y);
     if (!eng) g.append(el("text", { x: W - 4, y: y + 4, "text-anchor": "end" }, `${de(z.sparen_heute_monat)} → ${de(z.sparen_reform_monat)}`));
@@ -427,7 +432,7 @@ function tabelle(ziel, zeilen, erste) {
 function zeichne() {
   feld();
   hantel($("d1"), D.zehntel, z => de(z.einkommen_monat) + " €");
-  hantel($("d3"), D.vermoegen, z => de(z.einkommen_monat) + " €");
+  hantel($("d3"), D.vermoegen, z => de(z.einkommen_monat) + " €", true);
   anteile();
   quellen();
   aufbau();
