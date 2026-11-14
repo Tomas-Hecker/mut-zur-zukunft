@@ -53,7 +53,7 @@ G = [
  ("wer-bezahlt-einkommen-vermoegen", 1688, 1122, "Welche Einkommen und Vermögen die Reform bezahlen",
   "Balken nach Einkommens- und Vermögensart: Auf Löhne fallen «lohn» Mrd. € weniger, auf Gewinne eigener Firmen «gew» Mrd. € mehr, auf vererbte Firmen «firm» Mrd. € mehr.",
   "Wie viel mehr oder weniger Steuern und Abgaben im Jahr auf jede Art von Einkommen und Vermögen fallen als heute, in Milliarden Euro. Auf Löhne fallen «lohn» Mrd. € weniger, auf Gewinne eigener Firmen «gew» Mrd. € mehr. Beim Erbe zahlen Firmen «firm» Mrd. € mehr, «firml» Mrd. €, wenn der Staatsanteil am Erbe voll wirkt: Heute sind vererbte Firmen zu 85 % verschont, mit der Reform zählt alles voll. Zusammen tragen die Haushalte «summe» Mrd. € weniger als heute, «ausgl» Mrd. € davon ist der Ausgleich für heutige Rentner (bis 300 € im Monat) und 10 € im Monat je Erwachsenem. Steuern von Firmen, die nicht den Haushalten gehören, sind nicht enthalten."),
- ("vermoegen-sparen", 1688, 962, "Wie Vermögen wächst",
+ ("vermoegen-sparen", 1688, 1057, "Wie Vermögen wächst",
   "Punktgrafik zum Sparen nach Vermögen: Haushalte unter 100.000 € Vermögen sparen mit der Reform «sr» € im Monat, heute «sh» €.",
   "Um wie viel Prozent das Vermögen der Haushalte im Jahr durch Sparen wächst. Haushalte mit weniger als 100.000 € Vermögen sparen heute im Mittel «sh» € im Monat, mit der Reform «sr» €, also «sq» % statt «qh» % ihres Einkommens. Weil sie im Mittel nur «vm» € besitzen, wirkt das als großer Sprung beim Wachstum des Vermögens. Gespart wird, was vom Einkommen nach Steuern und Abgaben bleibt, wenn der Haushalt so viel einkauft wie heute; was er mehr hat, legt er in dieser Rechnung ganz zurück. Nicht enthalten: Wertsteigerung von Häusern und Aktien, Erbschaften und Schenkungen."),
 ]
