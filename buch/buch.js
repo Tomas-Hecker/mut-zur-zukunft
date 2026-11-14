@@ -93,3 +93,21 @@
   input.form.addEventListener('submit', function (ev) { ev.preventDefault(); run(); });
   if (window.BUCH_INDEX) run(); else window.addEventListener('load', run);
 })();
+/* RECHNERLINKS ANFANG */
+/* Online-Buch: Rechnerlinks im selben Fenster öffnen und die Buchstelle mitgeben, damit der Rechner
+   „Zurück zur Buchstelle“ anbieten kann. An buch.js anhängen (läuft nach dem Laden der Seite). */
+(() => {
+  const BASE = "https://tomas-hecker.github.io/mut-zur-zukunft/";
+  const seite = location.pathname.split("/").pop() || "index.html";
+  document.querySelectorAll('.rechnerlink a[href^="' + BASE + '"]').forEach(a => {
+    const u = new URL(a.getAttribute("href"));
+    let h = a.closest(".rechnerlink"), id = "";
+    for (let el = h; el && !id; el = el.previousElementSibling || el.parentElement) {   // nächste Überschrift davor
+      if (/^H[234]$/.test(el.tagName) && el.id) id = el.id;
+    }
+    if (u.pathname.includes("/steuerrechner/")) u.searchParams.set("buch", seite + (id ? "#" + id : ""));
+    a.href = "../" + u.pathname.split("/mut-zur-zukunft/")[1] + u.search + u.hash;
+    a.removeAttribute("target"); a.classList.remove("ext");
+  });
+})();
+/* RECHNERLINKS ENDE */
