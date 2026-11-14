@@ -23,7 +23,7 @@ const e = S.rechne(K, pop, {}); const opt = e.opt;
 // Ausgleich: heutige Rentner bis 300 € im Monat, alle Erwachsenen 10 € im Monat
 const ausgleich = r => WAHL ? 120 * sp.erw[r.i] + (sp.rentner[r.i] > 0 ? Math.min(Math.max(0, -r.plus), 3600) : 0) : 0;
 const H = [];
-let maxFehler = 0;
+let maxFehler = 0, maxEk = 0;
 for (const r of e.R) {
   const i = r.i; if (sp.typ[i] === "kind_erw") continue;
   const beamte = sp.beamter[i] ? opt.beamtePlus * sp.pension[i] + r.zulage : 0;
@@ -37,7 +37,13 @@ for (const r of e.R) {
   const srL = sr - erbR + erbL;
   // Probe: Unterschied der Lasten ohne Erbschaft = Plus bei gleichem Einkauf (Beamte samt Zulage)
   maxFehler = Math.max(maxFehler, Math.abs((sh - erbH - (sr - erbR)) - (r.plus + x)));
-  H.push({ w: sp.w[i], ek: r.einkommen, W: sp.W[i], heute, reform, sh, sr, srL, netto: (r.plus + x) / 12, rentner: sp.rentner[i] > 0 });
+  // Einkommensarten (Summe = r.einkommen, geprüft) und Vermögensarten
+  const ek = { lohn: sp.lohn1[i] + (sp.erw[i] === 2 ? sp.lohn2[i] : 0) + sp.mini[i], rente: sp.rente[i] + sp.pension[i], firma: sp.gewinn[i] + sp.gmbh[i],
+    kap: sp.kap[i], miete: sp.vermietCash[i], sozial: sp.transfer[i] + sp.kinder[i] * 259 * 12 + (sp.leist ? sp.leist[i] : 0) };
+  maxEk = Math.max(maxEk, Math.abs(Object.values(ek).reduce((a, b) => a + b, 0) - r.einkommen));
+  const verm = { haus: sp.hauswert[i], immo: sp.immo[i], geld: sp.geld[i], betrieb: sp.betrieb[i] };
+  const spar = r.verf - r.konsum - sp.vollj[i] * sp.unterhalt[i] * 12;
+  H.push({ w: sp.w[i], ek: r.einkommen, W: sp.W[i], heute, reform, sh, sr, srL, netto: (r.plus + x) / 12, rentner: sp.rentner[i] > 0, eka: ek, verm, spar, sparR: spar + r.plus + x, erbH, erbR, erbL });
 }
 function gruppen(schluessel, namen) {
   const g = namen.map(n => ({ name: n, hh: 0, ek: 0, heute: { est: 0, sv: 0, kap: 0, mwst: 0, erb: 0 }, reform: { ausg: 0, mwst: 0, sv: 0, aus: 0, bsz: 0, ausgl: 0, erb: 0, erbLang: 0 }, sh: 0, sr: 0, srL: 0, mehr: 0, wen: 0, wenSum: 0, wenRent: 0 }));
@@ -93,7 +99,36 @@ const feld = c => ({ haushalte_mio: +(c.hh / 1e6).toFixed(3), faelle: c.n, plus_
   entlastung_prozent: c.ek > 0 ? +(100 * c.dl / c.ek).toFixed(1) : null, entlastung_lang_prozent: c.ek > 0 ? +(100 * c.dlL / c.ek).toFixed(1) : null,
   entlastung_monat: c.hh ? Math.round(c.dl / c.hh / 12) : null, entlastung_lang_monat: c.hh ? Math.round(c.dlL / c.hh / 12) : null });
 const matrix = { zeilen_einkommen_spalten_vermoegen: M.map(z => z.map(feld)), einkommen: randE.map(feld), vermoegen: randV.map(feld), alle: feld(alle), vermoegen_grenzen: vgrenzen };
-const out = { stand: new Date().toISOString().slice(0, 10), wahl: WAHL, hausregel_alle: HAUS, mehr_prozent: +(100 * nMehr / nAll).toFixed(1), weniger_mio: +(nWen / 1e6).toFixed(1), probe_max_abweichung_eur: +maxFehler.toFixed(2), zehntel_grenzen_monat: grenzen, matrix, gesamt: tot,
+// Welche Einkommen und Vermögen die Last tragen
+// Einkommen: die Last eines Haushalts ohne Erbe wird nach dem Anteil jeder Einkommensart an seinem Einkommen verteilt.
+// Erbe: die erwartete Erbschaftsteuer (heute) und der Staatsanteil (Reform) nach dem Anteil jeder Vermögensart am Nachlass;
+// heute mit den Bewertungsregeln (Immobilien zu drei Vierteln, Firmen zu 85 % verschont), mit der Reform alles voll.
+const EKN = { lohn: "Löhne und Gehälter", rente: "Renten und Pensionen", firma: "Gewinne eigener Firmen", kap: "Zinsen und Dividenden", miete: "Mieten", sozial: "Sozialleistungen und Kindergeld" };
+const VN = { haus: "selbst bewohnte Häuser", immo: "vermietete Häuser und Wohnungen", geld: "Geld und Wertpapiere", betrieb: "Firmen" };
+const ea = Object.fromEntries(Object.keys(EKN).map(k => [k, { basis: 0, h: 0, r: 0, rL: 0 }]));
+const va = Object.fromEntries(Object.keys(VN).map(k => [k, { basis: 0, h: 0, r: 0, rL: 0 }]));
+let ohneEkH = 0, ohneEkR = 0;
+for (const h of H) {
+  const lh = h.sh - h.heute.erb, lr = h.sr - h.reform.erb;
+  if (h.ek > 0) for (const k in ea) { const y = h.eka[k]; ea[k].basis += h.w * y; ea[k].h += h.w * lh * y / h.ek; ea[k].r += h.w * lr * y / h.ek; ea[k].rL += h.w * lr * y / h.ek; }
+  else { ohneEkH += h.w * lh; ohneEkR += h.w * lr; }
+  const bh = { haus: 0.75 * h.verm.haus, immo: 0.75 * h.verm.immo, geld: h.verm.geld, betrieb: 0.15 * h.verm.betrieb };
+  const sH = Object.values(bh).reduce((a, b) => a + b, 0), sR = Object.values(h.verm).reduce((a, b) => a + b, 0);
+  for (const k in va) { va[k].basis += h.w * h.verm[k]; if (sH > 0) va[k].h += h.w * h.erbH * bh[k] / sH; if (sR > 0) { va[k].r += h.w * h.erbR * h.verm[k] / sR; va[k].rL += h.w * h.erbL * h.verm[k] / sR; } }
+}
+const arten = {
+  einkommen: Object.entries(ea).map(([k, a]) => ({ art: k, name: EKN[k], einkommen_mrd: +(a.basis / 1e9).toFixed(1), heute_mrd: +(a.h / 1e9).toFixed(1), reform_mrd: +(a.r / 1e9).toFixed(1), reform_lang_mrd: +(a.rL / 1e9).toFixed(1),
+    je100_heute: +(100 * a.h / a.basis).toFixed(1), je100_reform: +(100 * a.r / a.basis).toFixed(1) })),
+  erbe: Object.entries(va).map(([k, a]) => ({ art: k, name: VN[k], bestand_bio: +(a.basis / 1e12).toFixed(2), heute_mrd: +(a.h / 1e9).toFixed(1), reform_mrd: +(a.r / 1e9).toFixed(1), reform_lang_mrd: +(a.rL / 1e9).toFixed(1) })),
+  ohne_einkommen_mrd: { heute: +(ohneEkH / 1e9).toFixed(2), reform: +(ohneEkR / 1e9).toFixed(2) },
+};
+// Vermögensaufbau: Sparen je Haushalt bei gleichem Einkauf (das Plus der Reform wird ganz gespart), Erbe an den Staat
+const vg = ["unter 100.000 €", "100.000 bis 200.000 €", "200.000 bis 400.000 €", "400.000 bis 800.000 €", "800.000 € bis 1 Mio. €", "über 1 Mio. €"].map(n => ({ name: n, hh: 0, sH: 0, sR: 0, eH: 0, eR: 0, eL: 0, W: 0, ek: 0, x: 0 }));
+for (const h of H) { const g = vg[Math.min(5, S.stufeVon(h.W))]; g.hh += h.w; g.sH += h.w * h.spar; g.sR += h.w * h.sparR; g.eH += h.w * h.erbH; g.eR += h.w * h.erbR; g.eL += h.w * h.erbL; g.W += h.w * h.W; g.ek += h.w * h.ek; g.x -= h.w * h.reform.ausgl; }
+const aufbau = vg.map(g => ({ name: g.name, haushalte_mio: +(g.hh / 1e6).toFixed(2), vermoegen_mittel: Math.round(g.W / g.hh),
+  sparen_heute_monat: Math.round(g.sH / g.hh / 12), sparen_reform_monat: Math.round(g.sR / g.hh / 12), sparquote_heute: +(100 * g.sH / g.ek).toFixed(1), sparquote_reform: +(100 * g.sR / g.ek).toFixed(1), einkommen_monat: Math.round(g.ek / g.hh / 12), sparen_heute_mrd: +(g.sH / 1e9).toFixed(1), sparen_reform_mrd: +(g.sR / 1e9).toFixed(1),
+  erbe_heute_mrd: +(g.eH / 1e9).toFixed(1), erbe_reform_mrd: +(g.eR / 1e9).toFixed(1), erbe_reform_lang_mrd: +(g.eL / 1e9).toFixed(1) }));
+const out = { stand: new Date().toISOString().slice(0, 10), wahl: WAHL, hausregel_alle: HAUS, mehr_prozent: +(100 * nMehr / nAll).toFixed(1), weniger_mio: +(nWen / 1e6).toFixed(1), probe_max_abweichung_eur: +maxFehler.toFixed(2), zehntel_grenzen_monat: grenzen, matrix, arten, aufbau, probe_einkommensarten_eur: +maxEk.toFixed(2), ausgleich_mrd: +(vg.reduce((a, g) => a + g.x, 0) / 1e9).toFixed(1), gesamt: tot,
   oberstes_prozent: { anteil_heute: +(100 * top1.sh / (tot.heute_mrd * 1e9)).toFixed(1), anteil_reform: +(100 * top1.sr / (tot.reform_mrd * 1e9)).toFixed(1), anteil_reform_lang: +(100 * top1.srL / (tot.reform_lang_mrd * 1e9)).toFixed(1) },
   zehntel: z, vermoegen: vs };
 fs.writeFileSync(__dirname + "/steuerlast.json", JSON.stringify(out, null, 1));

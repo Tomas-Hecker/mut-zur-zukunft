@@ -83,7 +83,7 @@ ul.quellen { margin: 0; padding-left: 18px; color: var(--fg2); font-size: 13px; 
         <button type="button" data-erb="1" aria-pressed="false">Erbe voll wirksam</button>
       </div>
     </div>
-    <p>Jedes Feld ist eine Gruppe von Haushalten. Nach rechts steigt das Einkommen, nach oben das Vermögen. Die Farbe zeigt, wie viel Prozent ihres Einkommens die Haushalte im Mittel mehr oder weniger haben als heute.</p>
+    <p>Jedes Feld ist eine Gruppe von Haushalten. Nach rechts steigt das Einkommen, nach unten das Vermögen. Die Farbe zeigt, wie viel Prozent ihres Einkommens die Haushalte im Mittel mehr oder weniger haben als heute.</p>
     <div class="skala" id="skala"></div>
     <div class="skala-enden"><span>← mehr Geld als heute</span><span>weniger Geld als heute →</span></div>
     <div class="diagramm" id="d0"></div>
@@ -117,6 +117,33 @@ ul.quellen { margin: 0; padding-left: 18px; color: var(--fg2); font-size: 13px; 
     <p class="hinweis">Nettovermögen des Haushalts. Mehr zahlen vor allem Haushalte mit eigenem Haus, das noch nicht abbezahlt ist: Auf den Mietwert des unbezahlten Teils fällt Ausgabensteuer an, ebenso auf ausgegebene Zinsen und Mieten. Der beim Start bezahlte Teil des Hauses und Ausgaben aus versteuertem Ersparten bleiben frei. „Mit weniger“ zählt die Haushalte der Gruppe, die weniger haben als heute.</p>
   </section>
 
+  <section class="karte" aria-labelledby="t6">
+    <div class="steuer">
+      <h2 id="t6">Welche Einkommen und Vermögen die Reform bezahlen</h2>
+      <div class="segment" role="group" aria-label="Erbschaft rechnen">
+        <button type="button" data-erb="0" aria-pressed="true">Erbe im ersten Jahr</button>
+        <button type="button" data-erb="1" aria-pressed="false">Erbe voll wirksam</button>
+      </div>
+    </div>
+    <p>Wie viel mehr oder weniger Steuern und Abgaben im Jahr auf jede Art von Einkommen und Vermögen fallen als heute, in Milliarden Euro.</p>
+    <div class="legende"><span><i style="background:var(--g2);border-radius:2px"></i>trägt weniger als heute</span><span><i style="background:var(--r2);border-radius:2px"></i>trägt mehr als heute</span></div>
+    <div class="diagramm" id="d6"></div>
+    <p id="summe6"></p>
+    <p class="hinweis">Einkommen: Die Steuern und Abgaben eines Haushalts sind nach dem Anteil jeder Einkommensart an seinem Einkommen verteilt. Vermögen: die Erbschaftsteuer heute und der Staatsanteil am Erbe mit der Reform, verteilt nach dem Anteil jeder Vermögensart am Nachlass. Heute zählen Häuser beim Erbe im Mittel nur zu drei Vierteln, Firmen sind zu 85 % verschont; mit der Reform zählt alles voll.</p>
+    <details>
+      <summary>Tabelle: von 100 € Einkommen an Steuern und Abgaben</summary>
+      <div class="tabelle"><table id="tab6"></table></div>
+    </details>
+  </section>
+
+  <section class="karte" aria-labelledby="t7">
+    <h2 id="t7">Wie Vermögen wächst: Sparen heute und mit der Reform</h2>
+    <div class="zahlen" id="zahlen7"></div>
+    <div class="legende"><span><i style="background:var(--heute)"></i>heute</span><span><i style="background:var(--reform)"></i>mit der Reform</span></div>
+    <div class="diagramm" id="d7"></div>
+    <p class="hinweis">Gespart wird, was vom Einkommen nach Steuern und Abgaben bleibt, wenn der Haushalt so viel einkauft wie heute. Was ein Haushalt mit der Reform mehr hat, legt er in dieser Rechnung ganz zurück; was er weniger hat, fehlt beim Sparen. Gruppen nach Nettovermögen. Die Zahlen in Euro sind das Sparen je Haushalt im Monat, heute und mit der Reform.</p>
+  </section>
+
   <section class="karte" aria-labelledby="t4">
     <h2 id="t4">Woraus sich die Last zusammensetzt</h2>
     <p>Im Mittel je Haushalt und Monat in Euro. Abgezogen sind bei der Reform die Auszahlungen an die Haushalte: Arbeitgeberanteile, die als Lohn ausgezahlt werden, höhere Renten und Grundsicherung, der Bestandsschutz der Rentner und der Ausgleich für Beamte, dazu der gewählte Ausgleich (Rentner bis 300 €, 10 € je Erwachsenem).</p>
@@ -148,7 +175,7 @@ ul.quellen { margin: 0; padding-left: 18px; color: var(--fg2); font-size: 13px; 
 <script>
 const D = /*DATEN*/null;
 const $ = id => document.getElementById(id);
-const de = (x, d = 0) => x.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const de = (x, d = 0) => x.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d }).replace("-", "−");
 const NS = "http://www.w3.org/2000/svg";
 const el = (n, a = {}, txt) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; return e; };
 let lang = false;
@@ -225,7 +252,7 @@ function feld() {
   const defs = el("defs"), pat = el("pattern", { id: "schraffur", width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" });
   pat.append(el("line", { x1: 0, y1: 0, x2: 0, y2: 6, stroke: "var(--line)", "stroke-width": 2 })); defs.append(pat); svg.append(defs);
   const x = e => e < 10 ? links + e * zw : links + 10 * zw + lucke;
-  const y = v => v < 10 ? oben + (9 - v) * zh : oben + 10 * zh + lucke;
+  const y = v => v < 10 ? oben + v * zh : oben + 10 * zh + lucke;
   const zelle = (e, v, c, tipKopf) => {
     const g0 = el("g"); const zu = !c || c.faelle < MIN_FAELLE || wert(c) == null;
     const st = zu ? null : stufe(wert(c));
@@ -255,7 +282,7 @@ function feld() {
     }
   }
   svg.append(el("text", { x: links + 5 * zw, y: H - 6, "text-anchor": "middle", class: "leise" }, "Einkommen: Zehntel, mittleres Einkommen im Monat →"));
-  svg.append(el("text", { x: 0, y: 12, class: "leise" }, eng ? "Vermögen ↑" : "Vermögen ↑ (Zehntel)"));
+  svg.append(el("text", { x: 0, y: 12, class: "leise" }, eng ? "Vermögen ↓" : "Vermögen ↓ (Zehntel)"));
   $("d0").replaceChildren(svg);
   $("skala").innerHTML = STUFEN.map(s => `<div><i style="background:${s.farbe}"></i>${s.name}</div>`).join("");
 }
@@ -293,6 +320,78 @@ function anteile() {
   ].map(([a, b]) => `<div class="zahl"><b>${a}</b><span>${b}</span></div>`).join("");
 }
 
+function quellen() {
+  const A = D.arten, eng = $("d6").clientWidth < 600;
+  const zeilen = [{ kopf: "Einkommen" }, ...A.einkommen.map(a => ({ ...a, d: a.reform_mrd - a.heute_mrd, r: a.reform_mrd })),
+    { kopf: "Vermögen, beim Erbe" }, ...A.erbe.map(a => ({ ...a, d: (lang ? a.reform_lang_mrd : a.reform_mrd) - a.heute_mrd, r: lang ? a.reform_lang_mrd : a.reform_mrd }))];
+  const W = Math.max(320, Math.round($("d6").clientWidth || 800));
+  const links = eng ? 48 : 250, rechts = 64, zh = eng ? 44 : 30, kh = 34, oben = 22;
+  let H = oben; for (const z of zeilen) H += z.kopf ? kh : zh; H += 6;
+  const werte = zeilen.filter(z => !z.kopf).map(z => z.d);
+  const lo = Math.floor(Math.min(0, ...werte) / 10) * 10, hi = Math.ceil(Math.max(0, ...werte) / 10) * 10;
+  const sx = v => links + (W - links - rechts) * (v - lo) / (hi - lo);
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Veränderung der Steuern und Abgaben nach Einkommens- und Vermögensart in Milliarden Euro" });
+  for (let t = lo; t <= hi; t += 10) {
+    svg.append(el("line", { x1: sx(t), x2: sx(t), y1: oben - 6, y2: H - 4, stroke: t === 0 ? "var(--muted)" : "var(--grid)", "stroke-width": 1 }));
+    svg.append(el("text", { x: sx(t), y: 12, "text-anchor": "middle", class: "leise" }, (t > 0 ? "+" : t < 0 ? "−" : "") + Math.abs(t)));
+  }
+  let y = oben;
+  for (const z of zeilen) {
+    if (z.kopf) { svg.append(el("text", { x: 0, y: y + kh - 10, class: "stark" }, z.kopf)); y += kh; continue; }
+    const g = el("g"), mitte = eng ? y + zh - 13 : y + zh / 2;
+    g.append(el("rect", { x: 0, y, width: W, height: zh, fill: "transparent" }));
+    g.append(el("text", { x: eng ? 0 : 12, y: eng ? y + 13 : mitte + 4 }, z.name));
+    const x0 = sx(0), x1 = sx(z.d), bx = Math.min(x0, x1), bw = Math.max(1.5, Math.abs(x1 - x0));
+    g.append(el("rect", { x: bx, y: mitte - 8, width: bw, height: 16, rx: 3, fill: z.d < 0 ? "var(--g2)" : "var(--r2)" }));
+    const txt = (z.d > 0.05 ? "+" : z.d < -0.05 ? "−" : "±") + de(Math.abs(z.d), 1);
+    g.append(el("text", { x: z.d < 0 ? bx - 6 : bx + bw + 6, y: mitte + 4, "text-anchor": z.d < 0 ? "end" : "start", class: "stark" }, txt));
+    const zus = z.je100_heute != null ? `<br>von 100 € gehen an Steuern und Abgaben: heute ${de(z.je100_heute, 1)} €, mit der Reform ${de(z.je100_reform, 1)} €` : `<br>Vermögen dieser Art: ${de(z.bestand_bio, 2)} Bio. €`;
+    g.addEventListener("pointermove", ev => zeigeTip(ev, `<b>${z.name}</b><br>heute ${de(z.heute_mrd, 1)} Mrd. €, mit der Reform ${de(z.r, 1)} Mrd. € im Jahr${zus}`));
+    g.addEventListener("pointerleave", versteckeTip);
+    svg.append(g); y += zh;
+  }
+  $("d6").replaceChildren(svg);
+  const tot = D.gesamt, diff = (lang ? tot.reform_lang_mrd : tot.reform_mrd) - tot.heute_mrd;
+  $("summe6").textContent = `Zusammen tragen die Haushalte ${de(Math.abs(diff), 0)} Mrd. € ${diff < 0 ? "weniger" : "mehr"} als heute; ${de(D.ausgleich_mrd, 0)} Mrd. € davon sind der gewählte Ausgleich. Steuern von Firmen, die nicht den Haushalten gehören, sind nicht enthalten.`;
+  $("tab6").innerHTML = `<thead><tr><th>Einkommensart</th><th>Einkommen im Jahr</th><th class="gruppe-h">heute je 100 €</th><th class="gruppe-r">Reform je 100 €</th></tr></thead><tbody>` +
+    A.einkommen.map(a => `<tr><td>${a.name}</td><td>${de(a.einkommen_mrd, 0)} Mrd. €</td><td>${de(a.je100_heute, 1)} €</td><td>${de(a.je100_reform, 1)} €</td></tr>`).join("") + "</tbody>";
+}
+
+function aufbau() {
+  const Z = D.aufbau, ziel = $("d7");
+  const W = Math.max(320, Math.round(ziel.clientWidth || 800)), eng = W < 600;
+  const links = eng ? 150 : 230, rechts = eng ? 8 : 130, zh = eng ? 42 : 34, oben = 26, H = oben + Z.length * zh + 10;
+  const werte = Z.flatMap(z => [z.sparquote_heute, z.sparquote_reform]);
+  const lo = Math.floor(Math.min(0, ...werte) / 5) * 5, hi = Math.ceil(Math.max(...werte) / 5) * 5;
+  const sx = v => links + (W - links - rechts) * (v - lo) / (hi - lo);
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Sparen in Prozent des Einkommens nach Vermögen, heute und mit der Reform" });
+  for (let t = lo; t <= hi; t += (eng ? 10 : 5)) {
+    svg.append(el("line", { x1: sx(t), x2: sx(t), y1: oben - 8, y2: H - 6, stroke: t === 0 ? "var(--muted)" : "var(--grid)", "stroke-width": 1 }));
+    svg.append(el("text", { x: sx(t), y: 12, "text-anchor": "middle", class: "leise" }, (t < 0 ? "−" : "") + Math.abs(t) + " %"));
+  }
+  if (!eng) svg.append(el("text", { x: W - 4, y: 12, "text-anchor": "end", class: "leise" }, "€ im Monat"));
+  Z.forEach((z, k) => {
+    const y = oben + k * zh + zh / 2, h = z.sparquote_heute, r = z.sparquote_reform, g = el("g");
+    g.append(el("rect", { x: 0, y: y - zh / 2, width: W, height: zh, fill: "transparent" }));
+    if (eng) { g.append(el("text", { x: 0, y: y - 3, class: "stark" }, z.name)); g.append(el("text", { x: 0, y: y + 13, class: "leise" }, `${de(z.sparen_heute_monat)} → ${de(z.sparen_reform_monat)} € im Monat`)); }
+    else g.append(el("text", { x: 0, y: y + 4, class: "stark" }, z.name));
+    g.append(el("line", { x1: sx(Math.min(h, r)), x2: sx(Math.max(h, r)), y1: y, y2: y, stroke: "var(--line)", "stroke-width": 4, "stroke-linecap": "round" }));
+    g.append(el("circle", { cx: sx(h), cy: y, r: 6, fill: "var(--heute)", stroke: "var(--surface)", "stroke-width": 2 }));
+    g.append(el("circle", { cx: sx(r), cy: y, r: 6, fill: "var(--reform)", stroke: "var(--surface)", "stroke-width": 2 }));
+    if (!eng) g.append(el("text", { x: W - 4, y: y + 4, "text-anchor": "end" }, `${de(z.sparen_heute_monat)} → ${de(z.sparen_reform_monat)}`));
+    g.addEventListener("pointermove", ev => zeigeTip(ev, `<b>${z.name}</b><br>${de(z.haushalte_mio, 1)} Mio. Haushalte, Einkommen ${de(z.einkommen_monat)} € im Monat<br>Sparen heute ${de(z.sparen_heute_monat)} € (${de(h, 1)} %), mit der Reform ${de(z.sparen_reform_monat)} € (${de(r, 1)} %)<br>Erbe an den Staat im Jahr: heute ${de(z.erbe_heute_mrd, 1)} Mrd. €, mit der Reform ${de(z.erbe_reform_mrd, 1)} Mrd. € (voll wirksam ${de(z.erbe_reform_lang_mrd, 1)})`));
+    g.addEventListener("pointerleave", versteckeTip);
+    svg.append(g);
+  });
+  ziel.replaceChildren(svg);
+  const S = f => Z.reduce((a, z) => a + z[f], 0);
+  $("zahlen7").innerHTML = [
+    [de(S("sparen_heute_mrd"), 0) + " → " + de(S("sparen_reform_mrd"), 0) + " Mrd. €", "sparen alle Haushalte im Jahr, heute und mit der Reform"],
+    [de(S("sparen_reform_mrd") - Z[5].sparen_reform_mrd, 0) + " Mrd. €", `davon Haushalte unter 1 Mio. € Vermögen mit der Reform, heute ${de(S("sparen_heute_mrd") - Z[5].sparen_heute_mrd, 0)} Mrd. €`],
+    [de(S("erbe_heute_mrd"), 0) + " → " + de(S("erbe_reform_mrd"), 0) + " Mrd. €", `gehen beim Erbe im Jahr an den Staat, voll wirksam ${de(S("erbe_reform_lang_mrd"), 0)} Mrd. €`],
+  ].map(([a, b]) => `<div class="zahl"><b>${a}</b><span>${b}</span></div>`).join("");
+}
+
 function tabelle(ziel, zeilen, erste) {
   const kopf = `<thead><tr><th>${erste}</th><th>Einkommen</th><th class="gruppe-h">Einkommen­steuer</th><th class="gruppe-h">Beiträge</th><th class="gruppe-h">Kapital</th><th class="gruppe-h">MwSt</th><th class="gruppe-h">Erbe</th><th class="gruppe-h">heute</th><th class="gruppe-r">Ausgaben­steuer</th><th class="gruppe-r">MwSt</th><th class="gruppe-r">Beiträge</th><th class="gruppe-r">Erbe</th><th class="gruppe-r">Auszahlungen</th><th class="gruppe-r">Ausgleich</th><th class="gruppe-r">Reform</th></tr></thead>`;
   const z = x => { const h = x.heute, r = x.reform, erb = lang ? r.erbLang : r.erb, aus = r.aus + r.bsz;
@@ -306,6 +405,8 @@ function zeichne() {
   hantel($("d1"), D.zehntel, z => de(z.einkommen_monat) + " €");
   hantel($("d3"), D.vermoegen, z => de(z.einkommen_monat) + " €");
   anteile();
+  quellen();
+  aufbau();
   tabelle($("tab1"), D.zehntel, "Zehntel");
   tabelle($("tab2"), D.vermoegen, "Vermögen");
 }
