@@ -6,18 +6,18 @@
 /* Layout: eine ruhige Spalte, je Frage eine Karte mit einer Grafik; Zahlen in Tabellenziffern */
 :root {
   --bg: #f6f7f8; --surface: #ffffff; --fg: #15181c; --fg2: #4a515b; --muted: #6b7380; --line: #dfe3e8; --grid: #eceff2;
-  --heute: #b8322a; --reform: #2fa463; --minus: #c9502f;
+  --heute: #C8532C; --reform: #3F8F63; --minus: #c9502f;
   --o1: #86b6ef; --o2: #3987e5; --o3: #184f95;
-  --g3: #0f7356; --g2: #45a982; --g1: #9fd8bf; --n0: #ebece9; --r1: #f5ae9a; --r2: #df6a51; --r3: #a52a1c;
+  --g3: #1F5A43; --g2: #3F8F63; --g1: #9FD8B0; --n0: #EDEBE4; --r1: #E9A58A; --r2: #C8532C; --r3: #8E3417;
   --tx-hell: #ffffff; --tx-dunkel: #15181c;
   --display: "Space Grotesk", "Inter", system-ui, sans-serif; --text: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #121417; --surface: #1a1d21; --fg: #eef0f2; --fg2: #c2c7ce; --muted: #9aa1ab; --line: #2c3138; --grid: #24282e;
-  --heute: #c0382e; --reform: #38ad6b; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4; color-scheme: dark } }
+  --heute: #D2643C; --reform: #4C9C70; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #121417; --surface: #1a1d21; --fg: #eef0f2; --fg2: #c2c7ce; --muted: #9aa1ab; --line: #2c3138; --grid: #24282e;
-  --heute: #c0382e; --reform: #38ad6b; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4; color-scheme: dark }
+  --heute: #D2643C; --reform: #4C9C70; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4; color-scheme: dark }
 * { box-sizing: border-box }
 body { background: var(--bg); color: var(--fg); font-family: var(--text); font-size: 15px; line-height: 1.55; margin: 0 }
 .wrap { max-width: 880px; margin: 0 auto; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px }
@@ -199,7 +199,7 @@ const versteckeTip = () => { tip.hidden = true; };
 
 // Zwei Punkte: liegen sie fast aufeinander, wird „heute“ als Ring um den Reform-Punkt gezeichnet, damit beide sichtbar bleiben
 function punkte(g, xh, xr, y) {
-  if (Math.abs(xh - xr) < 12) {
+  if (Math.abs(xh - xr) < 4) {
     g.append(el("circle", { cx: xh, cy: y, r: 9, fill: "var(--surface)", stroke: "var(--heute)", "stroke-width": 3 }));
     g.append(el("circle", { cx: xr, cy: y, r: 5, fill: "var(--reform)" }));
   } else {
@@ -248,11 +248,11 @@ function hantel(ziel, zeilen, beschrift) {
 // Farbfeld Einkommen × Vermögen: Stufen in Prozent des Einkommens (positiv = mehr Geld)
 const STUFEN = [
   { ab: 6, farbe: "var(--g3)", text: "var(--tx-hell)", name: "6 % und mehr" },
-  { ab: 3, farbe: "var(--g2)", text: "var(--tx-dunkel)", name: "3 bis 6 %" },
+  { ab: 3, farbe: "var(--g2)", text: "var(--tx-hell)", name: "3 bis 6 %" },
   { ab: 1, farbe: "var(--g1)", text: "var(--tx-dunkel)", name: "1 bis 3 %" },
   { ab: -1, farbe: "var(--n0)", text: "var(--tx-dunkel)", name: "fast gleich" },
   { ab: -3, farbe: "var(--r1)", text: "var(--tx-dunkel)", name: "1 bis 3 %" },
-  { ab: -6, farbe: "var(--r2)", text: "var(--tx-dunkel)", name: "3 bis 6 %" },
+  { ab: -6, farbe: "var(--r2)", text: "var(--tx-hell)", name: "3 bis 6 %" },
   { ab: -Infinity, farbe: "var(--r3)", text: "var(--tx-hell)", name: "6 % und mehr" },
 ];
 const stufe = v => STUFEN.find(s => v >= s.ab);
