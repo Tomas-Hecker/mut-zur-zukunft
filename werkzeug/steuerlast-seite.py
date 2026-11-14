@@ -1,6 +1,33 @@
 """Baut steuerlast/index.html aus den Grafiken in bilder/steuerlast/ (Schnitt: Projektordner, Skript stl/schnitt.py)."""
 import re
 R = '/home/user/mut-zur-zukunft/'
+import json
+M = '/mnt/project-files/rechenmodell-mikrosim/'
+J = json.load(open(M + 'steuerlast.json'))
+UB = json.load(open(M + 'uebergabe-buch.json'))
+def k(x, n=1):
+    t = f"{abs(x):,.{n}f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    return ("−" if x < 0 else "") + t
+def sk(x, n=1): return ("+" if x > 0 else "") + k(x, n)
+Z = J['zehntel']; ein = {a['art'] if 'art' in a else a['name']: a for a in J['arten']['einkommen']}
+def diff(name, lang=False, liste='einkommen'):
+    a = next(a for a in J['arten'][liste] if a['name'] == name)
+    return a['reform_lang_mrd' if lang else 'reform_mrd'] - a['heute_mrd']
+sp = re.search(r'Version 32 ([0-9,]+) bis ([0-9,]+) Mio', UB['spanne'])
+N = dict(
+ mehr=k(J['mehr_prozent']), weniger=k(J['weniger_mio']), sp1=sp.group(1), sp2=sp.group(2),
+ z1h=k(Z[0]['quote_heute']), z1r=k(Z[0]['quote_reform']), z10h=k(Z[9]['quote_heute']), z10r=k(Z[9]['quote_reform']),
+ uh=k(sum(z['anteil_heute'] for z in Z[:5])), ur=k(sum(z['anteil_reform'] for z in Z[:5])),
+ oh=k(Z[9]['anteil_heute']), orr=k(Z[9]['anteil_reform']),
+ gh=k(J['gesamt']['heute_mrd'], 0), gr=k(J['gesamt']['reform_mrd'], 0),
+ p1h=k(J['oberstes_prozent']['anteil_heute']), p1r=k(J['oberstes_prozent']['anteil_reform']), p1l=k(J['oberstes_prozent']['anteil_reform_lang']),
+ lohn=k(-diff('Löhne und Gehälter')), gew=k(diff('Gewinne eigener Firmen')),
+ firm=k(diff('Firmen', liste='erbe')), firml=k(diff('Firmen', True, 'erbe')),
+ summe=k(J['gesamt']['heute_mrd'] - J['gesamt']['reform_mrd'], 0), ausgl=k(J['ausgleich_mrd'], 0),
+ wh=k(J['aufbau'][0]['wachstum_heute']), wr=k(J['aufbau'][0]['wachstum_reform']),
+ vp=k(J['vermoegen'][0]['quote_heute'] - J['vermoegen'][0]['quote_reform']),
+)
+print(J['stand'], N)
 u = open(R + 'ueber-mich.html').read()
 header = re.search(r'<header class="top">.*?</header>', u, re.S).group(0)
 header = header.replace(' aria-current="page"', '')
@@ -12,20 +39,20 @@ G = [
   "Farbfeld nach Einkommen und Vermögen: Bis rund 310.000 € Vermögen haben fast alle Gruppen mehr Geld als heute, zwischen 310.000 und 490.000 € bleibt es fast gleich, darüber haben die Gruppen weniger.",
   "Jedes Feld ist eine Gruppe von Haushalten. Nach rechts steigt das Einkommen, nach unten das Vermögen. Grün heißt: Die Haushalte haben im Mittel mehr Geld als heute, in Prozent ihres Einkommens. Rot heißt: weniger. Bis rund 310.000 € Vermögen ist fast alles grün, zwischen 310.000 und 490.000 € bleibt es fast gleich, weniger haben vor allem Haushalte mit mehr als 490.000 € Vermögen. Auch in grünen Feldern haben einzelne Haushalte weniger. Schraffierte Felder: zu wenige Haushalte für eine Aussage."),
  ("steuerlast-nach-einkommen", 1688, 982, "Wie viel vom Einkommen an Steuern und Abgaben geht",
-  "Punktgrafik nach Einkommenszehnteln: Das unterste Zehntel zahlt 7,3 statt 18,1 % seines Einkommens, das oberste 41,6 statt 40,3 %.",
-  "Zehn gleich große Gruppen von je 4,1 Mio. Haushalten, geordnet nach dem Einkommen vor Steuern (Löhne, Gewinne, Renten, Kapitalerträge, Grundsicherung). Die Zahl hinter der Gruppe ist ihr mittleres Einkommen im Monat, die Punkte zeigen den Durchschnitt der Gruppe. Das unterste Zehntel zahlt 7,3 statt 18,1 % seines Einkommens, das oberste 41,6 statt 40,3 %. „Mit weniger“ zählt die Haushalte der Gruppe, die trotzdem weniger haben als heute (bei gleichem Einkauf, ohne Erbe)."),
+  "Punktgrafik nach Einkommenszehnteln: Das unterste Zehntel zahlt «z1r» statt «z1h» % seines Einkommens, das oberste «z10r» statt «z10h» %.",
+  "Zehn gleich große Gruppen von je 4,1 Mio. Haushalten, geordnet nach dem Einkommen vor Steuern (Löhne, Gewinne, Renten, Kapitalerträge, Grundsicherung). Die Zahl hinter der Gruppe ist ihr mittleres Einkommen im Monat, die Punkte zeigen den Durchschnitt der Gruppe. Das unterste Zehntel zahlt «z1r» statt «z1h» % seines Einkommens, das oberste «z10r» statt «z10h» %. „Mit weniger“ zählt die Haushalte der Gruppe, die trotzdem weniger haben als heute (bei gleichem Einkauf, ohne Erbe)."),
  ("steuerlast-anteile", 1688, 722, "Wie viel vom Ganzen jede Gruppe trägt",
-  "Balken: Das oberste Zehntel trägt 40,2 statt 37,8 % aller Steuern und Abgaben der Haushalte, die untere Hälfte 14,1 statt 15,7 %.",
-  "Alle Haushalte zahlen mit der Reform 1.063 Mrd. € im Jahr, heute 1.094 Mrd. €. Das oberste Zehntel trägt mehr vom Ganzen als heute, 40,2 statt 37,8 %. Das oberste Prozent trägt 11,9 statt 12,3 %, wenn das Erbe voll wirkt 12,4 %: Es spart viel und zahlt vor allem über das Erbe."),
+  "Balken: Das oberste Zehntel trägt «orr» statt «oh» % aller Steuern und Abgaben der Haushalte, die untere Hälfte «ur» statt «uh» %.",
+  "Alle Haushalte zahlen mit der Reform «gr» Mrd. € im Jahr, heute «gh» Mrd. €. Das oberste Zehntel trägt mehr vom Ganzen als heute, «orr» statt «oh» %. Das oberste Prozent trägt «p1r» statt «p1h» %, wenn das Erbe voll wirkt «p1l» %: Es spart viel und zahlt vor allem über das Erbe."),
  ("steuerlast-nach-vermoegen", 1688, 702, "Wie viel vom Einkommen nach Vermögen geht",
-  "Punktgrafik nach Vermögen: Haushalte unter 100.000 € Vermögen zahlen 5,3 Punkte weniger von ihrem Einkommen, Haushalte zwischen 400.000 € und 1 Mio. € mehr.",
+  "Punktgrafik nach Vermögen: Haushalte unter 100.000 € Vermögen zahlen «vp» Punkte weniger von ihrem Einkommen, Haushalte zwischen 400.000 € und 1 Mio. € mehr.",
   "Gruppen nach Nettovermögen. Mehr zahlen vor allem Haushalte mit eigenem Haus, das noch nicht abbezahlt ist: Auf den Mietwert des unbezahlten Teils fällt Ausgabensteuer an, ebenso auf ausgegebene Zinsen und Mieten. Der beim Start bezahlte Teil des Hauses und Ausgaben aus versteuertem Ersparten bleiben frei."),
  ("wer-bezahlt-einkommen-vermoegen", 1688, 1122, "Welche Einkommen und Vermögen die Reform bezahlen",
-  "Balken nach Einkommens- und Vermögensart: Auf Löhne fallen 43,3 Mrd. € weniger, auf Gewinne eigener Firmen 15,7 Mrd. € mehr, auf vererbte Firmen 5,7 Mrd. € mehr.",
-  "Wie viel mehr oder weniger Steuern und Abgaben im Jahr auf jede Art von Einkommen und Vermögen fallen als heute, in Milliarden Euro. Auf Löhne fallen 43,3 Mrd. € weniger, auf Gewinne eigener Firmen 15,7 Mrd. € mehr. Beim Erbe zahlen Firmen 5,7 Mrd. € mehr, 13,0 Mrd. €, wenn der Staatsanteil am Erbe voll wirkt: Heute sind vererbte Firmen zu 85 % verschont, mit der Reform zählt alles voll. Zusammen tragen die Haushalte 31 Mrd. € weniger als heute, 23 Mrd. € davon ist der Ausgleich für heutige Rentner (bis 300 € im Monat) und 10 € im Monat je Erwachsenem. Steuern von Firmen, die nicht den Haushalten gehören, sind nicht enthalten."),
+  "Balken nach Einkommens- und Vermögensart: Auf Löhne fallen «lohn» Mrd. € weniger, auf Gewinne eigener Firmen «gew» Mrd. € mehr, auf vererbte Firmen «firm» Mrd. € mehr.",
+  "Wie viel mehr oder weniger Steuern und Abgaben im Jahr auf jede Art von Einkommen und Vermögen fallen als heute, in Milliarden Euro. Auf Löhne fallen «lohn» Mrd. € weniger, auf Gewinne eigener Firmen «gew» Mrd. € mehr. Beim Erbe zahlen Firmen «firm» Mrd. € mehr, «firml» Mrd. €, wenn der Staatsanteil am Erbe voll wirkt: Heute sind vererbte Firmen zu 85 % verschont, mit der Reform zählt alles voll. Zusammen tragen die Haushalte «summe» Mrd. € weniger als heute, «ausgl» Mrd. € davon ist der Ausgleich für heutige Rentner (bis 300 € im Monat) und 10 € im Monat je Erwachsenem. Steuern von Firmen, die nicht den Haushalten gehören, sind nicht enthalten."),
  ("vermoegen-sparen", 1688, 962, "Wie Vermögen wächst",
-  "Punktgrafik zum Sparen: Haushalte unter 100.000 € Vermögen sparen 7,9 % ihres Vermögens im Jahr statt heute minus 3,3 %.",
-  "Um wie viel Prozent das Vermögen der Haushalte im Jahr durch Sparen wächst. Haushalte mit weniger als 100.000 € Vermögen bauen heute im Mittel Vermögen ab (−3,3 % im Jahr), mit der Reform wächst es um 7,9 %. Gespart wird, was vom Einkommen nach Steuern und Abgaben bleibt, wenn der Haushalt so viel einkauft wie heute; was er mehr hat, legt er in dieser Rechnung ganz zurück. Nicht enthalten: Wertsteigerung von Häusern und Aktien, Erbschaften und Schenkungen."),
+  "Punktgrafik zum Sparen: Haushalte unter 100.000 € Vermögen sparen «wr» % ihres Vermögens im Jahr statt heute «wh» %.",
+  "Um wie viel Prozent das Vermögen der Haushalte im Jahr durch Sparen wächst. Haushalte mit weniger als 100.000 € Vermögen bauen heute im Mittel Vermögen ab («wh» % im Jahr), mit der Reform wächst es um «wr» %. Gespart wird, was vom Einkommen nach Steuern und Abgaben bleibt, wenn der Haushalt so viel einkauft wie heute; was er mehr hat, legt er in dieser Rechnung ganz zurück. Nicht enthalten: Wertsteigerung von Häusern und Aktien, Erbschaften und Schenkungen."),
 ]
 figs = "\n".join(f'''<figure id="{f}">
 <a href="../bilder/steuerlast/{f}.webp" title="{t}: Grafik groß öffnen"><img src="../bilder/steuerlast/{f}.webp" width="{w}" height="{h}" loading="lazy" alt="{alt}"></a>
@@ -71,15 +98,15 @@ html = f'''<!doctype html>
 </div></section>
 <div class="wrap sl">
 <div class="facts">
-<div><b>73 %</b><span>der Haushalte haben mehr Geld als heute, wenn sie so viel einkaufen wie heute.</span></div>
-<div><b>18,1 → 7,3 %</b><span>vom Einkommen zahlt das ärmste Zehntel an Steuern und Abgaben, heute und mit der Reform.</span></div>
-<div><b>37,8 → 40,2 %</b><span>aller Steuern und Abgaben der Haushalte trägt das reichste Zehntel, heute und mit der Reform.</span></div>
+<div><b>«mehr» %</b><span>der Haushalte haben mehr Geld als heute, wenn sie so viel einkaufen wie heute.</span></div>
+<div><b>«z1h» → «z1r» %</b><span>vom Einkommen zahlt das ärmste Zehntel an Steuern und Abgaben, heute und mit der Reform.</span></div>
+<div><b>«oh» → «orr» %</b><span>aller Steuern und Abgaben der Haushalte trägt das reichste Zehntel, heute und mit der Reform.</span></div>
 </div>
 {figs}
 <div class="methode">
 <h2>Wie gerechnet wurde</h2>
 <p>Rund 49.000 künstliche Haushalte stehen für alle 41 Mio. Haushalte in Deutschland. Sie sind auf amtliche Zahlen geeicht: Löhne und Konsum aus der Volkswirtschaftlichen Gesamtrechnung 2025, Lohn- und Einkommensteuer aus den Steuereinnahmen 2025, Vermögen aus der Vermögensbefragung der Bundesbank 2023 mit einer Zuschätzung der Reichsten, Sparen aus der Einkommens- und Verbrauchsstichprobe.</p>
-<p>Heute: Lohn- und Einkommensteuer mit Soli, Sozialbeiträge, Abgeltungsteuer, Körperschaftsteuer auf eigene Firmen, Mehrwertsteuer, Erbschaft- und Schenkungsteuer. Mit der Reform: Ausgabensteuer über dem Freibetrag, höhere Mehrwertsteuer auf denselben Einkauf, die verbleibenden Beiträge und der Staatsanteil am Erbe, abzüglich der Auszahlungen an die Haushalte. Das Erbe zählt als erwartete Steuer im Jahr. Wie jede Schätzung hängt das Ergebnis an Annahmen: Im gezeigten Fall haben 11,2 Mio. Haushalte weniger als heute, mit anderen vertretbaren Eichungen sind es 9,9 bis 13,3 Mio. Jeden einzelnen Haushalt rechnet der <a href="../steuerrechner/">Steuerrechner</a> nach, die ganze Rechnung steht im <a href="../buch/">Buch</a>.</p>
+<p>Heute: Lohn- und Einkommensteuer mit Soli, Sozialbeiträge, Abgeltungsteuer, Körperschaftsteuer auf eigene Firmen, Mehrwertsteuer, Erbschaft- und Schenkungsteuer. Mit der Reform: Ausgabensteuer über dem Freibetrag, höhere Mehrwertsteuer auf denselben Einkauf, die verbleibenden Beiträge und der Staatsanteil am Erbe, abzüglich der Auszahlungen an die Haushalte. Das Erbe zählt als erwartete Steuer im Jahr. Wie jede Schätzung hängt das Ergebnis an Annahmen: Im gezeigten Fall haben «weniger» Mio. Haushalte weniger als heute, mit anderen vertretbaren Eichungen sind es «sp1» bis «sp2» Mio. Jeden einzelnen Haushalt rechnet der <a href="../steuerrechner/">Steuerrechner</a> nach, die ganze Rechnung steht im <a href="../buch/">Buch</a>.</p>
 </div>
 </div>
 </main>
@@ -88,5 +115,7 @@ html = f'''<!doctype html>
 </body>
 </html>
 '''
+html = re.sub(r'«(\w+)»', lambda m: N[m.group(1)], html)
+assert '«' not in html
 open(R + 'steuerlast/index.html', 'w').write(html)
 print('ok', len(html))
