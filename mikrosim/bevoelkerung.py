@@ -26,6 +26,8 @@ ECKWERTE = {
     "vermoegen_bio": 16.6,           # Eichpunkt „Vermögen heute“ (PHF 2023 plus fehlende Reiche), Thread Kurzfassung
     "eigentuemer_quote": 0.42,       # Mikrozensus 2022: 41,9 % der Haushalte wohnen im Eigentum
     "bruttoloehne_mrd": 2036.3,      # VGR 2025 (Destatis, Fachserie 18 Reihe 1.4, Tabelle 2.1.8): Bruttolöhne und -gehälter der Inländer
+    "heimkredit_bio": 1.15,          # Restschuld auf selbst genutzte Häuser und Wohnungen: Wohnungsbaukredite an private Haushalte rund
+                                     # 1,58 Bio. € (Bundesbank 2025: gut 35 % des BIP), davon rund drei Viertel für das eigene Heim (Schätzung)
     "nebenjob_mio": 3.3,             # Minijob als Nebenjob (Minijob-Zentrale, Quartalsbericht 2025: rund 3,3 Mio.)
 }
 
@@ -357,14 +359,25 @@ def verteile_vermoegen(d):
     # nur Selbständige und große Vermögen halten Betriebe; sonst wird der Betriebsanteil Geld
     hat_betrieb = (d["selbst"] > 0) | (W >= 1e6)
     geld = geld + np.where(hat_betrieb, 0, betr); betr = np.where(hat_betrieb, betr, 0)
-    # bezahlter Anteil des Hauses: Rentner 95 %, Erwerbstätige im Mittel rund 70 %, mit dem Alter steigend
-    hb = np.where(d["rentner"] > 0, rng.uniform(0.9, 1.0, n),
-                  np.clip(rng.beta(4, 2, n) * np.interp(d["alter"], [25, 40, 55, 64], [0.45, 0.8, 1.05, 1.15]), 0.15, 1.0))
-    hb = np.where(stufe == 0, np.minimum(hb, 0.35), hb)
-    hauswert = np.where(eigen, np.maximum(netto_heim, 1) / hb, 0.0)
-    # Hauswert begrenzen: kleinere Vermögen kaufen keine Villen
-    hauswert = np.where(eigen, np.clip(hauswert, 120000, 12e6), 0)
-    hb = np.where(eigen, np.clip(netto_heim / np.maximum(hauswert, 1), 0, 1), 0)
+    # bezahlter Anteil des Hauses (PHF 2023: gut die Hälfte der Eigentümer zahlt noch ab, junge fast alle, Rentner selten).
+    # Wer abzahlt, hat mit dem Alter mehr bezahlt. Die Restschuld wird danach auf die Wohnungsbaukredite für das eigene Heim geeicht.
+    mit_kredit = np.where(d["rentner"] > 0, rng.random(n) < 0.08, rng.random(n) < np.interp(d["alter"], [25, 40, 55, 64], [0.9, 0.75, 0.45, 0.3]))
+    mit_kredit |= (stufe == 0)
+    hb_k = np.clip(rng.beta(2, 2, n) * np.interp(d["alter"], [25, 40, 55, 70], [0.5, 0.8, 1.2, 1.5]), 0.1, 0.97)
+    hb_k = np.where(stufe == 0, np.minimum(hb_k, 0.35), hb_k)
+    def haus(f):
+        hb = np.where(mit_kredit, 1 - f * (1 - hb_k), 1.0)
+        hw = np.where(eigen, np.maximum(netto_heim, 1) / hb, 0.0)
+        hw = np.where(eigen, np.clip(hw, 120000, 12e6), 0)   # kleinere Vermögen kaufen keine Villen
+        hb = np.where(eigen, np.clip(netto_heim / np.maximum(hw, 1), 0, 1), 0)
+        return hw, hb
+    lo, hi = 0.0, 1.5
+    for _ in range(40):
+        f = (lo + hi) / 2; hw, hb = haus(f)
+        schuld = (d["w"] * hw * (1 - hb)).sum() / 1e12
+        if schuld > ECKWERTE["heimkredit_bio"]: hi = f
+        else: lo = f
+    hauswert, hb = haus((lo + hi) / 2)
     d.update(W=W, stufe=stufe, eigen=eigen.astype(int), hauswert=hauswert, heim_netto=np.where(eigen, hauswert * hb, 0),
              immo=imm, geld=geld, betrieb=betr, hb=hb)
     # Vermögen nach der Klammer neu zusammenzählen

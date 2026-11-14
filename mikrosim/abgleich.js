@@ -19,6 +19,8 @@ const zeilen = [
   ["Steuern", "Lohn- und Einkommensteuer samt Soli (Mrd. €)", 405, a.aufkommen.est_heute, "Kassenstatistik 2025: Lohnsteuer 262,7 + Kindergeld 54,6 + veranlagte 78,2 + Soli rund 9,5", "geeicht über Abzüge von 6,8 % des Erwerbseinkommens"],
   ["Steuern", "Mehrwertsteuer der Haushalte (Mrd. €)", null, a.aufkommen.mwst_heute, "Umsatzsteuer gesamt 310,2 (auch Staat, Vereine, Wohnungsbau)", "Anteil der Haushalte plausibel"],
   ["Konsum", "Konsum ohne Mietwert (Mrd. €)", 2085.7, a.aufkommen.konsum, VGR + ": Haushalte 2.305,4 − Mietwert 214,5 (Version 31: 2.300,2 − 214,5)", "geeicht"],
+  ["Vermögen", "Restschuld auf das eigene Heim (Bio. €)", 1.15, M(i => sp.eigen[i] ? sp.hauswert[i] * (1 - sp.hb[i]) : 0) / 1000, "Bundesbank: Wohnungsbaukredite an private Haushalte rund 1,58 Bio. € (2025), davon rund drei Viertel für das eigene Heim (Schätzung)", "geeicht; davor 3,8 Bio. € (Fehler, zu hoch)"],
+  ["Vermögen", "Mietwert, der nach der Reform besteuert wird (Anteil %)", null, 100 * M(i => sp.miet[i] * (1 - sp.hb[i])) / M(i => sp.miet[i]), "Regel „Eigenes Haus frei“: nur der beim Start noch nicht bezahlte Teil", ""],
   ["Konsum", "Mietwert selbst genutzter Wohnungen (Mrd. €)", 214.5, M(i => sp.miet[i]), "Eurostat, wie Version 31", "geeicht"],
   ["Vermögen", "Nettovermögen der Haushalte (Bio. €)", 16.6, M(i => sp.W[i]) / 1000, "Eichpunkt: PHF 2023 plus Zuschätzung der Reichsten", "geeicht"],
   ["Erbschaft", "Erbschaftsteuer heute (Mrd. €)", 21.4, a.erbschaft.erbst_heute_mrd, "festgesetzte Erbschaft- und Schenkungsteuer 2025", "Modell etwas niedriger"],

@@ -37,7 +37,7 @@ Art der Werte: **Statistik** (amtliche Zahl), **Studie** (Fachliteratur), **Eich
 | Zusammensetzung je Stufe | eigenes Heim, andere Immobilien, Geld und Wertpapiere, Betriebe | Eichpunkt | SVR 2025 |
 | Wer welches Vermögen hat | Rang aus Einkommen (0,6), Alter (0,55), Selbständigkeit (0,3) und Zufall | Annahme | geeicht auf PHF: Median 55–74 Jahre rund 140.000 € (Modell: Rentner 138.500 €) |
 | Eigentümer | 6 % bis 95 % je Stufe, zusammen 42 % | Statistik | Mikrozensus 2022: 41,9 % |
-| Bezahlter Teil des eigenen Hauses | Rentner 90–100 %, Erwerbstätige im Mittel rund 70 % | Annahme | wie Rechenmodell (HausFrei) |
+| Bezahlter Teil des eigenen Hauses | Rentner 96 %, Erwerbstätige 75 %; 68 % der erwerbstätigen und 19 % der Rentner-Eigentümer zahlen noch ab | Statistik/Schätzung | Restschuld geeicht auf 1,15 Bio. € (Bundesbank: Wohnungsbaukredite an private Haushalte rund 1,58 Bio. €, davon rund drei Viertel für das eigene Heim). Bis 14.11. lag sie fälschlich bei 3,8 Bio. € |
 | Mietwert | 3,2 % des Hauswerts, zusammen 214,5 Mrd. € | Statistik | Eurostat, wie Version 31 |
 | Ausgezahlte Zinsen und Dividenden | 1,0 % (kleine Vermögen) bis 3,0 % (ab 1 Mio. €) des Geldvermögens | Annahme | Bundesbank: kleine Vermögen liegen auf Konten und in Versicherungen |
 | Mieten | 3,5 % netto, davon 35 % steuerpflichtig (Abschreibung, Zinsen) | Annahme | Eichpunkt; Einkommensteuerstatistik |
@@ -59,7 +59,7 @@ Konsum, 1 % unter der amtlichen Summe. Offen bleibt: Gewinne und Entnahmen aus F
 540 Mrd. € (Selbständigeneinkommen 175,6 + Ausschüttungen und Entnahmen 364,3). Rechnet man sie hinzu, ändert sich die Zahl der
 Haushalte mit weniger um weniger als 1,5 Mio.
 
-**Ehrliche Spanne der Haushalte mit weniger:** Standard 19,7 Mio. (48 %). Mit anderen vertretbaren Eichungen 18,5 bis 22 Mio.
+**Ehrliche Spanne der Haushalte mit weniger:** Standard 18,3 Mio. (44 %). Mit anderen vertretbaren Eichungen 17 bis 20,7 Mio.
 
 ## 4. Verhalten (alle einstellbar)
 
