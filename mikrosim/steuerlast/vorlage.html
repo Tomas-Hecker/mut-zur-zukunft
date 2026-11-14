@@ -14,12 +14,10 @@
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #121417; --surface: #1a1d21; --fg: #eef0f2; --fg2: #c2c7ce; --muted: #9aa1ab; --line: #2c3138; --grid: #24282e;
-  --heute: #c0382e; --reform: #38ad6b; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4;
-  --g3: #5cc49a; --g2: #2f8a66; --g1: #1f5541; --n0: #2f3439; --r1: #6b2a20; --r2: #b34a37; --r3: #ee7f68; --tx-hell: #121417; --tx-dunkel: #eef0f2; color-scheme: dark } }
+  --heute: #c0382e; --reform: #38ad6b; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #121417; --surface: #1a1d21; --fg: #eef0f2; --fg2: #c2c7ce; --muted: #9aa1ab; --line: #2c3138; --grid: #24282e;
-  --heute: #c0382e; --reform: #38ad6b; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4;
-  --g3: #5cc49a; --g2: #2f8a66; --g1: #1f5541; --n0: #2f3439; --r1: #6b2a20; --r2: #b34a37; --r3: #ee7f68; --tx-hell: #121417; --tx-dunkel: #eef0f2; color-scheme: dark }
+  --heute: #c0382e; --reform: #38ad6b; --minus: #e0714f; --o1: #184f95; --o2: #3987e5; --o3: #9ec5f4; color-scheme: dark }
 * { box-sizing: border-box }
 body { background: var(--bg); color: var(--fg); font-family: var(--text); font-size: 15px; line-height: 1.55; margin: 0 }
 .wrap { max-width: 880px; margin: 0 auto; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px }
@@ -263,7 +261,7 @@ function feld() {
   const zw = (W - links - lucke) / 11, zh = eng ? Math.max(24, zw) : 34;
   const H = oben + 11 * zh + lucke + unten;
   const wert = c => lang ? c.entlastung_lang_prozent : c.entlastung_prozent;
-  const vText = v => (v > 0.05 ? "+" : v < -0.05 ? "−" : "") + de(Math.abs(v), eng ? 0 : 1);
+  const vText = v => { const st = eng ? 1 : 10, g = Math.round(v * st) / st; return (g > 0 ? "+" : g < 0 ? "−" : "") + de(Math.abs(g), eng ? 0 : 1); };
   const vZeile = j => j === 0 ? "bis " + geld(g[0]) : j === 9 ? "über " + geld(g[8]) : geld(g[j - 1]) + " bis " + geld(g[j]);
   const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Mehr oder weniger Geld als heute in Prozent des Einkommens, nach Einkommens- und Vermögenszehntel" });
   const defs = el("defs"), pat = el("pattern", { id: "schraffur", width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" });
