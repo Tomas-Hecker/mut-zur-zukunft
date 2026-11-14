@@ -32,7 +32,7 @@ for (const r of e.R) {
   const erbH = e.erbe.heute[i], erbR = e.erbe.anspruch[i] * opt.realStart, erbL = e.erbe.anspruch[i] * opt.realLang;
   const heute = { est: r.heute.est, sv: r.heute.sv, kap: r.heute.kap, mwst: r.heute.mwst, erb: erbH };
   const x = ausgleich(r);
-  const reform = { ausg: r.atg + r.ausgUeb, mwst: r.heute.mwst + r.pw, sv: r.svNeu, aus: -(r.gut - r.bsz) - beamte, bsz: -r.bsz, ausgl: -x, erb: erbR, erbLang: erbL };
+  const reform = { ausg: r.atg + r.ausgUeb, mwst: r.heute.mwst + r.pw, sv: r.svNeu, aus: -(r.gut - r.bsz) - beamte - (r.traeger || 0), bsz: -r.bsz, ausgl: -x, erb: erbR, erbLang: erbL };
   const sh = heute.est + heute.sv + heute.kap + heute.mwst + heute.erb;
   const sr = reform.ausg + reform.mwst + reform.sv + reform.aus + reform.bsz + reform.ausgl + reform.erb;
   const srL = sr - erbR + erbL;

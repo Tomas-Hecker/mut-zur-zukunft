@@ -152,7 +152,7 @@ th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: 
       <section class="karte hinweis">
         <h2>Was das Modell kann und was nicht</h2>
         <p>Die Haushalte sind künstlich, aber auf amtliche Zahlen geeicht: 41,25 Mio. Haushalte, Bruttolöhne 2.036 Mrd. € (VGR 2025), Lohn- und Einkommensteuer 405 Mrd. € (Kassenstatistik 2025), Konsum 2.086 Mrd. € ohne Mietwert (VGR 2025), Vermögen 16,6 Bio. € (PHF 2023 der Bundesbank plus fehlende Reiche), Mietwert 214,5 Mrd. €. Wie stark Rentner, Arbeitnehmer und Selbständige sparen, folgt der Einkommens- und Verbrauchsstichprobe (EVS). Jede Zahl steht mit Quelle und Abweichung in Annahmen.md und abgleich.md.</p>
-        <p>Ehrliche Spanne: Mit anderen vertretbaren Eichungen haben mit dem Ausgleich von Version 32 zum Start 10,6 bis 14,2 Mio. Haushalte weniger, ohne Ausgleich 17 bis 20,7 Mio. Den Haushalten fehlen gegenüber der VGR noch rund 150 Mrd. € Gewinne und Entnahmen aus Firmen.</p>
+        <p>Ehrliche Spanne: Mit anderen vertretbaren Eichungen haben mit dem Ausgleich von Version 32 zum Start 9,9 bis 13,3 Mio. Haushalte weniger, ohne Ausgleich 16,2 bis 19,8 Mio. Den Haushalten fehlen gegenüber der VGR noch rund 150 Mrd. € Gewinne und Entnahmen aus Firmen.</p>
         <p>Nicht drin sind bisher: Wie viel Menschen arbeiten (Arbeitsangebot), Firmen und Preise, Wanderung, die Jahre bis 2070. Die Erwachsenen sind rund 66 statt 69,6 Mio., weil Menschen in Heimen und manche erwachsene Kinder fehlen. Leistungen wie Arbeitslosen- und Elterngeld sind für die Haushalte neutral gerechnet.</p>
       </section>
     </main>
@@ -919,6 +919,9 @@ const STANDARD = {
   // Ausgleich (Version 32, Tomas 14.11.2026: Rentner bis 300 €, 10 € je Erwachsenem); hier 0, die Seite und steuerlast.js setzen ihn
   ausgleichRentnerMonat: 0,    // heutige Rentner: Minus wird bis zu diesem Betrag im Monat ausgeglichen, läuft mit ihnen aus
   pauschaleErwMonat: 0,        // jeder Erwachsene bekommt diesen Betrag im Monat
+  // Wer nur von Arbeitslosen-, Kranken- oder Elterngeld lebt, für den zahlt der Träger die Prämie der Krankenkasse, wie heute die Beiträge
+  // (§ 251 und § 224 SGB V); in der Grundsicherung, im Bürgerjob und in der Bildung ist sie schon eingerechnet
+  praemieLeistung: true,
 };
 
 function zahl(x) { return typeof x === "number" ? x : 0; }
@@ -1008,6 +1011,10 @@ function rechne(K, pop, optIn = {}) {
       plus += opt.beamtePlus * sp.pension[i];   // bei gleichem Einkauf bleibt das Mehr an Bezügen ganz übrig
       if (plus < 0) { zulage = -plus; plus = 0; }
     }
+    // Prämie für Haushalte, die nur von Leistungen leben, zahlt der Träger
+    const traeger = opt.praemieLeistung && sp.leist && sp.leist[i] > 0 && sp.transfer[i] === 0 && !sp.rentner[i]
+      && sp.lohn1[i] + sp.lohn2[i] + sp.mini[i] + sp.gewinn[i] === 0 ? A.KVPraem * sp.erw[i] : 0;
+    plus += traeger;
     // Ausgleich: Rentner bis zur Grenze (aus dem Minus vor der Pauschale), dazu die Pauschale je Erwachsenem
     const ausgl = (sp.rentner[i] > 0 ? Math.min(Math.max(0, -plus), 12 * opt.ausgleichRentnerMonat) : 0) + 12 * opt.pauschaleErwMonat * sp.erw[i];
     plus += ausgl;
@@ -1015,7 +1022,7 @@ function rechne(K, pop, optIn = {}) {
     const ueber2 = r.konsum + r.pw + r.mietw - r.alt - r.frei;
     const tauM = ueber2 > 0 ? (A.Satz3 + mwstSatzNeu) / (1 + A.Satz3) : mwstSatzNeu;
     const tauLang = (r.konsum + r.pw + r.mietw - r.frei) > 0 ? (A.Satz3 + mwstSatzNeu) / (1 + A.Satz3) : mwstSatzNeu;
-    R.push({ i, plus, ausgl, zulage, bsz: r.bsz, heute: r.heute, vorschlag: r.vorschlag, sumH: r.sumH, ausg: r.ausg, ausgUeb: r.ausgUeb,
+    R.push({ i, plus, ausgl, traeger, zulage, bsz: r.bsz, heute: r.heute, vorschlag: r.vorschlag, sumH: r.sumH, ausg: r.ausg, ausgUeb: r.ausgUeb,
       mwst: r.mwst + pl.leist * A.MwStQ, mwstNeu: r.mwstNeu + pl.leist * mwstSatzNeu, konsum: r.konsum + pl.leist, konsumLeist: pl.leist, verf: verf0[i], einkommen: r.einkommen + extra, tauM, tauLang,
       mietw: r.mietw, alt: r.alt, pw: r.pw, atg: r.atg, kk: r.kk, pq: r.pq, kapKons: kapN[i] * kq(i), ueberS: ueber2 > 0,
       svNeu: r.svNeu, gut: r.gut, teile: { ausSum: r.ausSum, agRP: r.agRP, rentePlus: r.rentePlus, gsPlus: r.gsPlus, anr: r.anr, bsz: r.bsz } });
@@ -1238,8 +1245,8 @@ function zeichne(a) {
   const v = a.verhalten, k = a.kacheln_100;
   const netto = v.steuer_jetzt_mrd;
   $("kacheln").innerHTML = [
-    ["Haushalte mit mehr", de(k.mehr, 0) + " %", "Buch Version 32: 71 % (mit Ausgleich, gleicher Einkauf)"],
-    ["Haushalte mit weniger", de(a.weniger.mio, 1) + " Mio.", `im Mittel ${de(a.weniger.monat_mittel)} € im Monat · Buch Version 32: 11,9 Mio.`],
+    ["Haushalte mit mehr", de(k.mehr, 0) + " %", "Version 32: 73 % (mit Ausgleich, gleicher Einkauf)"],
+    ["Haushalte mit weniger", de(a.weniger.mio, 1) + " Mio.", `im Mittel ${de(a.weniger.monat_mittel)} € im Monat · Version 32: 11,2 Mio.`],
     ["Plus der Haushalte", de(a.plus_mrd) + " Mrd. €", `Minus ${de(a.minus_mrd)} Mrd. €`],
     ["Steuern durch Verhalten, sofort", `<span class="${netto >= 0 ? "plus" : "minus"}">${vz(netto, 1)}</span> Mrd. €`, "im Jahr, gegenüber der Rechnung mit gleichem Einkauf"],
     ["Steuern durch Verhalten, später", `<span class="${v.steuer_spaeter_mrd >= 0 ? "plus" : "minus"}">${vz(v.steuer_spaeter_mrd, 1)}</span> Mrd. €`, "im Jahr im Dauerzustand"],

@@ -24,8 +24,9 @@ Art der Werte: **Statistik** (amtliche Zahl), **Studie** (Fachliteratur), **Eich
 | Gewinne Selbständiger | Median 45.000 €, Streuung 0,95; KV 40 % privat, sonst rund 20 % freiwillig gesetzlich | Annahme | Summe der Gewinne 271 Mrd. € |
 | Beamte und Pensionäre | Besoldung Median 4.200 €, Pension Median 3.400 € | Annahme | Summe 170 Mrd. € (Beihilfe 22,6 Mrd. = 13 %) |
 | Renten | Rentnerinnen allein Median 1.550 €, Rentner 1.800 €, Paare 1.850 + 1.100 €, dazu Betriebs- und Zusatzrenten bei der Hälfte | Statistik, gerundet | Alterssicherungsbericht 2024; Summe 355 Mrd. € |
-| Bürgergeld | Regelbedarf plus Miete und Heizung | Recht | Summe 41 Mrd. € |
-| Andere Leistungen in Geld (Arbeitslosen-, Kranken-, Elterngeld, BAföG) | 54 Mrd. € | Annahme | für die Haushalte neutral gerechnet (die Reform müsste sie anpassen) |
+| Bürgergeld | Regelbedarf plus Miete und Heizung, abzüglich Kindergeld (wird angerechnet, § 11 SGB II) | Recht | Summe 38,7 Mrd. € samt Grundsicherung im Alter. Bis 14.11. war das Kindergeld doppelt gezählt (3,4 Mrd. € zu viel); Familien in der Grundsicherung lagen dadurch über dem Freibetrag und zahlten scheinbar Ausgabensteuer |
+| Andere Leistungen in Geld (Arbeitslosen-, Kranken-, Elterngeld, BAföG) | 54 Mrd. € | Annahme | für die Haushalte neutral gerechnet (die Reform müsste sie anpassen). Wer nur davon lebt, für den zahlt der Träger mit der Reform die Prämie der Krankenkasse, wie heute die Beiträge (§ 251, § 224 SGB V); Schalter `praemieLeistung` |
+| Krankenkasse ohne Arbeit, Rente oder Leistungen | Wer vom Ersparten lebt, zahlt heute freiwillig mindestens den Mindestbeitrag: 20 % von 14.000 € im Jahr (rund 230 € im Monat), sonst 20 % der Einnahmen bis zur Bemessungsgrenze; ein Beitrag je Haushalt (Partner mitversichert); 0,57 Mio. Haushalte, 1,6 Mrd. € | Recht/Annahme | § 240 SGB V. Erwachsene Kinder unter 25 ohne Einkommen sind bei den Eltern mitversichert und zahlen mit der Reform die Prämie selbst (außer in Bildung oder Bürgerjob, die das Modell nicht abbildet). Bis 14.11. fehlte der heutige Beitrag |
 
 **Abgleich:** Alle Summen mit Soll, Ist und Abweichung stehen in [abgleich.md](abgleich.md) (erzeugt mit `node abgleich.js`).
 
@@ -65,8 +66,10 @@ Kapitalerträge × 1,5), weil offen ist, wo die fehlenden rund 150 Mrd. € lieg
 
 | | Standard | Spanne |
 |---|---|---|
-| ohne Ausgleich | 18,3 Mio. (44 %) | 17 bis 20,7 Mio. |
-| mit dem Ausgleich von Version 32 (Rentner bis 300 €, 10 € je Erwachsenem) | 11,9 Mio. (29 %) | 10,6 bis 14,2 Mio. |
+| ohne Ausgleich | 17,7 Mio. (43 %) | 16,2 bis 19,8 Mio. |
+| mit dem Ausgleich von Version 32 (Rentner bis 300 €, 10 € je Erwachsenem) | 11,2 Mio. (27 %) | 9,9 bis 13,3 Mio. |
+
+Vor der Korrektur von Kindergeld und Krankenkasse (14.11., 13 Uhr) waren es 18,3 und 11,9 Mio.
 
 ## 4. Verhalten (alle einstellbar)
 
@@ -91,7 +94,7 @@ und nur zur Hälfte fällig (langfristig, wie Version 31).
 | Kosten im ersten Jahr | 22,7 Mrd. € | Rechnung | `node steuerlast.js` (Feld `ausgleich_mrd`); das Buch rechnet die 10 € mit 69,6 Mio. Erwachsenen (8,35 Mrd. €), das Modell kennt 65,6 Mio. |
 
 In `simulation.js` stehen beide Werte auf 0, damit die Grundrechnung die Reform ohne Ausgleich zeigt. Die Seite und `steuerlast.js` setzen sie
-auf Version 32. Ergebnis: 71 % der Haushalte haben mehr, 11,9 Mio. weniger (im Mittel 516 € im Monat).
+auf Version 32. Ergebnis: 72,8 % der Haushalte haben mehr, 11,2 Mio. weniger (im Mittel 554 € im Monat).
 
 ## 4b. Wer heute wie viel zahlt und wie es mit der Reform wäre (steuerlast.js)
 

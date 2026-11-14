@@ -62,6 +62,7 @@ EIGEN_P = [0.06, 0.62, 0.78, 0.85, 0.88, 0.90, 0.93, 0.95]   # Anteil der Eigent
 
 # Erträge (wie Eichpunkt): Mieten 3,5 %, Geld und Wertpapiere 3 %, Betriebe 7 % des Werts, Mietwert rund 3,2 % des Hauswerts
 R_MIETE, R_GELD, R_BETRIEB = 0.035, 0.03, 0.07
+KINDERGELD = 259               # € im Monat je Kind (2026)
 MIETE_STEUERPFLICHTIG = 0.35  # nach Abschreibung und Zinsen: Einkünfte aus Vermietung in der Steuerstatistik rund ein Drittel der Mieten
 AUSSCHUETTUNG = 0.50          # ausgeschütteter Teil der Betriebsgewinne großer Vermögen, Rest bleibt in der Firma (GmbH)
 
@@ -216,7 +217,9 @@ def baue_typ(typ):
             d[k][gs] = 0
     regel = np.where(d["erw"] == 2, 2 * 506, 563) + 400 * d["kinder"]
     kdu = np.where(d["erw"] == 2, 650, 520) + 120 * d["kinder"]
-    d["transfer"][gs] = np.maximum(0, 12 * (regel[gs] + kdu[gs]) - d["rente"][gs] - 0.7 * d["mini"][gs])
+    # Kindergeld wird auf das Bürgergeld angerechnet (§ 11 Abs. 1 SGB II, Einkommen des Kindes); der Rechenkern zahlt es zusätzlich aus,
+    # deshalb steht hier nur der Rest (bis 14.11. doppelt gezählt: Familien in der Grundsicherung hatten 259 € je Kind zu viel)
+    d["transfer"][gs] = np.maximum(0, 12 * (regel[gs] + kdu[gs] - KINDERGELD * d["kinder"][gs]) - d["rente"][gs] - 0.7 * d["mini"][gs])
     d["bg"][gs] = 1
     d["leist"][gs] = 0
     return d
@@ -399,6 +402,14 @@ def ertraege(d):
     d["gmbh"] = np.where(gross, (1 - AUSSCHUETTUNG) * gew, 0.0)
     # kleinere Betriebe: Gewinn steckt schon im Gewinn der Selbständigen; mindestens 7 % des Betriebswerts
     d["gewinn"] = np.where(~gross & (d["selbst"] > 0), np.maximum(d["gewinn"], gew), d["gewinn"])
+    # Ohne Arbeit, Rente, Grundsicherung oder Leistungen (leben vom Ersparten): heute freiwillig in der Krankenkasse, mindestens der
+    # Mindestbeitrag (§ 240 SGB V, rund 20 % von 14.000 € im Jahr), sonst rund 20 % der Einnahmen bis zur Bemessungsgrenze; ein Beitrag
+    # je Haushalt, der Partner ist beitragsfrei mitversichert. Erwachsene Kinder unter 25 sind bei den Eltern mitversichert.
+    # Wie bei den Selbständigen steht der Beitrag in der Spalte pkv. (bis 14.11. fehlte er: diese Haushalte zahlten heute nichts)
+    ohne = ((d["lohn1"] + d["lohn2"] + d["mini"] + d["gewinn"] + d["pension"] + d["rente"] + d["transfer"] + d["leist"]) == 0) \
+        & (d["bg"] == 0) & (d["rentner"] == 0) & (d["beamter"] == 0) & (d["pkv"] == 0) & ((d["typ"] != "kind_erw") | (d["alter"] >= 25))
+    d["pkv"] = np.where(ohne, 0.20 * np.clip(d["kap"] + d["aus"] + d["vermietCash"], 14000, 69750), d["pkv"])
+    d["freiw"] = ohne.astype(float)
     # Verzehr von Erspartem im Alter (Konsum aus Vermögen): 1 % mit 65 bis 3,5 % mit 90 des Geldvermögens
     verz = np.interp(d["alter"], [65, 75, 90], [0.01, 0.02, 0.035]) * (d["rentner"] > 0)   # Ältere entsparen langsam (PHF)
     d["verm"] = d["verm"] + verz * np.maximum(d["geld"], 0)

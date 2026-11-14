@@ -16,7 +16,7 @@ const out = {
   "3_ausgleich": V.slice(1).map(v => ({ name: v.name, kosten_erstes_jahr_mrd: v.kosten_mrd, davon_rentner_mrd: v.kosten_rentner_mrd, davon_uebrige_mrd: v.kosten_uebrige_mrd,
     rentneranteil_nach_jahren_mrd: v.auslauf_rentneranteil_mrd, auslauf: "Rentneranteil sinkt mit der Sterbetafel wie der Bestandsschutz; der Anteil der Übrigen bleibt, bis die Regel ausläuft oder abschmilzt (politische Entscheidung)",
     plus_nach_mrd: v.plus_nach_mrd, minus_nach_mrd: v.minus_nach_mrd, weniger_mio: v.weniger_mio, anteil_prozent: v.anteil, mittel_monat: v.monat, rentner: v.rentner, uebrige: v.uebrige })),
-  spanne: "Mit anderen vertretbaren Eichungen (Sparquote statt Konsum als Anker, höhere Ausschüttungen, höhere Kapitalerträge; node spanne.js): ohne Ausgleich 17 bis 20,7 Mio. Haushalte mit weniger (Standard 18,3), mit dem Ausgleich von Version 32 10,6 bis 14,2 Mio. (Standard 11,9)",
+  spanne: "Mit anderen vertretbaren Eichungen (Sparquote statt Konsum als Anker, höhere Ausschüttungen, höhere Kapitalerträge; node spanne.js): ohne Ausgleich 16,2 bis 19,8 Mio. Haushalte mit weniger (Standard 17,7), mit dem Ausgleich von Version 32 9,9 bis 13,3 Mio. (Standard 11,2)",
 };
 fs.writeFileSync(__dirname + "/uebergabe-buch.json", JSON.stringify(out, null, 1));
 console.log(JSON.stringify(out["1_haushalte_mit_weniger"]), JSON.stringify(out["2_plus_minus_mrd"]));
