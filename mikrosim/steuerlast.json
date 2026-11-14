@@ -1836,6 +1836,7 @@
  ],
  "probe_einkommensarten_eur": 0,
  "ausgleich_mrd": 22.9,
+ "ausgleich_alle_mrd": 23.4,
  "gesamt": {
   "heute_mrd": 1091,
   "reform_mrd": 1052.9,

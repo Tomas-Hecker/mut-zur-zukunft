@@ -101,10 +101,12 @@ und nur zur Hälfte fällig (langfristig, wie Version 31).
 | Freibetrag der Ausgabensteuer | 1.150 € je Erwachsenem im Monat (13.800 € im Jahr), genau das Existenzminimum zum Ausgeben (1.200 € minus 50 € Prämie); darüber 50 % | Vorschlag | Tomas 14.11., 12:49, weil die Bankgebühren (FISIM) nicht zur Basis gehören; im Rechenkern Grenze1 = Grenze2 = 1.452 € über dem Grundfreibetrag 12.348 €. Vorher 1.200 € |
 | Ausgleich für heutige Rentner | Wer heute Rente oder Pension bezieht und mit der Reform weniger hätte, bekommt das Minus bis 300 € im Monat ersetzt; läuft mit den heutigen Rentnern aus | Vorschlag | Version 32; `ausgleichRentnerMonat` in `simulation.js`, auf der Seite einstellbar |
 | Für jeden Erwachsenen | 10 € im Monat | Vorschlag | Version 32; `pauschaleErwMonat` |
-| Kosten im ersten Jahr | 22,9 Mrd. € | Rechnung | `node steuerlast.js` (Feld `ausgleich_mrd`); das Buch rechnet die 10 € mit 69,6 Mio. Erwachsenen (8,35 Mrd. €), das Modell kennt 65,6 Mio. |
+| Kosten im ersten Jahr | 23,4 Mrd. € (15,5 für Rentner, 7,9 für die 10 €) | Rechnung | `node steuerlast.js` (Feld `ausgleich_alle_mrd`, alle Steuerfälle); die Steuerlast-Seite zeigt nur Haushalte und nennt 22,9 Mrd. €, ohne die 10 € für erwachsene Kinder im Haushalt der Eltern; das Buch rechnet die 10 € mit 69,6 Mio. Erwachsenen (8,35 Mrd. €), das Modell kennt 65,6 Mio. |
 
 In `simulation.js` stehen beide Werte auf 0, damit die Grundrechnung die Reform ohne Ausgleich zeigt. Die Seite und `steuerlast.js` setzen sie
 auf Version 32. Ergebnis mit Freibetrag 1.150 €: 72,9 % der Haushalte haben mehr, 11,1 Mio. weniger (im Mittel 524 € im Monat).
+
+Vergleich Härteausgleich bis 1.000 € im Monat (erstes Jahr): allein 71,7 Mrd. €; zusätzlich zum Ausgleich von Version 32 noch 55,2 Mrd. € (zusammen 78,6), oder 54,5 Mrd. €, wenn die 1.000 € den Rentnerausgleich von Version 32 mit einschließen. Gerechnet als Summe von w·min(Minus, 12.000 €) über alle Steuerfälle mit Minus (Buch-Thread, von mir nachgerechnet am 14.11.).
 
 ## 4b. Wer heute wie viel zahlt und wie es mit der Reform wäre (steuerlast.js)
 
