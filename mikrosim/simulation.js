@@ -5,7 +5,9 @@
 
 const STANDARD = {
   // Rechenkern wie Version 31: Konsum 2.300,2, Miete und Mietwert 214,5, Härteausgleich aus
-  kern: { Konsum: 2300.2, Miete: 214.5, Nutzwert: 214.5, HAAn: 0 },
+  // Version 32 (Tomas 14.11.2026, 12:49): Freibetrag 1.150 € je Erwachsenem im Monat (13.800 € im Jahr = GFB 12.348 + 1.452), genau das
+  // Existenzminimum zum Ausgeben; wer Grundsicherung bekommt, behält seine Leistungen. Vorher 1.200 € (Grenze 2.052)
+  kern: { Konsum: 2300.2, Miete: 214.5, Nutzwert: 214.5, HAAn: 0, Grenze1: 1452, Grenze2: 1452 },
   eichung: "konsum",           // "konsum" (Standard seit 14.11.): Konsum genau wie VGR 2025 und Version 31; "sparquote": Konsum aus Einkommen und Sparquote der VGR
   sparquoteZiel: 0.104,        // Sparquote der privaten Haushalte 2025 (Statistisches Bundesamt, VGR): rund 10,4 %
   sparRentner: -0.087, sparSelbst: 0.059,   // Versatz der Sparquote für Rentner- und Selbständigenhaushalte: geeicht mit eichen_sparen.js auf

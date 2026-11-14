@@ -101,7 +101,7 @@ th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: 
       <div class="gruppe">
         <h3>Reform</h3>
         <div class="feld"><label for="fb">Freibetrag je Erwachsenem <output id="fb_o"></output></label>
-          <input type="range" id="fb" min="900" max="1500" step="25" value="1200"></div>
+          <input type="range" id="fb" min="900" max="1500" step="25" value="1150"></div>
         <div class="feld"><label for="satz">Satz der Ausgabensteuer <output id="satz_o"></output></label>
           <input type="range" id="satz" min="30" max="60" step="1" value="50">
           <small>Anteil am ausgegebenen Euro über dem Freibetrag.</small></div>
@@ -152,7 +152,7 @@ th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: 
       <section class="karte hinweis">
         <h2>Was das Modell kann und was nicht</h2>
         <p>Die Haushalte sind künstlich, aber auf amtliche Zahlen geeicht: 41,25 Mio. Haushalte, Bruttolöhne 2.036 Mrd. € (VGR 2025), Lohn- und Einkommensteuer 405 Mrd. € (Kassenstatistik 2025), Konsum 2.050 Mrd. € ohne Mietwert und ohne unterstellte Bankgebühren (VGR 2025), Vermögen 16,6 Bio. € (PHF 2023 der Bundesbank plus fehlende Reiche), Mietwert 214,5 Mrd. €. Wie stark Rentner, Arbeitnehmer und Selbständige sparen, folgt der Einkommens- und Verbrauchsstichprobe (EVS). Jede Zahl steht mit Quelle und Abweichung in Annahmen.md und abgleich.md.</p>
-        <p>Ehrliche Spanne: Mit anderen vertretbaren Eichungen haben mit dem Ausgleich von Version 32 zum Start 8,7 bis 13,3 Mio. Haushalte weniger, ohne Ausgleich 15,1 bis 19,8 Mio. Den Haushalten fehlen gegenüber der VGR noch rund 85 Mrd. € Gewinne und Entnahmen aus Firmen; die Spanne rechnet sie mit ein.</p>
+        <p>Ehrliche Spanne: Mit anderen vertretbaren Eichungen haben mit dem Ausgleich von Version 32 zum Start 9,7 bis 15,1 Mio. Haushalte weniger, ohne Ausgleich 16,3 bis 21,8 Mio. Den Haushalten fehlen gegenüber der VGR noch rund 85 Mrd. € Gewinne und Entnahmen aus Firmen; die Spanne rechnet sie mit ein.</p>
         <p>Nicht drin sind bisher: Wie viel Menschen arbeiten (Arbeitsangebot), Firmen und Preise, Wanderung, die Jahre bis 2070. Die Erwachsenen sind rund 66 statt 69,6 Mio., weil Menschen in Heimen und manche erwachsene Kinder fehlen. Leistungen wie Arbeitslosen- und Elterngeld sind für die Haushalte neutral gerechnet.</p>
       </section>
     </main>
@@ -171,7 +171,7 @@ const vz = (x, d = 0) => (x > 0 ? "+" : x < 0 ? "−" : "") + de(Math.abs(x), d)
 const V31 = { mehr: 70, gleich: 13, weniger20: 3, weniger100: 4, wenigerMehr: 10, weniger_mio: 7.0, weniger_monat: 300, plus_mrd: 318, bs_mrd: 78.4, bz_mrd: 8.9, erbst: 14.9 };
 let POP = null;
 const VORGABEN = [
-  { name: "Version 32", v: { mpc: 50, pv: -5, kv: 25, me: -5, ar: 300, pe: 10 } },
+  { name: "Version 32", v: { mpc: 50, pv: -5, kv: 25, me: -5, ar: 300, pe: 10, fb: 1150 } },
   { name: "Ohne Ausgleich", v: { ar: 0, pe: 0 } },
   { name: "Alles ausgegeben", v: { mpc: 100, pv: -5, kv: 25, me: -5 } },
   { name: "Alles angelegt und vererbt", v: { mpc: 0, pv: 100, kv: 25, me: -5 } },
@@ -209,8 +209,8 @@ function zeichne(a) {
   const v = a.verhalten, k = a.kacheln_100;
   const netto = v.steuer_jetzt_mrd;
   $("kacheln").innerHTML = [
-    ["Haushalte mit mehr", de(k.mehr, 0) + " %", "Version 32: 76,5 % (mit Ausgleich, gleicher Einkauf)"],
-    ["Haushalte mit weniger", de(a.weniger.mio, 1) + " Mio.", `im Mittel ${de(a.weniger.monat_mittel)} € im Monat · Version 32: 9,7 Mio.`],
+    ["Haushalte mit mehr", de(k.mehr, 0) + " %", "Version 32: 72,9 % (Freibetrag 1.150 €, mit Ausgleich, gleicher Einkauf)"],
+    ["Haushalte mit weniger", de(a.weniger.mio, 1) + " Mio.", `im Mittel ${de(a.weniger.monat_mittel)} € im Monat · Version 32: 11,1 Mio.`],
     ["Plus der Haushalte", de(a.plus_mrd) + " Mrd. €", `Minus ${de(a.minus_mrd)} Mrd. €`],
     ["Steuern durch Verhalten, sofort", `<span class="${netto >= 0 ? "plus" : "minus"}">${vz(netto, 1)}</span> Mrd. €`, "im Jahr, gegenüber der Rechnung mit gleichem Einkauf"],
     ["Steuern durch Verhalten, später", `<span class="${v.steuer_spaeter_mrd >= 0 ? "plus" : "minus"}">${vz(v.steuer_spaeter_mrd, 1)}</span> Mrd. €`, "im Jahr im Dauerzustand"],

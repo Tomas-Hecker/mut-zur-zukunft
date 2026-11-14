@@ -4,159 +4,159 @@
  "varianten": [
   {
    "ausgleich": "ohne Ausgleich",
-   "standard_mio": 16.1,
-   "standard_prozent": 38.9,
-   "von_mio": 15.1,
-   "bis_mio": 19.8,
+   "standard_mio": 17.9,
+   "standard_prozent": 43.4,
+   "von_mio": 16.3,
+   "bis_mio": 21.8,
    "zeilen": [
     {
      "eichung": "Standard",
      "anker": "Konsum",
-     "weniger_mio": 16.1,
-     "anteil_prozent": 38.9,
-     "mittel_monat": 416
+     "weniger_mio": 17.9,
+     "anteil_prozent": 43.4,
+     "mittel_monat": 407
     },
     {
      "eichung": "Standard",
      "anker": "Sparquote",
-     "weniger_mio": 16.6,
-     "anteil_prozent": 40.3,
-     "mittel_monat": 423
+     "weniger_mio": 18.7,
+     "anteil_prozent": 45.3,
+     "mittel_monat": 412
     },
     {
      "eichung": "Ausschüttungen doppelt",
      "anker": "Konsum",
-     "weniger_mio": 15.1,
-     "anteil_prozent": 36.6,
-     "mittel_monat": 399
+     "weniger_mio": 16.5,
+     "anteil_prozent": 39.9,
+     "mittel_monat": 398
     },
     {
      "eichung": "Ausschüttungen doppelt",
      "anker": "Sparquote",
-     "weniger_mio": 19.8,
-     "anteil_prozent": 48,
+     "weniger_mio": 21.8,
+     "anteil_prozent": 52.8,
      "mittel_monat": 457
     },
     {
      "eichung": "Ausschüttungen × 1,5, Gewinne × 1,2",
      "anker": "Konsum",
-     "weniger_mio": 15.1,
-     "anteil_prozent": 36.6,
-     "mittel_monat": 405
+     "weniger_mio": 16.3,
+     "anteil_prozent": 39.5,
+     "mittel_monat": 409
     },
     {
      "eichung": "Ausschüttungen × 1,5, Gewinne × 1,2",
      "anker": "Sparquote",
-     "weniger_mio": 18.7,
-     "anteil_prozent": 45.4,
-     "mittel_monat": 456
+     "weniger_mio": 20.8,
+     "anteil_prozent": 50.3,
+     "mittel_monat": 451
     },
     {
      "eichung": "Kapitalerträge × 1,5",
      "anker": "Konsum",
-     "weniger_mio": 15.8,
-     "anteil_prozent": 38.3,
+     "weniger_mio": 17.3,
+     "anteil_prozent": 42.1,
+     "mittel_monat": 421
+    },
+    {
+     "eichung": "Kapitalerträge × 1,5",
+     "anker": "Sparquote",
+     "weniger_mio": 20.1,
+     "anteil_prozent": 48.6,
+     "mittel_monat": 438
+    },
+    {
+     "eichung": "Konsum samt Bankgebühren (FISIM)",
+     "anker": "Konsum",
+     "weniger_mio": 19.9,
+     "anteil_prozent": 48.1,
      "mittel_monat": 424
     },
     {
-     "eichung": "Kapitalerträge × 1,5",
-     "anker": "Sparquote",
-     "weniger_mio": 17.9,
-     "anteil_prozent": 43.4,
-     "mittel_monat": 448
-    },
-    {
-     "eichung": "Konsum samt Bankgebühren (FISIM)",
-     "anker": "Konsum",
-     "weniger_mio": 17.7,
-     "anteil_prozent": 43,
-     "mittel_monat": 433
-    },
-    {
      "eichung": "Konsum samt Bankgebühren (FISIM)",
      "anker": "Sparquote",
-     "weniger_mio": 16.6,
-     "anteil_prozent": 40.3,
-     "mittel_monat": 423
+     "weniger_mio": 18.7,
+     "anteil_prozent": 45.3,
+     "mittel_monat": 412
     }
    ]
   },
   {
    "ausgleich": "Version 32: Rentner bis 300 €, 10 € je Erwachsenem",
-   "standard_mio": 9.7,
-   "standard_prozent": 23.4,
-   "von_mio": 8.7,
-   "bis_mio": 13.3,
+   "standard_mio": 11.1,
+   "standard_prozent": 27,
+   "von_mio": 9.7,
+   "bis_mio": 15.1,
    "zeilen": [
     {
      "eichung": "Standard",
      "anker": "Konsum",
-     "weniger_mio": 9.7,
-     "anteil_prozent": 23.4,
-     "mittel_monat": 546
+     "weniger_mio": 11.1,
+     "anteil_prozent": 27,
+     "mittel_monat": 524
     },
     {
      "eichung": "Standard",
      "anker": "Sparquote",
-     "weniger_mio": 10.2,
-     "anteil_prozent": 24.7,
-     "mittel_monat": 551
+     "weniger_mio": 11.9,
+     "anteil_prozent": 28.9,
+     "mittel_monat": 522
     },
     {
      "eichung": "Ausschüttungen doppelt",
-     "anker": "Konsum",
-     "weniger_mio": 8.8,
-     "anteil_prozent": 21.2,
-     "mittel_monat": 530
-    },
-    {
-     "eichung": "Ausschüttungen doppelt",
-     "anker": "Sparquote",
-     "weniger_mio": 13.3,
-     "anteil_prozent": 32.3,
-     "mittel_monat": 569
-    },
-    {
-     "eichung": "Ausschüttungen × 1,5, Gewinne × 1,2",
-     "anker": "Konsum",
-     "weniger_mio": 8.7,
-     "anteil_prozent": 21.2,
-     "mittel_monat": 542
-    },
-    {
-     "eichung": "Ausschüttungen × 1,5, Gewinne × 1,2",
-     "anker": "Sparquote",
-     "weniger_mio": 12.3,
-     "anteil_prozent": 29.7,
-     "mittel_monat": 578
-    },
-    {
-     "eichung": "Kapitalerträge × 1,5",
      "anker": "Konsum",
      "weniger_mio": 9.8,
      "anteil_prozent": 23.7,
-     "mittel_monat": 532
+     "mittel_monat": 526
+    },
+    {
+     "eichung": "Ausschüttungen doppelt",
+     "anker": "Sparquote",
+     "weniger_mio": 15.1,
+     "anteil_prozent": 36.7,
+     "mittel_monat": 557
+    },
+    {
+     "eichung": "Ausschüttungen × 1,5, Gewinne × 1,2",
+     "anker": "Konsum",
+     "weniger_mio": 9.7,
+     "anteil_prozent": 23.5,
+     "mittel_monat": 540
+    },
+    {
+     "eichung": "Ausschüttungen × 1,5, Gewinne × 1,2",
+     "anker": "Sparquote",
+     "weniger_mio": 14.1,
+     "anteil_prozent": 34.1,
+     "mittel_monat": 559
+    },
+    {
+     "eichung": "Kapitalerträge × 1,5",
+     "anker": "Konsum",
+     "weniger_mio": 11.1,
+     "anteil_prozent": 26.9,
+     "mittel_monat": 518
     },
     {
      "eichung": "Kapitalerträge × 1,5",
      "anker": "Sparquote",
-     "weniger_mio": 11.8,
-     "anteil_prozent": 28.5,
-     "mittel_monat": 551
+     "weniger_mio": 13.7,
+     "anteil_prozent": 33.3,
+     "mittel_monat": 524
     },
     {
      "eichung": "Konsum samt Bankgebühren (FISIM)",
      "anker": "Konsum",
-     "weniger_mio": 11.2,
-     "anteil_prozent": 27.2,
-     "mittel_monat": 556
+     "weniger_mio": 13.1,
+     "anteil_prozent": 31.8,
+     "mittel_monat": 529
     },
     {
      "eichung": "Konsum samt Bankgebühren (FISIM)",
      "anker": "Sparquote",
-     "weniger_mio": 10.2,
-     "anteil_prozent": 24.7,
-     "mittel_monat": 551
+     "weniger_mio": 11.9,
+     "anteil_prozent": 28.9,
+     "mittel_monat": 522
     }
    ]
   }

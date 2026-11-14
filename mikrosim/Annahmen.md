@@ -73,11 +73,12 @@ Kapitalerträge × 1,5), weil offen ist, wo die fehlenden rund 150 Mrd. € lieg
 
 | | Standard | Spanne |
 |---|---|---|
-| ohne Ausgleich | 16,1 Mio. (39 %) | 15,1 bis 19,8 Mio. |
-| mit dem Ausgleich von Version 32 (Rentner bis 300 €, 10 € je Erwachsenem) | 9,7 Mio. (23 %) | 8,7 bis 13,3 Mio. |
+| ohne Ausgleich | 17,9 Mio. (43 %) | 16,3 bis 21,8 Mio. |
+| mit dem Ausgleich von Version 32 (Rentner bis 300 €, 10 € je Erwachsenem) | 11,1 Mio. (27 %) | 9,7 bis 15,1 Mio. |
 
 Verlauf am 14.11.: 18,3 und 11,9 Mio. vor der Korrektur von Kindergeld und Krankenkasse, danach 17,7 und 11,2 Mio., seit dem Abzug
-der FISIM vom Konsum 16,1 und 9,7 Mio. Die Spanne enthält auch die alte Eichung mit FISIM.
+der FISIM vom Konsum 16,1 und 9,7 Mio., mit dem Freibetrag von 1.150 € statt 1.200 € (Tomas, 12:49) 17,9 und 11,1 Mio.
+Die Spanne enthält auch die alte Eichung mit FISIM.
 
 ## 4. Verhalten (alle einstellbar)
 
@@ -93,16 +94,17 @@ Steuer aus einem zusätzlich ausgegebenen Euro: über dem Freibetrag rund 60 Cen
 darunter rund 20 Cent Mehrwertsteuer. Vererbtes bringt den Staatsanteil nur, soweit der Nachlass über dem Familienfreibetrag liegt,
 und nur zur Hälfte fällig (langfristig, wie Version 31).
 
-## 4a. Ausgleich (Version 32, Tomas 14.11.2026)
+## 4a. Freibetrag und Ausgleich (Version 32, Tomas 14.11.2026)
 
 | Was | Wert | Art | Quelle |
 |---|---|---|---|
+| Freibetrag der Ausgabensteuer | 1.150 € je Erwachsenem im Monat (13.800 € im Jahr), genau das Existenzminimum zum Ausgeben (1.200 € minus 50 € Prämie); darüber 50 % | Vorschlag | Tomas 14.11., 12:49, weil die Bankgebühren (FISIM) nicht zur Basis gehören; im Rechenkern Grenze1 = Grenze2 = 1.452 € über dem Grundfreibetrag 12.348 €. Vorher 1.200 € |
 | Ausgleich für heutige Rentner | Wer heute Rente oder Pension bezieht und mit der Reform weniger hätte, bekommt das Minus bis 300 € im Monat ersetzt; läuft mit den heutigen Rentnern aus | Vorschlag | Version 32; `ausgleichRentnerMonat` in `simulation.js`, auf der Seite einstellbar |
 | Für jeden Erwachsenen | 10 € im Monat | Vorschlag | Version 32; `pauschaleErwMonat` |
-| Kosten im ersten Jahr | 22,6 Mrd. € | Rechnung | `node steuerlast.js` (Feld `ausgleich_mrd`); das Buch rechnet die 10 € mit 69,6 Mio. Erwachsenen (8,35 Mrd. €), das Modell kennt 65,6 Mio. |
+| Kosten im ersten Jahr | 22,9 Mrd. € | Rechnung | `node steuerlast.js` (Feld `ausgleich_mrd`); das Buch rechnet die 10 € mit 69,6 Mio. Erwachsenen (8,35 Mrd. €), das Modell kennt 65,6 Mio. |
 
 In `simulation.js` stehen beide Werte auf 0, damit die Grundrechnung die Reform ohne Ausgleich zeigt. Die Seite und `steuerlast.js` setzen sie
-auf Version 32. Ergebnis: 76,5 % der Haushalte haben mehr, 9,7 Mio. weniger (im Mittel 546 € im Monat).
+auf Version 32. Ergebnis mit Freibetrag 1.150 €: 72,9 % der Haushalte haben mehr, 11,1 Mio. weniger (im Mittel 524 € im Monat).
 
 ## 4b. Wer heute wie viel zahlt und wie es mit der Reform wäre (steuerlast.js)
 
