@@ -64,6 +64,13 @@ EIGEN_P = [0.06, 0.62, 0.78, 0.85, 0.88, 0.90, 0.93, 0.95]   # Anteil der Eigent
 R_MIETE, R_GELD, R_BETRIEB = 0.035, 0.03, 0.07
 KINDERGELD = 259               # € im Monat je Kind (2026)
 MIETE_STEUERPFLICHTIG = 0.35  # nach Abschreibung und Zinsen: Einkünfte aus Vermietung in der Steuerstatistik rund ein Drittel der Mieten
+# Gewinne und Entnahmen auf die VGR 2025 (Konto II.1.2.2, Sektor Haushalte): Selbständigeneinkommen 175,6 + Ausschüttungen und
+# Entnahmen 364,3 = 539,9 Mrd. €. Im Modell stecken davon die Gewinne der Selbständigen, die Ausschüttungen großer Vermögen und der
+# Dividendenteil der Kapitalerträge (Kapitalerträge 100,9 minus tatsächliche Zinsen 35,0 laut VGR). Es fehlen rund 85 Mrd. €, vor allem
+# Entnahmen aus Personengesellschaften. Sie lassen sich hier als Ausschüttung nach dem Betriebsvermögen zuschätzen. Im Standard bleibt der
+# Zuschlag 0: Ohne ihn ergeben Konsum (VGR ohne FISIM) und Sparquote (VGR 10,4 %) dasselbe Bild, mit ihm läge die Sparquote bei 13 %.
+# Die Zuschätzung gehört deshalb in die Spanne (spanne.js), nicht in den Standard (14.11., Hinweis aus dem Buch-Faden)
+AUS_ZUSCHLAG_MRD = 0.0
 AUSSCHUETTUNG = 0.50          # ausgeschütteter Teil der Betriebsgewinne großer Vermögen, Rest bleibt in der Firma (GmbH)
 
 # ---------------------------------------------------------------- Hilfen
@@ -400,6 +407,8 @@ def ertraege(d):
     gew = R_BETRIEB * d["betrieb"]
     d["aus"] = np.where(gross, AUSSCHUETTUNG * gew, 0.0)
     d["gmbh"] = np.where(gross, (1 - AUSSCHUETTUNG) * gew, 0.0)
+    bv = np.maximum(d["betrieb"], 0)
+    d["aus"] = d["aus"] + AUS_ZUSCHLAG_MRD * 1e9 * bv / (d["w"] * bv).sum()
     # kleinere Betriebe: Gewinn steckt schon im Gewinn der Selbständigen; mindestens 7 % des Betriebswerts
     d["gewinn"] = np.where(~gross & (d["selbst"] > 0), np.maximum(d["gewinn"], gew), d["gewinn"])
     # Ohne Arbeit, Rente, Grundsicherung oder Leistungen (leben vom Ersparten): heute freiwillig in der Krankenkasse, mindestens der

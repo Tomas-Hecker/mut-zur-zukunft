@@ -4,12 +4,14 @@ const fs = require("fs"); const K = require("./kern.js"); const S = require("./s
 const pop = require("./bevoelkerung.json"); const sp = pop.spalten;
 const orig = { aus: sp.aus.slice(), gewinn: sp.gewinn.slice(), kap: sp.kap.slice() };
 // Faktoren auf Ausschüttungen, Gewinne aus der eigenen Firma und Kapitalerträge: den Haushalten fehlen gegenüber der VGR rund 150 Mrd. €
-// Gewinne und Entnahmen; wo genau, ist offen. Dazu der zweite Anker der Eichung (Sparquote 10,4 % statt Konsum 2.085,7 Mrd. €).
+// Gewinne und Entnahmen; wo genau, ist offen. Dazu der zweite Anker der Eichung (Sparquote 10,4 % statt Konsum 2.050,2 Mrd. €) und der Konsum samt unterstellter
+// Bankgebühren (2.085,7 Mrd. €, Eichung bis 14.11.).
 const EICHUNGEN = [
   { name: "Standard", f: [1, 1, 1] },
   { name: "Ausschüttungen doppelt", f: [2, 1, 1] },
   { name: "Ausschüttungen × 1,5, Gewinne × 1,2", f: [1.5, 1.2, 1] },
   { name: "Kapitalerträge × 1,5", f: [1, 1, 1.5] },
+  { name: "Konsum samt Bankgebühren (FISIM)", f: [1, 1, 1], o: { konsumZiel: 2085.7 } },
 ];
 const AUSGLEICH = [
   { name: "ohne Ausgleich", o: {} },
@@ -22,7 +24,7 @@ for (const a of AUSGLEICH) {
   for (const E of EICHUNGEN) {
     sp.aus = orig.aus.map(x => x * E.f[0]); sp.gewinn = orig.gewinn.map(x => x * E.f[1]); sp.kap = orig.kap.map(x => x * E.f[2]);
     for (const eichung of ["konsum", "sparquote"]) {
-      const s = S.auswerten(S.rechne(K, pop, { ...a.o, eichung }));
+      const s = S.auswerten(S.rechne(K, pop, { ...a.o, ...(E.o || {}), eichung }));
       zeilen.push({ eichung: E.name, anker: eichung === "konsum" ? "Konsum" : "Sparquote", weniger_mio: r1(s.weniger.mio),
         anteil_prozent: r1(100 * s.weniger.mio / s.haushalte_mio), mittel_monat: Math.round(s.weniger.monat_mittel) });
     }

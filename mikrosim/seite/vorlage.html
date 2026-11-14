@@ -116,7 +116,7 @@ th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: 
       <div class="gruppe">
         <h3>Eichung des Konsums</h3>
         <div class="feld"><label for="eich">Konsum ergibt sich aus</label>
-          <select id="eich"><option value="konsum">der amtlichen Summe 2025 (2.086 Mrd. € ohne Mietwert)</option><option value="sparquote">den Einkommen und der Sparquote 10,4 %</option></select>
+          <select id="eich"><option value="konsum">der amtlichen Summe 2025 (2.050 Mrd. € ohne Mietwert und Bankgebühren)</option><option value="sparquote">den Einkommen und der Sparquote 10,4 %</option></select>
           <small>Beide Wege liegen seit der Eichung an der VGR 2025 nah beieinander.</small></div>
       </div>
       <button class="knopf" id="los" type="submit">Neu rechnen</button>
@@ -151,8 +151,8 @@ th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: 
       </section>
       <section class="karte hinweis">
         <h2>Was das Modell kann und was nicht</h2>
-        <p>Die Haushalte sind künstlich, aber auf amtliche Zahlen geeicht: 41,25 Mio. Haushalte, Bruttolöhne 2.036 Mrd. € (VGR 2025), Lohn- und Einkommensteuer 405 Mrd. € (Kassenstatistik 2025), Konsum 2.086 Mrd. € ohne Mietwert (VGR 2025), Vermögen 16,6 Bio. € (PHF 2023 der Bundesbank plus fehlende Reiche), Mietwert 214,5 Mrd. €. Wie stark Rentner, Arbeitnehmer und Selbständige sparen, folgt der Einkommens- und Verbrauchsstichprobe (EVS). Jede Zahl steht mit Quelle und Abweichung in Annahmen.md und abgleich.md.</p>
-        <p>Ehrliche Spanne: Mit anderen vertretbaren Eichungen haben mit dem Ausgleich von Version 32 zum Start 9,9 bis 13,3 Mio. Haushalte weniger, ohne Ausgleich 16,2 bis 19,8 Mio. Den Haushalten fehlen gegenüber der VGR noch rund 150 Mrd. € Gewinne und Entnahmen aus Firmen.</p>
+        <p>Die Haushalte sind künstlich, aber auf amtliche Zahlen geeicht: 41,25 Mio. Haushalte, Bruttolöhne 2.036 Mrd. € (VGR 2025), Lohn- und Einkommensteuer 405 Mrd. € (Kassenstatistik 2025), Konsum 2.050 Mrd. € ohne Mietwert und ohne unterstellte Bankgebühren (VGR 2025), Vermögen 16,6 Bio. € (PHF 2023 der Bundesbank plus fehlende Reiche), Mietwert 214,5 Mrd. €. Wie stark Rentner, Arbeitnehmer und Selbständige sparen, folgt der Einkommens- und Verbrauchsstichprobe (EVS). Jede Zahl steht mit Quelle und Abweichung in Annahmen.md und abgleich.md.</p>
+        <p>Ehrliche Spanne: Mit anderen vertretbaren Eichungen haben mit dem Ausgleich von Version 32 zum Start 8,7 bis 13,3 Mio. Haushalte weniger, ohne Ausgleich 15,1 bis 19,8 Mio. Den Haushalten fehlen gegenüber der VGR noch rund 85 Mrd. € Gewinne und Entnahmen aus Firmen; die Spanne rechnet sie mit ein.</p>
         <p>Nicht drin sind bisher: Wie viel Menschen arbeiten (Arbeitsangebot), Firmen und Preise, Wanderung, die Jahre bis 2070. Die Erwachsenen sind rund 66 statt 69,6 Mio., weil Menschen in Heimen und manche erwachsene Kinder fehlen. Leistungen wie Arbeitslosen- und Elterngeld sind für die Haushalte neutral gerechnet.</p>
       </section>
     </main>
@@ -209,8 +209,8 @@ function zeichne(a) {
   const v = a.verhalten, k = a.kacheln_100;
   const netto = v.steuer_jetzt_mrd;
   $("kacheln").innerHTML = [
-    ["Haushalte mit mehr", de(k.mehr, 0) + " %", "Version 32: 73 % (mit Ausgleich, gleicher Einkauf)"],
-    ["Haushalte mit weniger", de(a.weniger.mio, 1) + " Mio.", `im Mittel ${de(a.weniger.monat_mittel)} € im Monat · Version 32: 11,2 Mio.`],
+    ["Haushalte mit mehr", de(k.mehr, 0) + " %", "Version 32: 76,5 % (mit Ausgleich, gleicher Einkauf)"],
+    ["Haushalte mit weniger", de(a.weniger.mio, 1) + " Mio.", `im Mittel ${de(a.weniger.monat_mittel)} € im Monat · Version 32: 9,7 Mio.`],
     ["Plus der Haushalte", de(a.plus_mrd) + " Mrd. €", `Minus ${de(a.minus_mrd)} Mrd. €`],
     ["Steuern durch Verhalten, sofort", `<span class="${netto >= 0 ? "plus" : "minus"}">${vz(netto, 1)}</span> Mrd. €`, "im Jahr, gegenüber der Rechnung mit gleichem Einkauf"],
     ["Steuern durch Verhalten, später", `<span class="${v.steuer_spaeter_mrd >= 0 ? "plus" : "minus"}">${vz(v.steuer_spaeter_mrd, 1)}</span> Mrd. €`, "im Jahr im Dauerzustand"],

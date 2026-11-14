@@ -48,17 +48,24 @@ Art der Werte: **Statistik** (amtliche Zahl), **Studie** (Fachliteratur), **Eich
 
 | Was | Wert | Art | Quelle |
 |---|---|---|---|
-| Eichung (Standard) | Konsum genau 2.085,7 Mrd. € ohne Mietwert (VGR 2025: Konsum der Haushalte 2.305,4, Version 31: 2.300,2, jeweils − 214,5 Mietwert); wahlweise Sparquote 10,4 % | Statistik | VGR 2025 |
-| Sparen nach Gruppen | Rentnerhaushalte sparen 10 Punkte weniger, Selbständige 6 Punkte mehr als Arbeitnehmer bei gleichem Einkommen | Statistik | EVS 2018 (Fachserie 15 Heft 4, Tabelle 1.2): Konsum je Nettoeinkommen Arbeitnehmer 71,0 %, Ruhestand 83,3 %, Selbständige 62,4 %. Geeicht wird der Abstand zu den Arbeitnehmern (`node eichen_sparen.js`); das Verhältnis statt des Abstands verlangte von Rentnern mehr Konsum, als Einkommen und Erspartes hergeben |
+| Eichung (Standard) | Konsum genau 2.050,2 Mrd. € ohne Mietwert und ohne unterstellte Bankgebühren: 2.300,2 (Version 31; VGR 2025: 2.305,4) − Mietwert 214,5 − FISIM 35,5. Die Sparquote ergibt sich dann mit 10,9 % (amtlich 10,4 %); wahlweise wird auf die Sparquote geeicht | Statistik | VGR 2025, Konto II.4. FISIM sind Bankgebühren, die in den Zinsen stecken: Die Haushalte zahlen sie nicht in bar, und das Einkommen im Modell enthält die FISIM-Zinsen auch nicht. Bis 14.11. war der Konsum 35,5 Mrd. € zu hoch; die Mitte gab dadurch fast ihr ganzes Einkommen aus (Hinweis aus dem Buch-Faden) |
+| Sparen nach Gruppen | Rentnerhaushalte sparen 8,7 Punkte weniger, Selbständige 5,9 Punkte mehr als Arbeitnehmer bei gleichem Einkommen | Statistik | EVS 2018 (Fachserie 15 Heft 4, Tabelle 1.2): Konsum je Nettoeinkommen Arbeitnehmer 71,0 %, Ruhestand 83,3 %, Selbständige 62,4 %. Geeicht wird der Abstand zu den Arbeitnehmern (`node eichen_sparen.js`); das Verhältnis statt des Abstands verlangte von Rentnern mehr Konsum, als Einkommen und Erspartes hergeben |
 | Sparquote nach Einkommen | rund 7 Punkte mehr je Verdopplung des Einkommens: + 0,10 × ln(Einkommen/30.000), über 100.000 € zusätzlich + 0,08 × ln(Einkommen/100.000) | Studie | EVS 2018: unten Entsparen, oben 20–40 % |
 | Kapitalerträge | nach Steuer zur Hälfte ausgegeben (ab 1 Mio. € zu einem Viertel), der Rest wieder angelegt | Studie | Baker, Nagel, Wurgler 2007; Di Maggio, Kermani, Majlesi 2020 |
 | Verzehr von Erspartem im Alter | 1 % (65 Jahre) bis 3,5 % (90 Jahre) des Geldvermögens | Annahme | PHF: Ältere entsparen langsam |
 
 **Geklärte Abweichung (Stand 14.11.):** Vor der Eichung ergab die amtliche Sparquote nur 1.910 Mrd. € Konsum. Der Grund waren
 fehlende Löhne (1.825 statt 2.036 Mrd. €). Seit der Eichung liegen beide Wege nah beieinander: Mit der Sparquote ergibt sich 2.068 Mrd. €
-Konsum, 1 % unter der amtlichen Summe. Offen bleibt: Gewinne und Entnahmen aus Firmen liegen im Modell bei 389 Mrd. €, in der VGR bei
-540 Mrd. € (Selbständigeneinkommen 175,6 + Ausschüttungen und Entnahmen 364,3). Rechnet man sie hinzu, ändert sich die Zahl der
-Haushalte mit weniger um weniger als 1,5 Mio.
+Konsum, 1 % unter der amtlichen Summe. Seit dem Abzug der FISIM (14.11., 13 Uhr) treffen sich beide Wege fast genau: Konsum 2.050 Mrd. €
+und Sparquote 10,9 % (amtlich 10,4 %). Offen bleibt: Gewinne und Entnahmen aus Firmen liegen im Modell bei 389 Mrd. €, in der VGR bei
+540 Mrd. € (Selbständigeneinkommen 175,6 + Ausschüttungen und Entnahmen 364,3); zieht man den Dividendenteil der Kapitalerträge ab
+(100,9 − 35,0 tatsächliche Zinsen), fehlen rund 85 Mrd. €. Schätzt man sie bei den Firmeneigentümern zu (`AUS_ZUSCHLAG_MRD` in
+bevoelkerung.py), haben 0,6 Mio. Haushalte weniger mit weniger, die Sparquote stiege aber auf 13 %. Deshalb steht die Zuschätzung in der
+Spanne, nicht im Standard.
+
+**Offen:** In der EVS 2023 (Tabelle 63221-32) steigt der Konsum mit dem Einkommen langsamer als im Modell (Elastizität rund 0,7 statt
+0,9 zwischen 1.500 und 5.000 € netto). Im Modell gibt die Mitte deshalb eher zu viel aus; die Zahl der Haushalte mit weniger ist eher
+zu hoch als zu niedrig.
 
 **Ehrliche Spanne der Haushalte mit weniger** (`node spanne.js`, alle Zeilen in `spanne.json`): Gerechnet wird mit beiden Ankern der Eichung
 (Konsum oder Sparquote) und mit mehr Gewinnen und Kapitalerträgen bei den Haushalten (Ausschüttungen × 2, Ausschüttungen × 1,5 und Gewinne × 1,2,
@@ -66,10 +73,11 @@ Kapitalerträge × 1,5), weil offen ist, wo die fehlenden rund 150 Mrd. € lieg
 
 | | Standard | Spanne |
 |---|---|---|
-| ohne Ausgleich | 17,7 Mio. (43 %) | 16,2 bis 19,8 Mio. |
-| mit dem Ausgleich von Version 32 (Rentner bis 300 €, 10 € je Erwachsenem) | 11,2 Mio. (27 %) | 9,9 bis 13,3 Mio. |
+| ohne Ausgleich | 16,1 Mio. (39 %) | 15,1 bis 19,8 Mio. |
+| mit dem Ausgleich von Version 32 (Rentner bis 300 €, 10 € je Erwachsenem) | 9,7 Mio. (23 %) | 8,7 bis 13,3 Mio. |
 
-Vor der Korrektur von Kindergeld und Krankenkasse (14.11., 13 Uhr) waren es 18,3 und 11,9 Mio.
+Verlauf am 14.11.: 18,3 und 11,9 Mio. vor der Korrektur von Kindergeld und Krankenkasse, danach 17,7 und 11,2 Mio., seit dem Abzug
+der FISIM vom Konsum 16,1 und 9,7 Mio. Die Spanne enthält auch die alte Eichung mit FISIM.
 
 ## 4. Verhalten (alle einstellbar)
 
@@ -91,10 +99,10 @@ und nur zur Hälfte fällig (langfristig, wie Version 31).
 |---|---|---|---|
 | Ausgleich für heutige Rentner | Wer heute Rente oder Pension bezieht und mit der Reform weniger hätte, bekommt das Minus bis 300 € im Monat ersetzt; läuft mit den heutigen Rentnern aus | Vorschlag | Version 32; `ausgleichRentnerMonat` in `simulation.js`, auf der Seite einstellbar |
 | Für jeden Erwachsenen | 10 € im Monat | Vorschlag | Version 32; `pauschaleErwMonat` |
-| Kosten im ersten Jahr | 22,7 Mrd. € | Rechnung | `node steuerlast.js` (Feld `ausgleich_mrd`); das Buch rechnet die 10 € mit 69,6 Mio. Erwachsenen (8,35 Mrd. €), das Modell kennt 65,6 Mio. |
+| Kosten im ersten Jahr | 22,6 Mrd. € | Rechnung | `node steuerlast.js` (Feld `ausgleich_mrd`); das Buch rechnet die 10 € mit 69,6 Mio. Erwachsenen (8,35 Mrd. €), das Modell kennt 65,6 Mio. |
 
 In `simulation.js` stehen beide Werte auf 0, damit die Grundrechnung die Reform ohne Ausgleich zeigt. Die Seite und `steuerlast.js` setzen sie
-auf Version 32. Ergebnis: 72,8 % der Haushalte haben mehr, 11,2 Mio. weniger (im Mittel 554 € im Monat).
+auf Version 32. Ergebnis: 76,5 % der Haushalte haben mehr, 9,7 Mio. weniger (im Mittel 546 € im Monat).
 
 ## 4b. Wer heute wie viel zahlt und wie es mit der Reform wäre (steuerlast.js)
 

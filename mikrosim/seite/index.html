@@ -116,7 +116,7 @@ th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: 
       <div class="gruppe">
         <h3>Eichung des Konsums</h3>
         <div class="feld"><label for="eich">Konsum ergibt sich aus</label>
-          <select id="eich"><option value="konsum">der amtlichen Summe 2025 (2.086 Mrd. € ohne Mietwert)</option><option value="sparquote">den Einkommen und der Sparquote 10,4 %</option></select>
+          <select id="eich"><option value="konsum">der amtlichen Summe 2025 (2.050 Mrd. € ohne Mietwert und Bankgebühren)</option><option value="sparquote">den Einkommen und der Sparquote 10,4 %</option></select>
           <small>Beide Wege liegen seit der Eichung an der VGR 2025 nah beieinander.</small></div>
       </div>
       <button class="knopf" id="los" type="submit">Neu rechnen</button>
@@ -151,8 +151,8 @@ th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: 
       </section>
       <section class="karte hinweis">
         <h2>Was das Modell kann und was nicht</h2>
-        <p>Die Haushalte sind künstlich, aber auf amtliche Zahlen geeicht: 41,25 Mio. Haushalte, Bruttolöhne 2.036 Mrd. € (VGR 2025), Lohn- und Einkommensteuer 405 Mrd. € (Kassenstatistik 2025), Konsum 2.086 Mrd. € ohne Mietwert (VGR 2025), Vermögen 16,6 Bio. € (PHF 2023 der Bundesbank plus fehlende Reiche), Mietwert 214,5 Mrd. €. Wie stark Rentner, Arbeitnehmer und Selbständige sparen, folgt der Einkommens- und Verbrauchsstichprobe (EVS). Jede Zahl steht mit Quelle und Abweichung in Annahmen.md und abgleich.md.</p>
-        <p>Ehrliche Spanne: Mit anderen vertretbaren Eichungen haben mit dem Ausgleich von Version 32 zum Start 9,9 bis 13,3 Mio. Haushalte weniger, ohne Ausgleich 16,2 bis 19,8 Mio. Den Haushalten fehlen gegenüber der VGR noch rund 150 Mrd. € Gewinne und Entnahmen aus Firmen.</p>
+        <p>Die Haushalte sind künstlich, aber auf amtliche Zahlen geeicht: 41,25 Mio. Haushalte, Bruttolöhne 2.036 Mrd. € (VGR 2025), Lohn- und Einkommensteuer 405 Mrd. € (Kassenstatistik 2025), Konsum 2.050 Mrd. € ohne Mietwert und ohne unterstellte Bankgebühren (VGR 2025), Vermögen 16,6 Bio. € (PHF 2023 der Bundesbank plus fehlende Reiche), Mietwert 214,5 Mrd. €. Wie stark Rentner, Arbeitnehmer und Selbständige sparen, folgt der Einkommens- und Verbrauchsstichprobe (EVS). Jede Zahl steht mit Quelle und Abweichung in Annahmen.md und abgleich.md.</p>
+        <p>Ehrliche Spanne: Mit anderen vertretbaren Eichungen haben mit dem Ausgleich von Version 32 zum Start 8,7 bis 13,3 Mio. Haushalte weniger, ohne Ausgleich 15,1 bis 19,8 Mio. Den Haushalten fehlen gegenüber der VGR noch rund 85 Mrd. € Gewinne und Entnahmen aus Firmen; die Spanne rechnet sie mit ein.</p>
         <p>Nicht drin sind bisher: Wie viel Menschen arbeiten (Arbeitsangebot), Firmen und Preise, Wanderung, die Jahre bis 2070. Die Erwachsenen sind rund 66 statt 69,6 Mio., weil Menschen in Heimen und manche erwachsene Kinder fehlen. Leistungen wie Arbeitslosen- und Elterngeld sind für die Haushalte neutral gerechnet.</p>
       </section>
     </main>
@@ -887,9 +887,12 @@ const STANDARD = {
   kern: { Konsum: 2300.2, Miete: 214.5, Nutzwert: 214.5, HAAn: 0 },
   eichung: "konsum",           // "konsum" (Standard seit 14.11.): Konsum genau wie VGR 2025 und Version 31; "sparquote": Konsum aus Einkommen und Sparquote der VGR
   sparquoteZiel: 0.104,        // Sparquote der privaten Haushalte 2025 (Statistisches Bundesamt, VGR): rund 10,4 %
-  sparRentner: -0.10, sparSelbst: 0.06,   // Versatz der Sparquote für Rentner- und Selbständigenhaushalte: geeicht mit eichen_sparen.js auf
+  sparRentner: -0.087, sparSelbst: 0.059,   // Versatz der Sparquote für Rentner- und Selbständigenhaushalte: geeicht mit eichen_sparen.js auf
                                // den Abstand der Konsumquoten in der EVS 2018 (Fachserie 15 Heft 4, Tabelle 1.2)
-  konsumZiel: 2085.7,          // Mrd. €: Konsum ohne Mietwert, 2.300,2 − 214,5 wie im Blatt Verteilung; die Sparquoten werden darauf geeicht
+  sparSteigung: 0.10, sparSteigungOben: 0.08,   // Sparquote steigt um sparSteigung × ln(Einkommen/30.000), über 100.000 € zusätzlich
+  konsumZiel: 2050.2,          // Mrd. €: Konsum ohne Mietwert und ohne unterstellte Bankgebühren (FISIM): 2.300,2 − 214,5 − 35,5
+                               // (VGR 2025, Konto II.4: FISIM im Konsum der Haushalte 35,5; die Haushalte zahlen sie nicht in bar, und
+                               // das Einkommen im Modell enthält die FISIM-Zinsen auch nicht); die Sparquoten werden darauf geeicht
   kapKonsum: [0.5, 0.25],      // Anteil der Kapitalerträge nach Steuer, der ausgegeben wird (unter / ab 1 Mio. € Vermögen); der Rest
                                // wird wieder angelegt (Baker, Nagel, Wurgler 2007; Di Maggio, Kermani, Majlesi 2020)
   entsparGrenze: 0.05,         // Entsparen im Jahr höchstens 5 % des Geldvermögens
@@ -920,7 +923,7 @@ const STANDARD = {
   ausgleichRentnerMonat: 0,    // heutige Rentner: Minus wird bis zu diesem Betrag im Monat ausgeglichen, läuft mit ihnen aus
   pauschaleErwMonat: 0,        // jeder Erwachsene bekommt diesen Betrag im Monat
   // Wer nur von Arbeitslosen-, Kranken- oder Elterngeld lebt, für den zahlt der Träger die Prämie der Krankenkasse, wie heute die Beiträge
-  // (§ 251 und § 224 SGB V); in der Grundsicherung, im Bürgerjob und in der Bildung ist sie schon eingerechnet
+  // (§ 251 und § 224 SGB V; Tomas 14.11.2026); in der Grundsicherung, im Bürgerjob und in der Bildung ist sie schon eingerechnet
   praemieLeistung: true,
 };
 
@@ -950,9 +953,9 @@ function eingabe(sp, i, spar) {
 // kommen hier als Kapitalertrag ohne Steuer dazu, indem sie über verm (Ausgaben aus Vermögen) laufen würden — das wäre falsch,
 // deshalb rechnen wir den Unterschied selbst: verf + (vermietCash − vermiet).
 
-function sparquote(verf, rentner, transfer, a0) {
+function sparquote(verf, rentner, transfer, a0, b = 0.10, c = 0.08) {
   if (transfer > 0) return 0;
-  let s = a0 + 0.10 * Math.log(Math.max(verf, 5000) / 30000) + 0.08 * Math.max(0, Math.log(Math.max(verf, 1) / 100000));   // Rentner sparen in Deutschland im Mittel weiter (EVS)
+  let s = a0 + b * Math.log(Math.max(verf, 5000) / 30000) + c * Math.max(0, Math.log(Math.max(verf, 1) / 100000));   // Rentner sparen in Deutschland im Mittel weiter (EVS)
   return Math.min(0.75, Math.max(-0.10, s));
 }
 
@@ -978,7 +981,7 @@ function rechne(K, pop, optIn = {}) {
   const kq = i => (sp.W[i] >= 1e6 ? opt.kapKonsum[1] : opt.kapKonsum[0]);
   const plan = (i, a0) => {
     const basis = verf0[i] - kapN[i];
-    const s = sparquote(basis, sp.rentner[i], sp.transfer[i], a0 + (sp.rentner[i] ? opt.sparRentner : sp.selbst[i] ? opt.sparSelbst : 0));
+    const s = sparquote(basis, sp.rentner[i], sp.transfer[i], a0 + (sp.rentner[i] ? opt.sparRentner : sp.selbst[i] ? opt.sparSelbst : 0), opt.sparSteigung, opt.sparSteigungOben);
     let konsum = basis * (1 - s) + kapN[i] * kq(i) + sp.verm[i];
     const entspar = s < 0 ? Math.min(-s * basis, Math.max(0, sp.geld[i]) * opt.entsparGrenze) : 0;
     // Leistungen wie Arbeitslosen-, Kranken- und Elterngeld: Die Reform müsste sie so anpassen, dass derselbe Einkauf möglich bleibt.
@@ -1245,8 +1248,8 @@ function zeichne(a) {
   const v = a.verhalten, k = a.kacheln_100;
   const netto = v.steuer_jetzt_mrd;
   $("kacheln").innerHTML = [
-    ["Haushalte mit mehr", de(k.mehr, 0) + " %", "Version 32: 73 % (mit Ausgleich, gleicher Einkauf)"],
-    ["Haushalte mit weniger", de(a.weniger.mio, 1) + " Mio.", `im Mittel ${de(a.weniger.monat_mittel)} € im Monat · Version 32: 11,2 Mio.`],
+    ["Haushalte mit mehr", de(k.mehr, 0) + " %", "Version 32: 76,5 % (mit Ausgleich, gleicher Einkauf)"],
+    ["Haushalte mit weniger", de(a.weniger.mio, 1) + " Mio.", `im Mittel ${de(a.weniger.monat_mittel)} € im Monat · Version 32: 9,7 Mio.`],
     ["Plus der Haushalte", de(a.plus_mrd) + " Mrd. €", `Minus ${de(a.minus_mrd)} Mrd. €`],
     ["Steuern durch Verhalten, sofort", `<span class="${netto >= 0 ? "plus" : "minus"}">${vz(netto, 1)}</span> Mrd. €`, "im Jahr, gegenüber der Rechnung mit gleichem Einkauf"],
     ["Steuern durch Verhalten, später", `<span class="${v.steuer_spaeter_mrd >= 0 ? "plus" : "minus"}">${vz(v.steuer_spaeter_mrd, 1)}</span> Mrd. €`, "im Jahr im Dauerzustand"],

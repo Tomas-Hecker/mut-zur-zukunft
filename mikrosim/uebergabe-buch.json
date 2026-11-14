@@ -1,57 +1,57 @@
 {
  "stand": "2026-11-14",
- "grundlage": "Mikrosimulation, Standard: Konsum 2.085,7 Mrd. € wie VGR 2025, Löhne und Einkommensteuer auf 2025 geeicht, Sparen nach EVS; Rechenkern Version 31/32",
+ "grundlage": "Mikrosimulation, Standard: Konsum 2.050,2 Mrd. € wie VGR 2025 ohne Mietwert und ohne unterstellte Bankgebühren (FISIM), Löhne und Einkommensteuer auf 2025 geeicht, Sparen nach EVS; Rechenkern Version 31/32",
  "hinweis": "Werte für das erste Jahr bei gleichem Einkauf, mit Bestandsschutz und Altvermögenskonto; Plus und Minus sind Summen über Haushalte (auch erwachsene Kinder als eigene Steuerfälle)",
  "1_haushalte_mit_weniger": {
   "alle": {
-   "mio": 17.7,
-   "anteil_prozent": 43,
-   "mittel_monat": 432,
-   "ueber100_mio": 12
+   "mio": 16.1,
+   "anteil_prozent": 39,
+   "mittel_monat": 416,
+   "ueber100_mio": 10.9
   },
   "rentner": {
    "haushalte_mio": 11.5,
    "weniger_mio": 8.4,
    "anteil_prozent": 73,
-   "mittel_monat": 245,
-   "ueber100_mio": 5
+   "mittel_monat": 241,
+   "ueber100_mio": 4.9
   },
   "uebrige": {
    "haushalte_mio": 29.7,
-   "weniger_mio": 9.3,
-   "anteil_prozent": 31,
-   "mittel_monat": 602,
-   "ueber100_mio": 7.1
+   "weniger_mio": 7.7,
+   "anteil_prozent": 26,
+   "mittel_monat": 606,
+   "ueber100_mio": 6
   }
  },
  "2_plus_minus_mrd": {
-  "plus": 108.2,
-  "minus": 93.3,
-  "saldo": 14.9,
-  "bestandsschutz_mrd": 63.4,
-  "beamte_zulage_mrd": 16.9,
+  "plus": 127.6,
+  "minus": 81.1,
+  "saldo": 46.5,
+  "bestandsschutz_mrd": 61.7,
+  "beamte_zulage_mrd": 14.5,
   "probe": "Plus minus Minus ist hier die Summe der Haushalte, nicht der Saldo des Staates; Unternehmen, Ausland, Staatsausgaben und Übergänge fehlen. Ein Abweichen von −12,7 ist deshalb kein Fehler, muss aber im Buch-Modell erklärt werden."
  },
  "3_ausgleich": [
   {
    "name": "A: Erspartes kauft so viel wie heute (Konto um den Preisanstieg aufgestockt)",
-   "kosten_erstes_jahr_mrd": 11.2,
-   "davon_rentner_mrd": 9.5,
-   "davon_uebrige_mrd": 1.7,
+   "kosten_erstes_jahr_mrd": 10,
+   "davon_rentner_mrd": 9,
+   "davon_uebrige_mrd": 1,
    "rentneranteil_nach_jahren_mrd": {
-    "0": 9.5,
-    "5": 7.7,
-    "10": 5.4,
-    "15": 3.3,
-    "20": 1.6,
+    "0": 9,
+    "5": 7.2,
+    "10": 5,
+    "15": 3,
+    "20": 1.5,
     "30": 0.1
    },
    "auslauf": "Rentneranteil sinkt mit der Sterbetafel wie der Bestandsschutz; der Anteil der Übrigen bleibt, bis die Regel ausläuft oder abschmilzt (politische Entscheidung)",
-   "plus_nach_mrd": 111.8,
-   "minus_nach_mrd": 85.6,
-   "weniger_mio": 17.1,
-   "anteil_prozent": 41,
-   "mittel_monat": 409,
+   "plus_nach_mrd": 130.5,
+   "minus_nach_mrd": 74.1,
+   "weniger_mio": 15.6,
+   "anteil_prozent": 38,
+   "mittel_monat": 390,
    "rentner": {
     "haushalte_mio": 11.5,
     "weniger_mio": 8.2,
@@ -61,10 +61,10 @@
    },
    "uebrige": {
     "haushalte_mio": 29.7,
-    "weniger_mio": 8.9,
-    "anteil_prozent": 30,
-    "mittel_monat": 620,
-    "ueber100_mio": 7
+    "weniger_mio": 7.5,
+    "anteil_prozent": 25,
+    "mittel_monat": 621,
+    "ueber100_mio": 6
    }
   },
   {
@@ -81,24 +81,24 @@
     "30": 0.1
    },
    "auslauf": "Rentneranteil sinkt mit der Sterbetafel wie der Bestandsschutz; der Anteil der Übrigen bleibt, bis die Regel ausläuft oder abschmilzt (politische Entscheidung)",
-   "plus_nach_mrd": 114.1,
-   "minus_nach_mrd": 86.4,
-   "weniger_mio": 17,
-   "anteil_prozent": 41,
-   "mittel_monat": 416,
+   "plus_nach_mrd": 134,
+   "minus_nach_mrd": 74.7,
+   "weniger_mio": 15.4,
+   "anteil_prozent": 37,
+   "mittel_monat": 399,
    "rentner": {
     "haushalte_mio": 11.5,
     "weniger_mio": 8.3,
     "anteil_prozent": 72,
-    "mittel_monat": 219,
+    "mittel_monat": 215,
     "ueber100_mio": 4.4
    },
    "uebrige": {
     "haushalte_mio": 29.7,
-    "weniger_mio": 8.7,
-    "anteil_prozent": 29,
-    "mittel_monat": 605,
-    "ueber100_mio": 6.6
+    "weniger_mio": 7.1,
+    "anteil_prozent": 24,
+    "mittel_monat": 614,
+    "ueber100_mio": 5.7
    }
   },
   {
@@ -115,45 +115,45 @@
     "30": 0.1
    },
    "auslauf": "Rentneranteil sinkt mit der Sterbetafel wie der Bestandsschutz; der Anteil der Übrigen bleibt, bis die Regel ausläuft oder abschmilzt (politische Entscheidung)",
-   "plus_nach_mrd": 118.7,
-   "minus_nach_mrd": 79.8,
-   "weniger_mio": 16.5,
-   "anteil_prozent": 40,
-   "mittel_monat": 395,
+   "plus_nach_mrd": 139,
+   "minus_nach_mrd": 68.6,
+   "weniger_mio": 14.9,
+   "anteil_prozent": 36,
+   "mittel_monat": 377,
    "rentner": {
     "haushalte_mio": 11.5,
     "weniger_mio": 8.3,
     "anteil_prozent": 72,
-    "mittel_monat": 195,
-    "ueber100_mio": 4.4
+    "mittel_monat": 191,
+    "ueber100_mio": 4.3
    },
    "uebrige": {
     "haushalte_mio": 29.7,
-    "weniger_mio": 8.2,
-    "anteil_prozent": 28,
-    "mittel_monat": 595,
-    "ueber100_mio": 6.3
+    "weniger_mio": 6.7,
+    "anteil_prozent": 22,
+    "mittel_monat": 607,
+    "ueber100_mio": 5.3
    }
   },
   {
    "name": "C: Rentner beim Start: voller Ausgleich",
-   "kosten_erstes_jahr_mrd": 24.7,
-   "davon_rentner_mrd": 24.7,
+   "kosten_erstes_jahr_mrd": 24.3,
+   "davon_rentner_mrd": 24.3,
    "davon_uebrige_mrd": 0,
    "rentneranteil_nach_jahren_mrd": {
-    "0": 24.7,
-    "5": 20.5,
-    "10": 14.9,
-    "15": 9.3,
-    "20": 4.7,
+    "0": 24.3,
+    "5": 20.1,
+    "10": 14.6,
+    "15": 9.1,
+    "20": 4.5,
     "30": 0.4
    },
    "auslauf": "Rentneranteil sinkt mit der Sterbetafel wie der Bestandsschutz; der Anteil der Übrigen bleibt, bis die Regel ausläuft oder abschmilzt (politische Entscheidung)",
-   "plus_nach_mrd": 108.2,
-   "minus_nach_mrd": 68.6,
-   "weniger_mio": 9.3,
-   "anteil_prozent": 22,
-   "mittel_monat": 602,
+   "plus_nach_mrd": 127.6,
+   "minus_nach_mrd": 56.8,
+   "weniger_mio": 7.7,
+   "anteil_prozent": 19,
+   "mittel_monat": 606,
    "rentner": {
     "haushalte_mio": 11.5,
     "weniger_mio": 0,
@@ -163,148 +163,148 @@
    },
    "uebrige": {
     "haushalte_mio": 29.7,
-    "weniger_mio": 9.3,
-    "anteil_prozent": 31,
-    "mittel_monat": 602,
-    "ueber100_mio": 7.1
+    "weniger_mio": 7.7,
+    "anteil_prozent": 26,
+    "mittel_monat": 606,
+    "ueber100_mio": 6
    }
   },
   {
    "name": "D1: Härteausgleich bis 500 € im Monat",
-   "kosten_erstes_jahr_mrd": 54.4,
-   "davon_rentner_mrd": 19.4,
-   "davon_uebrige_mrd": 35,
+   "kosten_erstes_jahr_mrd": 48.8,
+   "davon_rentner_mrd": 19.1,
+   "davon_uebrige_mrd": 29.7,
    "rentneranteil_nach_jahren_mrd": {
-    "0": 19.4,
-    "5": 16,
-    "10": 11.6,
-    "15": 7.2,
+    "0": 19.1,
+    "5": 15.8,
+    "10": 11.4,
+    "15": 7.1,
     "20": 3.6,
     "30": 0.3
    },
    "auslauf": "Rentneranteil sinkt mit der Sterbetafel wie der Bestandsschutz; der Anteil der Übrigen bleibt, bis die Regel ausläuft oder abschmilzt (politische Entscheidung)",
-   "plus_nach_mrd": 108.2,
-   "minus_nach_mrd": 38.9,
-   "weniger_mio": 4.7,
-   "anteil_prozent": 11,
-   "mittel_monat": 680,
+   "plus_nach_mrd": 127.6,
+   "minus_nach_mrd": 32.3,
+   "weniger_mio": 4.2,
+   "anteil_prozent": 10,
+   "mittel_monat": 641,
    "rentner": {
     "haushalte_mio": 11.5,
     "weniger_mio": 1.1,
     "anteil_prozent": 9,
-    "mittel_monat": 410,
+    "mittel_monat": 407,
     "ueber100_mio": 0.9
    },
    "uebrige": {
     "haushalte_mio": 29.7,
-    "weniger_mio": 3.6,
-    "anteil_prozent": 12,
-    "mittel_monat": 761,
-    "ueber100_mio": 3.1
+    "weniger_mio": 3.1,
+    "anteil_prozent": 10,
+    "mittel_monat": 720,
+    "ueber100_mio": 2.7
    }
   },
   {
    "name": "D2: Härteausgleich bis 1.000 € im Monat (wie Version 30)",
-   "kosten_erstes_jahr_mrd": 73.9,
-   "davon_rentner_mrd": 23.2,
-   "davon_uebrige_mrd": 50.8,
+   "kosten_erstes_jahr_mrd": 65.7,
+   "davon_rentner_mrd": 22.8,
+   "davon_uebrige_mrd": 42.8,
    "rentneranteil_nach_jahren_mrd": {
-    "0": 23.2,
-    "5": 19.2,
-    "10": 13.9,
-    "15": 8.7,
-    "20": 4.3,
-    "30": 0.4
+    "0": 22.8,
+    "5": 18.9,
+    "10": 13.7,
+    "15": 8.5,
+    "20": 4.2,
+    "30": 0.3
    },
    "auslauf": "Rentneranteil sinkt mit der Sterbetafel wie der Bestandsschutz; der Anteil der Übrigen bleibt, bis die Regel ausläuft oder abschmilzt (politische Entscheidung)",
-   "plus_nach_mrd": 108.2,
-   "minus_nach_mrd": 19.4,
-   "weniger_mio": 2,
-   "anteil_prozent": 5,
-   "mittel_monat": 784,
+   "plus_nach_mrd": 127.6,
+   "minus_nach_mrd": 15.5,
+   "weniger_mio": 1.7,
+   "anteil_prozent": 4,
+   "mittel_monat": 747,
    "rentner": {
     "haushalte_mio": 11.5,
-    "weniger_mio": 0.3,
+    "weniger_mio": 0.2,
     "anteil_prozent": 2,
-    "mittel_monat": 498,
+    "mittel_monat": 504,
     "ueber100_mio": 0.2
    },
    "uebrige": {
     "haushalte_mio": 29.7,
-    "weniger_mio": 1.8,
-    "anteil_prozent": 6,
-    "mittel_monat": 826,
-    "ueber100_mio": 1.6
+    "weniger_mio": 1.5,
+    "anteil_prozent": 5,
+    "mittel_monat": 788,
+    "ueber100_mio": 1.3
    }
   },
   {
    "name": "E: A + B1",
-   "kosten_erstes_jahr_mrd": 24,
-   "davon_rentner_mrd": 13.3,
-   "davon_uebrige_mrd": 10.8,
+   "kosten_erstes_jahr_mrd": 22.9,
+   "davon_rentner_mrd": 12.8,
+   "davon_uebrige_mrd": 10.1,
    "rentneranteil_nach_jahren_mrd": {
-    "0": 13.3,
-    "5": 10.9,
-    "10": 7.8,
-    "15": 4.8,
-    "20": 2.4,
+    "0": 12.8,
+    "5": 10.4,
+    "10": 7.4,
+    "15": 4.5,
+    "20": 2.3,
     "30": 0.2
    },
    "auslauf": "Rentneranteil sinkt mit der Sterbetafel wie der Bestandsschutz; der Anteil der Übrigen bleibt, bis die Regel ausläuft oder abschmilzt (politische Entscheidung)",
-   "plus_nach_mrd": 117.8,
-   "minus_nach_mrd": 78.8,
-   "weniger_mio": 16.4,
-   "anteil_prozent": 40,
-   "mittel_monat": 392,
+   "plus_nach_mrd": 137,
+   "minus_nach_mrd": 67.7,
+   "weniger_mio": 15,
+   "anteil_prozent": 36,
+   "mittel_monat": 372,
    "rentner": {
     "haushalte_mio": 11.5,
-    "weniger_mio": 8.1,
+    "weniger_mio": 8,
     "anteil_prozent": 70,
     "mittel_monat": 152,
     "ueber100_mio": 3
    },
    "uebrige": {
     "haushalte_mio": 29.7,
-    "weniger_mio": 8.4,
-    "anteil_prozent": 28,
-    "mittel_monat": 622,
-    "ueber100_mio": 6.6
+    "weniger_mio": 6.9,
+    "anteil_prozent": 23,
+    "mittel_monat": 628,
+    "ueber100_mio": 5.6
    }
   },
   {
    "name": "F: A + B1, dazu Rest bis 50 € im Monat ohne Antrag",
-   "kosten_erstes_jahr_mrd": 25.4,
-   "davon_rentner_mrd": 14.1,
-   "davon_uebrige_mrd": 11.3,
+   "kosten_erstes_jahr_mrd": 24,
+   "davon_rentner_mrd": 13.6,
+   "davon_uebrige_mrd": 10.4,
    "rentneranteil_nach_jahren_mrd": {
-    "0": 14.1,
-    "5": 11.6,
-    "10": 8.2,
-    "15": 5.1,
-    "20": 2.5,
+    "0": 13.6,
+    "5": 11.1,
+    "10": 7.9,
+    "15": 4.8,
+    "20": 2.4,
     "30": 0.2
    },
    "auslauf": "Rentneranteil sinkt mit der Sterbetafel wie der Bestandsschutz; der Anteil der Übrigen bleibt, bis die Regel ausläuft oder abschmilzt (politische Entscheidung)",
-   "plus_nach_mrd": 117.8,
-   "minus_nach_mrd": 77.4,
-   "weniger_mio": 11.7,
-   "anteil_prozent": 28,
-   "mittel_monat": 544,
+   "plus_nach_mrd": 137,
+   "minus_nach_mrd": 66.6,
+   "weniger_mio": 10.5,
+   "anteil_prozent": 25,
+   "mittel_monat": 521,
    "rentner": {
     "haushalte_mio": 11.5,
-    "weniger_mio": 4.4,
+    "weniger_mio": 4.3,
     "anteil_prozent": 38,
-    "mittel_monat": 264,
+    "mittel_monat": 265,
     "ueber100_mio": 3
    },
    "uebrige": {
     "haushalte_mio": 29.7,
-    "weniger_mio": 7.3,
-    "anteil_prozent": 24,
-    "mittel_monat": 714,
-    "ueber100_mio": 6.6
+    "weniger_mio": 6.2,
+    "anteil_prozent": 21,
+    "mittel_monat": 702,
+    "ueber100_mio": 5.6
    }
   }
  ],
- "spanne": "Mit anderen vertretbaren Eichungen (Sparquote statt Konsum als Anker, höhere Ausschüttungen, höhere Kapitalerträge; node spanne.js): ohne Ausgleich 16,2 bis 19,8 Mio. Haushalte mit weniger (Standard 17,7), mit dem Ausgleich von Version 32 9,9 bis 13,3 Mio. (Standard 11,2)"
+ "spanne": "Mit anderen vertretbaren Eichungen (Sparquote statt Konsum als Anker, höhere Ausschüttungen, höhere Kapitalerträge, Konsum samt FISIM; node spanne.js): ohne Ausgleich 15,1 bis 19,8 Mio. Haushalte mit weniger (Standard 16,1), mit dem Ausgleich von Version 32 8,7 bis 13,3 Mio. (Standard 9,7)"
 }

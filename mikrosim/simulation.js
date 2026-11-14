@@ -8,9 +8,12 @@ const STANDARD = {
   kern: { Konsum: 2300.2, Miete: 214.5, Nutzwert: 214.5, HAAn: 0 },
   eichung: "konsum",           // "konsum" (Standard seit 14.11.): Konsum genau wie VGR 2025 und Version 31; "sparquote": Konsum aus Einkommen und Sparquote der VGR
   sparquoteZiel: 0.104,        // Sparquote der privaten Haushalte 2025 (Statistisches Bundesamt, VGR): rund 10,4 %
-  sparRentner: -0.10, sparSelbst: 0.06,   // Versatz der Sparquote für Rentner- und Selbständigenhaushalte: geeicht mit eichen_sparen.js auf
+  sparRentner: -0.087, sparSelbst: 0.059,   // Versatz der Sparquote für Rentner- und Selbständigenhaushalte: geeicht mit eichen_sparen.js auf
                                // den Abstand der Konsumquoten in der EVS 2018 (Fachserie 15 Heft 4, Tabelle 1.2)
-  konsumZiel: 2085.7,          // Mrd. €: Konsum ohne Mietwert, 2.300,2 − 214,5 wie im Blatt Verteilung; die Sparquoten werden darauf geeicht
+  sparSteigung: 0.10, sparSteigungOben: 0.08,   // Sparquote steigt um sparSteigung × ln(Einkommen/30.000), über 100.000 € zusätzlich
+  konsumZiel: 2050.2,          // Mrd. €: Konsum ohne Mietwert und ohne unterstellte Bankgebühren (FISIM): 2.300,2 − 214,5 − 35,5
+                               // (VGR 2025, Konto II.4: FISIM im Konsum der Haushalte 35,5; die Haushalte zahlen sie nicht in bar, und
+                               // das Einkommen im Modell enthält die FISIM-Zinsen auch nicht); die Sparquoten werden darauf geeicht
   kapKonsum: [0.5, 0.25],      // Anteil der Kapitalerträge nach Steuer, der ausgegeben wird (unter / ab 1 Mio. € Vermögen); der Rest
                                // wird wieder angelegt (Baker, Nagel, Wurgler 2007; Di Maggio, Kermani, Majlesi 2020)
   entsparGrenze: 0.05,         // Entsparen im Jahr höchstens 5 % des Geldvermögens
@@ -71,9 +74,9 @@ function eingabe(sp, i, spar) {
 // kommen hier als Kapitalertrag ohne Steuer dazu, indem sie über verm (Ausgaben aus Vermögen) laufen würden — das wäre falsch,
 // deshalb rechnen wir den Unterschied selbst: verf + (vermietCash − vermiet).
 
-function sparquote(verf, rentner, transfer, a0) {
+function sparquote(verf, rentner, transfer, a0, b = 0.10, c = 0.08) {
   if (transfer > 0) return 0;
-  let s = a0 + 0.10 * Math.log(Math.max(verf, 5000) / 30000) + 0.08 * Math.max(0, Math.log(Math.max(verf, 1) / 100000));   // Rentner sparen in Deutschland im Mittel weiter (EVS)
+  let s = a0 + b * Math.log(Math.max(verf, 5000) / 30000) + c * Math.max(0, Math.log(Math.max(verf, 1) / 100000));   // Rentner sparen in Deutschland im Mittel weiter (EVS)
   return Math.min(0.75, Math.max(-0.10, s));
 }
 
@@ -99,7 +102,7 @@ function rechne(K, pop, optIn = {}) {
   const kq = i => (sp.W[i] >= 1e6 ? opt.kapKonsum[1] : opt.kapKonsum[0]);
   const plan = (i, a0) => {
     const basis = verf0[i] - kapN[i];
-    const s = sparquote(basis, sp.rentner[i], sp.transfer[i], a0 + (sp.rentner[i] ? opt.sparRentner : sp.selbst[i] ? opt.sparSelbst : 0));
+    const s = sparquote(basis, sp.rentner[i], sp.transfer[i], a0 + (sp.rentner[i] ? opt.sparRentner : sp.selbst[i] ? opt.sparSelbst : 0), opt.sparSteigung, opt.sparSteigungOben);
     let konsum = basis * (1 - s) + kapN[i] * kq(i) + sp.verm[i];
     const entspar = s < 0 ? Math.min(-s * basis, Math.max(0, sp.geld[i]) * opt.entsparGrenze) : 0;
     // Leistungen wie Arbeitslosen-, Kranken- und Elterngeld: Die Reform müsste sie so anpassen, dass derselbe Einkauf möglich bleibt.

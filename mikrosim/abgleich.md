@@ -13,8 +13,9 @@ Stand 2026-11-14. Erzeugt mit `node abgleich.js`. „Soll“ ist die amtliche Za
 | Einkommen | Gewinne der Selbständigen und Ausschüttungen (Mrd. €) | 539,9 | 388,7 | -28,0 % | VGR 2025, Destatis Fachserie 18 Reihe 1.4 (Stand 02.06.2026), Konto II.1.2: Selbständigeneinkommen 175,6 + Ausschüttungen und Entnahmen 364,3 | Modell niedriger: Entnahmen aus Personengesellschaften nur teilweise erfasst |
 | Einkommen | Verfügbares Einkommen (Mrd. €) | 2.583,7 | 2.302,8 | -10,9 % | VGR 2025, Destatis Fachserie 18 Reihe 1.4 (Stand 02.06.2026), Konto II.2 | Modell ohne Organisationen ohne Erwerbszweck (rund 67), ohne unterstellte Zinsen (FISIM, rund 51) und Versicherungserträge (rund 38): vergleichbar rund 2.428 |
 | Steuern | Lohn- und Einkommensteuer samt Soli (Mrd. €) | 405,0 | 405,0 | 0,0 % | Kassenstatistik 2025: Lohnsteuer 262,7 + Kindergeld 54,6 + veranlagte 78,2 + Soli rund 9,5 | geeicht über Abzüge von 6,8 % des Erwerbseinkommens |
-| Steuern | Mehrwertsteuer der Haushalte (Mrd. €) | – | 208,8 | – | Umsatzsteuer gesamt 310,2 (auch Staat, Vereine, Wohnungsbau) | Anteil der Haushalte plausibel |
-| Konsum | Konsum ohne Mietwert (Mrd. €) | 2.085,7 | 2.087,6 | 0,1 % | VGR 2025, Destatis Fachserie 18 Reihe 1.4 (Stand 02.06.2026): Haushalte 2.305,4 − Mietwert 214,5 (Version 31: 2.300,2 − 214,5) | geeicht |
+| Steuern | Mehrwertsteuer der Haushalte (Mrd. €) | – | 205,2 | – | Umsatzsteuer gesamt 310,2 (auch Staat, Vereine, Wohnungsbau) | Anteil der Haushalte plausibel |
+| Konsum | Konsum ohne Mietwert und ohne unterstellte Bankgebühren (Mrd. €) | 2.050,2 | 2.052,1 | 0,1 % | VGR 2025, Destatis Fachserie 18 Reihe 1.4 (Stand 02.06.2026): Haushalte 2.305,4 (Version 31: 2.300,2) − Mietwert 214,5 − FISIM 35,5 (Konto II.4) | geeicht; bis 14.11. mit FISIM (2.085,7) |
+| Konsum | Sparquote der Haushalte (%) | 10,4 | 10,9 | 4,7 % | VGR 2025, Destatis Fachserie 18 Reihe 1.4 (Stand 02.06.2026), Konto II.4: Sparen 272,4 je verfügbares Einkommen samt betrieblicher Versorgung 2.644,9 | nicht geeicht, ergibt sich; Probe für die Eichung über den Konsum |
 | Vermögen | Restschuld auf das eigene Heim (Bio. €) | 1,2 | 1,2 | 3,3 % | Bundesbank: Wohnungsbaukredite an private Haushalte rund 1,58 Bio. € (2025), davon rund drei Viertel für das eigene Heim (Schätzung) | geeicht; davor 3,8 Bio. € (Fehler, zu hoch) |
 | Vermögen | Mietwert, der nach der Reform besteuert wird (Anteil %) | – | 19,3 | – | Regel „Eigenes Haus frei“: nur der beim Start noch nicht bezahlte Teil |  |
 | Konsum | Mietwert selbst genutzter Wohnungen (Mrd. €) | 214,5 | 214,5 | 0,0 % | Eurostat, wie Version 31 | geeicht |
@@ -28,6 +29,6 @@ Anteil der Konsumausgaben am Haushaltsnettoeinkommen, mit Mietwert auf beiden Se
 
 | Gruppe | EVS | Abstand zu Arbeitnehmern (EVS) | Modell | Abstand (Modell) |
 |---|---|---|---|---|
-| Arbeitnehmer | 71,0 % | 0,0 Punkte | 94,4 % | 0,0 Punkte |
-| Ruhestand | 83,3 % | 12,4 Punkte | 106,1 % | 11,7 Punkte |
-| Selbständige | 62,4 % | -8,5 Punkte | 85,7 % | -8,7 Punkte |
+| Arbeitnehmer | 71,0 % | 0,0 Punkte | 92,8 % | 0,0 Punkte |
+| Ruhestand | 83,3 % | 12,4 Punkte | 105,1 % | 12,3 Punkte |
+| Selbständige | 62,4 % | -8,5 Punkte | 84,2 % | -8,5 Punkte |
