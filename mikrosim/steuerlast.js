@@ -1,8 +1,24 @@
 // Steuerlast heute und mit der Reform (Startjahr, gleicher Einkauf), nach Einkommenszehnteln und Vermögensstufen.
-// Aufruf: node steuerlast.js  ->  steuerlast.json
+// Mit Tomas' Wahl für Version 32 (14.11., 10:36): Rentner beim Start bis 300 € im Monat ausgeglichen, 10 € im Monat je Erwachsenem,
+// Hausregel 2 % des Kaufpreises statt Mietwert bis 40 m² je Erwachsenem plus 15 m² je Kind (wie wahl-v32/haus40.js).
+// Aufruf: node steuerlast.js [ohne]  ->  steuerlast.json und steuerlast/index.html   („ohne“: Reform ohne Ausgleich und Hausregel)
 const fs = require("fs"); const K = require("./kern.js"); const S = require("./simulation.js");
-const pop = require("./bevoelkerung.json"); const sp = pop.spalten;
+const pop0 = require("./bevoelkerung.json"); const sp = pop0.spalten; const n = pop0.n;
+const WAHL = process.argv[2] !== "ohne";
+// Hausregel: Fläche aus dem Hauswert (Eigentümer im Mittel 125,8 m²), innerhalb der Grenze 2 % des Kaufpreises statt Mietwert
+let wert = 0, hhN = 0;
+for (let i = 0; i < n; i++) if (sp.eigen[i] && sp.hauswert[i] > 0 && sp.typ[i] !== "kind_erw") { wert += sp.w[i] * sp.hauswert[i]; hhN += sp.w[i]; }
+const QM = wert / (hhN * 125.8);
+const miet = Float64Array.from(sp.miet);
+if (WAHL) for (let i = 0; i < n; i++) {
+  if (!sp.eigen[i] || !(sp.hauswert[i] > 0) || !(sp.miet[i] > 0)) continue;
+  const drin = Math.min(1, (40 * Math.max(1, sp.erw[i]) + 15 * sp.kinder[i]) / (sp.hauswert[i] / QM));
+  miet[i] = sp.miet[i] * (drin * 0.02 * sp.hauswert[i] / sp.miet[i] + (1 - drin));
+}
+const pop = { ...pop0, spalten: { ...sp, miet } };
 const e = S.rechne(K, pop, {}); const opt = e.opt;
+// Ausgleich: heutige Rentner bis 300 € im Monat, alle Erwachsenen 10 € im Monat
+const ausgleich = r => WAHL ? 120 * sp.erw[r.i] + (sp.rentner[r.i] > 0 ? Math.min(Math.max(0, -r.plus), 3600) : 0) : 0;
 const H = [];
 let maxFehler = 0;
 for (const r of e.R) {
@@ -11,16 +27,17 @@ for (const r of e.R) {
   // Erbschaft: erwartete Steuer im Jahr (Sterbewahrscheinlichkeit × Steuer auf den Nachlass, dazu Schenkungen)
   const erbH = e.erbe.heute[i], erbR = e.erbe.anspruch[i] * opt.realStart, erbL = e.erbe.anspruch[i] * opt.realLang;
   const heute = { est: r.heute.est, sv: r.heute.sv, kap: r.heute.kap, mwst: r.heute.mwst, erb: erbH };
-  const reform = { ausg: r.atg + r.ausgUeb, mwst: r.heute.mwst + r.pw, sv: r.svNeu, aus: -(r.gut - r.bsz) - beamte, bsz: -r.bsz, erb: erbR, erbLang: erbL };
+  const x = ausgleich(r);
+  const reform = { ausg: r.atg + r.ausgUeb, mwst: r.heute.mwst + r.pw, sv: r.svNeu, aus: -(r.gut - r.bsz) - beamte, bsz: -r.bsz, ausgl: -x, erb: erbR, erbLang: erbL };
   const sh = heute.est + heute.sv + heute.kap + heute.mwst + heute.erb;
-  const sr = reform.ausg + reform.mwst + reform.sv + reform.aus + reform.bsz + reform.erb;
+  const sr = reform.ausg + reform.mwst + reform.sv + reform.aus + reform.bsz + reform.ausgl + reform.erb;
   const srL = sr - erbR + erbL;
   // Probe: Unterschied der Lasten ohne Erbschaft = Plus bei gleichem Einkauf (Beamte samt Zulage)
-  maxFehler = Math.max(maxFehler, Math.abs((sh - erbH - (sr - erbR)) - r.plus));
+  maxFehler = Math.max(maxFehler, Math.abs((sh - erbH - (sr - erbR)) - (r.plus + x)));
   H.push({ w: sp.w[i], ek: r.einkommen, W: sp.W[i], heute, reform, sh, sr, srL });
 }
 function gruppen(schluessel, namen) {
-  const g = namen.map(n => ({ name: n, hh: 0, ek: 0, heute: { est: 0, sv: 0, kap: 0, mwst: 0, erb: 0 }, reform: { ausg: 0, mwst: 0, sv: 0, aus: 0, bsz: 0, erb: 0, erbLang: 0 }, sh: 0, sr: 0, srL: 0 }));
+  const g = namen.map(n => ({ name: n, hh: 0, ek: 0, heute: { est: 0, sv: 0, kap: 0, mwst: 0, erb: 0 }, reform: { ausg: 0, mwst: 0, sv: 0, aus: 0, bsz: 0, ausgl: 0, erb: 0, erbLang: 0 }, sh: 0, sr: 0, srL: 0 }));
   for (const h of H) {
     const x = g[schluessel(h)]; x.hh += h.w; x.ek += h.w * h.ek; x.sh += h.w * h.sh; x.sr += h.w * h.sr; x.srL += h.w * h.srL;
     for (const k in h.heute) x.heute[k] += h.w * h.heute[k]; for (const k in h.reform) x.reform[k] += h.w * h.reform[k];
@@ -50,11 +67,14 @@ const tot = { heute_mrd: +(H.reduce((s, h) => s + h.w * h.sh, 0) / 1e9).toFixed(
 // oberstes Prozent nach Einkommen
 const top1 = { sh: 0, sr: 0, srL: 0 }; kum = 0;
 for (const k of sortiert) { kum += H[k].w; if (kum > 0.99 * gesamt) { top1.sh += H[k].w * H[k].sh; top1.sr += H[k].w * H[k].sr; top1.srL += H[k].w * H[k].srL; } }
-const out = { stand: new Date().toISOString().slice(0, 10), probe_max_abweichung_eur: +maxFehler.toFixed(2), zehntel_grenzen_monat: grenzen, gesamt: tot,
+// Haushalte mit mehr und weniger (gleicher Einkauf, mit Ausgleich)
+let nMehr = 0, nWen = 0, nAll = 0;
+for (const r of e.R) { if (sp.typ[r.i] === "kind_erw") continue; const m = (r.plus + ausgleich(r)) / 12; nAll += sp.w[r.i]; if (m > 0.5) nMehr += sp.w[r.i]; else if (m < -0.5) nWen += sp.w[r.i]; }
+const out = { stand: new Date().toISOString().slice(0, 10), wahl: WAHL, mehr_prozent: +(100 * nMehr / nAll).toFixed(1), weniger_mio: +(nWen / 1e6).toFixed(1), probe_max_abweichung_eur: +maxFehler.toFixed(2), zehntel_grenzen_monat: grenzen, gesamt: tot,
   oberstes_prozent: { anteil_heute: +(100 * top1.sh / (tot.heute_mrd * 1e9)).toFixed(1), anteil_reform: +(100 * top1.sr / (tot.reform_mrd * 1e9)).toFixed(1), anteil_reform_lang: +(100 * top1.srL / (tot.reform_lang_mrd * 1e9)).toFixed(1) },
   zehntel: z, vermoegen: vs };
 fs.writeFileSync(__dirname + "/steuerlast.json", JSON.stringify(out, null, 1));
-console.log("Probe", maxFehler.toFixed(2), "Grenzen", grenzen.join(" "), JSON.stringify(tot), JSON.stringify(out.oberstes_prozent));
+console.log("Wahl", WAHL, "mehr", out.mehr_prozent, "% weniger", out.weniger_mio, "Mio. Probe", maxFehler.toFixed(2), "Grenzen", grenzen.join(" "), JSON.stringify(tot), JSON.stringify(out.oberstes_prozent));
 for (const x of [...z, ...vs]) console.log(x.name.padEnd(24), x.haushalte_mio, x.einkommen_monat, "heute", x.last_heute_monat, x.quote_heute + "%", "reform", x.last_reform_monat, x.quote_reform + "%", x.quote_reform_lang + "%", "Anteil", x.anteil_heute, x.anteil_reform, x.anteil_reform_lang, JSON.stringify(x.heute), JSON.stringify(x.reform));
 // Seite bauen: steuerlast/index.html aus der Vorlage mit den Daten
 const vorlage = fs.readFileSync(__dirname + "/steuerlast/vorlage.html", "utf8");

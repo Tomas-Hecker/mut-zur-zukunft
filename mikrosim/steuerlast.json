@@ -1,5 +1,8 @@
 {
  "stand": "2026-11-14",
+ "wahl": true,
+ "mehr_prozent": 71.9,
+ "weniger_mio": 11.6,
  "probe_max_abweichung_eur": 0,
  "zehntel_grenzen_monat": [
   1387,
@@ -14,13 +17,13 @@
  ],
  "gesamt": {
   "heute_mrd": 1093.3,
-  "reform_mrd": 1082.6,
-  "reform_lang_mrd": 1106.7
+  "reform_mrd": 1053.2,
+  "reform_lang_mrd": 1077.4
  },
  "oberstes_prozent": {
   "anteil_heute": 12.3,
-  "anteil_reform": 11.7,
-  "anteil_reform_lang": 12.1
+  "anteil_reform": 12,
+  "anteil_reform_lang": 12.4
  },
  "zehntel": [
   {
@@ -35,26 +38,27 @@
     "erb": 3
    },
    "reform": {
-    "ausg": 13,
+    "ausg": 12,
     "mwst": 135,
     "sv": 52,
     "aus": -120,
-    "bsz": -3,
+    "bsz": -2,
+    "ausgl": -11,
     "erb": 1,
     "erbLang": 2
    },
    "last_heute_monat": 143,
-   "last_reform_monat": 78,
-   "last_reform_lang_monat": 79,
+   "last_reform_monat": 67,
+   "last_reform_lang_monat": 68,
    "quote_heute": 16,
-   "quote_reform": 8.7,
-   "quote_reform_lang": 8.9,
+   "quote_reform": 7.5,
+   "quote_reform_lang": 7.6,
    "anteil_heute": 0.6,
-   "anteil_reform": 0.4,
-   "anteil_reform_lang": 0.4,
+   "anteil_reform": 0.3,
+   "anteil_reform_lang": 0.3,
    "summe_heute_mrd": 7.1,
-   "summe_reform_mrd": 3.9,
-   "summe_reform_lang_mrd": 3.9
+   "summe_reform_mrd": 3.3,
+   "summe_reform_lang_mrd": 3.3
   },
   {
    "name": "2. Zehntel",
@@ -68,26 +72,27 @@
     "erb": 14
    },
    "reform": {
-    "ausg": 342,
+    "ausg": 338,
     "mwst": 299,
     "sv": 59,
     "aus": -209,
-    "bsz": -118,
+    "bsz": -116,
+    "ausgl": -55,
     "erb": 7,
     "erbLang": 14
    },
    "last_heute_monat": 413,
-   "last_reform_monat": 380,
-   "last_reform_lang_monat": 387,
+   "last_reform_monat": 324,
+   "last_reform_lang_monat": 330,
    "quote_heute": 22.9,
-   "quote_reform": 21,
-   "quote_reform_lang": 21.4,
+   "quote_reform": 17.9,
+   "quote_reform_lang": 18.3,
    "anteil_heute": 1.9,
-   "anteil_reform": 1.7,
-   "anteil_reform_lang": 1.7,
+   "anteil_reform": 1.5,
+   "anteil_reform_lang": 1.5,
    "summe_heute_mrd": 20.5,
-   "summe_reform_mrd": 18.8,
-   "summe_reform_lang_mrd": 19.2
+   "summe_reform_mrd": 16,
+   "summe_reform_lang_mrd": 16.4
   },
   {
    "name": "3. Zehntel",
@@ -101,26 +106,27 @@
     "erb": 16
    },
    "reform": {
-    "ausg": 694,
+    "ausg": 688,
     "mwst": 417,
     "sv": 63,
     "aus": -326,
-    "bsz": -192,
+    "bsz": -190,
+    "ausgl": -64,
     "erb": 9,
     "erbLang": 19
    },
    "last_heute_monat": 678,
-   "last_reform_monat": 666,
-   "last_reform_lang_monat": 675,
+   "last_reform_monat": 598,
+   "last_reform_lang_monat": 607,
    "quote_heute": 26.3,
-   "quote_reform": 25.9,
-   "quote_reform_lang": 26.2,
+   "quote_reform": 23.2,
+   "quote_reform_lang": 23.6,
    "anteil_heute": 3.1,
-   "anteil_reform": 3,
-   "anteil_reform_lang": 3,
+   "anteil_reform": 2.8,
+   "anteil_reform_lang": 2.8,
    "summe_heute_mrd": 33.6,
-   "summe_reform_mrd": 33,
-   "summe_reform_lang_mrd": 33.4
+   "summe_reform_mrd": 29.6,
+   "summe_reform_lang_mrd": 30
   },
   {
    "name": "4. Zehntel",
@@ -134,26 +140,27 @@
     "erb": 21
    },
    "reform": {
-    "ausg": 1037,
+    "ausg": 1029,
     "mwst": 522,
     "sv": 70,
     "aus": -491,
-    "bsz": -212,
+    "bsz": -210,
+    "ausgl": -69,
     "erb": 15,
     "erbLang": 29
    },
    "last_heute_monat": 955,
-   "last_reform_monat": 940,
-   "last_reform_lang_monat": 955,
+   "last_reform_monat": 865,
+   "last_reform_lang_monat": 879,
    "quote_heute": 28.7,
-   "quote_reform": 28.2,
-   "quote_reform_lang": 28.7,
+   "quote_reform": 25.9,
+   "quote_reform_lang": 26.4,
    "anteil_heute": 4.3,
-   "anteil_reform": 4.3,
-   "anteil_reform_lang": 4.3,
+   "anteil_reform": 4.1,
+   "anteil_reform_lang": 4,
    "summe_heute_mrd": 47.3,
-   "summe_reform_mrd": 46.5,
-   "summe_reform_lang_mrd": 47.3
+   "summe_reform_mrd": 42.8,
+   "summe_reform_lang_mrd": 43.5
   },
   {
    "name": "5. Zehntel",
@@ -167,26 +174,27 @@
     "erb": 29
    },
    "reform": {
-    "ausg": 1477,
+    "ausg": 1467,
     "mwst": 624,
     "sv": 72,
-    "aus": -700,
-    "bsz": -240,
+    "aus": -699,
+    "bsz": -239,
+    "ausgl": -68,
     "erb": 23,
     "erbLang": 45
    },
    "last_heute_monat": 1286,
-   "last_reform_monat": 1257,
-   "last_reform_lang_monat": 1280,
+   "last_reform_monat": 1181,
+   "last_reform_lang_monat": 1204,
    "quote_heute": 31.1,
-   "quote_reform": 30.4,
-   "quote_reform_lang": 30.9,
+   "quote_reform": 28.5,
+   "quote_reform_lang": 29.1,
    "anteil_heute": 5.8,
-   "anteil_reform": 5.7,
-   "anteil_reform_lang": 5.7,
+   "anteil_reform": 5.6,
+   "anteil_reform_lang": 5.5,
    "summe_heute_mrd": 63.7,
-   "summe_reform_mrd": 62.2,
-   "summe_reform_lang_mrd": 63.4
+   "summe_reform_mrd": 58.5,
+   "summe_reform_lang_mrd": 59.6
   },
   {
    "name": "6. Zehntel",
@@ -200,26 +208,27 @@
     "erb": 31
    },
    "reform": {
-    "ausg": 1878,
+    "ausg": 1864,
     "mwst": 725,
     "sv": 77,
-    "aus": -905,
-    "bsz": -213,
+    "aus": -903,
+    "bsz": -212,
+    "ausgl": -58,
     "erb": 29,
     "erbLang": 59
    },
    "last_heute_monat": 1658,
-   "last_reform_monat": 1591,
-   "last_reform_lang_monat": 1621,
+   "last_reform_monat": 1521,
+   "last_reform_lang_monat": 1551,
    "quote_heute": 32.8,
-   "quote_reform": 31.5,
-   "quote_reform_lang": 32.1,
+   "quote_reform": 30.1,
+   "quote_reform_lang": 30.7,
    "anteil_heute": 7.5,
-   "anteil_reform": 7.3,
-   "anteil_reform_lang": 7.2,
+   "anteil_reform": 7.1,
+   "anteil_reform_lang": 7.1,
    "summe_heute_mrd": 82,
-   "summe_reform_mrd": 78.8,
-   "summe_reform_lang_mrd": 80.2
+   "summe_reform_mrd": 75.3,
+   "summe_reform_lang_mrd": 76.8
   },
   {
    "name": "7. Zehntel",
@@ -233,26 +242,27 @@
     "erb": 25
    },
    "reform": {
-    "ausg": 2366,
+    "ausg": 2347,
     "mwst": 844,
     "sv": 82,
-    "aus": -1148,
-    "bsz": -173,
+    "aus": -1147,
+    "bsz": -172,
+    "ausgl": -47,
     "erb": 34,
     "erbLang": 67
    },
    "last_heute_monat": 2107,
-   "last_reform_monat": 2006,
-   "last_reform_lang_monat": 2039,
+   "last_reform_monat": 1942,
+   "last_reform_lang_monat": 1975,
    "quote_heute": 34,
-   "quote_reform": 32.4,
-   "quote_reform_lang": 32.9,
+   "quote_reform": 31.4,
+   "quote_reform_lang": 31.9,
    "anteil_heute": 9.5,
-   "anteil_reform": 9.2,
+   "anteil_reform": 9.1,
    "anteil_reform_lang": 9.1,
    "summe_heute_mrd": 104.3,
-   "summe_reform_mrd": 99.3,
-   "summe_reform_lang_mrd": 100.9
+   "summe_reform_mrd": 96.1,
+   "summe_reform_lang_mrd": 97.8
   },
   {
    "name": "8. Zehntel",
@@ -266,26 +276,27 @@
     "erb": 28
    },
    "reform": {
-    "ausg": 2992,
+    "ausg": 2969,
     "mwst": 987,
     "sv": 88,
-    "aus": -1407,
+    "aus": -1406,
     "bsz": -77,
+    "ausgl": -34,
     "erb": 40,
     "erbLang": 80
    },
    "last_heute_monat": 2744,
-   "last_reform_monat": 2622,
-   "last_reform_lang_monat": 2662,
+   "last_reform_monat": 2567,
+   "last_reform_lang_monat": 2607,
    "quote_heute": 35.7,
-   "quote_reform": 34.1,
-   "quote_reform_lang": 34.7,
+   "quote_reform": 33.4,
+   "quote_reform_lang": 33.9,
    "anteil_heute": 12.4,
-   "anteil_reform": 12,
-   "anteil_reform_lang": 11.9,
+   "anteil_reform": 12.1,
+   "anteil_reform_lang": 12,
    "summe_heute_mrd": 135.9,
-   "summe_reform_mrd": 129.8,
-   "summe_reform_lang_mrd": 131.8
+   "summe_reform_mrd": 127.1,
+   "summe_reform_lang_mrd": 129.1
   },
   {
    "name": "9. Zehntel",
@@ -299,26 +310,27 @@
     "erb": 27
    },
    "reform": {
-    "ausg": 4155,
+    "ausg": 4124,
     "mwst": 1209,
     "sv": 92,
-    "aus": -1753,
+    "aus": -1751,
     "bsz": -41,
+    "ausgl": -27,
     "erb": 41,
     "erbLang": 81
    },
    "last_heute_monat": 3747,
-   "last_reform_monat": 3703,
-   "last_reform_lang_monat": 3744,
+   "last_reform_monat": 3648,
+   "last_reform_lang_monat": 3688,
    "quote_heute": 37.5,
-   "quote_reform": 37.1,
-   "quote_reform_lang": 37.5,
+   "quote_reform": 36.5,
+   "quote_reform_lang": 36.9,
    "anteil_heute": 17,
-   "anteil_reform": 16.9,
-   "anteil_reform_lang": 16.7,
+   "anteil_reform": 17.1,
+   "anteil_reform_lang": 16.9,
    "summe_heute_mrd": 185.4,
-   "summe_reform_mrd": 183.3,
-   "summe_reform_lang_mrd": 185.3
+   "summe_reform_mrd": 180.5,
+   "summe_reform_lang_mrd": 182.5
   },
   {
    "name": "10. Zehntel",
@@ -332,26 +344,27 @@
     "erb": 208
    },
    "reform": {
-    "ausg": 8206,
+    "ausg": 8169,
     "mwst": 1941,
     "sv": 92,
-    "aus": -1889,
+    "aus": -1887,
     "bsz": -12,
+    "ausgl": -25,
     "erb": 289,
     "erbLang": 579
    },
    "last_heute_monat": 8355,
-   "last_reform_monat": 8628,
-   "last_reform_lang_monat": 8917,
+   "last_reform_monat": 8567,
+   "last_reform_lang_monat": 8857,
    "quote_heute": 40.2,
-   "quote_reform": 41.6,
-   "quote_reform_lang": 43,
+   "quote_reform": 41.3,
+   "quote_reform_lang": 42.7,
    "anteil_heute": 37.8,
-   "anteil_reform": 39.4,
-   "anteil_reform_lang": 39.9,
+   "anteil_reform": 40.3,
+   "anteil_reform_lang": 40.7,
    "summe_heute_mrd": 413.6,
-   "summe_reform_mrd": 427,
-   "summe_reform_lang_mrd": 441.4
+   "summe_reform_mrd": 424,
+   "summe_reform_lang_mrd": 438.4
   }
  ],
  "vermoegen": [
@@ -367,26 +380,27 @@
     "erb": 1
    },
    "reform": {
-    "ausg": 1248,
+    "ausg": 1245,
     "mwst": 540,
     "sv": 71,
-    "aus": -674,
-    "bsz": -106,
+    "aus": -673,
+    "bsz": -105,
+    "ausgl": -24,
     "erb": 0,
     "erbLang": 0
    },
    "last_heute_monat": 1258,
-   "last_reform_monat": 1080,
-   "last_reform_lang_monat": 1081,
+   "last_reform_monat": 1054,
+   "last_reform_lang_monat": 1054,
    "quote_heute": 32.1,
-   "quote_reform": 27.6,
-   "quote_reform_lang": 27.6,
+   "quote_reform": 26.9,
+   "quote_reform_lang": 26.9,
    "anteil_heute": 27.8,
    "anteil_reform": 24.1,
    "anteil_reform_lang": 23.6,
    "summe_heute_mrd": 303.5,
-   "summe_reform_mrd": 260.6,
-   "summe_reform_lang_mrd": 260.7
+   "summe_reform_mrd": 254.2,
+   "summe_reform_lang_mrd": 254.3
   },
   {
    "name": "100.000 bis 200.000 €",
@@ -400,26 +414,27 @@
     "erb": 11
    },
    "reform": {
-    "ausg": 2252,
+    "ausg": 2232,
     "mwst": 781,
     "sv": 77,
-    "aus": -989,
-    "bsz": -174,
+    "aus": -988,
+    "bsz": -173,
+    "ausgl": -43,
     "erb": 4,
     "erbLang": 8
    },
    "last_heute_monat": 2060,
-   "last_reform_monat": 1951,
-   "last_reform_lang_monat": 1955,
+   "last_reform_monat": 1890,
+   "last_reform_lang_monat": 1894,
    "quote_heute": 35.5,
-   "quote_reform": 33.6,
-   "quote_reform_lang": 33.7,
+   "quote_reform": 32.6,
+   "quote_reform_lang": 32.7,
    "anteil_heute": 12.1,
-   "anteil_reform": 11.6,
+   "anteil_reform": 11.5,
    "anteil_reform_lang": 11.3,
    "summe_heute_mrd": 132.1,
-   "summe_reform_mrd": 125.1,
-   "summe_reform_lang_mrd": 125.4
+   "summe_reform_mrd": 121.2,
+   "summe_reform_lang_mrd": 121.5
   },
   {
    "name": "200.000 bis 400.000 €",
@@ -433,26 +448,27 @@
     "erb": 22
    },
    "reform": {
-    "ausg": 2532,
+    "ausg": 2506,
     "mwst": 833,
     "sv": 77,
-    "aus": -1028,
-    "bsz": -163,
+    "aus": -1027,
+    "bsz": -162,
+    "ausgl": -56,
     "erb": 8,
     "erbLang": 17
    },
    "last_heute_monat": 2250,
-   "last_reform_monat": 2259,
-   "last_reform_lang_monat": 2268,
+   "last_reform_monat": 2179,
+   "last_reform_lang_monat": 2187,
    "quote_heute": 35.9,
-   "quote_reform": 36,
-   "quote_reform_lang": 36.2,
+   "quote_reform": 34.8,
+   "quote_reform_lang": 34.9,
    "anteil_heute": 13.2,
-   "anteil_reform": 13.4,
-   "anteil_reform_lang": 13.2,
+   "anteil_reform": 13.3,
+   "anteil_reform_lang": 13.1,
    "summe_heute_mrd": 144.8,
-   "summe_reform_mrd": 145.4,
-   "summe_reform_lang_mrd": 145.9
+   "summe_reform_mrd": 140.2,
+   "summe_reform_lang_mrd": 140.8
   },
   {
    "name": "400.000 bis 800.000 €",
@@ -466,26 +482,27 @@
     "erb": 43
    },
    "reform": {
-    "ausg": 3245,
+    "ausg": 3214,
     "mwst": 975,
     "sv": 79,
-    "aus": -1157,
-    "bsz": -160,
+    "aus": -1155,
+    "bsz": -159,
+    "ausgl": -86,
     "erb": 34,
     "erbLang": 68
    },
    "last_heute_monat": 2745,
-   "last_reform_monat": 3016,
-   "last_reform_lang_monat": 3050,
+   "last_reform_monat": 2902,
+   "last_reform_lang_monat": 2936,
    "quote_heute": 36.1,
-   "quote_reform": 39.7,
-   "quote_reform_lang": 40.1,
+   "quote_reform": 38.2,
+   "quote_reform_lang": 38.7,
    "anteil_heute": 19,
-   "anteil_reform": 21.1,
-   "anteil_reform_lang": 20.9,
+   "anteil_reform": 20.9,
+   "anteil_reform_lang": 20.7,
    "summe_heute_mrd": 208.1,
-   "summe_reform_mrd": 228.6,
-   "summe_reform_lang_mrd": 231.2
+   "summe_reform_mrd": 220,
+   "summe_reform_lang_mrd": 222.6
   },
   {
    "name": "800.000 € bis 1 Mio. €",
@@ -499,26 +516,27 @@
     "erb": 72
    },
    "reform": {
-    "ausg": 4226,
+    "ausg": 4195,
     "mwst": 1165,
     "sv": 80,
-    "aus": -1272,
+    "aus": -1270,
     "bsz": -146,
+    "ausgl": -79,
     "erb": 106,
     "erbLang": 211
    },
    "last_heute_monat": 3540,
-   "last_reform_monat": 4158,
-   "last_reform_lang_monat": 4264,
+   "last_reform_monat": 4052,
+   "last_reform_lang_monat": 4158,
    "quote_heute": 36.9,
-   "quote_reform": 43.3,
-   "quote_reform_lang": 44.4,
+   "quote_reform": 42.2,
+   "quote_reform_lang": 43.3,
    "anteil_heute": 5.2,
    "anteil_reform": 6.2,
    "anteil_reform_lang": 6.2,
    "summe_heute_mrd": 57.2,
-   "summe_reform_mrd": 67.2,
-   "summe_reform_lang_mrd": 68.9
+   "summe_reform_mrd": 65.5,
+   "summe_reform_lang_mrd": 67.2
   },
   {
    "name": "über 1 Mio. €",
@@ -532,26 +550,27 @@
     "erb": 392
    },
    "reform": {
-    "ausg": 6715,
+    "ausg": 6684,
     "mwst": 1640,
     "sv": 82,
-    "aus": -1278,
+    "aus": -1276,
     "bsz": -51,
+    "ausgl": -79,
     "erb": 570,
     "erbLang": 1140
    },
    "last_heute_monat": 7433,
-   "last_reform_monat": 7678,
-   "last_reform_lang_monat": 8248,
+   "last_reform_monat": 7570,
+   "last_reform_lang_monat": 8140,
    "quote_heute": 38.8,
-   "quote_reform": 40.1,
-   "quote_reform_lang": 43.1,
+   "quote_reform": 39.5,
+   "quote_reform_lang": 42.5,
    "anteil_heute": 22.6,
-   "anteil_reform": 23.6,
-   "anteil_reform_lang": 24.8,
+   "anteil_reform": 23.9,
+   "anteil_reform_lang": 25.2,
    "summe_heute_mrd": 247.5,
-   "summe_reform_mrd": 255.6,
-   "summe_reform_lang_mrd": 274.6
+   "summe_reform_mrd": 252,
+   "summe_reform_lang_mrd": 271
   }
  ]
 }
