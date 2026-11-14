@@ -5,9 +5,9 @@ plan={
  'steuerlast-feld-einkommen-vermoegen':[(8,100),(200,1440)],
  'steuerlast-nach-einkommen':[(8,960)],
  'steuerlast-anteile':[(8,700)],
- 'steuerlast-nach-vermoegen':[(8,680)],
+ 'steuerlast-nach-vermoegen':[(8,790)],
  'wer-bezahlt-einkommen-vermoegen':[(8,100),(200,1200)],
- 'vermoegen-sparen':[(8,100),(200,1135)],
+ 'vermoegen-sparen':[(8,100),(200,1240)],
 }
 for f,segs in plan.items():
     im=Image.open(D+f+'.png').convert('RGB')
