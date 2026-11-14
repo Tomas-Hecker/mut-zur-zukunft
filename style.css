@@ -56,3 +56,6 @@ footer nav{display:flex;gap:18px;flex-wrap:wrap}
 
 /* Große Bildschirme: ganze Breite nutzen, Fließtext bleibt lesbar breit */
 @media (min-width:1240px){.wrap{max-width:none;padding:0 max(32px,env(safe-area-inset-left,0px))}}
+
+/* Grafik „Wer die Reform bezahlt“ auf der Startseite */
+.steuerlast{margin:28px 0 8px;max-width:780px}.steuerlast img{display:block;width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:14px}.steuerlast figcaption{color:var(--muted);font-size:.95rem;margin-top:10px}
