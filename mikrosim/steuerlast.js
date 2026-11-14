@@ -1,0 +1,61 @@
+// Steuerlast heute und mit der Reform (Startjahr, gleicher Einkauf), nach Einkommenszehnteln und Vermögensstufen.
+// Aufruf: node steuerlast.js  ->  steuerlast.json
+const fs = require("fs"); const K = require("./kern.js"); const S = require("./simulation.js");
+const pop = require("./bevoelkerung.json"); const sp = pop.spalten;
+const e = S.rechne(K, pop, {}); const opt = e.opt;
+const H = [];
+let maxFehler = 0;
+for (const r of e.R) {
+  const i = r.i; if (sp.typ[i] === "kind_erw") continue;
+  const beamte = sp.beamter[i] ? opt.beamtePlus * sp.pension[i] + r.zulage : 0;
+  // Erbschaft: erwartete Steuer im Jahr (Sterbewahrscheinlichkeit × Steuer auf den Nachlass, dazu Schenkungen)
+  const erbH = e.erbe.heute[i], erbR = e.erbe.anspruch[i] * opt.realStart, erbL = e.erbe.anspruch[i] * opt.realLang;
+  const heute = { est: r.heute.est, sv: r.heute.sv, kap: r.heute.kap, mwst: r.heute.mwst, erb: erbH };
+  const reform = { ausg: r.atg + r.ausgUeb, mwst: r.heute.mwst + r.pw, sv: r.svNeu, aus: -(r.gut - r.bsz) - beamte, bsz: -r.bsz, erb: erbR, erbLang: erbL };
+  const sh = heute.est + heute.sv + heute.kap + heute.mwst + heute.erb;
+  const sr = reform.ausg + reform.mwst + reform.sv + reform.aus + reform.bsz + reform.erb;
+  const srL = sr - erbR + erbL;
+  // Probe: Unterschied der Lasten ohne Erbschaft = Plus bei gleichem Einkauf (Beamte samt Zulage)
+  maxFehler = Math.max(maxFehler, Math.abs((sh - erbH - (sr - erbR)) - r.plus));
+  H.push({ w: sp.w[i], ek: r.einkommen, W: sp.W[i], heute, reform, sh, sr, srL });
+}
+function gruppen(schluessel, namen) {
+  const g = namen.map(n => ({ name: n, hh: 0, ek: 0, heute: { est: 0, sv: 0, kap: 0, mwst: 0, erb: 0 }, reform: { ausg: 0, mwst: 0, sv: 0, aus: 0, bsz: 0, erb: 0, erbLang: 0 }, sh: 0, sr: 0, srL: 0 }));
+  for (const h of H) {
+    const x = g[schluessel(h)]; x.hh += h.w; x.ek += h.w * h.ek; x.sh += h.w * h.sh; x.sr += h.w * h.sr; x.srL += h.w * h.srL;
+    for (const k in h.heute) x.heute[k] += h.w * h.heute[k]; for (const k in h.reform) x.reform[k] += h.w * h.reform[k];
+  }
+  const totH = g.reduce((s, x) => s + x.sh, 0), totR = g.reduce((s, x) => s + x.sr, 0), totL = g.reduce((s, x) => s + x.srL, 0);
+  return g.map(x => {
+    const m = v => Math.round(v / x.hh / 12);
+    const o = { name: x.name, haushalte_mio: +(x.hh / 1e6).toFixed(2), einkommen_monat: m(x.ek),
+      heute: Object.fromEntries(Object.entries(x.heute).map(([k, v]) => [k, m(v)])), reform: Object.fromEntries(Object.entries(x.reform).map(([k, v]) => [k, m(v)])),
+      last_heute_monat: m(x.sh), last_reform_monat: m(x.sr), last_reform_lang_monat: m(x.srL),
+      quote_heute: +(100 * x.sh / x.ek).toFixed(1), quote_reform: +(100 * x.sr / x.ek).toFixed(1), quote_reform_lang: +(100 * x.srL / x.ek).toFixed(1),
+      anteil_heute: +(100 * x.sh / totH).toFixed(1), anteil_reform: +(100 * x.sr / totR).toFixed(1), anteil_reform_lang: +(100 * x.srL / totL).toFixed(1),
+      summe_heute_mrd: +(x.sh / 1e9).toFixed(1), summe_reform_mrd: +(x.sr / 1e9).toFixed(1), summe_reform_lang_mrd: +(x.srL / 1e9).toFixed(1) };
+    return o;
+  });
+}
+// Zehntel nach Haushaltseinkommen vor Steuern (alle Einkommen samt Renten und Grundsicherung)
+const sortiert = H.map((h, k) => k).sort((a, b) => H[a].ek - H[b].ek);
+const gesamt = H.reduce((s, h) => s + h.w, 0); let kum = 0; const zehntel = new Array(H.length);
+for (const k of sortiert) { zehntel[k] = Math.min(9, Math.floor(10 * kum / gesamt)); kum += H[k].w; }
+const grenzen = []; kum = 0; let next = 1;
+for (const k of sortiert) { kum += H[k].w; if (next < 10 && kum >= next * gesamt / 10) { grenzen.push(Math.round(H[k].ek / 12)); next++; } }
+const idx = new Map(H.map((h, k) => [h, k]));
+const z = gruppen(h => zehntel[idx.get(h)], ["1.", "2.", "3.", "4.", "5.", "6.", "7.", "8.", "9.", "10."].map(s => s + " Zehntel"));
+const vs = gruppen(h => Math.min(5, S.stufeVon(h.W)), ["unter 100.000 €", "100.000 bis 200.000 €", "200.000 bis 400.000 €", "400.000 bis 800.000 €", "800.000 € bis 1 Mio. €", "über 1 Mio. €"]);
+const tot = { heute_mrd: +(H.reduce((s, h) => s + h.w * h.sh, 0) / 1e9).toFixed(1), reform_mrd: +(H.reduce((s, h) => s + h.w * h.sr, 0) / 1e9).toFixed(1), reform_lang_mrd: +(H.reduce((s, h) => s + h.w * h.srL, 0) / 1e9).toFixed(1) };
+// oberstes Prozent nach Einkommen
+const top1 = { sh: 0, sr: 0, srL: 0 }; kum = 0;
+for (const k of sortiert) { kum += H[k].w; if (kum > 0.99 * gesamt) { top1.sh += H[k].w * H[k].sh; top1.sr += H[k].w * H[k].sr; top1.srL += H[k].w * H[k].srL; } }
+const out = { stand: new Date().toISOString().slice(0, 10), probe_max_abweichung_eur: +maxFehler.toFixed(2), zehntel_grenzen_monat: grenzen, gesamt: tot,
+  oberstes_prozent: { anteil_heute: +(100 * top1.sh / (tot.heute_mrd * 1e9)).toFixed(1), anteil_reform: +(100 * top1.sr / (tot.reform_mrd * 1e9)).toFixed(1), anteil_reform_lang: +(100 * top1.srL / (tot.reform_lang_mrd * 1e9)).toFixed(1) },
+  zehntel: z, vermoegen: vs };
+fs.writeFileSync(__dirname + "/steuerlast.json", JSON.stringify(out, null, 1));
+console.log("Probe", maxFehler.toFixed(2), "Grenzen", grenzen.join(" "), JSON.stringify(tot), JSON.stringify(out.oberstes_prozent));
+for (const x of [...z, ...vs]) console.log(x.name.padEnd(24), x.haushalte_mio, x.einkommen_monat, "heute", x.last_heute_monat, x.quote_heute + "%", "reform", x.last_reform_monat, x.quote_reform + "%", x.quote_reform_lang + "%", "Anteil", x.anteil_heute, x.anteil_reform, x.anteil_reform_lang, JSON.stringify(x.heute), JSON.stringify(x.reform));
+// Seite bauen: steuerlast/index.html aus der Vorlage mit den Daten
+const vorlage = fs.readFileSync(__dirname + "/steuerlast/vorlage.html", "utf8");
+fs.writeFileSync(__dirname + "/steuerlast/index.html", vorlage.replace("/*DATEN*/null", () => JSON.stringify(out)));

@@ -132,7 +132,8 @@ function rechne(K, pop, optIn = {}) {
     const tauLang = (r.konsum + r.pw + r.mietw - r.frei) > 0 ? (A.Satz3 + mwstSatzNeu) / (1 + A.Satz3) : mwstSatzNeu;
     R.push({ i, plus, zulage, bsz: r.bsz, heute: r.heute, vorschlag: r.vorschlag, sumH: r.sumH, ausg: r.ausg, ausgUeb: r.ausgUeb,
       mwst: r.mwst + pl.leist * A.MwStQ, mwstNeu: r.mwstNeu + pl.leist * mwstSatzNeu, konsum: r.konsum + pl.leist, konsumLeist: pl.leist, verf: verf0[i], einkommen: r.einkommen + extra, tauM, tauLang,
-      mietw: r.mietw, alt: r.alt, pw: r.pw, atg: r.atg, kk: r.kk, pq: r.pq, kapKons: kapN[i] * kq(i), ueberS: ueber2 > 0 });
+      mietw: r.mietw, alt: r.alt, pw: r.pw, atg: r.atg, kk: r.kk, pq: r.pq, kapKons: kapN[i] * kq(i), ueberS: ueber2 > 0,
+      svNeu: r.svNeu, gut: r.gut, teile: { ausSum: r.ausSum, agRP: r.agRP, rentePlus: r.rentePlus, gsPlus: r.gsPlus, anr: r.anr, bsz: r.bsz } });
   }
   // 3) Erbschaften: Nachlässe aus Vermögen und Sterblichkeit, heute und mit Staatsanteil (Dauerzustand, Mrd. € im Jahr)
   const erbe = erbschaften(opt, sp, n);
