@@ -19,9 +19,10 @@ if (WAHL && HAUS) for (let i = 0; i < n; i++) {
   miet[i] = sp.miet[i] * (drin * 0.02 * sp.hauswert[i] / sp.miet[i] + (1 - drin));
 }
 const pop = { ...pop0, spalten: { ...sp, miet } };
-const e = S.rechne(K, pop, {}); const opt = e.opt;
+const e = S.rechne(K, pop, WAHL ? { ausgleichRentnerMonat: 300, pauschaleErwMonat: 10 } : {}); const opt = e.opt;
 // Ausgleich: heutige Rentner bis 300 € im Monat, alle Erwachsenen 10 € im Monat
-const ausgleich = r => WAHL ? 120 * sp.erw[r.i] + (sp.rentner[r.i] > 0 ? Math.min(Math.max(0, -r.plus), 3600) : 0) : 0;
+// Ausgleich rechnet simulation.js (r.ausgl), r.plus enthält ihn schon
+const ausgleich = r => r.ausgl || 0;
 const H = [];
 let maxFehler = 0, maxEk = 0;
 for (const r of e.R) {
@@ -36,14 +37,14 @@ for (const r of e.R) {
   const sr = reform.ausg + reform.mwst + reform.sv + reform.aus + reform.bsz + reform.ausgl + reform.erb;
   const srL = sr - erbR + erbL;
   // Probe: Unterschied der Lasten ohne Erbschaft = Plus bei gleichem Einkauf (Beamte samt Zulage)
-  maxFehler = Math.max(maxFehler, Math.abs((sh - erbH - (sr - erbR)) - (r.plus + x)));
+  maxFehler = Math.max(maxFehler, Math.abs((sh - erbH - (sr - erbR)) - r.plus));
   // Einkommensarten (Summe = r.einkommen, geprüft) und Vermögensarten
   const ek = { lohn: sp.lohn1[i] + (sp.erw[i] === 2 ? sp.lohn2[i] : 0) + sp.mini[i], rente: sp.rente[i] + sp.pension[i], firma: sp.gewinn[i] + sp.gmbh[i],
     kap: sp.kap[i], miete: sp.vermietCash[i], sozial: sp.transfer[i] + sp.kinder[i] * 259 * 12 + (sp.leist ? sp.leist[i] : 0) };
   maxEk = Math.max(maxEk, Math.abs(Object.values(ek).reduce((a, b) => a + b, 0) - r.einkommen));
   const verm = { haus: sp.hauswert[i], immo: sp.immo[i], geld: sp.geld[i], betrieb: sp.betrieb[i] };
   const spar = r.verf - r.konsum - sp.vollj[i] * sp.unterhalt[i] * 12;
-  H.push({ w: sp.w[i], ek: r.einkommen, W: sp.W[i], heute, reform, sh, sr, srL, netto: (r.plus + x) / 12, rentner: sp.rentner[i] > 0, eka: ek, verm, spar, sparR: spar + r.plus + x, erbH, erbR, erbL });
+  H.push({ w: sp.w[i], ek: r.einkommen, W: sp.W[i], heute, reform, sh, sr, srL, netto: r.plus / 12, rentner: sp.rentner[i] > 0, eka: ek, verm, spar, sparR: spar + r.plus, erbH, erbR, erbL });
 }
 function gruppen(schluessel, namen) {
   const g = namen.map(n => ({ name: n, hh: 0, ek: 0, heute: { est: 0, sv: 0, kap: 0, mwst: 0, erb: 0 }, reform: { ausg: 0, mwst: 0, sv: 0, aus: 0, bsz: 0, ausgl: 0, erb: 0, erbLang: 0 }, sh: 0, sr: 0, srL: 0, mehr: 0, wen: 0, wenSum: 0, wenRent: 0 }));
@@ -81,7 +82,7 @@ const top1 = { sh: 0, sr: 0, srL: 0 }; kum = 0;
 for (const k of sortiert) { kum += H[k].w; if (kum > 0.99 * gesamt) { top1.sh += H[k].w * H[k].sh; top1.sr += H[k].w * H[k].sr; top1.srL += H[k].w * H[k].srL; } }
 // Haushalte mit mehr und weniger (gleicher Einkauf, mit Ausgleich)
 let nMehr = 0, nWen = 0, nAll = 0;
-for (const r of e.R) { if (sp.typ[r.i] === "kind_erw") continue; const m = (r.plus + ausgleich(r)) / 12; nAll += sp.w[r.i]; if (m > 0.5) nMehr += sp.w[r.i]; else if (m < -0.5) nWen += sp.w[r.i]; }
+for (const r of e.R) { if (sp.typ[r.i] === "kind_erw") continue; const m = r.plus / 12; nAll += sp.w[r.i]; if (m > 0.5) nMehr += sp.w[r.i]; else if (m < -0.5) nWen += sp.w[r.i]; }
 // Einkommen × Vermögen: 10 × 10 Felder (Zehntel nach Haushaltseinkommen und nach Nettovermögen)
 const sortW = H.map((h, k) => k).sort((a, b) => H[a].W - H[b].W);
 const vz = new Array(H.length); const vgrenzen = []; kum = 0; next = 1;

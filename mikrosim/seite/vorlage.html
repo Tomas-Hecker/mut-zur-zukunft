@@ -5,7 +5,7 @@
 /* Werkbank: links die Regler, rechts die Ergebnisse; Zahlen in Mono, Grün = mehr, Rot = weniger wie in den Grafiken des Buchs */
 :root {
   --bg: #f6f7f4; --panel: #ffffff; --fg: #1d2420; --muted: #5d6a63; --line: #dde3dd;
-  --gruen: #1f8a4c; --rot: #c0392b; --gelb: #d99a1a; --akzent: #24624a; --gruen-bg: #e3f2e8; --rot-bg: #f8e3e0;
+  --gruen: #3F8F63; --rot: #C8532C; --gelb: #E8B54D; --akzent: #1F5A43; --gruen-bg: #e3f2e8; --rot-bg: #f8e3e0;
   --f-text: "IBM Plex Sans", system-ui, sans-serif; --f-kopf: "IBM Plex Sans Condensed", "IBM Plex Sans", system-ui, sans-serif;
   --f-zahl: "IBM Plex Mono", ui-monospace, monospace;
 }
@@ -107,6 +107,11 @@ th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: 
           <small>Anteil am ausgegebenen Euro über dem Freibetrag.</small></div>
         <div class="feld"><label for="sa">Staatsanteil am Erbe <output id="sa_o"></output></label>
           <input type="range" id="sa" min="0" max="80" step="5" value="50"></div>
+        <div class="feld"><label for="ar">Ausgleich für heutige Rentner bis <output id="ar_o"></output></label>
+          <input type="range" id="ar" min="0" max="500" step="25" value="300">
+          <small>Wer heute Rente bekommt und mit der Reform weniger hätte, bekommt das Minus bis zu diesem Betrag ersetzt. Läuft mit den heutigen Rentnern aus.</small></div>
+        <div class="feld"><label for="pe">Für jeden Erwachsenen <output id="pe_o"></output></label>
+          <input type="range" id="pe" min="0" max="50" step="5" value="10"></div>
       </div>
       <div class="gruppe">
         <h3>Eichung des Konsums</h3>
@@ -147,7 +152,7 @@ th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: 
       <section class="karte hinweis">
         <h2>Was das Modell kann und was nicht</h2>
         <p>Die Haushalte sind künstlich, aber auf amtliche Zahlen geeicht: 41,25 Mio. Haushalte, Bruttolöhne 2.036 Mrd. € (VGR 2025), Lohn- und Einkommensteuer 405 Mrd. € (Kassenstatistik 2025), Konsum 2.086 Mrd. € ohne Mietwert (VGR 2025), Vermögen 16,6 Bio. € (PHF 2023 der Bundesbank plus fehlende Reiche), Mietwert 214,5 Mrd. €. Wie stark Rentner, Arbeitnehmer und Selbständige sparen, folgt der Einkommens- und Verbrauchsstichprobe (EVS). Jede Zahl steht mit Quelle und Abweichung in Annahmen.md und abgleich.md.</p>
-        <p>Ehrliche Spanne: Mit anderen vertretbaren Eichungen haben 17 bis 20,7 Mio. Haushalte zum Start weniger. Den Haushalten fehlen gegenüber der VGR noch rund 150 Mrd. € Gewinne und Entnahmen aus Firmen.</p>
+        <p>Ehrliche Spanne: Ohne Ausgleich haben mit anderen vertretbaren Eichungen 17 bis 20,7 Mio. Haushalte zum Start weniger. Den Haushalten fehlen gegenüber der VGR noch rund 150 Mrd. € Gewinne und Entnahmen aus Firmen.</p>
         <p>Nicht drin sind bisher: Wie viel Menschen arbeiten (Arbeitsangebot), Firmen und Preise, Wanderung, die Jahre bis 2070. Die Erwachsenen sind rund 66 statt 69,6 Mio., weil Menschen in Heimen und manche erwachsene Kinder fehlen. Leistungen wie Arbeitslosen- und Elterngeld sind für die Haushalte neutral gerechnet.</p>
       </section>
     </main>
@@ -166,7 +171,8 @@ const vz = (x, d = 0) => (x > 0 ? "+" : x < 0 ? "−" : "") + de(Math.abs(x), d)
 const V31 = { mehr: 70, gleich: 13, weniger20: 3, weniger100: 4, wenigerMehr: 10, weniger_mio: 7.0, weniger_monat: 300, plus_mrd: 318, bs_mrd: 78.4, bz_mrd: 8.9, erbst: 14.9 };
 let POP = null;
 const VORGABEN = [
-  { name: "Version 32", v: { mpc: 50, pv: -5, kv: 25, me: -5 } },
+  { name: "Version 32", v: { mpc: 50, pv: -5, kv: 25, me: -5, ar: 300, pe: 10 } },
+  { name: "Ohne Ausgleich", v: { ar: 0, pe: 0 } },
   { name: "Alles ausgegeben", v: { mpc: 100, pv: -5, kv: 25, me: -5 } },
   { name: "Alles angelegt und vererbt", v: { mpc: 0, pv: 100, kv: 25, me: -5 } },
   { name: "Reiche kürzen nicht, vererben weniger", v: { mpc: 50, pv: -5, kv: 0, me: 100 } },
@@ -180,6 +186,8 @@ function zeigeWerte() {
   $("fb_o").textContent = de(+$("fb").value) + " € im Monat";
   $("satz_o").textContent = $("satz").value + " %";
   $("sa_o").textContent = $("sa").value + " %";
+  $("ar_o").textContent = de(+$("ar").value) + " € im Monat";
+  $("pe_o").textContent = de(+$("pe").value) + " € im Monat";
 }
 function optionen() {
   const kv = +$("kv").value / 100, s = +$("satz").value / 100, fbJahr = 12 * +$("fb").value;
@@ -193,6 +201,7 @@ function optionen() {
     kuerzungLang: nurSofort ? 0 : 1,
     minusAusErbe: +$("me").value < 0 ? null : +$("me").value / 100,
     staatsanteil: +$("sa").value / 100,
+    ausgleichRentnerMonat: +$("ar").value, pauschaleErwMonat: +$("pe").value,
     kern: { Satz2: s / (1 - s), Satz3: s / (1 - s), Grenze1: g, Grenze2: g },
   };
 }
@@ -200,15 +209,16 @@ function zeichne(a) {
   const v = a.verhalten, k = a.kacheln_100;
   const netto = v.steuer_jetzt_mrd;
   $("kacheln").innerHTML = [
-    ["Haushalte mit mehr", de(k.mehr, 0) + " %", `Version 31: ${V31.mehr} %`],
-    ["Haushalte mit weniger", de(a.weniger.mio, 1) + " Mio.", `im Mittel ${de(a.weniger.monat_mittel)} € im Monat · V31: 7,0 Mio., 300 €`],
-    ["Plus der Haushalte", de(a.plus_mrd) + " Mrd. €", `Minus ${de(a.minus_mrd)} Mrd. € · V31: Plus 318`],
+    ["Haushalte mit mehr", de(k.mehr, 0) + " %", "Buch Version 32: 71 % (mit Ausgleich, gleicher Einkauf)"],
+    ["Haushalte mit weniger", de(a.weniger.mio, 1) + " Mio.", `im Mittel ${de(a.weniger.monat_mittel)} € im Monat · Buch Version 32: 11,9 Mio.`],
+    ["Plus der Haushalte", de(a.plus_mrd) + " Mrd. €", `Minus ${de(a.minus_mrd)} Mrd. €`],
     ["Steuern durch Verhalten, sofort", `<span class="${netto >= 0 ? "plus" : "minus"}">${vz(netto, 1)}</span> Mrd. €`, "im Jahr, gegenüber der Rechnung mit gleichem Einkauf"],
     ["Steuern durch Verhalten, später", `<span class="${v.steuer_spaeter_mrd >= 0 ? "plus" : "minus"}">${vz(v.steuer_spaeter_mrd, 1)}</span> Mrd. €`, "im Jahr im Dauerzustand"],
   ].map(([t, w, u]) => `<div class="kachel"><h3>${t}</h3><div class="wert">${w}</div><div class="unter">${u}</div></div>`).join("");
   const teile = [["mehr", "mehr", "var(--gruen)"], ["gleich", "genauso viel", "var(--muted)"], ["weniger20", "bis 20 € weniger", "var(--gelb)"],
-    ["weniger100", "20 bis 100 € weniger", "#d9732a"], ["wenigerMehr", "mehr als 100 € weniger", "var(--rot)"]];
-  $("balken").innerHTML = teile.map(([key, , c]) => `<div style="flex: 0 0 ${k[key]}%; background: ${c}">${k[key] >= 5 ? de(k[key]) : ""}</div>`).join("");
+    ["weniger100", "20 bis 100 € weniger", "#E9A58A"], ["wenigerMehr", "mehr als 100 € weniger", "var(--rot)"]];
+  const hell = new Set(["var(--gelb)", "#E9A58A"]);
+  $("balken").innerHTML = teile.map(([key, , c]) => `<div style="flex: 0 0 ${k[key]}%; background: ${c}${hell.has(c) ? "; color: #15181c" : ""}">${k[key] >= 5 ? de(k[key]) : ""}</div>`).join("");
   $("legende").innerHTML = teile.map(([key, n, c]) => `<span style="--c: ${c}">${n} ${de(k[key])}</span>`).join("");
   $("v31").innerHTML = `<tr><th></th><th>dieses Modell</th><th>Version 31</th></tr>` + [
     ["mehr", k.mehr, V31.mehr], ["genauso viel", k.gleich, V31.gleich], ["bis 20 € weniger", k.weniger20, V31.weniger20],

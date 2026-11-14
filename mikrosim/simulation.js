@@ -37,6 +37,9 @@ const STANDARD = {
   kinderJeNachlass: 2,
   staatsanteil: 0.5, famFrei: 400000, famKindQ: 0.25, andFrei: 20000,
   realStart: 0.25, realLang: 0.5, // fällig, wenn Geld ins Private fließt (wie Gesamtrechnung: 25 % am Start, langfristig 50 %)
+  // Ausgleich (Version 32, Tomas 14.11.2026: Rentner bis 300 €, 10 € je Erwachsenem); hier 0, die Seite und steuerlast.js setzen ihn
+  ausgleichRentnerMonat: 0,    // heutige Rentner: Minus wird bis zu diesem Betrag im Monat ausgeglichen, läuft mit ihnen aus
+  pauschaleErwMonat: 0,        // jeder Erwachsene bekommt diesen Betrag im Monat
 };
 
 function zahl(x) { return typeof x === "number" ? x : 0; }
@@ -126,11 +129,14 @@ function rechne(K, pop, optIn = {}) {
       plus += opt.beamtePlus * sp.pension[i];   // bei gleichem Einkauf bleibt das Mehr an Bezügen ganz übrig
       if (plus < 0) { zulage = -plus; plus = 0; }
     }
+    // Ausgleich: Rentner bis zur Grenze (aus dem Minus vor der Pauschale), dazu die Pauschale je Erwachsenem
+    const ausgl = (sp.rentner[i] > 0 ? Math.min(Math.max(0, -plus), 12 * opt.ausgleichRentnerMonat) : 0) + 12 * opt.pauschaleErwMonat * sp.erw[i];
+    plus += ausgl;
     // Steueranteil eines zusätzlichen Euros, den der Haushalt ausgibt (Ausgabensteuer und Mehrwertsteuer), mit Altvermögenskonto
     const ueber2 = r.konsum + r.pw + r.mietw - r.alt - r.frei;
     const tauM = ueber2 > 0 ? (A.Satz3 + mwstSatzNeu) / (1 + A.Satz3) : mwstSatzNeu;
     const tauLang = (r.konsum + r.pw + r.mietw - r.frei) > 0 ? (A.Satz3 + mwstSatzNeu) / (1 + A.Satz3) : mwstSatzNeu;
-    R.push({ i, plus, zulage, bsz: r.bsz, heute: r.heute, vorschlag: r.vorschlag, sumH: r.sumH, ausg: r.ausg, ausgUeb: r.ausgUeb,
+    R.push({ i, plus, ausgl, zulage, bsz: r.bsz, heute: r.heute, vorschlag: r.vorschlag, sumH: r.sumH, ausg: r.ausg, ausgUeb: r.ausgUeb,
       mwst: r.mwst + pl.leist * A.MwStQ, mwstNeu: r.mwstNeu + pl.leist * mwstSatzNeu, konsum: r.konsum + pl.leist, konsumLeist: pl.leist, verf: verf0[i], einkommen: r.einkommen + extra, tauM, tauLang,
       mietw: r.mietw, alt: r.alt, pw: r.pw, atg: r.atg, kk: r.kk, pq: r.pq, kapKons: kapN[i] * kq(i), ueberS: ueber2 > 0,
       svNeu: r.svNeu, gut: r.gut, teile: { ausSum: r.ausSum, agRP: r.agRP, rentePlus: r.rentePlus, gsPlus: r.gsPlus, anr: r.anr, bsz: r.bsz } });
