@@ -21,9 +21,10 @@
   --accent: #b97a06;      /* Logo-Bernstein, für Text abgedunkelt */
   --accent-fill: #f2b33d;
   --mint: #9fd8b0;
-  --good: #1d7a46;
+  --good: #1f5a43;
   --good-bg: #e3f3e8;
-  --bad: #b3322c;
+  --bad: #c8532c;
+  --heute: #c8532c; --reform: #3f8f63;
   --bad-bg: #f8e4e1;
   --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4;
   --grid: #e6e0d2;
@@ -37,7 +38,7 @@
     --bg: #0d1f18; --surface: #132a21; --sunk: #0a1913; --line: #2a4337;
     --fg: #eef0e9; --muted: #a9b8ae; --brand: #0a1913; --brand-fg: #fbf8f1;
     --accent: #f2b33d; --accent-fill: #f2b33d; --mint: #9fd8b0;
-    --good: #7fd39c; --good-bg: #173a29; --bad: #f08a80; --bad-bg: #3d1d1b;
+    --good: #7fd39c; --good-bg: #173a29; --bad: #f08a80; --bad-bg: #3d1d1b; --heute: #f08a80; --reform: #6cc58f;
     --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181;
     --grid: #233a30; color-scheme: dark;
   }
@@ -46,7 +47,7 @@
   --bg: #0d1f18; --surface: #132a21; --sunk: #0a1913; --line: #2a4337;
   --fg: #eef0e9; --muted: #a9b8ae; --brand: #0a1913; --brand-fg: #fbf8f1;
   --accent: #f2b33d; --accent-fill: #f2b33d; --mint: #9fd8b0;
-  --good: #7fd39c; --good-bg: #173a29; --bad: #f08a80; --bad-bg: #3d1d1b;
+  --good: #7fd39c; --good-bg: #173a29; --bad: #f08a80; --bad-bg: #3d1d1b; --heute: #f08a80; --reform: #6cc58f;
   --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181;
   --grid: #233a30; color-scheme: dark;
 }
@@ -235,7 +236,10 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
 .duo .k { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
 .duo .v { font-family: var(--font-display); font-size: clamp(1.4rem, 3.4vw, 1.9rem); font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.15; }
 .duo .s { font-size: .85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
-.duo .neu { background: var(--sunk); }
+.duo > div:first-child { border-top: 4px solid var(--heute); }
+.duo > div:first-child .k { color: var(--heute); }
+.duo .neu { background: var(--good-bg); border-top: 4px solid var(--reform); }
+.duo .neu .k { color: var(--good); }
 .tweak { border: 1px dashed var(--line); border-radius: var(--r); padding: 14px 16px; display: grid; gap: 12px; }
 .tweak h3 { font-size: 1.05rem; }
 .tweak .row2 { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; font-size: .88rem; }
@@ -1882,11 +1886,11 @@ function drawChart(rows) {
   const path = k => rows.map((r, i) => (i ? "L" : "M") + x(r.jahr).toFixed(1) + "," + yy(r[k]).toFixed(1)).join("");
   g += `<path class="ln" d="${path("ohne")}" style="stroke:var(--bad)"/>`;
   if (hatDemo) g += `<path class="ln" d="${path("demo")}" style="stroke:var(--s1)" stroke-dasharray="5 4"/>`;
-  g += `<path class="ln" d="${path("quote")}" style="stroke:var(--s3)"/>`;
+  g += `<path class="ln" d="${path("quote")}" style="stroke:var(--reform)"/>`;
   if (hatPlan) g += `<path class="ln" d="${path("plan")}" style="stroke:var(--good);stroke-width:3"/>`;
   const last = rows[rows.length - 1];
   const sq = v => v < -0.005 ? pct(-v, 0) + " Vermögen" : pct(Math.max(0, v), 0) + " Schulden";
-  const labs = [["ohne", "Ohne Reform", "var(--bad)"], ["quote", hatPlan ? "Reform allein" : "Mit Reform", "var(--s3)"]];
+  const labs = [["ohne", "Ohne Reform", "var(--bad)"], ["quote", hatPlan ? "Reform allein" : "Mit Reform", "var(--reform)"]];
   if (hatPlan) labs.push(["plan", "Mit Zukunftsplan", "var(--good)"]);
   if (hatDemo) labs.push(["demo", "Ohne Alterung", "var(--s1)"]);
   const pos = labs.map(([k, t, c]) => ({ k, t, c, y: yy(last[k]) })).sort((p, q) => p.y - q.y);
