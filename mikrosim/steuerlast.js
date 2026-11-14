@@ -5,12 +5,15 @@
 const fs = require("fs"); const K = require("./kern.js"); const S = require("./simulation.js");
 const pop0 = require("./bevoelkerung.json"); const sp = pop0.spalten; const n = pop0.n;
 const WAHL = process.argv[2] !== "ohne";
+// Tomas 14.11. 10:51: Hausregel nur für Häuser, die nach dem Start gekauft werden. Im ersten Jahr greift sie daher bei keinem Haushalt.
+// Mit "haus" als Argument wird sie zum Vergleich auf alle Eigentümer angewandt.
+const HAUS = process.argv.includes("haus");
 // Hausregel: Fläche aus dem Hauswert (Eigentümer im Mittel 125,8 m²), innerhalb der Grenze 2 % des Kaufpreises statt Mietwert
 let wert = 0, hhN = 0;
 for (let i = 0; i < n; i++) if (sp.eigen[i] && sp.hauswert[i] > 0 && sp.typ[i] !== "kind_erw") { wert += sp.w[i] * sp.hauswert[i]; hhN += sp.w[i]; }
 const QM = wert / (hhN * 125.8);
 const miet = Float64Array.from(sp.miet);
-if (WAHL) for (let i = 0; i < n; i++) {
+if (WAHL && HAUS) for (let i = 0; i < n; i++) {
   if (!sp.eigen[i] || !(sp.hauswert[i] > 0) || !(sp.miet[i] > 0)) continue;
   const drin = Math.min(1, (40 * Math.max(1, sp.erw[i]) + 15 * sp.kinder[i]) / (sp.hauswert[i] / QM));
   miet[i] = sp.miet[i] * (drin * 0.02 * sp.hauswert[i] / sp.miet[i] + (1 - drin));
@@ -70,11 +73,11 @@ for (const k of sortiert) { kum += H[k].w; if (kum > 0.99 * gesamt) { top1.sh +=
 // Haushalte mit mehr und weniger (gleicher Einkauf, mit Ausgleich)
 let nMehr = 0, nWen = 0, nAll = 0;
 for (const r of e.R) { if (sp.typ[r.i] === "kind_erw") continue; const m = (r.plus + ausgleich(r)) / 12; nAll += sp.w[r.i]; if (m > 0.5) nMehr += sp.w[r.i]; else if (m < -0.5) nWen += sp.w[r.i]; }
-const out = { stand: new Date().toISOString().slice(0, 10), wahl: WAHL, mehr_prozent: +(100 * nMehr / nAll).toFixed(1), weniger_mio: +(nWen / 1e6).toFixed(1), probe_max_abweichung_eur: +maxFehler.toFixed(2), zehntel_grenzen_monat: grenzen, gesamt: tot,
+const out = { stand: new Date().toISOString().slice(0, 10), wahl: WAHL, hausregel_alle: HAUS, mehr_prozent: +(100 * nMehr / nAll).toFixed(1), weniger_mio: +(nWen / 1e6).toFixed(1), probe_max_abweichung_eur: +maxFehler.toFixed(2), zehntel_grenzen_monat: grenzen, gesamt: tot,
   oberstes_prozent: { anteil_heute: +(100 * top1.sh / (tot.heute_mrd * 1e9)).toFixed(1), anteil_reform: +(100 * top1.sr / (tot.reform_mrd * 1e9)).toFixed(1), anteil_reform_lang: +(100 * top1.srL / (tot.reform_lang_mrd * 1e9)).toFixed(1) },
   zehntel: z, vermoegen: vs };
 fs.writeFileSync(__dirname + "/steuerlast.json", JSON.stringify(out, null, 1));
-console.log("Wahl", WAHL, "mehr", out.mehr_prozent, "% weniger", out.weniger_mio, "Mio. Probe", maxFehler.toFixed(2), "Grenzen", grenzen.join(" "), JSON.stringify(tot), JSON.stringify(out.oberstes_prozent));
+console.log("Wahl", WAHL, "Hausregel für alle", HAUS, "mehr", out.mehr_prozent, "% weniger", out.weniger_mio, "Mio. Probe", maxFehler.toFixed(2), "Grenzen", grenzen.join(" "), JSON.stringify(tot), JSON.stringify(out.oberstes_prozent));
 for (const x of [...z, ...vs]) console.log(x.name.padEnd(24), x.haushalte_mio, x.einkommen_monat, "heute", x.last_heute_monat, x.quote_heute + "%", "reform", x.last_reform_monat, x.quote_reform + "%", x.quote_reform_lang + "%", "Anteil", x.anteil_heute, x.anteil_reform, x.anteil_reform_lang, JSON.stringify(x.heute), JSON.stringify(x.reform));
 // Seite bauen: steuerlast/index.html aus der Vorlage mit den Daten
 const vorlage = fs.readFileSync(__dirname + "/steuerlast/vorlage.html", "utf8");

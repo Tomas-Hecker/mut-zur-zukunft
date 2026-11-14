@@ -62,7 +62,7 @@ ul.quellen { margin: 0; padding-left: 18px; color: var(--fg2); font-size: 13px; 
   <header class="kopf">
     <div class="eyebrow">Mikrosimulation · 41,25 Mio. Haushalte · Stand <span id="stand"></span></div>
     <h1>Wer trägt die Steuerlast, heute und mit der Reform</h1>
-    <p class="lead">Alle Steuern und Abgaben eines Haushalts im Jahr, geteilt durch sein Einkommen vor Steuern. Gerechnet für das erste Jahr der Reform (Version 32), wenn jeder Haushalt genau so viel einkauft wie heute. Mit dem gewählten Ausgleich: heutige Rentner bis 300 € im Monat, 10 € im Monat für jeden Erwachsenen und 2 % des Kaufpreises statt Mietwert für das selbst bewohnte Haus.</p>
+    <p class="lead">Alle Steuern und Abgaben eines Haushalts im Jahr, geteilt durch sein Einkommen vor Steuern. Gerechnet für das erste Jahr der Reform (Version 32), wenn jeder Haushalt genau so viel einkauft wie heute. Mit dem gewählten Ausgleich: heutige Rentner bis 300 € im Monat und 10 € im Monat für jeden Erwachsenen. Die Hausregel (2 % des Kaufpreises statt Mietwert) gilt nur für Häuser, die nach dem Start gekauft werden, und wirkt im ersten Jahr deshalb noch bei keinem Haushalt.</p>
     <p class="lead" id="mehrZeile"></p>
   </header>
 
@@ -90,7 +90,7 @@ ul.quellen { margin: 0; padding-left: 18px; color: var(--fg2); font-size: 13px; 
     <h2 id="t3">Anteil am Einkommen nach Vermögen</h2>
     <div class="legende"><span><i style="background:var(--heute)"></i>heute</span><span><i style="background:var(--reform)"></i>mit der Reform</span></div>
     <div class="diagramm" id="d3"></div>
-    <p class="hinweis">Nettovermögen des Haushalts. Mehr zahlen vor allem Haushalte mit großem Haus, das noch nicht abbezahlt ist, und Haushalte, die Zinsen und Mieten ausgeben. Für den unbezahlten Teil des Hauses zählen bis 40 m² je Erwachsenem und 15 m² je Kind nur 2 % des Kaufpreises, darüber der Mietwert. Der beim Start bezahlte Teil des Hauses und Ausgaben aus versteuertem Ersparten bleiben frei.</p>
+    <p class="hinweis">Nettovermögen des Haushalts. Mehr zahlen vor allem Haushalte mit eigenem Haus, das noch nicht abbezahlt ist: Auf den Mietwert des unbezahlten Teils fällt Ausgabensteuer an, ebenso auf ausgegebene Zinsen und Mieten. Der beim Start bezahlte Teil des Hauses und Ausgaben aus versteuertem Ersparten bleiben frei.</p>
   </section>
 
   <section class="karte" aria-labelledby="t4">
@@ -111,7 +111,7 @@ ul.quellen { margin: 0; padding-left: 18px; color: var(--fg2); font-size: 13px; 
     <ul class="quellen">
       <li>Künstliche Haushalte, geeicht auf amtliche Zahlen: Bruttolöhne 2.036 Mrd. € (VGR 2025), Lohn- und Einkommensteuer 405 Mrd. € (Steuereinnahmen 2025), Konsum 2.086 Mrd. € ohne Mietwert (VGR 2025), Vermögen 16,6 Bio. € (Bundesbank PHF 2023 plus Zuschätzung der Reichsten), Sparen nach der Verbrauchsstichprobe EVS.</li>
       <li>Heute: Lohn- und Einkommensteuer mit Soli, Sozialbeiträge der Beschäftigten und Rentner (mit privater Krankenversicherung), Abgeltungsteuer und Körperschaftsteuer auf eigene Firmen, Mehrwertsteuer, Erbschaft- und Schenkungsteuer.</li>
-      <li>Reform (Version 32): Ausgabensteuer über dem Freibetrag von 1.200 € je Erwachsenem im Monat, höhere Mehrwertsteuer auf denselben Einkauf, verbleibende Beiträge, Staatsanteil am Erbe, abzüglich der Auszahlungen und des gewählten Ausgleichs. Hausregel: Fläche aus dem Hauswert (2.830 € je m², Eigentümer im Mittel 125,8 m²).</li>
+      <li>Reform (Version 32): Ausgabensteuer über dem Freibetrag von 1.200 € je Erwachsenem im Monat, höhere Mehrwertsteuer auf denselben Einkauf, verbleibende Beiträge, Staatsanteil am Erbe, abzüglich der Auszahlungen und des gewählten Ausgleichs. Die Hausregel für später gekaufte Häuser ist im ersten Jahr nicht enthalten. Die 10 € gehen im Modell an 65,6 Mio. Erwachsene (7,9 Mrd. € im Jahr); amtlich sind es 69,6 Mio. (8,35 Mrd. €). Für die Anteile ändert das nichts Sichtbares.</li>
       <li>Der Ausgleich für heutige Rentner läuft mit ihnen aus. Wer später in Rente geht, hat schon unter der Reform gearbeitet und gespart. Einen echten Dauerzustand mit den Haushalten von morgen rechnet das Modell noch nicht; die Ansicht „Erbe voll wirksam“ ändert nur das Erbe.</li>
       <li>Erbschaft als erwartete Steuer im Jahr: Sterbewahrscheinlichkeit mal Steuer auf den Nachlass. Im ersten Jahr ist ein Viertel des Staatsanteils fällig, auf Dauer die Hälfte (wie Version 31).</li>
       <li>Nicht enthalten: Steuern der Firmen, die nicht den Haushalten gehören, Gewerbesteuer, Verhalten (mehr oder weniger arbeiten, sparen, ausgeben) und 4 Mio. erwachsene Kinder mit eigenem Einkommen.</li>
