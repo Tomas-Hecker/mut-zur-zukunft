@@ -1,6 +1,6 @@
 """Hängt an alle Links auf das Buch-PDF ?v=<Prüfsumme>, damit Browser nach einem Update die neue Fassung laden."""
 import hashlib, glob, re
-for PDF in ('Wir-koennen-uns-die-Zukunft-leisten.pdf', 'Die-Reform-auf-einen-Blick-Kurzheft.pdf'):
+for PDF in ('Wir-koennen-uns-die-Zukunft-leisten.pdf', 'Wir-koennen-uns-die-Zukunft-leisten-Kurzfassung.pdf'):
     v = hashlib.md5(open('buch/' + PDF, 'rb').read()).hexdigest()[:8]
     for f in glob.glob('buch/*.html') + ['index.html']:
         s = open(f, encoding='utf-8').read()
