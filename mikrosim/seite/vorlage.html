@@ -1,0 +1,259 @@
+<title>Haushalte im Rechenmodell</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Werkbank: links die Regler, rechts die Ergebnisse; Zahlen in Mono, Grün = mehr, Rot = weniger wie in den Grafiken des Buchs */
+:root {
+  --bg: #f6f7f4; --panel: #ffffff; --fg: #1d2420; --muted: #5d6a63; --line: #dde3dd;
+  --gruen: #1f8a4c; --rot: #c0392b; --gelb: #d99a1a; --akzent: #24624a; --gruen-bg: #e3f2e8; --rot-bg: #f8e3e0;
+  --f-text: "IBM Plex Sans", system-ui, sans-serif; --f-kopf: "IBM Plex Sans Condensed", "IBM Plex Sans", system-ui, sans-serif;
+  --f-zahl: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #131815; --panel: #1b221e; --fg: #e6ece8; --muted: #9aa8a0; --line: #2c3631;
+  --gruen: #4cc27f; --rot: #ef7a6c; --gelb: #f0b84a; --akzent: #7fcfa6; --gruen-bg: #1d3528; --rot-bg: #3a2420; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #131815; --panel: #1b221e; --fg: #e6ece8; --muted: #9aa8a0; --line: #2c3631;
+  --gruen: #4cc27f; --rot: #ef7a6c; --gelb: #f0b84a; --akzent: #7fcfa6; --gruen-bg: #1d3528; --rot-bg: #3a2420; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-text); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 48px; }
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 20px; }
+h1, h2, h3 { font-family: var(--f-kopf); font-weight: 600; text-wrap: balance; margin: 0; }
+h1 { font-size: 1.9rem; letter-spacing: -0.01em; }
+h2 { font-size: 1.2rem; }
+h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+p { margin: 0; max-width: 70ch; }
+.kopf { display: grid; gap: 6px; }
+.kopf p { color: var(--muted); }
+.raster { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 860px) { .raster { grid-template-columns: minmax(0, 1fr); } }
+.regler { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: grid; gap: 16px; position: sticky; top: 12px; }
+@media (max-width: 860px) { .regler { position: static; } }
+.gruppe { display: grid; gap: 10px; }
+.feld { display: grid; gap: 2px; min-width: 0; }
+.feld label { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 8px; font-size: 0.9rem; }
+.feld output { font-family: var(--f-zahl); font-size: 0.85rem; color: var(--akzent); white-space: nowrap; }
+.feld small { color: var(--muted); font-size: 0.78rem; line-height: 1.35; }
+input[type=range] { width: 100%; margin: 0; box-sizing: border-box; accent-color: var(--akzent); }
+.regler select { width: 100%; min-width: 0; }
+select { font: inherit; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--fg); }
+.knopf { font: inherit; font-weight: 600; padding: 10px 14px; border-radius: 6px; border: 0; background: var(--akzent); color: var(--bg); cursor: pointer; }
+.knopf:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--gelb); outline-offset: 2px; }
+.knopf[disabled] { opacity: 0.6; cursor: progress; }
+.vorgaben { display: flex; flex-wrap: wrap; gap: 6px; }
+.vorgaben button { font: inherit; font-size: 0.82rem; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--fg); cursor: pointer; }
+.vorgaben button:hover { border-color: var(--akzent); }
+.ergebnis { display: grid; gap: 20px; min-width: 0; }
+.status { font-size: 0.85rem; color: var(--muted); }
+.kacheln { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.kachel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 2px; }
+.kachel .wert { font-family: var(--f-zahl); font-size: 1.25rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.kachel .unter { font-size: 0.8rem; color: var(--muted); }
+.plus { color: var(--gruen); } .minus { color: var(--rot); }
+.balken { display: flex; height: 26px; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); }
+.balken div { display: grid; place-items: center; font-family: var(--f-zahl); font-size: 0.75rem; color: #fff; min-width: 0; overflow: hidden; }
+.legende { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.8rem; color: var(--muted); }
+.legende span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; background: var(--c); vertical-align: -1px; }
+.karte { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.tabelle { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.86rem; }
+th, td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+th:first-child, td:first-child { text-align: left; }
+td { font-family: var(--f-zahl); font-size: 0.82rem; }
+td:first-child { font-family: var(--f-text); font-size: 0.86rem; }
+th { font-weight: 500; color: var(--muted); font-size: 0.78rem; vertical-align: bottom; white-space: normal; }
+.hinweis { font-size: 0.85rem; color: var(--muted); display: grid; gap: 6px; }
+.abw { font-size: 0.78rem; }
+@media (prefers-reduced-motion: no-preference) { .balken div { transition: flex-basis 0.4s ease; } }
+</style>
+
+<div class="wrap">
+  <header class="kopf">
+    <h3>Wir können uns die Zukunft leisten · Mikrosimulation, Entwurf 0.1</h3>
+    <h1>Haushalte im Rechenmodell</h1>
+    <p>Rund 49.000 künstliche Haushalte mit Einkommen, Vermögen und Konsum stehen für die gut 41 Mio. Haushalte in Deutschland. Jeder wird mit dem Rechenkern des Steuerrechners nach heutigem Recht und mit der Reform gerechnet. Stell die Annahmen links ein und rechne neu.</p>
+  </header>
+  <div class="raster">
+    <form class="regler" id="regler">
+      <div class="gruppe">
+        <h3>Schnellwahl</h3>
+        <div class="vorgaben" id="vorgaben"></div>
+      </div>
+      <div class="gruppe">
+        <h3>Das Plus</h3>
+        <div class="feld"><label for="mpc">Sofort ausgegeben, im Mittel <output id="mpc_o"></output></label>
+          <input type="range" id="mpc" min="0" max="100" step="5" value="50">
+          <small>0 % heißt alles angelegt, 100 % alles ausgegeben. Wer weniger Vermögen hat, gibt mehr aus, Grundsicherung immer alles.</small></div>
+        <div class="feld"><label for="pv">Vom Angelegten am Ende vererbt <output id="pv_o"></output></label>
+          <input type="range" id="pv" min="-5" max="100" step="5" value="-5">
+          <small>Ganz links: nach Vermögen gestaffelt (5 % bis 85 %), sonst für alle gleich. Der Rest wird später selbst ausgegeben.</small></div>
+      </div>
+      <div class="gruppe">
+        <h3>Das Minus</h3>
+        <div class="feld"><label for="kv">Vermögende kürzen den Einkauf sofort um <output id="kv_o"></output></label>
+          <input type="range" id="kv" min="0" max="100" step="5" value="25">
+          <small>Ab 400.000 € Vermögen. Darunter fest: 100 % unter 100.000 €, 80 % bis 200.000 €, 50 % bis 400.000 €.</small></div>
+        <div class="feld"><label for="me">Was sie nicht kürzen, fehlt am Ende am Erbe <output id="me_o"></output></label>
+          <input type="range" id="me" min="-5" max="100" step="5" value="-5">
+          <small>Ganz links: wie beim Plus gestaffelt. 100 % ist der Fall „Reiche geben weiter so viel aus und vererben nur weniger“.</small></div>
+      </div>
+      <div class="gruppe">
+        <h3>Reform</h3>
+        <div class="feld"><label for="fb">Freibetrag je Erwachsenem <output id="fb_o"></output></label>
+          <input type="range" id="fb" min="900" max="1500" step="25" value="1200"></div>
+        <div class="feld"><label for="satz">Satz der Ausgabensteuer <output id="satz_o"></output></label>
+          <input type="range" id="satz" min="30" max="60" step="1" value="50">
+          <small>Anteil am ausgegebenen Euro über dem Freibetrag.</small></div>
+        <div class="feld"><label for="sa">Staatsanteil am Erbe <output id="sa_o"></output></label>
+          <input type="range" id="sa" min="0" max="80" step="5" value="50"></div>
+      </div>
+      <div class="gruppe">
+        <h3>Eichung des Konsums</h3>
+        <div class="feld"><label for="eich">Konsum ergibt sich aus</label>
+          <select id="eich"><option value="sparquote">den Einkommen und der Sparquote 10,4 %</option><option value="konsum">der Summe von Version 31 (2.086 Mrd. €)</option></select></div>
+      </div>
+      <button class="knopf" id="los" type="submit">Neu rechnen</button>
+      <div class="status" id="status" aria-live="polite">Lädt die Haushalte …</div>
+    </form>
+
+    <main class="ergebnis">
+      <section class="kacheln" id="kacheln"></section>
+      <section class="karte">
+        <h2>Von 100 Haushalten haben zum Start bei gleichem Einkauf</h2>
+        <div class="balken" id="balken"></div>
+        <div class="legende" id="legende"></div>
+        <div class="tabelle"><table id="v31"></table></div>
+      </section>
+      <section class="karte">
+        <h2>Wer trägt welche Last: nach Vermögen</h2>
+        <p class="hinweis">Beträge je Haushalt im Jahr, wenn nicht anders genannt. „Heute“ sind Lohn- und Einkommensteuer, Sozialbeiträge der Beschäftigten, Steuern auf Kapitalerträge und Gewinne der eigenen GmbH und die Mehrwertsteuer.</p>
+        <div class="tabelle"><table id="stufen"></table></div>
+      </section>
+      <section class="karte">
+        <h2>Nach Einkommen: zehn gleich große Gruppen</h2>
+        <div class="tabelle"><table id="zehntel"></table></div>
+      </section>
+      <section class="karte">
+        <h2>Was mit dem Plus und dem Minus geschieht</h2>
+        <div class="tabelle"><table id="verh"></table></div>
+        <p class="hinweis">„Später“ ist der Dauerzustand nach rund einer Generation: Was angelegt wird, wird später mit Ausgabensteuer und Mehrwertsteuer ausgegeben oder mit dem Staatsanteil vererbt, dieser nur über dem Familienfreibetrag und zur Hälfte fällig (wie langfristig in Version 31). Ohne Zinsen und ohne Abzinsung.</p>
+      </section>
+      <section class="karte">
+        <h2>Erbschaften im Jahr</h2>
+        <div class="tabelle"><table id="erbe"></table></div>
+      </section>
+      <section class="karte hinweis">
+        <h2>Was das Modell kann und was nicht</h2>
+        <p>Die Haushalte sind künstlich, aber auf amtliche Eckwerte geeicht: 41,25 Mio. Haushalte, Vermögen 16,6 Bio. € nach dem Eichpunkt (PHF 2023 der Bundesbank plus fehlende Reiche), Einkommensteuer rund 400 Mrd. €, Mietwert 214,5 Mrd. €. Jede Annahme steht in der Datei Annahmen.md mit Quelle.</p>
+        <p>Nicht drin sind bisher: Wie viel Menschen arbeiten (Arbeitsangebot), Firmen und Preise, Wanderung, die Jahre bis 2070. Die Erwachsenen sind rund 66 statt 69,6 Mio., weil Menschen in Heimen und manche erwachsene Kinder fehlen. Leistungen wie Arbeitslosen- und Elterngeld sind für die Haushalte neutral gerechnet.</p>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>var module = { exports: {} };</script>
+<script>/*KERN*/</script>
+<script>var KERN = module.exports; module = { exports: {} };</script>
+<script>/*SIM*/</script>
+<script>
+var SIM = module.exports;
+const $ = id => document.getElementById(id);
+const de = (x, d = 0) => (x == null || isNaN(x)) ? "–" : x.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const vz = (x, d = 0) => (x > 0 ? "+" : x < 0 ? "−" : "") + de(Math.abs(x), d);
+const V31 = { mehr: 70, gleich: 13, weniger20: 3, weniger100: 4, wenigerMehr: 10, weniger_mio: 7.0, weniger_monat: 300, plus_mrd: 318, bs_mrd: 78.4, bz_mrd: 8.9, erbst: 14.9 };
+let POP = null;
+const VORGABEN = [
+  { name: "Version 32", v: { mpc: 50, pv: -5, kv: 25, me: -5 } },
+  { name: "Alles ausgegeben", v: { mpc: 100, pv: -5, kv: 25, me: -5 } },
+  { name: "Alles angelegt und vererbt", v: { mpc: 0, pv: 100, kv: 25, me: -5 } },
+  { name: "Reiche kürzen nicht, vererben weniger", v: { mpc: 50, pv: -5, kv: 0, me: 100 } },
+  { name: "Wie Version 31: nichts ausgegeben, nichts gekürzt", v: { mpc: 0, pv: -5, kv: 0, me: -5 } },
+];
+function zeigeWerte() {
+  $("mpc_o").textContent = $("mpc").value + " %";
+  $("pv_o").textContent = +$("pv").value < 0 ? "gestaffelt" : $("pv").value + " %";
+  $("kv_o").textContent = $("kv").value + " %";
+  $("me_o").textContent = +$("me").value < 0 ? "gestaffelt" : $("me").value + " %";
+  $("fb_o").textContent = de(+$("fb").value) + " € im Monat";
+  $("satz_o").textContent = $("satz").value + " %";
+  $("sa_o").textContent = $("sa").value + " %";
+}
+function optionen() {
+  const kv = +$("kv").value / 100, s = +$("satz").value / 100, fbJahr = 12 * +$("fb").value;
+  const g = fbJahr - 12348;
+  const nurSofort = +$("me").value >= 0 && kv === 0;
+  return {
+    eichung: $("eich").value,
+    mpcMittelZiel: +$("mpc").value / 100,
+    plusVererbt: +$("pv").value < 0 ? null : +$("pv").value / 100,
+    kuerzung: [1.0, 0.8, 0.5, kv, kv, kv, kv, kv],
+    kuerzungLang: nurSofort ? 0 : 1,
+    minusAusErbe: +$("me").value < 0 ? null : +$("me").value / 100,
+    staatsanteil: +$("sa").value / 100,
+    kern: { Satz2: s / (1 - s), Satz3: s / (1 - s), Grenze1: g, Grenze2: g },
+  };
+}
+function zeichne(a) {
+  const v = a.verhalten, k = a.kacheln_100;
+  const netto = v.steuer_jetzt_mrd;
+  $("kacheln").innerHTML = [
+    ["Haushalte mit mehr", de(k.mehr, 0) + " %", `Version 31: ${V31.mehr} %`],
+    ["Haushalte mit weniger", de(a.weniger.mio, 1) + " Mio.", `im Mittel ${de(a.weniger.monat_mittel)} € im Monat · V31: 7,0 Mio., 300 €`],
+    ["Plus der Haushalte", de(a.plus_mrd) + " Mrd. €", `Minus ${de(a.minus_mrd)} Mrd. € · V31: Plus 318`],
+    ["Steuern durch Verhalten, sofort", `<span class="${netto >= 0 ? "plus" : "minus"}">${vz(netto, 1)}</span> Mrd. €`, "im Jahr, gegenüber der Rechnung mit gleichem Einkauf"],
+    ["Steuern durch Verhalten, später", `<span class="${v.steuer_spaeter_mrd >= 0 ? "plus" : "minus"}">${vz(v.steuer_spaeter_mrd, 1)}</span> Mrd. €`, "im Jahr im Dauerzustand"],
+  ].map(([t, w, u]) => `<div class="kachel"><h3>${t}</h3><div class="wert">${w}</div><div class="unter">${u}</div></div>`).join("");
+  const teile = [["mehr", "mehr", "var(--gruen)"], ["gleich", "genauso viel", "var(--muted)"], ["weniger20", "bis 20 € weniger", "var(--gelb)"],
+    ["weniger100", "20 bis 100 € weniger", "#d9732a"], ["wenigerMehr", "mehr als 100 € weniger", "var(--rot)"]];
+  $("balken").innerHTML = teile.map(([key, , c]) => `<div style="flex: 0 0 ${k[key]}%; background: ${c}">${k[key] >= 5 ? de(k[key]) : ""}</div>`).join("");
+  $("legende").innerHTML = teile.map(([key, n, c]) => `<span style="--c: ${c}">${n} ${de(k[key])}</span>`).join("");
+  $("v31").innerHTML = `<tr><th></th><th>dieses Modell</th><th>Version 31</th></tr>` + [
+    ["mehr", k.mehr, V31.mehr], ["genauso viel", k.gleich, V31.gleich], ["bis 20 € weniger", k.weniger20, V31.weniger20],
+    ["20 bis 100 € weniger", k.weniger100, V31.weniger100], ["mehr als 100 € weniger", k.wenigerMehr, V31.wenigerMehr],
+  ].map(([n, a1, b]) => `<tr><td>${n}</td><td>${de(a1)}</td><td>${b}</td></tr>`).join("") +
+  `<tr><td>Bestandsschutz der Rentner, Mrd. €</td><td>${de(a.bestandsschutz.mrd, 1)}</td><td>78,4</td></tr>` +
+  `<tr><td>Zulage für Beamte und Pensionäre, Mrd. €</td><td>${de(a.beamte_zulage.mrd, 1)}</td><td>8,9</td></tr>` +
+  `<tr><td>Ausgabensteuer am Start, Mrd. €</td><td>${de(a.aufkommen.ausgabensteuer_start)}</td><td>1.289</td></tr>`;
+  const S = a.stufen;
+  $("stufen").innerHTML = `<tr><th>Nettovermögen</th><th>Haushalte, Mio.</th><th>Einkommen</th><th>Konsum</th><th>zahlt heute</th><th>Plus im Monat</th><th>mehr</th><th>weniger</th><th>Erbschaftsteuer heute, Mrd. €</th><th>Staatsanteil, Mrd. € (fällig zur Hälfte)</th></tr>` +
+    S.map(s => `<tr><td>${s.stufe}</td><td>${de(s.haushalte_mio, 2)}</td><td>${de(s.einkommen_mittel)}</td><td>${de(s.konsum_mittel)}</td><td>${de(s.heute_mittel)}</td>
+      <td class="${s.plus_monat_mittel >= 0 ? "plus" : "minus"}">${vz(s.plus_monat_mittel)}</td><td>${de(100 * s.anteil_mehr)} %</td><td>${de(100 * s.anteil_weniger)} %</td>
+      <td>${de(s.erbst_heute_mrd, 1)}</td><td>${de(s.staatsanteil_anspruch_mrd, 1)}</td></tr>`).join("");
+  $("zehntel").innerHTML = `<tr><th>Zehntel nach Einkommen</th><th>Einkommen</th><th>Vermögen</th><th>zahlt heute</th><th>Plus im Monat</th><th>mehr</th><th>weniger</th></tr>` +
+    a.zehntel.map(z => `<tr><td>${z.zehntel}. Zehntel</td><td>${de(z.einkommen_mittel)}</td><td>${de(z.vermoegen_mittel)}</td><td>${de(z.heute_mittel)}</td>
+      <td class="${z.plus_monat_mittel >= 0 ? "plus" : "minus"}">${vz(z.plus_monat_mittel)}</td><td>${de(100 * z.anteil_mehr)} %</td><td>${de(100 * z.anteil_weniger)} %</td></tr>`).join("");
+  $("verh").innerHTML = `<tr><th>Mrd. € im Jahr</th><th>Betrag</th></tr>` + [
+    ["Plus der Haushalte, die mehr haben", v.plus_mrd], ["davon sofort ausgegeben", v.ausgegeben_mrd], ["davon angelegt", v.angelegt_mrd],
+    ["Minus der Haushalte, die weniger haben", v.minus_mrd], ["davon sofort am Einkauf gekürzt", v.gekuerzt_mrd], ["davon aus Erspartem bezahlt (weniger angelegt)", v.weniger_angelegt_mrd],
+    ["Steuern sofort aus dem ausgegebenen Plus", v.steuer_jetzt_aus_plus_mrd], ["Steuern sofort, die durch das Kürzen fehlen", v.steuer_jetzt_aus_minus_mrd],
+    ["Steuern sofort, zusammen", v.steuer_jetzt_mrd], ["Steuern später aus dem Angelegten, zusammen", v.steuer_spaeter_mrd],
+  ].map(([n, x]) => `<tr><td>${n}</td><td>${vz(x, 1)}</td></tr>`).join("");
+  const e = a.erbschaft;
+  $("erbe").innerHTML = `<tr><th>Mrd. € im Jahr</th><th>dieses Modell</th><th>Statistik und Version 31</th></tr>` + [
+    ["Nachlässe", de(e.nachlass_mrd), "–"], ["Schenkungen großer Vermögen", de(e.schenkungen_mrd), "Nachlässe und Schenkungen zusammen 300 bis 400 (DIW)"],
+    ["Erbschaft- und Schenkungsteuer heute", de(e.erbst_heute_mrd, 1), "14,9 (Steuerschätzung 2025)"],
+    ["Staatsanteil über dem Familienfreibetrag", de(e.staatsanteil_anspruch_mrd, 1), "–"],
+    ["davon fällig am Start (25 %)", de(e.staatsanteil_start_mrd, 1), "Version 31: 43,75 − 19,3 Freibetrag = 24,5"],
+    ["davon fällig langfristig (50 %)", de(e.staatsanteil_lang_mrd, 1), "Version 31: 87,5 − 38,6 Freibetrag = 48,9"],
+  ].map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("");
+}
+function rechnen() {
+  if (!POP) return;
+  $("los").disabled = true; $("status").textContent = "Rechnet …";
+  setTimeout(() => {
+    const t0 = performance.now();
+    try {
+      const erg = SIM.rechne(KERN, POP, optionen());
+      zeichne(SIM.auswerten(erg));
+      $("status").textContent = `Gerechnet in ${de((performance.now() - t0) / 1000, 1)} Sekunden, ${de(POP.n)} Haushalte.`;
+    } catch (e) { $("status").textContent = "Fehler beim Rechnen: " + e.message; }
+    $("los").disabled = false;
+  }, 30);
+}
+$("vorgaben").innerHTML = VORGABEN.map((p, i) => `<button type="button" data-i="${i}">${p.name}</button>`).join("");
+$("vorgaben").addEventListener("click", e => { const i = e.target.dataset.i; if (i == null) return; for (const [k, v] of Object.entries(VORGABEN[i].v)) $(k).value = v; zeigeWerte(); rechnen(); });
+$("regler").addEventListener("input", zeigeWerte);
+$("regler").addEventListener("submit", e => { e.preventDefault(); rechnen(); });
+zeigeWerte();
+fetch("bevoelkerung.json").then(r => r.json()).then(p => { POP = p; rechnen(); }).catch(e => { $("status").textContent = "Die Haushalte ließen sich nicht laden: " + e.message; });
+</script>

@@ -317,9 +317,9 @@ def klone(d, p):
         m = 1
         if d["typ"][i] != "kind_erw":
             if p[i] > 0.999:
-                m = 120
+                m = 40
             elif p[i] > 0.99:
-                m = 30
+                m = 15
             elif p[i] > 0.95:
                 m = 6
         lo = p[i] - pw[i] / 2
@@ -426,9 +426,13 @@ def main():
     # Rechenkern (heute) — hier eine Näherung, die simulation.js mit dem Kern nachschärft (Schalter eichen)
     d["spar0"] = np.zeros(len(d["w"]))
     out = {"stand": "2026-11-14", "eckwerte": ECKWERTE, "stufen": [list(s) for s in STUFEN], "n": int(len(d["w"])), "spalten": {}}
+    weg = {"p", "spar0", "stufe", "heim_netto", "pg", "bjob", "vorsorge"}
     for k, v in d.items():
+        if k in weg:
+            continue
         if v.dtype.kind in "fi":
-            out["spalten"][k] = [round(float(x), 2) if v.dtype.kind == "f" else int(x) for x in v]
+            nk = 2 if k in ("hb",) else (1 if k == "w" else 0)
+            out["spalten"][k] = [round(float(x), nk) if nk else int(round(float(x))) for x in v]
         else:
             out["spalten"][k] = [str(x) for x in v]
     json.dump(out, open(os.path.join(HIER, "bevoelkerung.json"), "w"), separators=(",", ":"))

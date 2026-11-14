@@ -18,6 +18,7 @@ const STANDARD = {
   verhalten: true,
   mpc: [0.75, 0.6, 0.5, 0.4, 0.35, 0.25, 0.15, 0.1],   // Anteil des Plus, der im selben Jahr ausgegeben wird
   mpcGrundsicherung: 1.0,
+  plusVererbt: null,           // Anteil des angelegten Plus, der vererbt wird (null = „vererbt“ je Stufe; 1 = alles angelegt und vererbt)
   mpcMittelZiel: 0.5,          // Version 32: im Mittel (gewichtet mit dem Plus) wird die Hälfte ausgegeben; null = Anteile je Stufe unverändert         // z. B. 0.5: alle Anteile so skaliert, dass im Mittel (gewichtet mit dem Plus) die Hälfte ausgegeben wird
   kuerzung: [1.0, 0.8, 0.5, 0.25, 0.25, 0.25, 0.25, 0.25],  // Anteil eines Minus, um den der Haushalt seinen Einkauf SOFORT kürzt
                                // (Version 32: Vermögende ein Viertel; wer wenig hat, muss sofort sparen)
@@ -28,8 +29,9 @@ const STANDARD = {
   vererbtAlter: 0.15,          // Rentnerhaushalte vererben mehr vom Angelegten
   // Erbschaften
   q65: 0.0095, gompertz: 0.105, // Sterberate mit 65 (Mittel Frauen und Männer) und Anstieg je Lebensjahr (wie Rechenmodell RTSteig)
-  paarFaktor: 0.5, paarVersatz: 6, // Paar: Nachlass erst beim zweiten Tod, Rate wie 0,5 × q(Alter + 6)
-  schenkungQ: 0.012,           // Schenkungen großer Vermögen im Jahr, Anteil des Vermögens über 500.000 €
+  paarFaktor: 0.6, paarVersatz: 6, // Paar: Nachlass erst beim zweiten Tod, Rate wie 0,5 × q(Alter + 6)
+  schenkungQ: 0.009,           // Schenkungen großer Vermögen im Jahr, Anteil des Vermögens über 500.000 €
+  schenkSatzHeute: 0.04,
   kinderJeNachlass: 2,
   staatsanteil: 0.5, famFrei: 400000, famKindQ: 0.25, andFrei: 20000,
   realStart: 0.25, realLang: 0.5, // fällig, wenn Geld ins Private fließt (wie Gesamtrechnung: 25 % am Start, langfristig 50 %)
@@ -139,7 +141,9 @@ function rechne(K, pop, optIn = {}) {
 
 function q(opt, a) { return Math.min(1, opt.q65 * Math.exp(opt.gompertz * (a - 65))); }
 
-function erbstHeute(teil, betrieb) {   // Steuerklasse I je Kind: Freibetrag 400.000 €, Sätze 7 bis 30 %; Betriebe zu 85 % verschont
+function erbstHeute(teil, betrieb, immo) {   // Steuerklasse I je Kind: Freibetrag 400.000 €, Sätze 7 bis 30 %; Betriebe zu 85 % verschont,
+  // Immobilien im Mittel mit drei Vierteln des Marktwerts bewertet
+  teil -= 0.25 * immo;
   const stufen = [[75000, 0.07], [300000, 0.11], [600000, 0.15], [6e6, 0.19], [13e6, 0.23], [26e6, 0.27], [Infinity, 0.30]];
   const verschont = teil > 26e6 ? 0.7 : 0.85;
   const x = Math.max(0, teil - betrieb * verschont - 400000);
@@ -158,7 +162,7 @@ function erbschaften(opt, sp, n) {
     const betrieb = sp.betrieb[i];
     // heute
     let st;
-    if (k > 0) st = k * erbstHeute(W / k, betrieb / k);
+    if (k > 0) st = k * erbstHeute(W / k, betrieb / k, (sp.hauswert[i] + sp.immo[i]) / k);
     else st = Math.max(0, W - opt.andFrei - 0.85 * betrieb) * 0.3;
     // Reform: Staatsanteil über dem Familienfreibetrag (ein Viertel mehr je weiterem Kind), sonst über dem Freibetrag für andere
     const frei = k > 0 ? opt.famFrei * (1 + opt.famKindQ * (k - 1)) : opt.andFrei * 2;
@@ -166,6 +170,10 @@ function erbschaften(opt, sp, n) {
     E.rate[i] = h; E.nachlass[i] = h * W; E.heute[i] = h * st; E.anspruch[i] = h * ans;
     // Schenkungen großer Vermögen (heute weitgehend wie Erbschaft besteuert, Freibeträge alle zehn Jahre neu)
     E.schenk[i] = opt.schenkungQ * Math.max(0, W - 5e5);
+    // Schenkungen: heute im Mittel rund 4 % Steuer (Freibeträge alle zehn Jahre, Betriebe verschont); im Vorschlag wie ein Erbe,
+    // der Freibetrag ist bei großen Vermögen meist schon verbraucht (80 % über dem Freibetrag)
+    E.heute[i] += opt.schenkSatzHeute * E.schenk[i];
+    E.anspruch[i] += opt.staatsanteil * 0.8 * E.schenk[i];
   }
   return E;
 }
@@ -173,11 +181,11 @@ function erbschaften(opt, sp, n) {
 function verhalten(opt, sp, R, E) {
   const n = R.length;
   let mpc = opt.mpc.slice();
-  if (opt.mpcMittelZiel) {
+  if (opt.mpcMittelZiel != null) {
     let s = 0, p = 0;
     for (const r of R) { if (r.plus > 0) { const j = stufeVon(sp.W[r.i]); const m = sp.transfer[r.i] > 0 ? opt.mpcGrundsicherung : mpc[j]; s += sp.w[r.i] * r.plus * m; p += sp.w[r.i] * r.plus; } }
     const f = opt.mpcMittelZiel / (s / p);
-    mpc = mpc.map(x => Math.min(1, x * f));
+    mpc = opt.mpcMittelZiel >= 1 ? mpc.map(() => 1) : mpc.map(x => Math.min(1, x * f));
   }
   const V = [];
   for (const r of R) {
@@ -187,6 +195,7 @@ function verhalten(opt, sp, R, E) {
     else { gekuerzt = opt.kuerzung[j] * -r.plus; angelegt = r.plus + gekuerzt; }   // negativ: es wird weniger angelegt oder entspart
     let b = Math.min(0.95, opt.vererbt[j] + (sp.rentner[i] ? opt.vererbtAlter : 0));
     if (r.plus < 0 && opt.minusAusErbe != null) b = opt.minusAusErbe;
+    if (r.plus >= 0 && opt.plusVererbt != null) b = opt.plusVererbt;
     // Steuer, die das Angelegte später bringt: selbst ausgegeben mit Ausgabensteuer und Mehrwertsteuer, vererbt mit dem Staatsanteil,
     // soweit der Nachlass über dem Freibetrag liegt (langfristig fällig zum Anteil realLang)
     const k = sp.kinderlos[i] ? 0 : opt.kinderJeNachlass;
