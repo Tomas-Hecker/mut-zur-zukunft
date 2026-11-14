@@ -25,7 +25,9 @@ N = dict(
  firm=k(diff('Firmen', liste='erbe')), firml=k(diff('Firmen', True, 'erbe')),
  summe=k(J['gesamt']['heute_mrd'] - J['gesamt']['reform_mrd'], 0), ausgl=k(J['ausgleich_mrd'], 0),
  wh=k(J['aufbau'][0]['wachstum_heute']), wr=k(J['aufbau'][0]['wachstum_reform']),
- vp=k(J['vermoegen'][0]['quote_heute'] - J['vermoegen'][0]['quote_reform']),
+ sh=k(J['aufbau'][0]['sparen_heute_monat'], 0), sr=k(J['aufbau'][0]['sparen_reform_monat'], 0),
+ qh=k(J['aufbau'][0]['sparquote_heute']), qr=k(J['aufbau'][0]['sparquote_reform']),
+ sq=k(J['aufbau'][0]['sparquote_reform']), vm=k(J['aufbau'][0]['vermoegen_mittel'], 0), vp=k(J['vermoegen'][0]['quote_heute'] - J['vermoegen'][0]['quote_reform']),
 )
 print(J['stand'], N)
 u = open(R + 'ueber-mich.html').read()
@@ -51,8 +53,8 @@ G = [
   "Balken nach Einkommens- und Vermögensart: Auf Löhne fallen «lohn» Mrd. € weniger, auf Gewinne eigener Firmen «gew» Mrd. € mehr, auf vererbte Firmen «firm» Mrd. € mehr.",
   "Wie viel mehr oder weniger Steuern und Abgaben im Jahr auf jede Art von Einkommen und Vermögen fallen als heute, in Milliarden Euro. Auf Löhne fallen «lohn» Mrd. € weniger, auf Gewinne eigener Firmen «gew» Mrd. € mehr. Beim Erbe zahlen Firmen «firm» Mrd. € mehr, «firml» Mrd. €, wenn der Staatsanteil am Erbe voll wirkt: Heute sind vererbte Firmen zu 85 % verschont, mit der Reform zählt alles voll. Zusammen tragen die Haushalte «summe» Mrd. € weniger als heute, «ausgl» Mrd. € davon ist der Ausgleich für heutige Rentner (bis 300 € im Monat) und 10 € im Monat je Erwachsenem. Steuern von Firmen, die nicht den Haushalten gehören, sind nicht enthalten."),
  ("vermoegen-sparen", 1688, 962, "Wie Vermögen wächst",
-  "Punktgrafik zum Sparen: Haushalte unter 100.000 € Vermögen sparen «wr» % ihres Vermögens im Jahr statt heute «wh» %.",
-  "Um wie viel Prozent das Vermögen der Haushalte im Jahr durch Sparen wächst. Haushalte mit weniger als 100.000 € Vermögen bauen heute im Mittel Vermögen ab («wh» % im Jahr), mit der Reform wächst es um «wr» %. Gespart wird, was vom Einkommen nach Steuern und Abgaben bleibt, wenn der Haushalt so viel einkauft wie heute; was er mehr hat, legt er in dieser Rechnung ganz zurück. Nicht enthalten: Wertsteigerung von Häusern und Aktien, Erbschaften und Schenkungen."),
+  "Punktgrafik zum Sparen nach Vermögen: Haushalte unter 100.000 € Vermögen sparen mit der Reform «sr» € im Monat, heute «sh» €.",
+  "Um wie viel Prozent das Vermögen der Haushalte im Jahr durch Sparen wächst. Haushalte mit weniger als 100.000 € Vermögen sparen heute im Mittel «sh» € im Monat, mit der Reform «sr» €, also «sq» % statt «qh» % ihres Einkommens. Weil sie im Mittel nur «vm» € besitzen, wirkt das als großer Sprung beim Wachstum des Vermögens. Gespart wird, was vom Einkommen nach Steuern und Abgaben bleibt, wenn der Haushalt so viel einkauft wie heute; was er mehr hat, legt er in dieser Rechnung ganz zurück. Nicht enthalten: Wertsteigerung von Häusern und Aktien, Erbschaften und Schenkungen."),
 ]
 figs = "\n".join(f'''<figure id="{f}">
 <a href="../bilder/steuerlast/{f}.webp" title="{t}: Grafik groß öffnen"><img src="../bilder/steuerlast/{f}.webp" width="{w}" height="{h}" loading="lazy" alt="{alt}"></a>
