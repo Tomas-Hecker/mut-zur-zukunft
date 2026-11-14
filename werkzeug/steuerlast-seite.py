@@ -13,7 +13,8 @@ Z = J['zehntel']; ein = {a['art'] if 'art' in a else a['name']: a for a in J['ar
 def diff(name, lang=False, liste='einkommen'):
     a = next(a for a in J['arten'][liste] if a['name'] == name)
     return a['reform_lang_mrd' if lang else 'reform_mrd'] - a['heute_mrd']
-sp = re.search(r'Version 32 ([0-9,]+) bis ([0-9,]+) Mio', UB['spanne'])
+sp = re.search(r'Version 32 ([0-9,]+) bis ([0-9,]+) Mio\. \(Standard ([0-9,]+)\)', UB['spanne'])
+assert sp.group(3) == f"{J['weniger_mio']:.1f}".replace('.', ','), ('Spanne passt nicht zu steuerlast.json', sp.group(3), J['weniger_mio'])
 N = dict(
  mehr=k(J['mehr_prozent']), weniger=k(J['weniger_mio']), sp1=sp.group(1), sp2=sp.group(2),
  z1h=k(Z[0]['quote_heute']), z1r=k(Z[0]['quote_reform']), z10h=k(Z[9]['quote_heute']), z10r=k(Z[9]['quote_reform']),
