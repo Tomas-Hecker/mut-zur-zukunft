@@ -37,12 +37,13 @@ for (const r of e.R) {
   const srL = sr - erbR + erbL;
   // Probe: Unterschied der Lasten ohne Erbschaft = Plus bei gleichem Einkauf (Beamte samt Zulage)
   maxFehler = Math.max(maxFehler, Math.abs((sh - erbH - (sr - erbR)) - (r.plus + x)));
-  H.push({ w: sp.w[i], ek: r.einkommen, W: sp.W[i], heute, reform, sh, sr, srL });
+  H.push({ w: sp.w[i], ek: r.einkommen, W: sp.W[i], heute, reform, sh, sr, srL, netto: (r.plus + x) / 12, rentner: sp.rentner[i] > 0 });
 }
 function gruppen(schluessel, namen) {
-  const g = namen.map(n => ({ name: n, hh: 0, ek: 0, heute: { est: 0, sv: 0, kap: 0, mwst: 0, erb: 0 }, reform: { ausg: 0, mwst: 0, sv: 0, aus: 0, bsz: 0, ausgl: 0, erb: 0, erbLang: 0 }, sh: 0, sr: 0, srL: 0 }));
+  const g = namen.map(n => ({ name: n, hh: 0, ek: 0, heute: { est: 0, sv: 0, kap: 0, mwst: 0, erb: 0 }, reform: { ausg: 0, mwst: 0, sv: 0, aus: 0, bsz: 0, ausgl: 0, erb: 0, erbLang: 0 }, sh: 0, sr: 0, srL: 0, mehr: 0, wen: 0, wenSum: 0, wenRent: 0 }));
   for (const h of H) {
     const x = g[schluessel(h)]; x.hh += h.w; x.ek += h.w * h.ek; x.sh += h.w * h.sh; x.sr += h.w * h.sr; x.srL += h.w * h.srL;
+    if (h.netto > 0.5) x.mehr += h.w; else if (h.netto < -0.5) { x.wen += h.w; x.wenSum += h.w * h.netto; if (h.rentner) x.wenRent += h.w; }
     for (const k in h.heute) x.heute[k] += h.w * h.heute[k]; for (const k in h.reform) x.reform[k] += h.w * h.reform[k];
   }
   const totH = g.reduce((s, x) => s + x.sh, 0), totR = g.reduce((s, x) => s + x.sr, 0), totL = g.reduce((s, x) => s + x.srL, 0);
@@ -53,7 +54,9 @@ function gruppen(schluessel, namen) {
       last_heute_monat: m(x.sh), last_reform_monat: m(x.sr), last_reform_lang_monat: m(x.srL),
       quote_heute: +(100 * x.sh / x.ek).toFixed(1), quote_reform: +(100 * x.sr / x.ek).toFixed(1), quote_reform_lang: +(100 * x.srL / x.ek).toFixed(1),
       anteil_heute: +(100 * x.sh / totH).toFixed(1), anteil_reform: +(100 * x.sr / totR).toFixed(1), anteil_reform_lang: +(100 * x.srL / totL).toFixed(1),
-      summe_heute_mrd: +(x.sh / 1e9).toFixed(1), summe_reform_mrd: +(x.sr / 1e9).toFixed(1), summe_reform_lang_mrd: +(x.srL / 1e9).toFixed(1) };
+      summe_heute_mrd: +(x.sh / 1e9).toFixed(1), summe_reform_mrd: +(x.sr / 1e9).toFixed(1), summe_reform_lang_mrd: +(x.srL / 1e9).toFixed(1),
+      mehr_prozent: +(100 * x.mehr / x.hh).toFixed(1), weniger_prozent: +(100 * x.wen / x.hh).toFixed(1), weniger_mio: +(x.wen / 1e6).toFixed(2),
+      weniger_mittel_monat: x.wen ? Math.round(-x.wenSum / x.wen) : 0, weniger_rentner_mio: +(x.wenRent / 1e6).toFixed(2) };
     return o;
   });
 }

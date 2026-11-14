@@ -59,7 +59,12 @@
    "anteil_reform_lang": 0.3,
    "summe_heute_mrd": 7.1,
    "summe_reform_mrd": 3.3,
-   "summe_reform_lang_mrd": 3.4
+   "summe_reform_lang_mrd": 3.4,
+   "mehr_prozent": 83.5,
+   "weniger_prozent": 16.5,
+   "weniger_mio": 0.68,
+   "weniger_mittel_monat": 26,
+   "weniger_rentner_mio": 0
   },
   {
    "name": "2. Zehntel",
@@ -93,7 +98,12 @@
    "anteil_reform_lang": 1.5,
    "summe_heute_mrd": 20.5,
    "summe_reform_mrd": 16.1,
-   "summe_reform_lang_mrd": 16.5
+   "summe_reform_lang_mrd": 16.5,
+   "mehr_prozent": 87.6,
+   "weniger_prozent": 12.4,
+   "weniger_mio": 0.51,
+   "weniger_mittel_monat": 104,
+   "weniger_rentner_mio": 0.07
   },
   {
    "name": "3. Zehntel",
@@ -127,7 +137,12 @@
    "anteil_reform_lang": 2.8,
    "summe_heute_mrd": 33.6,
    "summe_reform_mrd": 29.8,
-   "summe_reform_lang_mrd": 30.3
+   "summe_reform_lang_mrd": 30.3,
+   "mehr_prozent": 82.1,
+   "weniger_prozent": 17.8,
+   "weniger_mio": 0.74,
+   "weniger_mittel_monat": 223,
+   "weniger_rentner_mio": 0.25
   },
   {
    "name": "4. Zehntel",
@@ -161,7 +176,12 @@
    "anteil_reform_lang": 4,
    "summe_heute_mrd": 47.3,
    "summe_reform_mrd": 43.1,
-   "summe_reform_lang_mrd": 43.8
+   "summe_reform_lang_mrd": 43.8,
+   "mehr_prozent": 76.4,
+   "weniger_prozent": 23.5,
+   "weniger_mio": 0.97,
+   "weniger_mittel_monat": 264,
+   "weniger_rentner_mio": 0.33
   },
   {
    "name": "5. Zehntel",
@@ -195,7 +215,12 @@
    "anteil_reform_lang": 5.5,
    "summe_heute_mrd": 63.7,
    "summe_reform_mrd": 58.9,
-   "summe_reform_lang_mrd": 60
+   "summe_reform_lang_mrd": 60,
+   "mehr_prozent": 67.2,
+   "weniger_prozent": 32.4,
+   "weniger_mio": 1.34,
+   "weniger_mittel_monat": 259,
+   "weniger_rentner_mio": 0.49
   },
   {
    "name": "6. Zehntel",
@@ -229,7 +254,12 @@
    "anteil_reform_lang": 7.1,
    "summe_heute_mrd": 82,
    "summe_reform_mrd": 75.9,
-   "summe_reform_lang_mrd": 77.4
+   "summe_reform_lang_mrd": 77.4,
+   "mehr_prozent": 69.1,
+   "weniger_prozent": 30.9,
+   "weniger_mio": 1.27,
+   "weniger_mittel_monat": 353,
+   "weniger_rentner_mio": 0.41
   },
   {
    "name": "7. Zehntel",
@@ -263,7 +293,12 @@
    "anteil_reform_lang": 9.1,
    "summe_heute_mrd": 104.3,
    "summe_reform_mrd": 96.9,
-   "summe_reform_lang_mrd": 98.6
+   "summe_reform_lang_mrd": 98.6,
+   "mehr_prozent": 68.2,
+   "weniger_prozent": 31.7,
+   "weniger_mio": 1.31,
+   "weniger_mittel_monat": 373,
+   "weniger_rentner_mio": 0.36
   },
   {
    "name": "8. Zehntel",
@@ -297,7 +332,12 @@
    "anteil_reform_lang": 12,
    "summe_heute_mrd": 135.9,
    "summe_reform_mrd": 128.1,
-   "summe_reform_lang_mrd": 130.1
+   "summe_reform_lang_mrd": 130.1,
+   "mehr_prozent": 67.3,
+   "weniger_prozent": 32.7,
+   "weniger_mio": 1.35,
+   "weniger_mittel_monat": 483,
+   "weniger_rentner_mio": 0.21
   },
   {
    "name": "9. Zehntel",
@@ -331,7 +371,12 @@
    "anteil_reform_lang": 17,
    "summe_heute_mrd": 185.4,
    "summe_reform_mrd": 182,
-   "summe_reform_lang_mrd": 184
+   "summe_reform_lang_mrd": 184,
+   "mehr_prozent": 64.9,
+   "weniger_prozent": 35.1,
+   "weniger_mio": 1.45,
+   "weniger_mittel_monat": 648,
+   "weniger_rentner_mio": 0.11
   },
   {
    "name": "10. Zehntel",
@@ -365,7 +410,12 @@
    "anteil_reform_lang": 40.6,
    "summe_heute_mrd": 413.6,
    "summe_reform_mrd": 425.8,
-   "summe_reform_lang_mrd": 440.1
+   "summe_reform_lang_mrd": 440.1,
+   "mehr_prozent": 44.8,
+   "weniger_prozent": 55.2,
+   "weniger_mio": 2.28,
+   "weniger_mittel_monat": 1217,
+   "weniger_rentner_mio": 0.09
   }
  ],
  "vermoegen": [
@@ -401,7 +451,12 @@
    "anteil_reform_lang": 23.5,
    "summe_heute_mrd": 303.5,
    "summe_reform_mrd": 254.8,
-   "summe_reform_lang_mrd": 254.8
+   "summe_reform_lang_mrd": 254.8,
+   "mehr_prozent": 86.9,
+   "weniger_prozent": 13,
+   "weniger_mio": 2.62,
+   "weniger_mittel_monat": 251,
+   "weniger_rentner_mio": 0
   },
   {
    "name": "100.000 bis 200.000 €",
@@ -435,7 +490,12 @@
    "anteil_reform_lang": 11.3,
    "summe_heute_mrd": 132.1,
    "summe_reform_mrd": 122.4,
-   "summe_reform_lang_mrd": 122.6
+   "summe_reform_lang_mrd": 122.6,
+   "mehr_prozent": 76.3,
+   "weniger_prozent": 23.5,
+   "weniger_mio": 1.26,
+   "weniger_mittel_monat": 342,
+   "weniger_rentner_mio": 0.08
   },
   {
    "name": "200.000 bis 400.000 €",
@@ -469,7 +529,12 @@
    "anteil_reform_lang": 13.1,
    "summe_heute_mrd": 144.8,
    "summe_reform_mrd": 141.8,
-   "summe_reform_lang_mrd": 142.3
+   "summe_reform_lang_mrd": 142.3,
+   "mehr_prozent": 67.2,
+   "weniger_prozent": 32.8,
+   "weniger_mio": 1.76,
+   "weniger_mittel_monat": 439,
+   "weniger_rentner_mio": 0.25
   },
   {
    "name": "400.000 bis 800.000 €",
@@ -503,7 +568,12 @@
    "anteil_reform_lang": 20.7,
    "summe_heute_mrd": 208.1,
    "summe_reform_mrd": 222.1,
-   "summe_reform_lang_mrd": 224.7
+   "summe_reform_lang_mrd": 224.7,
+   "mehr_prozent": 42.2,
+   "weniger_prozent": 57.7,
+   "weniger_mio": 3.65,
+   "weniger_mittel_monat": 534,
+   "weniger_rentner_mio": 1.16
   },
   {
    "name": "800.000 € bis 1 Mio. €",
@@ -537,7 +607,12 @@
    "anteil_reform_lang": 6.2,
    "summe_heute_mrd": 57.2,
    "summe_reform_mrd": 66,
-   "summe_reform_lang_mrd": 67.7
+   "summe_reform_lang_mrd": 67.7,
+   "mehr_prozent": 29.2,
+   "weniger_prozent": 70.8,
+   "weniger_mio": 0.95,
+   "weniger_mittel_monat": 810,
+   "weniger_rentner_mio": 0.27
   },
   {
    "name": "über 1 Mio. €",
@@ -571,7 +646,12 @@
    "anteil_reform_lang": 25.1,
    "summe_heute_mrd": 247.5,
    "summe_reform_mrd": 253,
-   "summe_reform_lang_mrd": 272
+   "summe_reform_lang_mrd": 272,
+   "mehr_prozent": 40.4,
+   "weniger_prozent": 59.6,
+   "weniger_mio": 1.65,
+   "weniger_mittel_monat": 943,
+   "weniger_rentner_mio": 0.57
   }
  ]
 }
