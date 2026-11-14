@@ -381,7 +381,7 @@ let mass = "v";
 function aufbau() {
   const Z = D.aufbau, ziel = $("d7");
   const qH = z => mass === "v" ? z.wachstum_heute : z.sparquote_heute, qR = z => mass === "v" ? z.wachstum_reform : z.sparquote_reform;
-  $("text7").textContent = mass === "v" ? "Um wie viel Prozent das Vermögen der Haushalte im Jahr durch Sparen wächst." : "Wie viel Prozent ihres Einkommens die Haushalte im Jahr sparen.";
+  $("text7").textContent = mass === "v" ? "Um wie viel Prozent das Vermögen der Haushalte im Jahr durch Sparen wächst. Die Zeilen sind die Haushalte nach ihrem Vermögen: Haus, Wohnungen, Geld und Firmen, abzüglich Schulden." : "Wie viel Prozent ihres Einkommens die Haushalte im Jahr sparen. Die Zeilen sind die Haushalte nach ihrem Vermögen: Haus, Wohnungen, Geld und Firmen, abzüglich Schulden.";
   const W = Math.max(320, Math.round(ziel.clientWidth || 800)), eng = W < 600;
   const links = eng ? 150 : 230, rechts = eng ? 8 : 130, zh = eng ? 42 : 34, oben = 26, H = oben + Z.length * zh + 10;
   const werte = Z.flatMap(z => [qH(z), qR(z)]);
@@ -394,6 +394,7 @@ function aufbau() {
     svg.append(el("text", { x: sx(t), y: 12, "text-anchor": "middle", class: "leise" }, (t < 0 ? "−" : "") + Math.abs(t) + " %"));
   }
   if (!eng) svg.append(el("text", { x: W - 4, y: 12, "text-anchor": "end", class: "leise" }, "€ im Monat"));
+  svg.append(el("text", { x: 0, y: 12, class: "leise" }, "Vermögen des Haushalts"));
   Z.forEach((z, k) => {
     const y = oben + k * zh + zh / 2, h = qH(z), r = qR(z), g = el("g");
     g.append(el("rect", { x: 0, y: y - zh / 2, width: W, height: zh, fill: "transparent" }));
