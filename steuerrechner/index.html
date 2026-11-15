@@ -202,6 +202,12 @@ footer .wrap { display: grid; gap: 8px; }
 .qgroups details > p { margin: 8px 0 10px; color: var(--muted); font-size: .92rem; max-width: 70ch; }
 table.q td, table.q th { white-space: normal; vertical-align: top; }
 table.q td:nth-child(2) { white-space: nowrap; font-weight: 600; }
+.qe { display: inline-flex; align-items: center; gap: 4px; }
+.qin { width: 7.5em; padding: 4px 6px; font: inherit; font-weight: 600; text-align: right; border: 1px solid var(--line); border-radius: 6px; background: var(--card, #fff); color: inherit; }
+.qin:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.qu { font-weight: 400; color: var(--muted); font-size: .86rem; }
+.qalt .qback { margin-left: 4px; padding: 0 6px; font-size: .8rem; border: 1px solid var(--line); border-radius: 999px; background: none; color: inherit; cursor: pointer; }
+.qreset { margin: 8px 0 12px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--accent); background: none; color: var(--accent); font: inherit; font-weight: 600; cursor: pointer; }
 table.q td:nth-child(4) { text-align: left; color: var(--muted); font-size: .86rem; min-width: 220px; }
 table.q th:nth-child(3), table.q td:nth-child(3), table.q th:nth-child(4) { text-align: left; }
 a.ql { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
@@ -733,7 +739,8 @@ h1,h2,h3{break-after:avoid}
     </div>
     <ul class="qarten" id="qarten" aria-label="Was die Arten bedeuten"></ul>
     <div class="qfilter" id="qfilter" role="group" aria-label="Nach Art der Zahl filtern"></div>
-    <div class="qgroups" id="qgroups"></div>
+    <button type="button" id="qreset" class="qreset" hidden onclick="for (const k in A0) if (typeof A0[k] === 'number') A[k] = A0[k]; updateAll();"></button>
+<div class="qgroups" id="qgroups"></div>
     <div>
       <h3>Weitere Quellen der Rechnung</h3>
     </div>
@@ -2001,6 +2008,12 @@ function fmtQ(v, u) {
     default: return fmt(v, 2);
   }
 }
+const Q_EINH = { eur: "€", eurm: "€/Monat", mrd: "Mrd. €", mio: "Mio.", pct: "%", pkt: "Punkte", std: "Std.", jahre: "Jahre", eurkg: "€/kg", miot: "Mio. t" };
+const qAnz = (v, u) => u === "pct" ? +(v * 100).toFixed(4) : +v.toFixed(6);
+function qNeu(k) {   // nach einer Änderung alles neu rechnen, Fokus auf der Zeile halten
+  updateAll();
+  const z = document.getElementById("ann-" + k), el = z && z.querySelector(".qin"); if (el) el.focus({ preventScroll: true });
+}
 function renderQuellen() {
   const f = $("qfilter");
   if (!f.childElementCount) {
@@ -2020,7 +2033,10 @@ function renderQuellen() {
     if (!rows.length) return "";
     const tr = rows.map(([k, lbl, typ, anz, her, qu, bu, aktiv, nv, u]) => {
       const geaendert = u && k in A && typeof A[k] === "number" && A[k] !== A0[k];
-      const wert = geaendert ? `${fmtQ(A[k], u)}<small class="qalt">Buch: ${esc(anz)}</small>` : esc(anz);
+      const wert = u && k in A && typeof A[k] === "number"
+        ? `<span class="qe"><input class="qin" type="number" step="any" inputmode="decimal" data-k="${esc(k)}" data-u="${u}" value="${qAnz(A[k], u)}" aria-label="${esc(lbl)}"><span class="qu">${Q_EINH[u] || ""}</span></span>`
+          + (geaendert ? `<small class="qalt">Buch: ${esc(anz)} <button type="button" class="qback" data-k="${esc(k)}">zurück</button></small>` : "")
+        : esc(anz);
       const quellen = qu.length ? `<span class="qk">Quelle:</span> ` + qu.map(([t, url]) => url ? `<a class="ql" href="${esc(url)}" target="_blank" rel="noopener">${esc(t)}</a>` : esc(t)).join("; ") : "";
       const buch = bu.length ? `<span class="qk">Im Buch:</span> ` + bu.map(([st, ti, url]) => `<a class="ql" href="${esc(url)}" target="_blank" rel="noopener" title="${esc(ti)}">${esc(st)}</a>`).join(", ") : "";
       const c10 = C10 && !k.startsWith("San") ? `<a class="ql" href="../buch/stelle.html#ann-${esc(k)}" target="_blank" rel="noopener">Herleitung in Anhang C10</a>` : "";
@@ -2031,6 +2047,13 @@ function renderQuellen() {
     return `<details data-g="${gi}" ${open || qFilter ? "open" : ""}><summary>${esc(g.t)}<small>${rows.length} ${rows.length === 1 ? "Wert" : "Werte"}</small></summary><div class="tbl-wrap"><table class="q"><thead><tr><th>Größe</th><th>Wert</th><th>Art</th><th>Herleitung, Quelle und Stelle im Buch</th></tr></thead><tbody>${tr}</tbody></table></div></details>`;
   }).join("");
   box.querySelectorAll("details").forEach(d => d.addEventListener("toggle", postHeight));
+  box.querySelectorAll(".qin").forEach(el => el.addEventListener("change", () => {
+    const v = parseFloat(String(el.value).replace(",", ".")); if (!isFinite(v)) return;
+    A[el.dataset.k] = el.dataset.u === "pct" ? v / 100 : v; qNeu(el.dataset.k);
+  }));
+  box.querySelectorAll(".qback").forEach(b => b.onclick = () => { A[b.dataset.k] = A0[b.dataset.k]; qNeu(b.dataset.k); });
+  const n = Object.keys(A0).filter(k => typeof A0[k] === "number" && A[k] !== A0[k]).length;
+  $("qreset").hidden = !n; $("qreset").textContent = "Alle Annahmen auf die Werte aus dem Buch zurücksetzen";
   if (ziel && !vorher) { const z = document.getElementById("ann-" + ziel); if (z) setTimeout(() => z.scrollIntoView({ block: "center" }), 50); }
 }
 
@@ -2372,6 +2395,8 @@ document.querySelectorAll(".field .hint").forEach(h => { const f = h.closest(".f
 </script>
 
 <script src="buchlinks.js"></script>
+<script src="../info.js"></script>
+<script src="info-texte.js"></script>
 <script id="druck-js">(() => {
   let alt = null, zu = [];
   addEventListener("beforeprint", () => {
