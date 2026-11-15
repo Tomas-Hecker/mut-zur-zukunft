@@ -64,7 +64,7 @@
   Info.texte("#haushalt", {
     "Weitere Angaben": e("Hier kannst du Selbständigkeit, eine eigene Firma, Rente, Kapitalerträge und Vermögen eintragen. Für die meisten Haushalte reicht der obere Teil."),
     "Heute": e("Was dein Haushalt nach heutigem Recht im Jahr an Steuern und Abgaben zahlt."),
-    "Vorschlag": e("Was dein Haushalt mit der Reform aus dem Buch zahlen würde, mit allen Ausgleichen.", "idee"),
+    "Vorschlag": e("Was dein Haushalt mit der Reform aus dem Buch zahlen würde. Der Balken zeigt die echten Beträge: Prämie der Krankenkasse, Mehrwertsteuer und Ausgabensteuer. Der schraffierte Teil am Ende ist, was du dafür zurückbekommst: höhere Grundsicherung oder Rente, den ausgezahlten Arbeitgeberanteil und den Ausgleich. Unterm Strich bleibt die Zahl links.", "idee"),
     "Differenz": e("Vorschlag minus heute. Ein Minus heißt: du zahlst weniger und hast mehr."),
     "Ergebnis zum Teilen": e("Eine kleine Karte mit deinem Ergebnis, zum Herunterladen oder Weiterschicken. Deine Eingaben werden nirgends gespeichert."),
     "Euro pro Jahr": e("Alle Steuern und Abgaben eines Jahres, heute und im Vorschlag nebeneinander."),
