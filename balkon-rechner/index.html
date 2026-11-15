@@ -238,7 +238,7 @@ const N = 8760; let LAT = 50.219, LON = 8.268;   // mit Postleitzahl vom Wetter 
 /* ---------- Annahmen (Voreinstellung; Quellen unten in QUELLEN) ---------- */
 const V = {
   hh: 2500,
-  wp: 800, wr: 800, azi: "180", neig: "90", schatten: 0, verl: 10, pvKost: 400, montage: 0, pvJahre: 30, deg: 0.25, wrKost: 100, wrJahre: 15,
+  wp: 800, wr: 800, azi: "180", neig: "90", schatten: 0, verl: 10, pvKost: 400, montage: 0, pvJahre: 25, deg: 0.25, wrKost: 100, wrJahre: 15,
   batKwh: 0, batFix: 300, batKwhKost: 200, batWg: 90, batStand: 5, batJahre: 10, steuer: "smart", grund: 150,
   tarif: "fest", fest: 0.32, netz: 0.0867, abg: 0.066, aufs: 0.02, einsp: 0,
   zins: 3, steig: 2, foerd: 0,
@@ -250,7 +250,7 @@ const FELDER = {
     F("azi", "Ausrichtung", "", 0, "", [["180", "Süd"], ["135", "Südost"], ["225", "Südwest"], ["90", "Ost"], ["270", "West"], ["0", "Nord"]]),
     F("neig", "Neigung", "", 0, "", [["90", "senkrecht am Geländer (90°)"], ["70", "leicht schräg (70°)"], ["35", "aufgeständert (35°)"], ["15", "flach (15°)"]]),
     F("schatten", "Verschattung", "%", 5, "Bäume, Nachbarhaus, Balkon darüber"), F("verl", "Verluste", "%", 1, "Wechselrichter, Kabel, Schmutz"),
-    F("pvKost", "Preis des Sets", "€", 10, "zwei Module, Wechselrichter, Kabel: 200 bis 300 €, mit Halterung 300 bis 500 €"), F("montage", "Montage, falls nicht selbst", "€", 10), F("pvJahre", "Lebensdauer der Module", "Jahre", 1, "rund 30 Jahre; beim Umzug kommt die Anlage mit"),
+    F("pvKost", "Preis des Sets", "€", 10, "zwei Module, Wechselrichter, Kabel: 200 bis 300 €, mit Halterung 300 bis 500 €"), F("montage", "Montage, falls nicht selbst", "€", 10), F("pvJahre", "Lebensdauer der Module", "Jahre", 1, "25 Jahre vorsichtig gerechnet, oft halten die Module länger; beim Umzug kommt die Anlage mit"),
     F("deg", "Leistungsverlust der Module", "%/Jahr", 0.05), F("wrKost", "Neuer Wechselrichter", "€", 10), F("wrJahre", "nach", "Jahren", 1)],
   g_bat: [F("batKwh", "Speicher", "kWh", 0.1, "0 = ohne Speicher"), F("batFix", "Preis fest (Gerät ohne Akku)", "€", 10), F("batKwhKost", "Preis je kWh Akku", "€/kWh", 10, "zusammen: Speicher kosten 500 bis 1.000 € Aufpreis"),
     F("batWg", "Wirkungsgrad Laden und Entladen", "%", 1), F("batStand", "Eigenverbrauch des Speichers", "W", 1, "Elektronik im Bereitschaftsbetrieb; eigene Annahme, bitte die Angabe des Herstellers eintragen"), F("batJahre", "Lebensdauer", "Jahre", 1),
@@ -354,7 +354,7 @@ function sim(v, cap, detail) {
   }
   return { cap, G: sG, out: sOut, self: sSelf, bat: sBat, exp: sExp, clip: sClip, standNetz: sStandNetz, spar: euro + euroEx, mon, hs };
 }
-const MT = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31], MS = MT.reduce((a, d, k) => (a.push((k ? a[k - 1] : 0) + d), a), []);
+const MT = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31], MS = MT.reduce((a, d, k) => (a.push((k ? a[k - 1] : 0) + d), a), []);
 const monat = i => { const d = Math.floor(i / 24); let m = 0; while (d >= MS[m] && m < 11) m++; return m; };
 const MN = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
 

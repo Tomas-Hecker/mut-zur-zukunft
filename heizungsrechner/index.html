@@ -289,7 +289,8 @@ h1,h2,h3{break-after:avoid}
     <div class="panel">
       <h2>Was gilt (Stand November 2026)</h2>
       <ul class="src">
-        <li><b>Gebäudemodernisierungsgesetz:</b> Die 65-%-Pflicht ist seit 29.7.2026 gestrichen. Neue Gas- und Ölheizungen sind wieder erlaubt, müssen aber steigende Anteile Biogas, Bioöl oder Wasserstoff nutzen: 10 % ab 2029, 15 % ab 2030, 30 % ab 2035, 60 % ab 2040. <a href="https://reduco.ai/blog/heizungsgesetz-2026-aenderungen" target="_blank" rel="noopener">Überblick</a></li>
+        <li><b>Gebäudemodernisierungsgesetz:</b> Die 65-%-Pflicht ist seit 29.7.2026 gestrichen. Neue Gas- und Ölheizungen sind wieder erlaubt, müssen aber steigende Anteile Biogas, Bioöl oder Wasserstoff nutzen: 10 % ab 2029, 15 % ab 2030, 30 % ab 2035, 60 % ab 2040 (§ 43 GModG). <a href="https://www.gmodg.bund.de/GModG/DE/Home/startseite/GModG_News/GModG_News-node.html" target="_blank" rel="noopener">Bundesregierung</a>, <a href="https://reduco.ai/blog/heizungsgesetz-2026-aenderungen" target="_blank" rel="noopener">Überblick</a></li>
+        <li><b>CO₂ je kWh:</b> Erdgas 0,181 kg je kWh Brennwert (so wird Gas abgerechnet; 0,201 kg je kWh Heizwert), Heizöl 0,266 kg je kWh (Umweltbundesamt).</li>
         <li><b>CO₂-Preis:</b> 2026 und 2027 zwischen 55 und 65 € je Tonne, ab 2028 frühestens der EU-Emissionshandel für Gebäude und Verkehr (ETS2). <a href="https://www.zfk.de/politik/deutschland/co2-preis-2027-einigung-union-spd-behg-ets2" target="_blank" rel="noopener">ZfK</a></li>
         <li><b>Förderung (KfW 458, Richtlinie vom 21.7.2026):</b> 30 % Grundförderung, 16 % Klimageschwindigkeitsbonus beim Tausch einer funktionierenden fossilen Heizung im selbst bewohnten Haus, Einkommensbonus 10 bis 40 % im selbst bewohnten Haus, auch ohne Klimabonus. Höchstens 70 % (80 % bei kleinem Einkommen) von höchstens 28.000 € Kosten. <b>Geplant ab Februar 2027:</b> 15 % Grundförderung und 15 % mehr für Wärmepumpen aus der EU; der Klimabonus sinkt alle sechs Monate um 4 Punkte, von 12 % im Februar 2027 bis 0 im August 2028; förderfähig sind dann höchstens 27.250 €, ab August 2028 25.000 €. Die Deckel von 70 und 80 % bleiben. Quellen: <a href="https://mtf-online.net/wp-content/uploads/2026/07/2026-07-21_Uebersicht_Aenderungen_BEG-EM_Waermepumpe_v2.pdf" target="_blank" rel="noopener">Übersicht der Änderungen BEG EM Wärmepumpe, 21.7.2026</a>, <a href="https://reduco.ai/blog/foerderung/heizungsfoerderung-21-juli-2026-aenderungen" target="_blank" rel="noopener">Überblick</a>; vor dem Antrag bei der KfW prüfen.</li>
         <li>Vorschlag aus dem Buch „Wir können uns die Zukunft leisten“: CO₂-Preis 100 € ab 2028 bis 300 € ab 2040, das Geld fließt als Klimageld an alle zurück (rund 240 € je Person 2030, hier nicht eingerechnet). Dazu ein zinsloses Darlehen für die Wärmepumpe und Strom ohne Netzentgelt in 8 Stunden am Tag.</li>
@@ -342,7 +343,7 @@ function feld(f) {
 try { new URLSearchParams(location.search).forEach((w, k) => { if (k in V) V[k] = typeof V[k] === "number" ? (+w || V[k]) : w; }); } catch (e) {}
 Object.entries(FELDER).forEach(([box, fs]) => fs.forEach(f => $(box).append(feld(f))));
 
-const EF = { gas: 0.201, oel: 0.266 };           // kg CO₂ je kWh
+const EF = { gas: 0.181, oel: 0.266 };           // kg CO₂ je kWh; Gas je kWh Brennwert (0,201 je kWh Heizwert ÷ 1,11), wie abgerechnet
 const co2 = (pfad, j) => { const p = PFAD[pfad].p; if (j <= p[0][0]) return p[0][1]; for (let i = 1; i < p.length; i++) if (j <= p[i][0]) { const [a, pa] = p[i - 1], [b, pb] = p[i]; return pa + (pb - pa) * (j - a) / (b - a); } return p.at(-1)[1]; };
 const bio = j => j >= 2040 ? 0.6 : j >= 2035 ? 0.3 : j >= 2030 ? 0.15 : j >= 2029 ? 0.1 : 0;
 function foerderung(v) {
@@ -352,13 +353,13 @@ function foerderung(v) {
   const satz = Math.min(R[0] + (v.foeEU === "ja" ? R[1] : 0) + (selbst && v.foeBonus === "ja" ? R[2] : 0) + (selbst ? +v.foeEink / 100 : 0), v.foeEink === "40" ? 0.8 : 0.7);
   return { satz, betrag: satz * Math.min(v.wpPreis, R[3]), max: R[3] };
 }
-// Vorschlag aus dem Buch: Strom 5 %, Gas und Öl 50 % Mehrwertsteuer, Dienstleistungen 5 %, Sanierung ohne Mehrwertsteuer.
+// Vorschlag aus dem Buch: Strom 5 % und Stromsteuer auf dem europäischen Mindestmaß, Gas und Öl 50 % Mehrwertsteuer, Dienstleistungen 5 %, Sanierung ohne Mehrwertsteuer.
 // Wärmepumpe: zinsloser Kredit über 20 Jahre, die ersten 3 ohne Tilgung; der Einbau (40 %) zählt zu den Bauteilen.
 // Bauteile (Einbau, Dämmung, Fenster): bezahlt der Staat gegen einen Anteil am Hauswert, abgelöst über 40 Jahre mit der Wertsteigerung.
-const RF = { strom: 1.05 / 1.19, fossil: 1.5 / 1.19, dienst: 1.05 / 1.19, einb: 0.4, mat: 0.5, tilgFrei: 3, lauf: 20, abl: 40 };
+const RF = { stromSt: 0.0205 - 0.001, strom: 1.05 / 1.19, fossil: 1.5 / 1.19, dienst: 1.05 / 1.19, einb: 0.4, mat: 0.5, tilgFrei: 3, lauf: 20, abl: 40 };
 function reformPreise(v) {
   return { ...v, mwstF: 1.5, gasKwh: v.gasKwh * RF.fossil, gasBio: v.gasBio * RF.fossil, gasGrund: v.gasGrund * RF.fossil, oelLiter: v.oelLiter * RF.fossil, oelBio: v.oelBio * RF.fossil,
-    wpStrom: v.wpStrom * RF.strom, wpGrund: v.wpGrund * RF.strom, wpWart: v.wpWart * RF.dienst, gasWart: v.gasWart * RF.dienst, oelWart: v.oelWart * RF.dienst };
+    wpStrom: (v.wpStrom / 1.19 - RF.stromSt) * 1.05, wpGrund: v.wpGrund * RF.strom, wpWart: v.wpWart * RF.dienst, gasWart: v.gasWart * RF.dienst, oelWart: v.oelWart * RF.dienst };
 }
 function bank(P, v) {   // Bankkredit über die Laufzeit, gleiche Raten; ohne Zins: bar beim Kauf
   const N = Math.max(1, Math.round(v.dauer)), z = v.zinsK / 100, a = new Array(N + 1).fill(0);
@@ -424,6 +425,10 @@ const D_U = { 1918: [1.7, 1.4, 2.8, 1.2], 1948: [1.7, 1.4, 2.8, 1.2], 1957: [1.4
 const D_VL = bj => bj <= 1978 ? 65 : bj <= 1994 ? 55 : bj <= 2009 ? 50 : 35;
 const D = { Ziel: { uw: 0.20, ud: 0.14, uf: 0.95, uk: 0.25 }, Preis: { wand: 220, fen: 900, dach: 60, kel: 50 }, HGT: 52, Gewinne: 20, WW: 15, Luft: 0.7, Hoehe: 2.5, WBalt: 0.10, WBneu: 0.05,
   WpKw: 1500, StromCO2: 0.363, Lebensdauer: 40 };
+// CO₂ je kWh Strom: 2024 laut Umweltbundesamt, danach sinkend mit dem Ausbau von Wind und Sonne (eigene Annahme nach den Ausbauzielen)
+const StromCO2P = [[2024, 0.363], [2030, 0.25], [2040, 0.10], [2045, 0.05]];
+const stromCO2 = j => { const p = StromCO2P; if (j <= p[0][0]) return p[0][1]; for (let i = 1; i < p.length; i++) if (j <= p[i][0]) { const [a, pa] = p[i - 1], [b, pb] = p[i]; return pa + (pb - pa) * (j - a) / (b - a); } return p.at(-1)[1]; };
+const stromCO2Mittel = v => { let s = 0; for (let n = 0; n < v.dauer; n++) s += stromCO2(v.jahr + n); return s / Math.max(1, v.dauer); };
 const DV = { bj: 1968, fl: 140, g: 2, mWand: true, mDach: true, mFen: true, mKel: true, foe: 15, hk: true };
 const DAUTO = ["vl0", "uw", "ud", "uf", "uk", "kWand", "kDach", "kFen", "kKel", "kHk"], dHand = new Set();
 function dGeo(fl, g) { g = Math.max(1, Math.round(g)); const G = Math.max(30, fl) / (g * 0.8), umf = 4 * Math.sqrt(G) * 1.1, fass = umf * g * 2.9, af = 0.2 * fl; return { G, af, aw: Math.max(0, fass - af), ad: G, ak: G, ah: fass + 2 * G }; }
@@ -481,7 +486,7 @@ function zeigeDaemmung() {
   const fall = ref => dFall(d, ref);
   const FH = fall(false), FR = fall(true), F0 = V.reform ? FR : FH, { r0, r1, tot, a, b } = F0;
   const s0 = d.w0 / a.jaz, s1 = d.w1 / b.jaz, g0 = r0.kGas, g1 = r1.kGas;
-  const co2 = { wp0: s0 * D.StromCO2 / 1000, wp1: s1 * D.StromCO2 / 1000, gas0: g0 * EF.gas / 1000, gas1: g1 * EF.gas / 1000 };
+  const sc = stromCO2Mittel(V), co2 = { wp0: s0 * sc / 1000, wp1: s1 * sc / 1000, gas0: g0 * EF.gas / 1000, gas1: g1 * EF.gas / 1000 };
   const nm = { wp0: "Wärmepumpe, ohne Dämmung", wp1: "Wärmepumpe mit Dämmung und Fenstern", gas0: "Gasheizung, ohne Dämmung", gas1: "Gasheizung mit Dämmung und Fenstern" };
   const keys = ["wp1", "wp0", "gas1", "gas0"], best = keys.reduce((x, y) => tot[y] < tot[x] ? y : x);
   if (!d.irgend) {
@@ -518,7 +523,7 @@ function zeigeDaemmung() {
     + row("Jahres&shy;arbeits&shy;zahl", [fmt(a.jaz, 1), fmt(b.jaz, 1), "", ""])
     + row("Strom oder Gas im Jahr, kWh", [f100(s0), f100(s1), f100(g0), f100(g1)])
     + row("Strompreis je kWh", [fmt(a.preis * 100, 1) + " ct", fmt(b.preis * 100, 1) + " ct", "", ""])
-    + row("CO₂ im ersten Jahr", ["wp0", "wp1", "gas0", "gas1"].map(k => fmt(co2[k], 1) + " t"))
+    + row("CO₂ im Jahr (Strom im Mittel der Laufzeit)", ["wp0", "wp1", "gas0", "gas1"].map(k => fmt(co2[k], 1) + " t"))
     + row(`Heizung über ${fmt(V.dauer)} Jahre`, [eur(r0.tot.wp), eur(r1.tot.wp), eur(r0.tot.gas), eur(r1.tot.gas)])
     + row("Dämmung und Fenster", ["", eur(d.kosten), "", eur(d.kosten)])
     + (V.reform ? row("ohne Mehrwertsteuer, Arbeit 5 %", ["", "−" + eur(d.kosten - F0.Bn), "", "−" + eur(d.kosten - F0.Bn)]) + row("Ablösung des Anteils mit Wertsteigerung", ["", "+" + eur(F0.zahl - F0.Bn), "", "+" + eur(F0.zahl - F0.Bn)])
@@ -526,7 +531,7 @@ function zeigeDaemmung() {
     + row(`Restwert nach ${fmt(V.dauer)} Jahren, mit Wertsteigerung`, ["", "−" + eur(d.rest), "", "−" + eur(d.rest)])
     + row("Zusammen", ["wp0", "wp1", "gas0", "gas1"].map(k => eur(tot[k])), "sum") + "</tbody>";
   $("d_note").innerHTML = `Die Dämmung senkt den Wärmebedarf; die alten Heizkörper reichen dann mit niedrigerer Vorlauftemperatur. Das hebt die Jahresarbeitszahl. ${V.wpTarif === "dyn" ? `Im dynamischen Tarif kann ein gedämmtes Haus mehr Wärme in billige Stunden verschieben, der Strom kostet dann im Schnitt ${fmt(b.preis * 100, 1)} statt ${fmt(a.preis * 100, 1)} ct.` : "Mit dem dynamischen Tarif (oben bei der Wärmepumpe einstellbar) verschiebt ein gedämmtes Haus mehr Wärme in billige Stunden."} `
-    + `Die kleinere Wärmepumpe kostet geschätzt ${eur(d.wpKleiner)} weniger.${d.hk0 && !d.hk1 ? ` Ohne Dämmung braucht die Wärmepumpe größere Heizkörper für ${eur(d.hk0)}, mit Dämmung nicht; auch das zählt für die Dämmung.` : ""} Dämmung hält rund ${D.Lebensdauer} Jahre; der Rest zählt als Restwert. CO₂ des Stroms: Strommix 2024 mit 363 g je kWh (Umweltbundesamt, Schätzung vom 9.4.2025); er sinkt mit jedem Jahr mehr Wind und Sonne. Die Jahresarbeitszahl stammt aus deiner Angabe oben, geändert nach dem Stundenmodell des Energie-Rechners (Luft-Wasser-Wärmepumpe, Wetterjahr Idstein). Grobe Schätzung; ein Energieberater rechnet genauer. Wie Mieter und Vermieter mit der Reform aus dem Buch dabei stehen, zeigt der <a href="../steuerrechner/#sanierung">Steuerrechner</a>.`;
+    + `Die kleinere Wärmepumpe kostet geschätzt ${eur(d.wpKleiner)} weniger.${d.hk0 && !d.hk1 ? ` Ohne Dämmung braucht die Wärmepumpe größere Heizkörper für ${eur(d.hk0)}, mit Dämmung nicht; auch das zählt für die Dämmung.` : ""} Dämmung hält rund ${D.Lebensdauer} Jahre; der Rest zählt als Restwert. CO₂ des Stroms: Strommix 2024 mit 363 g je kWh (Umweltbundesamt, Schätzung vom 9.4.2025), danach sinkend auf 250 g 2030 und 100 g 2040 (eigene Annahme nach den Ausbauzielen für Wind und Sonne); gerechnet ist das Mittel über ${fmt(V.dauer)} Jahre, ${fmt(sc * 1000)} g je kWh. Die Jahresarbeitszahl stammt aus deiner Angabe oben, geändert nach dem Stundenmodell des Energie-Rechners (Luft-Wasser-Wärmepumpe, Wetterjahr Idstein). Grobe Schätzung; ein Energieberater rechnet genauer. Wie Mieter und Vermieter mit der Reform aus dem Buch dabei stehen, zeigt der <a href="../steuerrechner/#sanierung">Steuerrechner</a>.`;
   const q = new URLSearchParams({ waerme: Math.round(d.w1), vl: Math.round(d.vl1) }); if (PLZ) q.set("plz", PLZ);
   $("d_link").innerHTML = `Stundengenau mit Solarstrom, Speicher und E-Auto: <a href="../energie-rechner/?${q}">im Energie-Rechner mit dem gedämmten Haus weiterrechnen</a>.`;
 }
@@ -623,13 +628,13 @@ function drawCum(r) {
 ["auto", "ets", "mzz"].forEach(p => $("p_" + p).onclick = () => { V.pfadWahl = p; ["auto", "ets", "mzz"].forEach(q => $("p_" + q).setAttribute("aria-pressed", q === p)); run(); });
 /* Ort nach Postleitzahl: mittlere Temperatur der Heizzeit und Vorschlag für die Jahresarbeitszahl nach dem Wetter des Orts */
 let PLZ = "";
-const BH0 = { ...BH }, JAZ0 = V.wpJaz;
+const BH0 = { ...BH }, JAZ0 = V.wpJaz, HGT0 = D.HGT;
 let jazEigen = new URLSearchParams(location.search).has("wpJaz");   // vom Energie-Rechner übernommen oder selbst eingetragen: bleibt
 document.addEventListener("input", e => { if (e.target && e.target.id === "i_wpJaz") jazEigen = true; });
 async function ortLaden(p) {
   const i = await Ort.info(p); if (!i) return null;
   const b = await Ort.bezug(); PLZ = p;
-  BH.teMittel = BH0.teMittel + (i.th - b.th);
+  BH.teMittel = BH0.teMittel + (i.th - b.th); D.HGT = HGT0 * (20 - i.th) / (20 - b.th);
   if (!jazEigen) { V.wpJaz = Math.round(JAZ0 * i.jf * 10) / 10; const el = $("i_wpJaz"); if (el) el.value = V.wpJaz; }
   $("ort_note").textContent = `Jahresarbeitszahl ${fmt(V.wpJaz, 1)}${jazEigen ? " (deine Angabe)" : ` (für ${i.n} geschätzt: ${fmt(JAZ0, 1)} × ${fmt(i.jf, 2)}, gerechnet wie im Energie-Rechner mit dem Wetter des Orts)`}. `
     + `Mittel der Außentemperatur in der Heizzeit ${fmt(i.th, 1)} °C (Idstein ${fmt(b.th, 1)} °C). Wetter: PVGIS 5.3, © Europäische Union, CC BY 4.0.`;
