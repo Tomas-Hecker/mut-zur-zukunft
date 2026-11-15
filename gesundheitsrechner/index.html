@@ -113,6 +113,14 @@ details > summary { cursor: pointer; font-weight: 700 }
 .studie .fund { font-size: 13.5px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 6px; margin-top: 2px }
 .ampel { display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px }
 .ampel span { border-radius: 999px; padding: 3px 10px; background: var(--field); border: 1px solid var(--line) }
+.bonus { border: 2px solid var(--ok); border-radius: 10px; padding: 12px 14px; display: grid; gap: 8px }
+.bonus .kopf { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px }
+.bonus .kopf .v { font: 800 24px/1.15 var(--display); color: var(--ok) }
+.bonus ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 14.5px }
+.bonus li { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 8px; align-items: baseline }
+.bonus li b.e { font-variant-numeric: tabular-nums }
+.bonus .ja { color: var(--good) } .bonus .nein { color: var(--muted) }
+details.grp > summary { font-size: 14.5px }
 [hidden] { display: none !important }
 </style>
 <style id="sitenav-css">
@@ -213,6 +221,15 @@ h1,h2,h3{break-after:avoid}
       </div>
       <div class="presets"><span>Beispiele:</span><button type="button" data-p="gesund">Gesund</button><button type="button" data-p="bauch">Bauch, Zucker noch normal</button><button type="button" data-p="prae">Vorstufe Diabetes</button><button type="button" data-p="dm">Diabetes, schlecht eingestellt</button></div>
       <p class="note">So misst du den Bauchumfang: im Stehen, nach dem Ausatmen, mit dem Maßband waagerecht in der Mitte zwischen unterster Rippe und Hüftknochen (meist knapp über dem Bauchnabel). Faustregel: Der Bauchumfang sollte weniger als die Hälfte der Körpergröße sein.</p>
+      <details class="grp" id="bonusfelder">
+        <summary>Gesundheitsbonus: deine Werte vor einem Jahr (freiwillig)</summary>
+        <p class="note">Der Bonus aus dem Buch belohnt nicht nur gesunde Werte, sondern auch Fortschritte. Trag ein, was du vor einem Jahr hattest, dann sieht der Rechner, ob du dich verbessert hast. Leer lassen geht auch.</p>
+        <div class="row2">
+          <div class="f"><label for="i_bauchVor">Bauchumfang vor einem Jahr</label><div class="in"><input id="i_bauchVor" type="number" inputmode="decimal" step="1" min="0" placeholder="leer"><span class="u">cm</span></div></div>
+          <div class="f"><label for="i_hbVor">Langzeitzucker vor einem Jahr</label><div class="in"><input id="i_hbVor" type="number" inputmode="decimal" step="0.1" min="0" placeholder="leer"><span class="u" id="u_hbVor">%</span></div></div>
+        </div>
+        <div class="chk"><input type="checkbox" id="i_leben"> <label for="i_leben">Ich gehe zur Vorsorge, rauche nicht und bewege mich regelmäßig</label></div>
+      </details>
     </div>
 
     <div class="panel">
@@ -221,6 +238,7 @@ h1,h2,h3{break-after:avoid}
       <div class="tiles" id="tiles"></div>
       <div class="tbl"><table id="t_kosten"></table></div>
       <p class="note" id="n_kosten"></p>
+      <div class="bonus" id="bonus"></div>
     </div>
   </div>
 
@@ -404,7 +422,7 @@ const ALLE = { kasse: 35, gesellschaft: 75 }; // Mrd. € im Jahr bei voller Wir
 const EINW = 83.5e6, LEBEN = 81;
 
 // ---------- Eingaben ----------
-const V = { sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, einheit: "pct", dm: false };
+const V = { sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, einheit: "pct", dm: false, bauchVor: 0, hbVor: 0, leben: false };
 const FELD = [["alter", "Alter", "Jahre", 1, 18, 95], ["groesse", "Körpergröße", "cm", 1, 120, 220], ["bauch", "Bauchumfang", "cm", 1, 50, 200]];
 FELD.forEach(([k, l, u, st, mi, ma]) => {
   const d = document.createElement("div"); d.className = "f";
@@ -416,7 +434,12 @@ FELD.forEach(([k, l, u, st, mi, ma]) => {
 const mmol = p => (p - 2.15) * 10.929, pct = m => m / 10.929 + 2.15;
 function zeigeHb() { $("i_hba1c").value = V.einheit === "pct" ? fmt(V.hba1c, 1).replace(",", ".") : Math.round(mmol(V.hba1c)); $("i_hba1c").step = V.einheit === "pct" ? 0.1 : 1; }
 $("i_hba1c").addEventListener("input", e => { const x = +e.target.value; if (x) { V.hba1c = V.einheit === "pct" ? x : pct(x); run(); } });
-$("i_einheit").addEventListener("change", e => { V.einheit = e.target.value; zeigeHb(); });
+$("i_einheit").addEventListener("change", e => { V.einheit = e.target.value; zeigeHb(); zeigeHbVor(); run(); });
+function zeigeHbVor() { $("u_hbVor").textContent = V.einheit === "pct" ? "%" : "mmol/mol"; $("i_hbVor").step = V.einheit === "pct" ? 0.1 : 1;
+  $("i_hbVor").value = V.hbVor ? (V.einheit === "pct" ? fmt(V.hbVor, 1).replace(",", ".") : Math.round(mmol(V.hbVor))) : ""; }
+$("i_bauchVor").addEventListener("input", e => { V.bauchVor = +e.target.value || 0; run(); });
+$("i_hbVor").addEventListener("input", e => { const x = +e.target.value; V.hbVor = x ? (V.einheit === "pct" ? x : pct(x)) : 0; run(); });
+$("i_leben").addEventListener("change", e => { V.leben = e.target.checked; run(); });
 $("i_dm").addEventListener("change", e => { V.dm = e.target.checked; run(); });
 function setSex(s) { V.sex = s; $("s_m").setAttribute("aria-pressed", s === "m"); $("s_f").setAttribute("aria-pressed", s === "f"); run(); }
 $("s_m").onclick = () => setSex("m"); $("s_f").onclick = () => setSex("f");
@@ -561,8 +584,32 @@ function run() {
     xl: "Langzeitzucker HbA1c in %", zones: [[4.5, 5.7, "--z1"], [5.7, 6.5, "--z2"], [6.5, 11, "--z3"]], band: hb, lines: [{ p: hs, c: "--risk" }],
     dot: [r.h, meG.yll, `Du: ${jahre(meG.yll)}`] });
   rechenweg(r, lo, hi);
+  zeigeBonus();
   lg($("lg_g"), [["--risk", "Jahre weniger (mittlere Schätzung)"], ["--band", "Spanne der Studien", "sq"], ["--z1", "normal", "sq"], ["--z2", "Vorstufe", "sq"], ["--z3", "Diabetes", "sq"]]);
   zucker();
+}
+
+// ---------- Gesundheitsbonus (Vorschlag, Kapitel 5): bis 600 € im Jahr, je 200 € für drei Ziele ----------
+// Ziel erreicht, wenn der Wert gesund ist ODER sich im letzten Jahr deutlich verbessert hat.
+const BONUS = { teil: 200, hbGesund: 5.7, hbBesser: 0.5, wGesund: 0.5, bauchBesser: 3 };
+function bonus(p) {
+  const w = p.bauch / p.groesse, z = [];
+  const hbG = !p.dm && p.hba1c < BONUS.hbGesund, hbB = p.hbVor > 0 && p.hbVor - p.hba1c >= BONUS.hbBesser - 1e-9;
+  z.push({ n: "Langzeitzucker", ok: hbG || hbB,
+    warum: hbG ? `gesund (${fmt(p.hba1c, 1)} % liegt unter 5,7 %)` : hbB ? `Fortschritt: ${fmt(p.hbVor - p.hba1c, 1)} Prozentpunkte weniger als vor einem Jahr` :
+      `noch nicht: unter 5,7 % oder mindestens 0,5 Prozentpunkte weniger als vor einem Jahr${p.hbVor ? "" : " (Wert vor einem Jahr eintragen)"}` });
+  const wG = w < BONUS.wGesund, wB = p.bauchVor > 0 && p.bauchVor - p.bauch >= BONUS.bauchBesser - 1e-9;
+  z.push({ n: "Bauchumfang", ok: wG || wB,
+    warum: wG ? `gesund (unter der halben Körpergröße, ${fmt(p.groesse / 2)} cm)` : wB ? `Fortschritt: ${fmt(p.bauchVor - p.bauch)} cm weniger als vor einem Jahr` :
+      `noch nicht: unter ${fmt(p.groesse / 2)} cm oder mindestens 3 cm weniger als vor einem Jahr${p.bauchVor ? "" : " (Wert vor einem Jahr eintragen)"}` });
+  z.push({ n: "Vorsorge, Nichtrauchen, Bewegung", ok: p.leben, warum: p.leben ? "Ziel erreicht" : "noch nicht: Haken setzen, wenn du das machst" });
+  return { z, summe: z.filter(x => x.ok).length * BONUS.teil };
+}
+function zeigeBonus() {
+  const b = bonus(V), fehlt = 3 * BONUS.teil - b.summe;
+  $("bonus").innerHTML = `<div class="kopf"><span class="k" style="font-weight:700">Dein Gesundheitsbonus im Jahr</span><span class="v">${fmt(b.summe)} € von 600 €</span></div>
+    <ul>${b.z.map(x => `<li><span class="${x.ok ? "ja" : "nein"}">${x.ok ? "✓" : "○"}</span><span><b>${x.n}:</b> ${x.warum}</span><b class="e ${x.ok ? "ja" : "nein"}">${x.ok ? "200 €" : "0 €"}</b></li>`).join("")}</ul>
+    <p class="note">${fehlt ? `Noch ${fmt(fehlt)} € im Jahr möglich. Wer gesund ist, bekommt den Bonus, und wer krank ist und Fortschritte macht, bekommt ihn genauso.` : "Du bekommst den vollen Bonus. 600 € sind so viel wie die ganze Prämie der Krankenkasse im Vorschlag des Buchs."} Der Messwert bleibt beim Arzt, die Kasse erfährt nur, ob das Ziel erreicht ist. Wer wegen Typ-1-Diabetes oder Veranlagung ein Ziel nicht schaffen kann, bekommt den Teil für die Teilnahme an einem Programm.</p>`;
 }
 
 // ---------- Rechenweg mit den eigenen Zahlen ----------
@@ -648,6 +695,9 @@ Info.felder({
   hba1c: ["Der Langzeitzucker zeigt, wie hoch dein Blutzucker in den letzten 2 bis 3 Monaten im Schnitt war. Zucker im Blut bleibt am roten Blutfarbstoff haften; der HbA1c misst, wie viel davon „verzuckert“ ist.<br><b>Unter 5,7 %</b> normal · <b>5,7 bis 6,4 %</b> Vorstufe · <b>ab 6,5 %</b> Diabetes. Im Laborbefund steht er in % oder in mmol/mol (39 mmol/mol = 5,7 %)."],
   i_dm: ["Wer Medikamente nimmt, hat oft einen guten Wert, obwohl der Diabetes da ist. Setze dann den Haken: Der Rechner rechnet mit dem Risiko eines Diabetes und deinem Wert unter Behandlung."],
   r_g: ["Wie viel weniger Zucker die Menschen im Schnitt essen, wenn auf jeden zugesetzten Zucker eine Abgabe kommt. Heute sind es rund 90 g am Tag. Die Limonaden-Abgabe allein spart 2,3 g. Mit 12 g ist etwa ein Achtel weniger gemeint. Der Rechner rechnet das Limonaden-Ergebnis im gleichen Verhältnis hoch.", ...K5],
+  bauchVor: ["Für den Gesundheitsbonus: Wer seinen Bauchumfang in einem Jahr um mindestens 3 cm verringert, bekommt den Bauch-Teil des Bonus, auch wenn er noch nicht im gesunden Bereich ist.", ...K5],
+  hbVor: ["Für den Gesundheitsbonus: Wer seinen Langzeitzucker in einem Jahr um mindestens 0,5 Prozentpunkte senkt (z. B. von 7,5 auf 7,0 %), bekommt den Zucker-Teil des Bonus, auch mit Diabetes.", ...K5],
+  i_leben: ["Der dritte Teil des Bonus: regelmäßig zur Vorsorge gehen, nicht rauchen und sich bewegen. Nachgewiesen wird das wie bei den Bonusprogrammen, die es heute schon gibt.", ...K5],
   r_r: ["Diabetes, Herzinfarkt und Schlaganfall entstehen über viele Jahre. Wer heute weniger Zucker isst, wird vor allem in 10 bis 30 Jahren gesünder sein. Der Rechner lässt die Wirkung deshalb langsam anwachsen."],
 });
 Info.texte(".main", {
@@ -660,6 +710,7 @@ Info.texte(".main", {
   "Wirtschaft: Krankheitstage": ["Wer krank ist, fehlt bei der Arbeit oder geht früher in Rente. Dann fehlt seine Arbeit, und es fehlen Steuern und Beiträge. Gerechnet bis zum Alter 67."],
   "Wirtschaft: Arbeitsjahre": ["Wer vor 67 stirbt, kann in den fehlenden Jahren nicht mehr arbeiten. Der Rechner setzt dafür 45.000 € Wirtschaftsleistung je Jahr an, gewichtet mit der Wahrscheinlichkeit, dass es dazu kommt."],
   "Gesellschaft zusammen": ["Krankenkasse und Wirtschaft zusammen: das, was uns allen fehlt."],
+  "Dein Gesundheitsbonus": ["Vorschlag aus dem Buch: Die Abgabe auf Zucker fließt als Bonus an die Versicherten zurück, bis zu 600 € im Jahr. Der Rechner teilt ihn in drei gleiche Teile zu je 200 €: Langzeitzucker, Bauchumfang sowie Vorsorge, Nichtrauchen und Bewegung. Jeden Teil bekommt, wer gesund ist oder sich im letzten Jahr deutlich verbessert hat. Die genaue Aufteilung ist ein Vorschlag.", ...K5],
   "Gegenrechnung": ["Ehrlich gerechnet: Wer früher stirbt, verursacht in den verlorenen Jahren keine Gesundheitskosten mehr. Für die Kasse gleicht sich das teilweise aus. Für die Menschen nicht: Ihnen fehlen Lebensjahre."],
 });
 Info.texte("#zucker", {
