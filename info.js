@@ -70,7 +70,7 @@
     const keys = Object.keys(map).sort((a, b) => b.length - a.length);
     const setze = () => {
       [...(box.matches(SEL) ? [box] : []), ...box.querySelectorAll(SEL)].forEach(el => {
-        if (el.querySelector(":scope > .ib")) return;
+        if (el.querySelector(":scope > .ib") || el.closest("[data-noinfo], .sb")) return;
         const t = text(el); if (!t) return;
         const k = keys.find(k => t.startsWith(k)); if (k === undefined) return;
         // in eine <b>/<span>-Überschrift einer Kachel hinein, sonst ans Ende

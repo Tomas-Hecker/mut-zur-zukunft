@@ -9,3 +9,11 @@ if 'src="../info.js"' not in s:
     s = s.replace(a, a + '\n<script src="../info.js"></script>\n<script src="info-texte.js"></script>')
     open(p, 'w', encoding='utf-8').write(s)
     print('Info-Knöpfe eingebunden')
+
+# Hinweis unter der Tabelle „Euro pro Jahr“: sie rechnet anders als das Säulenbild darüber
+s = open(p, encoding='utf-8').read()
+a = '<div class="tbl-wrap"><table id="hhTable"></table></div>'
+if 'id="hhHinweis"' not in s and s.count(a) == 1:
+    s = s.replace(a, a + '\n        <p class="note" id="hhHinweis">Die Tabelle vergleicht bei gleichen Ausgaben in Euro: Heute und mit der Reform gibst du gleich viel Geld aus. Das Säulenbild darüber rechnet bei gleichem Einkauf wie heute, dann steigen mit der Reform die Preise und die Mehrwertsteuer. Deshalb weichen die Zahlen etwas ab. Das Ergebnis ganz oben rechnet wie das Säulenbild.</p>')
+    open(p, 'w', encoding='utf-8').write(s)
+    print('Hinweis unter der Tabelle')
