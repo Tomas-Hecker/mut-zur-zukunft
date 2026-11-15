@@ -21,7 +21,7 @@
   }
   const quelle = i => `Wetter für den Postleitzahlbereich ${i.bereich}.. (${i.n}, ${String(i.lat).replace(".", ",")}° N, ${String(i.lon).replace(".", ",")}° O, ${i.z} m): `
     + `typisches meteorologisches Jahr aus PVGIS 5.3 der Europäischen Kommission, Strahlung SARAH-3 und Wetter ERA5 2005 bis 2023, © Europäische Union, CC BY 4.0. `
-    + `Lage des Bereichs aus Ortskoordinaten von GeoNames (CC BY 4.0). Zeit von UTC auf MEZ umgerechnet.`;
+    + `Gerechnet für den größten Ort des Bereichs, Koordinaten von GeoNames (CC BY 4.0). Zeit von UTC auf MEZ umgerechnet.`;
   // Eingabefeld: ruft beimLaden(plz) auf, sobald fünf Ziffern da sind; merkt sich die PLZ im Link (?plz=)
   function feld(box, beimLaden, text) {
     if (!document.getElementById("plzstil")) document.head.insertAdjacentHTML("beforeend", '<style id="plzstil">.plzfeld{grid-column:1/-1}.plzfeld .in{max-width:12em}.plzfeld small{white-space:normal!important;overflow:visible!important}</style>');
@@ -37,7 +37,7 @@
       try {
         const r = await beimLaden(p);
         if (!r) { st.textContent = "Diese Postleitzahl kenne ich nicht."; return; }
-        st.textContent = `Wetter für die Postleitzahlen ${r.bereich}.., Mitte des Bereichs bei ${r.n} (${r.z} m)`;
+        st.textContent = `Wetter von ${r.n} (${r.z} m) für die Postleitzahlen ${r.bereich}..`;
         try { const u = new URL(location.href); u.searchParams.set("plz", p); history.replaceState(null, "", u); } catch (e) {}
       } catch (e) { st.textContent = "Das Wetter ließ sich nicht laden."; zuletzt = ""; }
     };

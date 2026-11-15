@@ -3,6 +3,8 @@
 (Europäische Kommission, JRC; © Europäische Union, CC BY 4.0) und schreibt es nach wetter/<bereich>.json.
 Aufruf: python3 werkzeug/wetter-laden.py <regionen.json> <cache-ordner> [ziel-ordner]
 regionen.json: {"653": {"n": "Eltville am Rhein", "lat": 50.04, "lon": 8.06}, ...}
+Lage je Bereich: der größte Ort (Einwohner nach GeoNames cities500, CC BY 4.0), nicht der Mittelpunkt,
+damit Bereiche in den Bergen nicht auf einem Gipfel liegen.
 Format je Bereich wie das eingebaute Wetter der Energie-Rechner: Stunde für Stunde in MEZ,
 t in Zehntel °C, rh in %, g (Global) und d (Diffus) waagrecht in W/m²."""
 import json, os, sys, time, urllib.request, concurrent.futures as cf

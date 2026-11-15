@@ -210,6 +210,7 @@ h1,h2,h3{break-after:avoid}
         <li><b>Arbeitsweg:</b> 0,03 % des (geminderten) Listenpreises je Entfernungskilometer und Monat, oder 0,002 % je Fahrt, höchstens 180 Fahrten im Jahr (§ 8 Abs. 2 EStG).</li>
         <li><b>Laden beim Arbeitgeber</b> ist steuerfrei (§ 3 Nr. 46 EStG), ebenso der Ersatz der Stromkosten für das Laden zu Hause (§ 3 Nr. 50 EStG).</li>
         <li>Verbrauch nach Herstellerangabe (WLTP) enthält beim E-Auto keine Ladeverluste. Der Rechner schlägt sie deshalb auf.</li>
+        <li>Im Winter braucht ein E-Auto für Heizung und kalte Batterie rund 15 bis 25 % mehr Strom, in kalten Gegenden und auf Kurzstrecken eher mehr. Wer viel im Winter oder im Gebirge fährt, trägt beim Verbrauch etwas mehr ein als die Herstellerangabe.</li>
         <li>Keine Steuerberatung. Fahrtenbuch, Zuzahlungen, Plug-in-Hybride und Sonderfälle sind nicht abgebildet.</li>
       </ul>
     </div>
@@ -233,7 +234,7 @@ const F = (k, lbl, u, step, sub, sel) => ({ k, lbl, u, step, sub, sel });
 const FELDER = {
   allg: [F("km", "Fahrleistung im Jahr", "km", 500), F("jahre", "Nutzungsdauer", "Jahre", 1, "bis zum Verschrotten oder Verkauf ohne Restwert"), F("kaufjahr", "Kaufjahr", "", 1, "bei Dienstwagen 2025: Grenze 100.000 € erst ab 1.7.2025")],
   g_ice: [F("iPreis", "Anschaffung", "€", 100), F("iVerb", "Verbrauch", "l/100 km", 0.1), F("iSprit", "Spritpreis", "€/l", 0.01), F("iSteuer", "Kfz-Steuer", "€/Jahr", 10), F("iVers", "Versicherung", "€/Jahr", 10), F("iWart", "Wartung und Reparaturen", "€/Jahr", 10)],
-  g_ev: [F("ePreis", "Anschaffung", "€", 100), F("eVerb", "Verbrauch (Herstellerangabe)", "kWh/100 km", 0.1), F("eVerlust", "Ladeverluste", "%", 1, "typisch 10 bis 15 %"),
+  g_ev: [F("ePreis", "Anschaffung", "€", 100), F("eVerb", "Verbrauch (Herstellerangabe)", "kWh/100 km", 0.1, "im Winter rund 15 bis 25 % mehr"), F("eVerlust", "Ladeverluste", "%", 1, "typisch 10 bis 15 %"),
     F("eHaus", "Strompreis zu Hause", "€/kWh", 0.01), F("eOff", "Strompreis unterwegs", "€/kWh", 0.01), F("eAnteil", "Anteil Laden zu Hause", "%", 5),
     F("eVers", "Versicherung", "€/Jahr", 10), F("eWart", "Wartung und Reparaturen", "€/Jahr", 10), F("eSteuerNach", "Kfz-Steuer nach der Befreiung", "€/Jahr", 5, "nach Gewicht, halbiert; meist 30 bis 100 €"), F("eWallbox", "Wallbox (einmalig)", "€", 100, "0, wenn schon vorhanden")],
   dw: [F("methode", "Arbeitsweg", "", 0, "", [["pausch", "0,03 % pauschal"], ["einzel", "0,002 % je Fahrt"]]), F("entf", "Entfernung zur Arbeit (einfach)", "km", 1), F("fahrten", "Fahrten zur Arbeit im Jahr", "", 1, "nur bei 0,002 % je Fahrt, höchstens 180"),

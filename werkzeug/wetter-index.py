@@ -5,7 +5,11 @@
      gerechnet wie im Energie-Rechner (Wärme 15.000 kWh, davon 2.500 Warmwasser, Vorlauf 45 °C, Heizgrenze 15 °C)
 Die Auslegungstemperatur bleibt überall −12 °C wie im Energie-Rechner: Ein typisches meteorologisches Jahr enthält
 bewusst keine Extreme, seine kältesten Tage taugen deshalb nicht für die Norm-Außentemperatur.
-Bezug: das Wetterjahr Idstein, das im Energie-Rechner eingebaut ist und mit dem die Rechner ohne Postleitzahl rechnen.
+Ein einzelnes typisches Jahr ist verrauscht (die Monate werden aus verschiedenen Jahren gewählt, Nachbarbereiche
+weichen deshalb um bis zu 1,5 K ab). Deshalb geglättet: th = Höhengradient (Ausgleich über alle Bereiche) plus
+Rest, der Rest gemittelt über die Nachbarbereiche (Gauß, 25 km). jf kommt aus dem Ausgleich JAZ ~ th über alle
+Bereiche, bezogen auf den Bereich 655 (Idstein), und ist auf 0,05 gerundet. So bekommt Idstein mit und ohne
+Postleitzahl dieselbe Jahresarbeitszahl.
 Aufruf: python3 werkzeug/wetter-index.py [wetter-ordner]"""
 import json, math, os, sys
 ORD = sys.argv[1] if len(sys.argv) > 1 else 'wetter'
@@ -32,14 +36,27 @@ B = {k: v for k, v in json.load(open(os.path.join(ORD, 'bereiche.json'), encodin
 T = {}
 for b in B:
     T[b] = [x / 10 for x in json.load(open(os.path.join(ORD, b + '.json')))['t']]
-_s = open('energie-rechner/index.html', encoding='utf-8').read(); _i = _s.index('const D = ') + 10
-TB = [x / 10 for x in json.loads(_s[_i:_s.index(';\n', _i)])['t']]
-j0, th0 = kennzahlen(TB)
-for b in B:
-    jaz, th = kennzahlen(T[b])
-    B[b].pop('tk', None); B[b].update(th=round(th, 1), jaz=round(jaz, 3))
-for b in B: B[b]['jf'] = round(B[b].pop('jaz') / j0, 3)
-B['_bezug'] = {'n': 'Idstein', 'th': round(th0, 1), 'jaz': round(j0, 3)}
+BEZUG = '655'   # Idstein
+roh = {b: kennzahlen(T[b]) for b in B}   # (jaz, th)
+def ausgleich(xs, ys):
+    n = len(xs); mx = sum(xs) / n; my = sum(ys) / n
+    k = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs); return my - k * mx, k
+L = list(B)
+a, k = ausgleich([B[b]['z'] for b in L], [roh[b][1] for b in L])           # th über Höhe
+rest = {b: roh[b][1] - (a + k * B[b]['z']) for b in L}
+def km(p, q):
+    return math.hypot((B[p]['lat'] - B[q]['lat']) * 111.2, (B[p]['lon'] - B[q]['lon']) * 111.2 * math.cos(math.radians(B[p]['lat'])))
+th = {}
+for b in L:
+    w = [(math.exp(-(km(b, q) / 25) ** 2 / 2), q) for q in L]; w = [(g, q) for g, q in w if g > 0.01]
+    th[b] = a + k * B[b]['z'] + sum(g * rest[q] for g, q in w) / sum(g for g, _ in w)
+aj, kj = ausgleich([roh[b][1] for b in L], [roh[b][0] for b in L])          # JAZ über th
+jaz = lambda t: aj + kj * t
+for b in L:
+    B[b].pop('tk', None); B[b].pop('jaz', None)
+    B[b]['th'] = round(th[b], 1); B[b]['jf'] = round(round(jaz(th[b]) / jaz(th[BEZUG]) / 0.05) * 0.05, 2)
+B['_bezug'] = {'n': 'Idstein', 'bereich': BEZUG, 'th': B[BEZUG]['th'], 'jaz': round(jaz(th[BEZUG]), 3)}
+print(f'Höhengradient {k*1000:.2f} K/1000 m, JAZ = {aj:.3f} + {kj:.3f} · th')
 json.dump(B, open(os.path.join(ORD, 'bereiche.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
-v = sorted((B[b]['jf'], b, B[b]['n']) for b in B if not b.startswith('_'))
+v = sorted((B[b]['jf'], b, B[b]['n']) for b in L)
 print('Bezug', B['_bezug'], 'jf von', v[0], 'bis', v[-1])

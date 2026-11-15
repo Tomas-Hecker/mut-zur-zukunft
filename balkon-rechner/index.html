@@ -491,7 +491,7 @@ async function ortLaden(p) {
   LAT = w.lat; LON = w.lon; SONNE = null; for (const k in PVC) delete PVC[k];
   W.t = Float64Array.from(w.t); W.g = Float64Array.from(w.g); W.d = Float64Array.from(w.d);
   document.querySelectorAll(".ortname").forEach(e => e.textContent = "Raum " + w.n);
-  const q = $("wetterquelle"); if (q) q.textContent = `Postleitzahlbereich ${w.bereich}.. (${w.n}, ${fmt(w.lat, 2)}° N, ${fmt(w.lon, 2)}° O, ${w.z} m), Lage aus Ortskoordinaten von GeoNames (CC BY 4.0).`;
+  const q = $("wetterquelle"); if (q) q.textContent = `Postleitzahlbereich ${w.bereich}.. (${w.n}, ${fmt(w.lat, 2)}° N, ${fmt(w.lon, 2)}° O, ${w.z} m), größter Ort des Bereichs, Koordinaten von GeoNames (CC BY 4.0).`;
   run(); return w;
 }
 Ort.feld($("g_ort"), ortLaden, "Gib deine Postleitzahl ein, dann rechnet der Rechner mit dem Wetter deines Orts. Ohne: Idstein.");
