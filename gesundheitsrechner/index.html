@@ -589,9 +589,9 @@ function run() {
   zucker();
 }
 
-// ---------- Gesundheitsbonus (Vorschlag, Kapitel 5): bis 600 € im Jahr, je 200 € für drei Ziele ----------
+// ---------- Gesundheitsbonus (Vorschlag, Kapitel 5): bis 480 € im Jahr (= Prämie 40 € im Monat), je 160 € für drei Ziele ----------
 // Ziel erreicht, wenn der Wert gesund ist ODER sich im letzten Jahr deutlich verbessert hat.
-const BONUS = { teil: 200, hbGesund: 5.7, hbBesser: 0.5, wGesund: 0.5, bauchBesser: 3 };
+const BONUS = { teil: 160, hbGesund: 5.7, hbBesser: 0.5, wGesund: 0.5, bauchBesser: 3 };
 function bonus(p) {
   const w = p.bauch / p.groesse, z = [];
   const hbG = !p.dm && p.hba1c < BONUS.hbGesund, hbB = p.hbVor > 0 && p.hbVor - p.hba1c >= BONUS.hbBesser - 1e-9;
@@ -607,9 +607,9 @@ function bonus(p) {
 }
 function zeigeBonus() {
   const b = bonus(V), fehlt = 3 * BONUS.teil - b.summe;
-  $("bonus").innerHTML = `<div class="kopf"><span class="k" style="font-weight:700">Dein Gesundheitsbonus im Jahr</span><span class="v">${fmt(b.summe)} € von 600 €</span></div>
-    <ul>${b.z.map(x => `<li><span class="${x.ok ? "ja" : "nein"}">${x.ok ? "✓" : "○"}</span><span><b>${x.n}:</b> ${x.warum}</span><b class="e ${x.ok ? "ja" : "nein"}">${x.ok ? "200 €" : "0 €"}</b></li>`).join("")}</ul>
-    <p class="note">${fehlt ? `Noch ${fmt(fehlt)} € im Jahr möglich. Wer gesund ist, bekommt den Bonus, und wer krank ist und Fortschritte macht, bekommt ihn genauso.` : "Du bekommst den vollen Bonus. 600 € sind so viel wie die ganze Prämie der Krankenkasse im Vorschlag des Buchs."} Der Messwert bleibt beim Arzt, die Kasse erfährt nur, ob das Ziel erreicht ist. Wer wegen Typ-1-Diabetes oder Veranlagung ein Ziel nicht schaffen kann, bekommt den Teil für die Teilnahme an einem Programm.</p>`;
+  $("bonus").innerHTML = `<div class="kopf"><span class="k" style="font-weight:700">Dein Gesundheitsbonus im Jahr</span><span class="v">${fmt(b.summe)} € von ${fmt(3 * BONUS.teil)} €</span></div>
+    <ul>${b.z.map(x => `<li><span class="${x.ok ? "ja" : "nein"}">${x.ok ? "✓" : "○"}</span><span><b>${x.n}:</b> ${x.warum}</span><b class="e ${x.ok ? "ja" : "nein"}">${x.ok ? fmt(BONUS.teil) + " €" : "0 €"}</b></li>`).join("")}</ul>
+    <p class="note">${fehlt ? `Noch ${fmt(fehlt)} € im Jahr möglich. Wer gesund ist, bekommt den Bonus, und wer krank ist und Fortschritte macht, bekommt ihn genauso.` : "Du bekommst den vollen Bonus. 480 € im Jahr sind genau die Prämie der Krankenkasse im Vorschlag des Buchs, 40 € im Monat: Wer gesund lebt, zahlt im Ergebnis keine Prämie."} Der Messwert bleibt beim Arzt, die Kasse erfährt nur, ob das Ziel erreicht ist. Wer wegen Typ-1-Diabetes oder Veranlagung ein Ziel nicht schaffen kann, bekommt den Teil für die Teilnahme an einem Programm.</p>`;
 }
 
 // ---------- Rechenweg mit den eigenen Zahlen ----------
@@ -710,7 +710,7 @@ Info.texte(".main", {
   "Wirtschaft: Krankheitstage": ["Wer krank ist, fehlt bei der Arbeit oder geht früher in Rente. Dann fehlt seine Arbeit, und es fehlen Steuern und Beiträge. Gerechnet bis zum Alter 67."],
   "Wirtschaft: Arbeitsjahre": ["Wer vor 67 stirbt, kann in den fehlenden Jahren nicht mehr arbeiten. Der Rechner setzt dafür 45.000 € Wirtschaftsleistung je Jahr an, gewichtet mit der Wahrscheinlichkeit, dass es dazu kommt."],
   "Gesellschaft zusammen": ["Krankenkasse und Wirtschaft zusammen: das, was uns allen fehlt."],
-  "Dein Gesundheitsbonus": ["Vorschlag aus dem Buch: Die Abgabe auf Zucker fließt als Bonus an die Versicherten zurück, bis zu 600 € im Jahr. Der Rechner teilt ihn in drei gleiche Teile zu je 200 €: Langzeitzucker, Bauchumfang sowie Vorsorge, Nichtrauchen und Bewegung. Jeden Teil bekommt, wer gesund ist oder sich im letzten Jahr deutlich verbessert hat. Die genaue Aufteilung ist ein Vorschlag.", ...K5],
+  "Dein Gesundheitsbonus": ["Vorschlag aus dem Buch: Die Abgabe auf Zucker fließt als Bonus an die Versicherten zurück, bis zu 480 € im Jahr, so viel wie die ganze Prämie der Krankenkasse (40 € im Monat). Der Bund zahlt ihn aus, er ersetzt die Prämie in der Höhe. Der Rechner teilt ihn in drei gleiche Teile zu je 160 €: Langzeitzucker, Bauchumfang sowie Vorsorge, Nichtrauchen und Bewegung. Jeden Teil bekommt, wer gesund ist oder sich im letzten Jahr deutlich verbessert hat. Die genaue Aufteilung ist ein Vorschlag.", ...K5],
   "Gegenrechnung": ["Ehrlich gerechnet: Wer früher stirbt, verursacht in den verlorenen Jahren keine Gesundheitskosten mehr. Für die Kasse gleicht sich das teilweise aus. Für die Menschen nicht: Ihnen fehlen Lebensjahre."],
 });
 Info.texte("#zucker", {
