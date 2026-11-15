@@ -142,7 +142,7 @@ details.grp > summary { font-size: 14.5px }
   th, td { padding: 3px 6px !important }
   th { font-size: 10px !important; white-space: normal !important }
   #t_herkunft td:first-child, #t_kosten td:first-child { width: 62% }
-  #t_z th:last-child, #t_z td:last-child { white-space: normal !important; text-align: left; width: 45% }
+  #t_z th:last-child, #t_z td:last-child, #t_a th:last-child, #t_a td:last-child { white-space: normal !important; text-align: left; width: 45% }
   .chart { max-width: 15cm }
   .cols, .studien { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important }
   .studie { padding: 8px 10px !important; break-inside: avoid }
@@ -317,6 +317,23 @@ h1,h2,h3{break-after:avoid}
     <p class="note">📖 Im Buch: <a href="../buch/kapitel-5.html#7-gesundheitsabgabe-und-gesundheitsbonus">Kapitel 5, Gesundheitsabgabe und Gesundheitsbonus</a> · <a href="../buch/anhang-c.html#ann-ZuckSatz">Anhang C, Zuckerabgabe je Kilogramm</a> · <a href="../buch/kapitel-6.html#zukunftsplan">Kapitel 6, niedrigere Gesundheitsausgaben im Zukunftsplan</a></p>
   </div>
 
+  <div class="panel" id="allegesund">
+    <div class="eyebrow">Für alle gerechnet</div>
+    <h2>Wenn alle gesund leben: was das bis 2070 bringen könnte</h2>
+    <p>Was wäre, wenn ab 2027 alle gesund essen, niemand mehr raucht, kaum jemand Alkohol trinkt und sich alle genug bewegen? Für jeden dieser Punkte gibt es Studien, die ausrechnen, was er Deutschland heute jedes Jahr kostet: bei den Krankenkassen und in der Wirtschaft durch Krankheitstage, Frührente und frühen Tod. Der Rechner zeigt, wie viel davon bis 2070 zusammenkäme.</p>
+    <p class="note"><b>Ehrlich gesagt:</b> Das ist eine Hoffnung, keine Vorhersage. Kein Land der Welt hat das geschafft. Die Zahlen zeigen, wie groß der Schatz ist, der hier liegt, nicht wie viel eine einzelne Maßnahme hebt.</p>
+    <div class="tiles t3" id="tiles_a"></div>
+    <div class="legend" id="lg_a"></div>
+    <div class="chart" id="c_a"></div>
+    <p class="note">Aufsummierte Einsparung für Krankenkassen und Wirtschaft von 2027 bis 2070, in Euro der jeweiligen Studie, ohne Abzinsung und ohne Preissteigerung. Jede Linie wächst langsam an, weil Krankheiten erst nach Jahren verschwinden.</p>
+    <div class="tbl"><table id="t_a"></table></div>
+    <ul class="txt">
+      <li><b>Nicht einfach zusammenzählen.</b> Viele Raucher trinken auch mehr und bewegen sich weniger, und ein Herzinfarkt hat oft mehrere Ursachen. Wie beim persönlichen Rechner zählt deshalb der größte Posten voll und jeder weitere nur zur Hälfte.</li>
+      <li><b>Wer länger lebt, braucht später auch Pflege und Rente.</b> Ein Teil der Ersparnis bei den Kassen wird in den gewonnenen Lebensjahren wieder ausgegeben (<a href="#q-vanbaal">van Baal 2008</a>). Der Gewinn an gesunden Jahren und an Arbeitskraft bleibt.</li>
+      <li><b>Die Schätzungen sind unterschiedlich sicher.</b> Die Kosten des Rauchens und des Alkohols sind gut untersucht. Bei der Bewegung stammt die Zahl aus einem Vergleich zwischen aktiven und inaktiven Menschen; dass Kranke sich weniger bewegen, spielt da mit hinein.</li>
+    </ul>
+  </div>
+
   <div class="panel" id="rechenweg">
     <div class="eyebrow">Nachvollziehen</div>
     <h2>So rechnet der Rechner, Schritt für Schritt mit deinen Zahlen</h2>
@@ -424,6 +441,12 @@ h1,h2,h3{break-after:avoid}
         <div class="wer">Deutsche Hauptstelle für Suchtfragen, Jahrbuch Sucht; Bundesgesundheitsministerium</div>
         <dl><dt>Was wurde untersucht?</dt><dd>Volkswirtschaftliche Kosten des Alkoholkonsums in Deutschland.</dd><dt>Was kam heraus?</dt><dd>Rund 57 Mrd. € im Jahr, davon 16,6 Mrd. € direkt (Krankenhaus, Reha, Medikamente) und 40,4 Mrd. € indirekt. 8,6 Millionen Erwachsene trinken riskant viel.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Je Gramm über 100 g in der Woche rund 13 € im Jahr für die Krankenkasse und 13 € für die Wirtschaft (direkte Kosten geteilt durch riskant Trinkende mit rund 150 g zu viel in der Woche; Annahme).</dd></dl>
         <div class="fund"><b>Fundstelle:</b> Bundesgesundheitsministerium, Stichwort Alkohol; Universität Bremen. <a href="https://www.bundesgesundheitsministerium.de/service/begriffe-von-a-z/a/alkohol.html" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-gottschalk">
+        <h3>Was Bewegungsmangel in Deutschland kostet</h3>
+        <div class="wer">Gottschalk S., König H.-H. u. a. (2025), <i>European Journal of Health Economics</i> 26:117; Bundesgesundheitsministerium 2024 (GEDA 2019/2020)</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Daten von 157.648 Teilnehmenden der NAKO Gesundheitsstudie, der größten Bevölkerungsstudie in Deutschland. Verglichen wurden die Kosten von Menschen, die sich genug bewegen, mit denen, die es nicht tun.</dd><dt>Was kam heraus?</dt><dd>Wer sich zu wenig bewegt, kostet im Jahr rund 188 € mehr im Gesundheitswesen und zusammen mit Krankheitstagen und Frührente rund 482 € mehr. Nur rund die Hälfte der Erwachsenen erreicht die 150 Minuten Bewegung in der Woche (52 % der 18- bis 64-Jährigen, Ältere seltener).</dd><dt>Wofür der Rechner das nutzt</dt><dd>Rund 35 Mio. Erwachsene × 482 € ≈ 17 Mrd. € im Jahr, davon × 188 € ≈ 6,6 Mrd. € bei den Kassen. Vorsicht: Die Studie ist ein Vergleich zu einem Zeitpunkt. Wer krank ist, bewegt sich oft weniger; ein Teil der Mehrkosten ist also Folge und nicht Ursache.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract), DOI 10.1007/s10198-024-01697-9; BMG, Bewegungsförderung bei Erwachsenen, Kurzversion. <a href="https://idw-online.de/de/news833514" target="_blank" rel="noopener">Zur Studie ›</a></div>
       </article>
       <article class="studie" id="q-li">
         <h3>Alle Gewohnheiten zusammen: bis zu 14 Jahre</h3>
@@ -835,13 +858,47 @@ function zucker() {
     ["Abgabe auf allen Zucker bis 2070", mrd(S[1].sum), `davon Krankenkassen ${mrd(S[1].sumK)}; ≈ ${eur(S[1].leben)} je Mensch über ein Leben`],
     ["Alle essen gesund, bis 2070", mrd(S[2].sum), `davon Krankenkassen ${mrd(S[2].sumK)}; ≈ ${eur(S[2].leben)} je Mensch über ein Leben`],
   ].map(([k, v, s]) => `<div class="tile"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`).join("");
-  $("t_z").innerHTML = `<tr><th>Fall</th><th>Ersparnis im Jahr bei voller Wirkung</th><th>davon Krankenkassen</th><th>Woher die Zahl kommt</th></tr>
-    <tr><td>Limonaden-Abgabe in Stufen</td><td>${mrd(S[0].ges)}</td><td>${mrd(S[0].kasse)}</td><td style="white-space:normal">Emmert-Fees u. a. 2023: 16 Mrd. € für die Gesellschaft und 4 Mrd. € für die Kassen in 20 Jahren, rund 29.300 Todesfälle vermieden oder aufgeschoben, 1,9 Mio. Jahre mit Diabetes weniger</td></tr>
-    <tr><td>Abgabe auf allen Zucker</td><td>${mrd(S[1].ges)}</td><td>${mrd(S[1].kasse)}</td><td style="white-space:normal">Limonaden-Ergebnis im Verhältnis der eingesparten Zuckermenge hochgerechnet (${g} statt 2,3 g am Tag). Grobe Schätzung: Ob die Wirkung genau mitwächst, ist nicht erforscht.</td></tr>
-    <tr><td>Alle essen gesund</td><td>${mrd(S[2].ges)}</td><td>${mrd(S[2].kasse)}</td><td style="white-space:normal">Zu viel Zucker, Salz und gesättigte Fette verursachten 2008 rund 7 % aller Krankheitskosten (Meier u. a. 2015), heute rund 35 Mrd. €. Dazu Arbeitsausfall im Verhältnis von Effertz u. a. 2016. Theoretische Obergrenze; zu wenig Obst, Gemüse und Vollkorn ist nicht einmal eingerechnet.</td></tr>`;
+  $("t_z").innerHTML = `<tr><th>Fall</th><th>Ersparnis im Jahr bei voller Wirkung</th><th>davon Krankenkassen</th><th style="text-align:left">Woher die Zahl kommt</th></tr>
+    <tr><td>Limonaden-Abgabe in Stufen</td><td>${mrd(S[0].ges)}</td><td>${mrd(S[0].kasse)}</td><td style="white-space:normal;text-align:left">Emmert-Fees u. a. 2023: 16 Mrd. € für die Gesellschaft und 4 Mrd. € für die Kassen in 20 Jahren, rund 29.300 Todesfälle vermieden oder aufgeschoben, 1,9 Mio. Jahre mit Diabetes weniger</td></tr>
+    <tr><td>Abgabe auf allen Zucker</td><td>${mrd(S[1].ges)}</td><td>${mrd(S[1].kasse)}</td><td style="white-space:normal;text-align:left">Limonaden-Ergebnis im Verhältnis der eingesparten Zuckermenge hochgerechnet (${g} statt 2,3 g am Tag). Grobe Schätzung: Ob die Wirkung genau mitwächst, ist nicht erforscht.</td></tr>
+    <tr><td>Alle essen gesund</td><td>${mrd(S[2].ges)}</td><td>${mrd(S[2].kasse)}</td><td style="white-space:normal;text-align:left">Zu viel Zucker, Salz und gesättigte Fette verursachten 2008 rund 7 % aller Krankheitskosten (Meier u. a. 2015), heute rund 35 Mrd. €. Dazu Arbeitsausfall im Verhältnis von Effertz u. a. 2016. Theoretische Obergrenze; zu wenig Obst, Gemüse und Vollkorn ist nicht einmal eingerechnet.</td></tr>`;
+}
+// ---------- Alle leben gesund: Potenzial bis 2070 ----------
+// Mrd. € im Jahr bei voller Wirkung; aufbau = Jahre bis zur vollen Wirkung
+const GESUND = [
+  { n: "Niemand raucht", k: "rauch", c: "--risk", ges: 97, kasse: 30, aufbau: 25, q: "q-effertz-tabak", qn: "Effertz, DKFZ Tabakatlas 2020",
+    t: "Rauchen kostet jedes Jahr rund 97 Mrd. €, davon 30 Mrd. € bei den Kassen. Volle Wirkung erst nach 25 Jahren, weil das Risiko nach dem Aufhören nur langsam sinkt. Die Zahl ist die höchste unter den Schätzungen." },
+  { n: "Alle essen gesund", k: "essen", c: "--s3", ges: ALLE.gesellschaft, kasse: ALLE.kasse, aufbau: 20, q: "q-meier", qn: "Meier u. a. 2015",
+    t: "Zu viel Zucker, Salz und gesättigte Fette, hochgerechnet auf heute. Volle Wirkung nach 20 Jahren, weil Diabetes und Herzleiden über Jahre entstehen." },
+  { n: "Kaum noch Alkohol", k: "alk", c: "--s2", ges: 57, kasse: 16.6, aufbau: 10, q: "q-dhs", qn: "DHS, Jahrbuch Sucht",
+    t: "Alkohol kostet rund 57 Mrd. € im Jahr, davon 16,6 Mrd. € direkt im Gesundheitswesen. Unfälle und Vergiftungen fallen sofort weg, Leber- und Krebsleiden nach etwa 10 Jahren." },
+  { n: "Alle bewegen sich genug", k: "bew", c: "--s1", ges: 17, kasse: 6.6, aufbau: 10, q: "q-gottschalk", qn: "Gottschalk u. a. 2025",
+    t: "Rund 35 Mio. Erwachsene bewegen sich weniger als 150 Minuten in der Woche. Sie kosten je Kopf 188 € mehr bei den Kassen und 482 € mehr insgesamt, zusammen rund 17 Mrd. €. Volle Wirkung nach etwa 10 Jahren." },
+];
+function gesamtKosten(xs) { const v = [...xs].sort((a, b) => b - a); return v[0] + GEMEINSAM * v.slice(1).reduce((a, b) => a + b, 0); }
+function allegesund() {
+  const jahreA = []; for (let j = 2027; j <= 2070; j++) jahreA.push(j);
+  GESUND.forEach(s => { let c = 0, ck = 0; s.cum = []; s.cumK = [];
+    jahreA.forEach((j, i) => { const f = Math.min(1, (i + 1) / s.aufbau); c += s.ges * f; ck += s.kasse * f; s.cum.push([j, c]); s.cumK.push([j, ck]); });
+    s.sum = c; s.sumK = ck; s.leben = s.ges * 1e9 / EINW * LEBEN; });
+  const T = { n: "Alles zusammen", c: "--fg", cum: [], cumK: [] };
+  jahreA.forEach((j, i) => { T.cum.push([j, gesamtKosten(GESUND.map(s => s.cum[i][1]))]); T.cumK.push([j, gesamtKosten(GESUND.map(s => s.cumK[i][1]))]); });
+  T.sum = T.cum.at(-1)[1]; T.sumK = T.cumK.at(-1)[1];
+  T.ges = gesamtKosten(GESUND.map(s => s.ges)); T.kasse = gesamtKosten(GESUND.map(s => s.kasse)); T.leben = T.ges * 1e9 / EINW * LEBEN;
+  const y1 = Math.ceil(T.sum / 1000) * 1000;
+  chart($("c_a"), { W: 1000, H: 380, aria: "Aufsummierte Einsparung bis 2070, wenn alle gesund leben", x0: 2027, x1: 2070, y1, xt: [2030, 2040, 2050, 2060, 2070], xf: t => t,
+    yt: Array.from({ length: y1 / 1000 + 1 }, (_, i) => i * 1000), yf: t => t ? fmt(t / 1000, 0) + " Bio." : "0", xl: "Jahr",
+    lines: GESUND.map(s => ({ p: s.cum, c: s.c })).concat([{ p: T.cum, c: T.c, w: 3.2 }, { p: T.cumK, c: T.c, d: 1, w: 1.8 }]),
+    endLabels: [[T.sum, mrd(T.sum), T.c], [GESUND[0].sum, mrd(GESUND[0].sum), GESUND[0].c]] });
+  lg($("lg_a"), GESUND.map(s => [s.c, s.n]).concat([["--fg", "Alles zusammen"], ["--fg", "davon Krankenkassen (alles zusammen)", "dash"]]));
+  $("tiles_a").innerHTML = GESUND.concat([T]).map(s => `<div class="tile"><span class="k">${s.n} bis 2070</span><span class="v">${mrd(s.sum)}</span><span class="s">davon Krankenkassen ${mrd(s.sumK)}; ≈ ${eur(s.leben)} je Mensch über ein Leben</span></div>`).join("");
+  $("t_a").innerHTML = `<tr><th>Was sich ändert</th><th>Ersparnis im Jahr bei voller Wirkung</th><th>davon Krankenkassen</th><th style="text-align:left">Woher die Zahl kommt</th></tr>` +
+    GESUND.map(s => `<tr><td>${s.n}</td><td>${mrd(s.ges)}</td><td>${mrd(s.kasse)}</td><td style="white-space:normal;text-align:left"><a href="#${s.q}">${s.qn}</a>: ${s.t}</td></tr>`).join("") +
+    `<tr class="sum"><td>Alles zusammen</td><td>${mrd(T.ges)}</td><td>${mrd(T.kasse)}</td><td style="white-space:normal;text-align:left;font-weight:400">Größter Posten voll, jeder weitere zur Hälfte, weil sich die Ursachen überschneiden. Zum Vergleich: Deutschland gibt heute rund 500 Mrd. € im Jahr für Gesundheit aus.</td></tr>`;
 }
 $("r_g").addEventListener("input", zucker); $("r_r").addEventListener("input", zucker);
 run();
+allegesund();
 </script>
 <script src="../tools-buchlinks.js"></script>
 <script src="../info.js"></script>
@@ -885,6 +942,14 @@ Info.texte("#zucker", {
   "Abgabe auf allen Zucker": ["Der Vorschlag aus dem Buch: eine Abgabe je Kilogramm zugesetzten Zucker, 4 € ab 2030 und 9 € ab 2035. Hersteller ändern dann ihre Rezepte, und alle essen weniger Zucker.", ...K5],
   "Alle essen gesund": ["Was möglich wäre, wenn sich alle so ernähren, wie es Fachleute empfehlen: weniger Zucker, Salz und gesättigte Fette. Das ist eine theoretische Obergrenze, die keine Steuer allein erreicht."],
   "Fall": ["Die drei Fälle im Vergleich: was sie im Jahr sparen, wenn sie voll wirken, und woher die Zahlen kommen."],
+});
+Info.texte("#allegesund", {
+  "Niemand raucht": ["Was es bringt, wenn ab 2027 niemand mehr raucht. Ehemalige Raucher haben noch viele Jahre ein erhöhtes Risiko, deshalb wächst die Ersparnis langsam über 25 Jahre an."],
+  "Alle essen gesund": ["Weniger Zucker, Salz und gesättigte Fette, so wie Fachleute es empfehlen. Dieselbe Zahl wie im Abschnitt zur Zuckerabgabe darüber.", ...K5],
+  "Kaum noch Alkohol": ["Was es bringt, wenn fast niemand mehr Alkohol trinkt. Unfälle, Gewalt und Vergiftungen fallen sofort weg, Leberschäden und Krebs erst nach Jahren."],
+  "Alle bewegen sich genug": ["Was es bringt, wenn sich alle mindestens 150 Minuten in der Woche bewegen, also gut 20 Minuten am Tag, zum Beispiel zügig gehen oder Rad fahren."],
+  "Alles zusammen": ["Alle vier Punkte gleichzeitig. Weil sich die Ursachen überschneiden, zählt der größte Posten voll und jeder weitere nur zur Hälfte. „Je Mensch über ein Leben“ heißt: die Ersparnis im Jahr auf jeden Einwohner verteilt und mal 81 Lebensjahre genommen."],
+  "Was sich ändert": ["Jeder Punkt für sich: was er im Jahr spart, wenn er voll wirkt, wie viel davon bei den Krankenkassen ankommt und aus welcher Studie die Zahl stammt."],
 });
 Info.texte(".cols", {
   "Bauch: Taille": ["Die Kurve zeigt für dein Alter und Geschlecht, wie viele Lebensjahre bei jedem Verhältnis von Bauch zu Größe statistisch fehlen. Der schwarze Punkt bist du. Grün ist gesund, gelb erhöht, rot stark erhöht."],
