@@ -132,8 +132,10 @@ h1,h2,h3{break-after:avoid}
 /* Cockpit (Energie, E-Auto, Heizung): Eingaben links, Ergebnis rechts, beide Spalten bleiben stehen und scrollen einzeln */
 @media (min-width:1200px) and (min-height:620px){
 .sitenav.flush ~ .wrap{gap:14px}
-.sitenav.flush ~ .wrap > header{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 28px;align-items:end}
-.sitenav.flush ~ .wrap > header .eyebrow{grid-column:1/-1}
+.sitenav.flush ~ .wrap > header{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 28px;align-items:end}
+.sitenav.flush ~ .wrap > header > *{grid-column:1/-1}
+.sitenav.flush ~ .wrap > header > h1{grid-column:1}
+.sitenav.flush ~ .wrap > header > .lead{grid-column:2}
 .sitenav.flush ~ .wrap > header h1{font-size:26px;max-width:22em}
 .sitenav.flush ~ .wrap > header .lead{font-size:13.5px;line-height:1.45;margin:0}
 .sitenav.flush ~ .wrap .main{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px}

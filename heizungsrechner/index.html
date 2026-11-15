@@ -164,8 +164,10 @@ h1,h2,h3{break-after:avoid}
 /* Cockpit (Energie, E-Auto, Heizung): Eingaben links, Ergebnis rechts, beide Spalten bleiben stehen und scrollen einzeln */
 @media (min-width:1200px) and (min-height:620px){
 .sitenav.flush ~ .wrap{gap:14px}
-.sitenav.flush ~ .wrap > header{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 28px;align-items:end}
-.sitenav.flush ~ .wrap > header .eyebrow{grid-column:1/-1}
+.sitenav.flush ~ .wrap > header{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 28px;align-items:end}
+.sitenav.flush ~ .wrap > header > *{grid-column:1/-1}
+.sitenav.flush ~ .wrap > header > h1{grid-column:1}
+.sitenav.flush ~ .wrap > header > .lead{grid-column:2}
 .sitenav.flush ~ .wrap > header h1{font-size:26px;max-width:22em}
 .sitenav.flush ~ .wrap > header .lead{font-size:13.5px;line-height:1.45;margin:0}
 .sitenav.flush ~ .wrap .main{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px}
@@ -204,6 +206,7 @@ h1,h2,h3{break-after:avoid}
         </div>
         <small class="note" id="r_txt"></small>
       </div>
+      <div class="grp"><h3>Dein Ort</h3><div class="row2" id="g_ort"></div></div>
       <div class="grp"><h3>Dein Haus</h3><div class="row2" id="haus"></div></div>
       <details class="more">
         <summary>Erweitert: CO₂-Preis einzeln wählen</summary>
@@ -299,6 +302,7 @@ h1,h2,h3{break-after:avoid}
 
 <div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Wir können uns die Zukunft leisten“. Die Ergebnisse sind Größenordnungen, können Fehler enthalten und ersetzen keine Steuer-, Rechts-, Finanz- oder Energieberatung. Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>
 <footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Der Rechner läuft im Browser und speichert keine Eingaben. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
+<script src="../wetter/ort.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const fmt = (v, d = 0) => (+v).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -523,7 +527,7 @@ function zeigeDaemmung() {
     + row("Zusammen", ["wp0", "wp1", "gas0", "gas1"].map(k => eur(tot[k])), "sum") + "</tbody>";
   $("d_note").innerHTML = `Die Dämmung senkt den Wärmebedarf; die alten Heizkörper reichen dann mit niedrigerer Vorlauftemperatur. Das hebt die Jahresarbeitszahl. ${V.wpTarif === "dyn" ? `Im dynamischen Tarif kann ein gedämmtes Haus mehr Wärme in billige Stunden verschieben, der Strom kostet dann im Schnitt ${fmt(b.preis * 100, 1)} statt ${fmt(a.preis * 100, 1)} ct.` : "Mit dem dynamischen Tarif (oben bei der Wärmepumpe einstellbar) verschiebt ein gedämmtes Haus mehr Wärme in billige Stunden."} `
     + `Die kleinere Wärmepumpe kostet geschätzt ${eur(d.wpKleiner)} weniger.${d.hk0 && !d.hk1 ? ` Ohne Dämmung braucht die Wärmepumpe größere Heizkörper für ${eur(d.hk0)}, mit Dämmung nicht; auch das zählt für die Dämmung.` : ""} Dämmung hält rund ${D.Lebensdauer} Jahre; der Rest zählt als Restwert. CO₂ des Stroms: Strommix 2024 mit 363 g je kWh (Umweltbundesamt, Schätzung vom 9.4.2025); er sinkt mit jedem Jahr mehr Wind und Sonne. Die Jahresarbeitszahl stammt aus deiner Angabe oben, geändert nach dem Stundenmodell des Energie-Rechners (Luft-Wasser-Wärmepumpe, Wetterjahr Idstein). Grobe Schätzung; ein Energieberater rechnet genauer. Wie Mieter und Vermieter mit der Reform aus dem Buch dabei stehen, zeigt der <a href="../steuerrechner/#sanierung">Steuerrechner</a>.`;
-  const q = new URLSearchParams({ waerme: Math.round(d.w1), vl: Math.round(d.vl1) });
+  const q = new URLSearchParams({ waerme: Math.round(d.w1), vl: Math.round(d.vl1) }); if (PLZ) q.set("plz", PLZ);
   $("d_link").innerHTML = `Stundengenau mit Solarstrom, Speicher und E-Auto: <a href="../energie-rechner/?${q}">im Energie-Rechner mit dem gedämmten Haus weiterrechnen</a>.`;
 }
 (() => {
@@ -617,6 +621,22 @@ function drawCum(r) {
 }
 ["heute", "reform"].forEach(k => $("r_" + k).onclick = () => { V.reform = k === "reform"; $("r_heute").setAttribute("aria-pressed", !V.reform); $("r_reform").setAttribute("aria-pressed", V.reform); run(); });
 ["auto", "ets", "mzz"].forEach(p => $("p_" + p).onclick = () => { V.pfadWahl = p; ["auto", "ets", "mzz"].forEach(q => $("p_" + q).setAttribute("aria-pressed", q === p)); run(); });
+/* Ort nach Postleitzahl: mittlere Temperatur der Heizzeit und Vorschlag für die Jahresarbeitszahl nach dem Wetter des Orts */
+let PLZ = "";
+const BH0 = { ...BH }, JAZ0 = V.wpJaz;
+let jazEigen = new URLSearchParams(location.search).has("wpJaz");   // vom Energie-Rechner übernommen oder selbst eingetragen: bleibt
+document.addEventListener("input", e => { if (e.target && e.target.id === "i_wpJaz") jazEigen = true; });
+async function ortLaden(p) {
+  const i = await Ort.info(p); if (!i) return null;
+  const b = await Ort.bezug(); PLZ = p;
+  BH.teMittel = BH0.teMittel + (i.th - b.th);
+  if (!jazEigen) { V.wpJaz = Math.round(JAZ0 * i.jf * 10) / 10; const el = $("i_wpJaz"); if (el) el.value = V.wpJaz; }
+  $("ort_note").textContent = `Jahresarbeitszahl ${fmt(V.wpJaz, 1)}${jazEigen ? " (deine Angabe)" : ` (für ${i.n} geschätzt: ${fmt(JAZ0, 1)} × ${fmt(i.jf, 2)}, gerechnet wie im Energie-Rechner mit dem Wetter des Orts)`}. `
+    + `Mittel der Außentemperatur in der Heizzeit ${fmt(i.th, 1)} °C (Idstein ${fmt(b.th, 1)} °C). Wetter: PVGIS 5.3, © Europäische Union, CC BY 4.0.`;
+  run(); return i;
+}
+Ort.feld($("g_ort"), ortLaden, "Gib deine Postleitzahl ein, dann schätzt der Rechner die Jahresarbeitszahl für deinen Ort. Ohne: Idstein.");
+$("g_ort").insertAdjacentHTML("beforeend", '<small class="note" id="ort_note"></small>');
 run();
 </script>
 
