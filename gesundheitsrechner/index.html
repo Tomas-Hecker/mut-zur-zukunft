@@ -122,6 +122,34 @@ details > summary { cursor: pointer; font-weight: 700 }
 .bonus .ja { color: var(--good) } .bonus .nein { color: var(--muted) }
 details.grp > summary { font-size: 14.5px }
 [hidden] { display: none !important }
+/* Druck: alles untereinander, kompakt, nichts abgeschnitten */
+@media print {
+  html { font-size: 12px }
+  body { padding: 0 !important; font-size: 12px }
+  .wrap { gap: 12px !important; max-width: none !important }
+  .main, .sitenav.flush ~ .wrap .main { grid-template-columns: minmax(0, 1fr) !important; gap: 10px !important }
+  .panel, .main > .panel { padding: 10px 12px !important; gap: 8px !important; border-radius: 6px }
+  .row2 { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 6px !important }
+  .f input, .f select { font-size: 12px !important; padding: 2px 6px !important }
+  .f small { white-space: normal !important }
+  .ib, .info-btn, .info-pop { display: none !important }
+  h1 { font-size: 22px !important } h2 { font-size: 16px !important } h3 { font-size: 13.5px !important }
+  .verdict { font-size: 13px !important; padding: 8px 10px !important }
+  .tiles, .tiles.t3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 6px !important }
+  .tile { padding: 6px 8px !important }
+  .tbl { overflow: visible !important }
+  table { font-size: 11.5px !important; table-layout: auto }
+  th, td { padding: 3px 6px !important }
+  th { font-size: 10px !important; white-space: normal !important }
+  #t_herkunft td:first-child, #t_kosten td:first-child { width: 62% }
+  #t_z th:last-child, #t_z td:last-child { white-space: normal !important; text-align: left; width: 45% }
+  .chart { max-width: 15cm }
+  .cols, .studien { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important }
+  .studie { padding: 8px 10px !important; break-inside: avoid }
+  .studie dl, .steps, .bonus ul, ul.txt, p { font-size: 11.5px !important }
+  .steps .calc { font-size: 11.5px !important; white-space: normal }
+  .tile, .bonus, .steps > li, tr { break-inside: avoid }
+}
 </style>
 <style id="sitenav-css">
 .sitenav{background:#12372a;color:#fbf8f1;font:600 15px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
