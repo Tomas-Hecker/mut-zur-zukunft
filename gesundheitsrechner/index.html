@@ -16,6 +16,7 @@
   --risk: #c4502b; --ok: #00907f; --mid: #c98a00; --good: #1d7a46; --bad: #b3401e; --hl: #e7f3f1; --band: rgb(196 80 43 / .16);
   --z1: rgb(0 144 127 / .08); --z2: rgb(201 138 0 / .10); --z3: rgb(196 80 43 / .10);
   --s1: #00907f; --s2: #c98a00; --s3: #5b6fd6;
+  --card: var(--panel); --accent: var(--ok);
   --display: "Archivo", "Arial Narrow", system-ui, sans-serif;
   --body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -95,6 +96,31 @@ a { color: var(--ok) }
 .range input { width: 100%; accent-color: var(--ok) }
 .warn { border-left: 4px solid var(--mid); padding: 8px 12px; background: var(--field); border-radius: 6px; font-size: 14.5px }
 details > summary { cursor: pointer; font-weight: 700 }
+.steps { counter-reset: st; display: grid; gap: 12px; margin: 0; padding: 0; list-style: none }
+.steps > li { counter-increment: st; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 4px 12px; align-items: start }
+.steps > li::before { content: counter(st); grid-row: span 3; width: 30px; height: 30px; border-radius: 50%; background: var(--hl); color: var(--fg); font: 800 15px/30px var(--display); text-align: center }
+.steps b.t { font-family: var(--display); font-size: 16px }
+.steps .calc { font-variant-numeric: tabular-nums; background: var(--field); border: 1px solid var(--line); border-radius: 7px; padding: 6px 10px; font-size: 15px; justify-self: start; max-width: 100% }
+.steps .calc b { color: var(--risk) }
+.studien { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px }
+.studie { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; scroll-margin-top: 16px }
+.studie:target { outline: 3px solid var(--ok); outline-offset: 2px }
+.studie h3 { font-size: 16px }
+.studie .wer { font-size: 13px; color: var(--muted) }
+.studie dl { margin: 0; display: grid; gap: 4px; font-size: 14.5px }
+.studie dt { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-top: 4px }
+.studie dd { margin: 0 }
+.studie .fund { font-size: 13.5px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 6px; margin-top: 2px }
+.ampel { display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px }
+.ampel span { border-radius: 999px; padding: 3px 10px; background: var(--field); border: 1px solid var(--line) }
+.bonus { border: 2px solid var(--ok); border-radius: 10px; padding: 12px 14px; display: grid; gap: 8px }
+.bonus .kopf { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px }
+.bonus .kopf .v { font: 800 24px/1.15 var(--display); color: var(--ok) }
+.bonus ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 14.5px }
+.bonus li { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 8px; align-items: baseline }
+.bonus li b.e { font-variant-numeric: tabular-nums }
+.bonus .ja { color: var(--good) } .bonus .nein { color: var(--muted) }
+details.grp > summary { font-size: 14.5px }
 [hidden] { display: none !important }
 </style>
 <style id="sitenav-css">
@@ -174,10 +200,12 @@ h1,h2,h3{break-after:avoid}
     <div class="eyebrow">Gesundheit über das ganze Leben</div>
     <h1>Bauchumfang und Langzeitzucker: Was kostet das an Lebenszeit und Geld?</h1>
     <p class="lead">Gib Körpergröße, Bauchumfang und deinen Langzeitzucker (HbA1c) ein. Der Rechner zeigt, wie viele Lebensjahre Menschen mit diesen Werten im Durchschnitt verlieren, was das die Krankenkassen kostet und was es die Gesellschaft kostet. Alles beruht auf großen Studien mit Millionen Menschen. Es sind Durchschnittswerte, keine Vorhersage für dich persönlich.</p>
+    <p class="note">So geht's: <b>1.</b> Werte eingeben (oder ein Beispiel antippen) · <b>2.</b> Ergebnis rechts lesen · <b>3.</b> Bei jedem kleinen <b>i</b> steht in einfachen Worten, was die Zahl bedeutet und woher sie kommt. Ganz unten erklären wir <a href="#rechenweg">den Rechenweg mit deinen Zahlen</a> und <a href="#studien">jede Studie einzeln</a>.</p>
   </header>
 
   <div class="main">
     <div class="panel">
+      <span class="lbl" style="font-size:13.5px;color:var(--muted)">Geschlecht</span>
       <div class="seg" role="group" aria-label="Geschlecht">
         <button type="button" id="s_m" aria-pressed="true">Mann</button>
         <button type="button" id="s_f" aria-pressed="false">Frau</button>
@@ -189,10 +217,19 @@ h1,h2,h3{break-after:avoid}
           <div class="in"><input id="i_hba1c" type="number" inputmode="decimal" step="0.1" min="3"><select id="i_einheit" aria-label="Einheit" style="flex:0 0 auto;width:auto;border-left:1px solid var(--line)"><option value="pct">%</option><option value="mmol">mmol/mol</option></select></div>
           <small>steht im Laborbefund; gesund unter 5,7 % (39 mmol/mol)</small>
         </div>
-        <label class="chk"><input type="checkbox" id="i_dm"> <span>Bei mir ist Diabetes schon festgestellt (dann zählt der Wert unter Behandlung)</span></label>
+        <div class="chk"><input type="checkbox" id="i_dm"> <label for="i_dm">Bei mir ist Diabetes schon festgestellt (dann zählt der Wert unter Behandlung)</label></div>
       </div>
       <div class="presets"><span>Beispiele:</span><button type="button" data-p="gesund">Gesund</button><button type="button" data-p="bauch">Bauch, Zucker noch normal</button><button type="button" data-p="prae">Vorstufe Diabetes</button><button type="button" data-p="dm">Diabetes, schlecht eingestellt</button></div>
       <p class="note">So misst du den Bauchumfang: im Stehen, nach dem Ausatmen, mit dem Maßband waagerecht in der Mitte zwischen unterster Rippe und Hüftknochen (meist knapp über dem Bauchnabel). Faustregel: Der Bauchumfang sollte weniger als die Hälfte der Körpergröße sein.</p>
+      <details class="grp" id="bonusfelder">
+        <summary>Gesundheitsbonus: deine Werte vor einem Jahr (freiwillig)</summary>
+        <p class="note">Der Bonus aus dem Buch belohnt nicht nur gesunde Werte, sondern auch Fortschritte. Trag ein, was du vor einem Jahr hattest, dann sieht der Rechner, ob du dich verbessert hast. Leer lassen geht auch.</p>
+        <div class="row2">
+          <div class="f"><label for="i_bauchVor">Bauchumfang vor einem Jahr</label><div class="in"><input id="i_bauchVor" type="number" inputmode="decimal" step="1" min="0" placeholder="leer"><span class="u">cm</span></div></div>
+          <div class="f"><label for="i_hbVor">Langzeitzucker vor einem Jahr</label><div class="in"><input id="i_hbVor" type="number" inputmode="decimal" step="0.1" min="0" placeholder="leer"><span class="u" id="u_hbVor">%</span></div></div>
+        </div>
+        <div class="chk"><input type="checkbox" id="i_leben"> <label for="i_leben">Ich gehe zur Vorsorge, rauche nicht und bewege mich regelmäßig</label></div>
+      </details>
     </div>
 
     <div class="panel">
@@ -201,6 +238,7 @@ h1,h2,h3{break-after:avoid}
       <div class="tiles" id="tiles"></div>
       <div class="tbl"><table id="t_kosten"></table></div>
       <p class="note" id="n_kosten"></p>
+      <div class="bonus" id="bonus"></div>
     </div>
   </div>
 
@@ -209,20 +247,20 @@ h1,h2,h3{break-after:avoid}
       <h2>Bauch: Taille geteilt durch Körpergröße</h2>
       <div class="legend" id="lg_w"></div>
       <div class="chart" id="c_w"></div>
-      <p class="note">Statistisch verlorene Lebensjahre nur durch den Bauch, bei normalem Blutzucker, für dein Alter und Geschlecht. Die Linie folgt der großen Auswertung von 72 Studien (Jayedi u. a. 2020), die Fläche zeigt die Spanne bis zur britischen Studie von Ashwell u. a. (2014), die für sehr dicke Bäuche deutlich mehr verlorene Jahre findet.</p>
+      <p class="note">Statistisch verlorene Lebensjahre nur durch den Bauch, bei normalem Blutzucker, für dein Alter und Geschlecht. Die Linie folgt der großen Auswertung von 72 Studien (<a href="#q-jayedi">Jayedi u. a. 2020</a>), die Fläche zeigt die Spanne bis zur britischen Studie von <a href="#q-ashwell">Ashwell u. a. 2014</a>, die für sehr dicke Bäuche deutlich mehr verlorene Jahre findet.</p>
     </div>
     <div class="panel">
       <h2>Blutzucker: Langzeitwert HbA1c</h2>
       <div class="legend" id="lg_g"></div>
       <div class="chart" id="c_g"></div>
-      <p class="note">Statistisch verlorene Lebensjahre nur durch den Blutzucker, bei gesundem Bauchumfang. Unter 5,7 % steigt das Risiko kaum, in der Vorstufe (5,7 bis 6,4 %) leicht, ab 6,5 % (Diabetes) deutlich (der Übergang ist in der Kurve zwischen 6 und 7 % geglättet), und jeder Prozentpunkt über 7 % kostet weitere Jahre.</p>
+      <p class="note">Statistisch verlorene Lebensjahre nur durch den Blutzucker, bei gesundem Bauchumfang. Unter 5,7 % steigt das Risiko kaum, in der Vorstufe (5,7 bis 6,4 %) leicht, ab 6,5 % (Diabetes) deutlich (der Übergang ist in der Kurve zwischen 6 und 7 % geglättet), und jeder Prozentpunkt über 7 % kostet weitere Jahre. Quellen: <a href="#q-zhong">Zhong 2016</a>, <a href="#q-huang">Huang 2016</a>, <a href="#q-erfc">ERFC 2023</a>, <a href="#q-zhang">Zhang 2012</a>.</p>
     </div>
   </div>
 
   <div class="panel" id="zucker">
     <div class="eyebrow">Für alle gerechnet</div>
     <h2>Was eine Zuckerabgabe bringt und was gesunde Ernährung insgesamt bringen könnte</h2>
-    <p>Großbritannien erhebt seit 2018 eine Abgabe auf gesüßte Getränke, gestaffelt nach dem Zuckergehalt. Die Hersteller haben daraufhin ihre Rezepte geändert: Der Zucker in den betroffenen Getränken sank um mehr als 40 %, und bei Mädchen in der 6. Klasse ging Fettleibigkeit um rund 8 % zurück. Für Deutschland hat ein Team der TU München und der Universität Oxford das 2023 durchgerechnet. Der Rechner schreibt diese Ergebnisse bis 2070 fort und vergleicht sie mit der Abgabe auf allen zugesetzten Zucker aus dem Buch und mit dem, was möglich wäre, wenn sich alle gesund ernähren.</p>
+    <p>Großbritannien erhebt seit 2018 eine Abgabe auf gesüßte Getränke, gestaffelt nach dem Zuckergehalt. Die Hersteller haben daraufhin ihre Rezepte geändert: Der Zucker in den betroffenen Getränken sank um mehr als 40 %, und bei Mädchen in der 6. Klasse ging Fettleibigkeit um rund 8 % zurück. Für Deutschland hat ein Team der TU München und der Universität Oxford das 2023 durchgerechnet (<a href="#q-emmert">Emmert-Fees u. a.</a>). Der Rechner schreibt diese Ergebnisse bis 2070 fort und vergleicht sie mit der Abgabe auf allen zugesetzten Zucker aus dem Buch und mit dem, was möglich wäre, wenn sich alle gesund ernähren.</p>
     <div class="row2" style="align-items:end">
       <div class="range"><label for="r_g">Abgabe auf allen Zucker (Buch): Menschen essen im Schnitt <b id="o_g"></b> Zucker weniger am Tag</label><input id="r_g" type="range" min="2" max="30" step="1" value="12"><small class="note">Heute rund 90 g zugesetzter Zucker am Tag. Die Limonaden-Abgabe allein spart 2,3 g.</small></div>
       <div class="range"><label for="r_r">Volle Wirkung erreicht nach <b id="o_r"></b></label><input id="r_r" type="range" min="10" max="30" step="1" value="20"><small class="note">Krankheiten wie Diabetes entstehen über Jahre, deshalb wirkt gesünderes Essen erst nach und nach.</small></div>
@@ -232,56 +270,130 @@ h1,h2,h3{break-after:avoid}
     <div class="chart" id="c_z"></div>
     <p class="note">Aufsummierte Einsparung für Krankenkassen und Wirtschaft von 2027 bis 2070, in heutigen Euro, ohne Abzinsung. Gestrichelt: nur der Teil, der bei den Krankenkassen ankommt.</p>
     <div class="tbl"><table id="t_z"></table></div>
+    <p class="note">📖 Im Buch: <a href="../buch/kapitel-5.html#7-gesundheitsabgabe-und-gesundheitsbonus">Kapitel 5, Gesundheitsabgabe und Gesundheitsbonus</a> · <a href="../buch/anhang-c.html#ann-ZuckSatz">Anhang C, Zuckerabgabe je Kilogramm</a> · <a href="../buch/kapitel-6.html#zukunftsplan">Kapitel 6, niedrigere Gesundheitsausgaben im Zukunftsplan</a></p>
   </div>
 
-  <div class="cols">
-    <div class="panel">
-      <h2>Was die Zahlen bedeuten und was nicht</h2>
-      <ul class="txt">
-        <li><b>Zusammenhang ist nicht gleich Ursache.</b> Die Studien beobachten, dass Menschen mit großem Bauch oder hohem Blutzucker früher sterben. Ein Teil davon geht auf Dinge zurück, die oft zusammen auftreten: Bewegungsmangel, Rauchen, Armut, Veranlagung. Die Studien rechnen das so gut es geht heraus. Dass Abnehmen und ein besserer Blutzucker wirklich helfen, zeigen zusätzlich Versuche mit Programmen und Medikamenten.</li>
-        <li><b>Durchschnitt, keine Vorhersage.</b> Wer heute einen großen Bauch hat, kann trotzdem sehr alt werden, und wer schlank ist, kann früh krank werden. Die Zahlen gelten für viele Menschen zusammen.</li>
-        <li><b>Bauch und Zucker überschneiden sich.</b> Ein Teil des Risikos durch den Bauch läuft über den Diabetes. Der Rechner zählt das deshalb nicht voll doppelt, sondern zieht 30 % des kleineren Teils ab.</li>
-        <li><b>Wer früher stirbt, kostet die Krankenkasse in den verlorenen Jahren nichts mehr.</b> Eine Studie aus den Niederlanden (van Baal u. a. 2008) fand deshalb, dass Menschen mit starkem Übergewicht über das ganze Leben sogar etwas weniger Gesundheitskosten verursachen als gesund Lebende, weil sie im Schnitt fünf Jahre früher sterben. Der Rechner zeigt diesen Betrag offen. Ein früher Tod ist aber kein Gewinn: verlorene Lebensjahre, Krankheit, Pflege und fehlende Arbeitskraft wiegen schwerer. Gesund leben heißt vor allem: länger und besser leben.</li>
-        <li><b>Keine ärztliche Beratung.</b> Bei einem HbA1c ab 5,7 % oder einem Bauchumfang über der halben Körpergröße lohnt sich ein Gespräch mit der Hausärztin oder dem Hausarzt. Für Kinder und Schwangere gilt der Rechner nicht.</li>
-      </ul>
-    </div>
-    <div class="panel">
-      <h2>So rechnet der Rechner</h2>
-      <ul class="src">
-        <li><b>Sterblichkeit:</b> Sterbetafel 2021/23 des Statistischen Bundesamts, nachgebildet mit einer Gompertz-Kurve. Bauch und Zucker erhöhen das Sterberisiko in jedem Alter um einen festen Faktor; die verlorenen Jahre sind die Differenz der Lebenserwartung.</li>
-        <li><b>Bauch:</b> je 0,1 über einem Verhältnis von 0,5 ein um 24 % höheres Sterberisiko (Spanne 12 bis 36 %), aus 72 Studien (Jayedi u. a. 2020, BMJ). Obere Grenze der Spanne: Ashwell u. a. 2014.</li>
-        <li><b>Zucker ohne Diabetes:</b> unter 5,7 % kein Aufschlag, bis 6,4 % auf +13 % steigend (Vorstufe; Huang u. a. 2016, BMJ: +13 bis +32 %).</li>
-        <li><b>Diabetes:</b> so viele verlorene Jahre, wie die Emerging Risk Factors Collaboration 2023 für Europa fand (Feststellung mit 30 Jahren rund 13 Jahre, mit 40 rund 9, mit 50 rund 5), bezogen auf einen HbA1c von 7 %. Jeder Prozentpunkt darüber erhöht das Sterberisiko um 15 % (Zhang u. a. 2012).</li>
-        <li><b>Vorstufe zu Diabetes:</b> Jedes Jahr erkranken bei 5,7 % rund 1,5 %, bei 6,4 % rund 6 % der Betroffenen neu an Diabetes (nach Selvin u. a. 2010, NEJM). Die Kosten zählen ab dann.</li>
-        <li><b>Kosten Diabetes:</b> 2.500 € im Jahr mehr bei der Krankenkasse und 3.000 € im Jahr weniger Wirtschaftsleistung durch Krankheitstage und Frührente bis 67, nach der KORA-Studie (Ulrich u. a. 2016) auf heutige Preise hochgerechnet; je Prozentpunkt HbA1c über 7 % 12 % mehr (Annahme, wegen Folgeschäden).</li>
-        <li><b>Kosten Bauch:</b> je 0,1 über 0,5 rund 1.200 € im Jahr bei der Krankenkasse und 1.000 € weniger Wirtschaftsleistung bis 67, abgeleitet aus Effertz u. a. 2016 (Fettleibigkeit kostet in Deutschland jährlich 29 Mrd. € direkt und 34 Mrd. € indirekt).</li>
-        <li><b>Früher Tod vor 67:</b> 45.000 € Wirtschaftsleistung je fehlendem Jahr (durchschnittliches Arbeitnehmerentgelt mal Erwerbsquote).</li>
-        <li>Alle Beträge in heutigen Euro, nicht abgezinst, gewichtet mit der Wahrscheinlichkeit, das jeweilige Alter zu erleben. Pflegekosten und Leid sind nicht eingerechnet.</li>
-      </ul>
-    </div>
+  <div class="panel" id="rechenweg">
+    <div class="eyebrow">Nachvollziehen</div>
+    <h2>So rechnet der Rechner, Schritt für Schritt mit deinen Zahlen</h2>
+    <p>Hier siehst du jeden Rechenschritt mit den Werten, die du oben eingegeben hast. Ändere oben etwas, dann ändern sich auch die Zahlen hier. Hinter jedem Schritt steht die Studie, aus der die Zahl kommt; ein Klick auf den Namen springt zur Erklärung der Studie.</p>
+    <ol class="steps" id="rw"></ol>
   </div>
 
-  <div class="panel" id="quellen">
-    <h2>Quellen</h2>
-    <ol class="src">
-      <li>Jayedi A. u. a. (2020): Central fatness and risk of all cause mortality: systematic review and dose-response meta-analysis of 72 prospective cohort studies. <i>BMJ</i> 370:m3324. <a href="https://www.bmj.com/content/370/bmj.m3324" target="_blank" rel="noopener">bmj.com</a></li>
-      <li>Ashwell M., Mayhew L., Richardson J., Rickayzen B. (2014): Waist-to-height ratio is more predictive of years of life lost than body mass index. <i>PLOS ONE</i> 9(9):e103483. <a href="https://openaccess.city.ac.uk/id/eprint/4058/" target="_blank" rel="noopener">City University London</a></li>
-      <li>Emerging Risk Factors Collaboration (2023): Life expectancy associated with different ages at diagnosis of type 2 diabetes in high-income countries. <i>Lancet Diabetes &amp; Endocrinology</i> 11(10):731–742. <a href="https://www.cam.ac.uk/research/news/type-2-diabetes-diagnosis-at-age-30-reduces-life-expectancy-by-as-much-as-14-years" target="_blank" rel="noopener">Universität Cambridge</a></li>
-      <li>Zhang Y. u. a. (2012): Glycosylated hemoglobin in relationship to cardiovascular outcomes and death in patients with type 2 diabetes: a systematic review and meta-analysis. <i>PLOS ONE</i> 7(8):e42551. <a href="https://pubmed.ncbi.nlm.nih.gov/22912709/" target="_blank" rel="noopener">PubMed</a></li>
-      <li>Selvin E. u. a. (2010): Glycated hemoglobin, diabetes, and cardiovascular risk in nondiabetic adults. <i>New England Journal of Medicine</i> 362:800–811. <a href="https://pubmed.ncbi.nlm.nih.gov/20200384/" target="_blank" rel="noopener">PubMed</a></li>
-      <li>Zhong G.-C. u. a. (2016): HbA1c and risks of all-cause and cause-specific death in subjects without known diabetes: a dose-response meta-analysis. <i>Scientific Reports</i> 6:24071. <a href="https://www.nature.com/articles/srep24071" target="_blank" rel="noopener">nature.com</a></li>
-      <li>Huang Y. u. a. (2016): Association between prediabetes and risk of cardiovascular disease and all cause mortality. <i>BMJ</i> 355:i5953. <a href="https://www.bmj.com/content/355/bmj.i5953" target="_blank" rel="noopener">bmj.com</a></li>
-      <li>Ulrich S. u. a. (2016): Cost burden of type 2 diabetes in Germany: results from the population-based KORA studies. <i>BMJ Open</i> 6:e012527. <a href="https://bmjopen.bmj.com/content/6/11/e012527" target="_blank" rel="noopener">bmjopen.bmj.com</a></li>
-      <li>Effertz T. u. a. (2016): The costs and consequences of obesity in Germany: a new approach from a prevalence and life-cycle perspective. <i>European Journal of Health Economics</i> 17:1141–1158. <a href="https://link.springer.com/article/10.1007/s10198-015-0751-4" target="_blank" rel="noopener">Springer</a></li>
-      <li>van Baal P. u. a. (2008): Lifetime medical costs of obesity: prevention no cure for increasing health expenditure. <i>PLOS Medicine</i> 5(2):e29. <a href="https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0050029" target="_blank" rel="noopener">plos.org</a></li>
-      <li>Jacobs E. u. a. (2017): Burden of mortality attributable to diagnosed diabetes: a nationwide analysis based on claims data from 65 million people in Germany. <i>Diabetes Care</i> 40(12):1703–1709. <a href="https://www.dzd-ev.de/en/article/diabetes-related-mortality-in-germany-higher-than-expected/" target="_blank" rel="noopener">DZD</a></li>
-      <li>Deutsche Diabetes Gesellschaft: Factsheet 2026 (9,3 Mio. Menschen mit Diabetes, 450.000 neue Fälle im Jahr, rund 30 Mrd. € Kosten). <a href="https://www.ddg.info/fileadmin/user_upload/DDG_Factsheet_2026.pdf" target="_blank" rel="noopener">ddg.info</a></li>
-      <li>Emmert-Fees K. u. a. (2023): Projected health and economic impacts of sugar-sweetened beverage taxation in Germany: a cross-validation modelling study. <i>PLOS Medicine</i> 20(11):e1004311. <a href="https://www.tum.de/en/news-and-events/all-news/press-releases/details/sugar-tax-could-save-as-much-as-16-billion-euros" target="_blank" rel="noopener">TU München</a></li>
-      <li>Rogers N. T. u. a. (2023): Associations between trajectories of obesity prevalence in English primary school children and the UK soft drinks industry levy. <i>PLOS Medicine</i> 20(1):e1004160. <a href="https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1004160" target="_blank" rel="noopener">plos.org</a></li>
-      <li>Meier T. u. a. (2015): Cardiovascular mortality attributable to dietary risk factors and healthcare costs of excessive intake of sugar, salt and saturated fat in Germany. <i>PLOS ONE</i> 10(9):e0135990 (16,8 Mrd. € Behandlungskosten 2008, rund 7 % aller Krankheitskosten). <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0135990" target="_blank" rel="noopener">plos.org</a></li>
-      <li>Pörschmann T., Meier T., Lorkowski S. (2024): Cardiovascular mortality attributable to dietary risk factors in 54 countries in the WHO European Region from 1990 to 2019. <i>European Journal of Preventive Cardiology</i> (31 % der Herz-Kreislauf-Todesfälle in Deutschland durch ungünstige Ernährung). <a href="https://www.zm-online.de/news/detail/jeder-dritte-kardiovaskulaere-todesfall-geht-auf-falsche-ernaehrung-zurueck" target="_blank" rel="noopener">zm-online.de</a></li>
-      <li>Statistisches Bundesamt: Gesundheitsausgaben 2024: 538 Mrd. €, 6.444 € je Einwohner; Sterbetafel 2021/23. <a href="https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Gesundheit/Gesundheitsausgaben/_inhalt.html" target="_blank" rel="noopener">destatis.de</a></li>
-    </ol>
+  <div class="panel">
+    <h2>Was die Zahlen bedeuten und was nicht</h2>
+    <ul class="txt">
+      <li><b>Zusammenhang ist nicht gleich Ursache.</b> Die Studien beobachten, dass Menschen mit großem Bauch oder hohem Blutzucker früher sterben. Ein Teil davon geht auf Dinge zurück, die oft zusammen auftreten: Bewegungsmangel, Rauchen, Armut, Veranlagung. Die Studien rechnen das so gut es geht heraus. Dass Abnehmen und ein besserer Blutzucker wirklich helfen, zeigen zusätzlich Versuche mit Programmen und Medikamenten.</li>
+      <li><b>Durchschnitt, keine Vorhersage.</b> Wer heute einen großen Bauch hat, kann trotzdem sehr alt werden, und wer schlank ist, kann früh krank werden. Die Zahlen gelten für viele Menschen zusammen, so wie eine Wettervorhersage von 70 % Regen nicht sagt, ob es bei dir regnet.</li>
+      <li><b>Die Spanne ist ehrlich gemeint.</b> Verschiedene Studien kommen auf verschiedene Werte. Der Rechner zeigt deshalb immer eine mittlere Schätzung und daneben die niedrigste und höchste, die sich aus den Studien ergibt.</li>
+      <li><b>Bauch und Zucker überschneiden sich.</b> Ein Teil des Risikos durch den Bauch läuft über den Diabetes. Der Rechner zählt das deshalb nicht voll doppelt (Schritt 4 oben).</li>
+      <li><b>Wer früher stirbt, kostet die Krankenkasse in den verlorenen Jahren nichts mehr.</b> Eine Studie aus den Niederlanden (<a href="#q-vanbaal">van Baal u. a. 2008</a>) fand deshalb, dass Menschen mit starkem Übergewicht über das ganze Leben sogar etwas weniger Gesundheitskosten verursachen als gesund Lebende. Der Rechner zeigt diesen Betrag offen als Gegenrechnung. Ein früher Tod ist aber kein Gewinn: verlorene Lebensjahre, Krankheit, Pflege und fehlende Arbeitskraft wiegen schwerer. Warum es trotzdem richtig ist, dass die Gemeinschaft für alle zahlt, auch wenn jemand „selbst schuld“ ist, erklärt das Buch in <a href="../buch/anhang-b.html#und-wenn-es-nur-eine-grundrente-aus-der-steuer-gaebe">Anhang B</a>.</li>
+      <li><b>Keine ärztliche Beratung.</b> Bei einem HbA1c ab 5,7 % oder einem Bauchumfang über der halben Körpergröße lohnt sich ein Gespräch mit der Hausärztin oder dem Hausarzt. Für Kinder, Jugendliche und Schwangere gilt der Rechner nicht.</li>
+    </ul>
+  </div>
+
+  <div class="panel" id="studien">
+    <div class="eyebrow">Die Grundlage</div>
+    <h2>Die Studien hinter dem Rechner, einfach erklärt</h2>
+    <p>Der Rechner erfindet keine Zahlen. Jede Annahme kommt aus einer veröffentlichten, von anderen Fachleuten geprüften Studie. Bei jeder Studie steht, was untersucht wurde, was herauskam, wofür der Rechner das nutzt und wo genau in der Studie du die Zahl findest.</p>
+    <div class="studien">
+      <article class="studie" id="q-jayedi">
+        <h3>Bauch und Sterberisiko: 72 Studien in einer</h3>
+        <div class="wer">Jayedi A. u. a. (2020), <i>BMJ</i> 370:m3324</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Eine Forschergruppe hat 72 Langzeitstudien aus aller Welt zusammengefasst. Darin wurden Menschen einmal vermessen und dann viele Jahre beobachtet: Wer starb wann? Für das Verhältnis Bauch zu Größe gab es 11 Studien.</dd><dt>Was kam heraus?</dt><dd>Je 0,1 mehr beim Verhältnis Bauch zu Größe steigt das Sterberisiko um 24 % (die Studie gibt als sichere Spanne 12 bis 36 % an). Am niedrigsten ist das Risiko bei 0,5, ab etwa 0,55 steigt es deutlich.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Das ist die mittlere Schätzung für den Bauch (Schritt 2). Die 12 % sind die untere Grenze der Spanne.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Abschnitt „Results“, Teil „Waist-to-height ratio“: HR 1,24 (95 % KI 1,12 bis 1,36) je 0,1 Einheiten; Kurvenform in der Dosis-Wirkungs-Abbildung. <a href="https://www.bmj.com/content/370/bmj.m3324" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-ashwell">
+        <h3>Wie viele Lebensjahre ein dicker Bauch kostet</h3>
+        <div class="wer">Ashwell M. u. a. (2014), <i>PLOS ONE</i> 9:e103483</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Britische Versicherungsmathematiker haben Daten einer großen britischen Gesundheitsbefragung (Health and Lifestyle Survey) ausgewertet und direkt in verlorene Lebensjahre umgerechnet, getrennt nach Alter und Geschlecht, nur für Nichtraucher.</dd><dt>Was kam heraus?</dt><dd>Ein 30-jähriger Mann mit einem Verhältnis von 0,8 verliert rund 20 Jahre, eine Frau rund 11 Jahre. Bei 0,6 sind es nur 1 bis 2 Jahre. Das Verhältnis Bauch zu Größe sagt die verlorenen Jahre besser voraus als der Body-Mass-Index.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Obere Grenze der Spanne beim Bauch. Weil es nur eine Studie aus einem Land ist, nimmt der Rechner sie nicht als Hauptwert.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Tabelle 3: verlorene Lebensjahre für Verhältnisse 0,5 bis 0,8 im Alter 30, 50 und 70. <a href="https://openaccess.city.ac.uk/id/eprint/4058/" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-erfc">
+        <h3>Diabetes: Je früher, desto mehr Lebensjahre fehlen</h3>
+        <div class="wer">Emerging Risk Factors Collaboration (2023), <i>Lancet Diabetes &amp; Endocrinology</i> 11:731</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Ein großer Verbund von Forschenden (Universität Cambridge u. a.) hat Daten von rund 1,5 Millionen Menschen aus 19 reichen Ländern ausgewertet: Wie lange leben Menschen, je nachdem, in welchem Alter ihr Typ-2-Diabetes festgestellt wurde?</dd><dt>Was kam heraus?</dt><dd>In Europa verliert, wer mit 30 Jahren Diabetes bekommt, rund 13 Lebensjahre, mit 40 rund 9 und mit 50 rund 5. Jedes Jahrzehnt früher kostet etwa 3 bis 4 Jahre mehr.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Grundwert für Diabetes (Schritt 3). Der Rechner stellt den Faktor auf das Sterberisiko für jedes Alter so ein, dass genau diese Jahre herauskommen. Für 60 und älter ist der Wert fortgeschrieben.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract), Abschnitt „Findings“, Werte für die Europäische Union; Pressemitteilung der Universität Cambridge. <a href="https://www.cam.ac.uk/research/news/type-2-diabetes-diagnosis-at-age-30-reduces-life-expectancy-by-as-much-as-14-years" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-zhang">
+        <h3>Bei Diabetes zählt jeder Prozentpunkt</h3>
+        <div class="wer">Zhang Y. u. a. (2012), <i>PLOS ONE</i> 7:e42551</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung vieler Studien mit Menschen, die Typ-2-Diabetes haben: Wie hängt ihr Langzeitzucker mit Herzinfarkt, Schlaganfall und Tod zusammen?</dd><dt>Was kam heraus?</dt><dd>Jeder Prozentpunkt mehr HbA1c erhöht das Sterberisiko um 15 % (Spanne 11 bis 20 %), das Risiko für Durchblutungsstörungen in den Beinen sogar um 29 %.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Aufschlag je Prozentpunkt über 7 % bei Diabetes (Schritt 3).</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract): „all-cause mortality RR 1,15 (95 % KI 1,11 bis 1,20)“ je 1 % HbA1c. <a href="https://pubmed.ncbi.nlm.nih.gov/22912709/" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-huang">
+        <h3>Die Vorstufe zum Diabetes ist schon ein Risiko</h3>
+        <div class="wer">Huang Y. u. a. (2016), <i>BMJ</i> 355:i5953</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung von 53 Langzeitstudien mit rund 1,6 Millionen Menschen, die noch keinen Diabetes hatten, aber erhöhte Zuckerwerte (Prädiabetes).</dd><dt>Was kam heraus?</dt><dd>Menschen in der Vorstufe haben je nach Definition ein um 13 bis 32 % höheres Sterberisiko als Menschen mit normalem Zucker.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Bei 6,4 % rechnet der Rechner mit +13 %, also dem unteren Wert; als Spanne +5 bis +30 % (Schritt 3).</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract), Ergebnisse zur Gesamtsterblichkeit. <a href="https://www.bmj.com/content/355/bmj.i5953" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-zhong">
+        <h3>Unter 5,7 % ist der Zucker kein Problem</h3>
+        <div class="wer">Zhong G.-C. u. a. (2016), <i>Scientific Reports</i> 6:24071</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung von 11 Langzeitstudien mit Menschen ohne bekannten Diabetes.</dd><dt>Was kam heraus?</dt><dd>Unter etwa 5,7 % verläuft das Sterberisiko flach, darüber steigt es an, am steilsten um 6,5 %.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Begründet, warum der Rechner unter 5,7 % keinen Aufschlag rechnet (Schritt 3).</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Abschnitt „Results“, Dosis-Wirkungs-Kurve für die Gesamtsterblichkeit (Abbildung 5a). <a href="https://www.nature.com/articles/srep24071" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-selvin">
+        <h3>Wie oft aus der Vorstufe Diabetes wird</h3>
+        <div class="wer">Selvin E. u. a. (2010), <i>New England Journal of Medicine</i> 362:800</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Die US-Studie ARIC hat über 11.000 Erwachsene ohne Diabetes rund 15 Jahre lang beobachtet.</dd><dt>Was kam heraus?</dt><dd>Mit einem HbA1c von 6,0 bis 6,4 % bekamen Menschen 4,5-mal so oft Diabetes wie mit 5,0 bis 5,4 %; bei 5,5 bis 5,9 % fast doppelt so oft.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Daraus schätzt der Rechner, wie viele Menschen in der Vorstufe jedes Jahr an Diabetes erkranken: 1,5 % bei 5,7 % bis 6 % bei 6,4 %. Ab dann zählen die Kosten eines Diabetes (Schritt 6).</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract): Hazard Ratios für diagnostizierten Diabetes je HbA1c-Gruppe. <a href="https://pubmed.ncbi.nlm.nih.gov/20200384/" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-kora">
+        <h3>Was Diabetes in Deutschland kostet</h3>
+        <div class="wer">Ulrich S. u. a. (2016), <i>BMJ Open</i> 6:e012527 (KORA-Studien, Augsburg)</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Forschende des Helmholtz Zentrums München haben für Menschen aus der Region Augsburg erfasst, wie oft sie zum Arzt gehen, im Krankenhaus liegen, Medikamente brauchen und krank fehlen, jeweils mit und ohne Typ-2-Diabetes.</dd><dt>Was kam heraus?</dt><dd>Menschen mit Diabetes kosten die Krankenversicherung 3.352 € im Jahr statt 1.849 € (Preise 2011), also rund 1.500 € mehr. Durch Krankheitstage und Frührente kommen rund 2.100 € dazu.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Hochgerechnet auf heute (Gesundheitsausgaben je Einwohner seit 2011 um rund drei Viertel gestiegen, Löhne um rund die Hälfte): 2.500 € mehr für die Krankenkasse, 3.000 € weniger Wirtschaftsleistung im Jahr (Schritt 6).</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Abschnitt „Results“: direkte und indirekte Kosten je Person, mit und ohne Diabetes. <a href="https://bmjopen.bmj.com/content/6/11/e012527" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-effertz">
+        <h3>Was Fettleibigkeit in Deutschland kostet</h3>
+        <div class="wer">Effertz T. u. a. (2016), <i>European Journal of Health Economics</i> 17:1141</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Auswertung der Daten von 146.000 Versicherten einer deutschen Krankenkasse, ergänzt um Daten zu Sterblichkeit, Arbeitslosigkeit und Pflege.</dd><dt>Was kam heraus?</dt><dd>Fettleibigkeit kostet in Deutschland jedes Jahr rund 29 Mrd. € direkt im Gesundheitswesen und 34 Mrd. € indirekt. Über das ganze Leben belastet ein fettleibiger Mann die Sozialkassen mit rund 167.000 €, eine Frau mit rund 207.000 €.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Daraus leitet der Rechner die Kosten des Bauchs ab: je 0,1 über 0,5 rund 1.200 € im Jahr für die Krankenkasse und 1.000 € weniger Wirtschaftsleistung (Schritt 6).</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract). <a href="https://link.springer.com/article/10.1007/s10198-015-0751-4" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-vanbaal">
+        <h3>Die unbequeme Gegenrechnung</h3>
+        <div class="wer">van Baal P. u. a. (2008), <i>PLOS Medicine</i> 5:e29</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Niederländische Forschende haben simuliert, was drei Gruppen über ihr ganzes Leben an Gesundheitskosten verursachen: Fettleibige, Raucher und gesund Lebende.</dd><dt>Was kam heraus?</dt><dd>Fettleibige leben im Schnitt rund 5 Jahre kürzer, Raucher rund 8 Jahre. Über das ganze Leben verursachen gesund Lebende deshalb die höchsten Gesundheitskosten, weil sie länger leben.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Grund für die Zeile „Gegenrechnung“ in der Kostentabelle. Der Rechner verschweigt diesen Effekt nicht.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract) und Tabelle 1 (Lebenszeitkosten je Gruppe). <a href="https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0050029" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-jacobs">
+        <h3>Diabetes ist in Deutschland viel tödlicher als die Statistik zeigt</h3>
+        <div class="wer">Jacobs E. u. a. (2017), <i>Diabetes Care</i> 40:1703</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Auswertung der Abrechnungsdaten von 65 Millionen gesetzlich Versicherten.</dd><dt>Was kam heraus?</dt><dd>Rund 175.000 Todesfälle im Jahr gehen auf Diabetes zurück, etwa jeder fünfte Todesfall. In der Todesursachenstatistik stehen nur rund 23.000. Menschen mit Diabetes leben im Schnitt 5 bis 6 Jahre kürzer.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Kontrolle: Die Werte des Rechners passen zu diesen deutschen Zahlen.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung; Pressemitteilung des Deutschen Zentrums für Diabetesforschung. <a href="https://www.dzd-ev.de/en/article/diabetes-related-mortality-in-germany-higher-than-expected/" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-emmert">
+        <h3>Was eine Limonaden-Abgabe in Deutschland bringen würde</h3>
+        <div class="wer">Emmert-Fees K. u. a. (2023), <i>PLOS Medicine</i> 20:e1004311</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Forschende der TU München und der Universität Oxford haben mit zwei Computermodellen durchgerechnet, was eine Abgabe auf gesüßte Getränke in Deutschland von 2023 bis 2043 bewirken würde.</dd><dt>Was kam heraus?</dt><dd>Eine gestaffelte Abgabe wie in Großbritannien senkt den Zucker um 2,3 g je Person und Tag (bei Männern von 30 bis 49 um 6 g), vermeidet oder verschiebt rund 29.300 Todesfälle und 1,9 Millionen Jahre mit Diabetes und spart in 20 Jahren 16 Mrd. € für die Gesellschaft, davon 4 Mrd. € bei den Krankenkassen. Ein einfacher Aufschlag von 20 % spart 9,5 Mrd. €.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Grundlage für die Zuckerabgabe-Rechnung bis 2070.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract); Pressemitteilung der TU München. <a href="https://www.tum.de/en/news-and-events/all-news/press-releases/details/sugar-tax-could-save-as-much-as-16-billion-euros" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-rogers">
+        <h3>Großbritannien: weniger dicke Kinder nach der Abgabe</h3>
+        <div class="wer">Rogers N. T. u. a. (2023), <i>PLOS Medicine</i> 20:e1004160</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Untersucht wurde, wie sich Fettleibigkeit bei Grundschulkindern in England vor und nach der Abgabe auf Softdrinks (seit 2018) entwickelte.</dd><dt>Was kam heraus?</dt><dd>Bei Mädchen in der 6. Klasse (10 bis 11 Jahre) gab es rund 8 % weniger Fettleibigkeit als ohne Abgabe zu erwarten war. Die Hersteller senkten den Zucker in ihren Getränken um mehr als 40 %.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Zeigt, dass eine Abgabe im echten Leben wirkt, nicht nur im Modell.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract). <a href="https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1004160" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-meier">
+        <h3>Was ungesundes Essen in Deutschland kostet</h3>
+        <div class="wer">Meier T. u. a. (2015), <i>PLOS ONE</i> 10:e0135990</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Forschende der Universitäten Halle und Jena haben berechnet, welche Krankheitskosten in Deutschland auf zu viel Zucker, Salz und gesättigte Fette zurückgehen.</dd><dt>Was kam heraus?</dt><dd>2008 waren es 16,8 Mrd. € Behandlungskosten, rund 7 % aller Krankheitskosten.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Grundlage für den Fall „Alle essen gesund“: 7 % der heutigen Gesundheitsausgaben sind rund 35 Mrd. € im Jahr.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract). <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0135990" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-poerschmann">
+        <h3>Jeder dritte Herztod hat mit dem Essen zu tun</h3>
+        <div class="wer">Pörschmann T., Meier T., Lorkowski S. (2024), <i>European Journal of Preventive Cardiology</i></div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Auswertung der Daten der Global-Burden-of-Disease-Studie für 54 Länder Europas von 1990 bis 2019.</dd><dt>Was kam heraus?</dt><dd>In Deutschland gehen 31 % der Todesfälle durch Herz-Kreislauf-Krankheiten auf ungünstige Ernährung zurück.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Zeigt, wie groß das Potenzial gesunder Ernährung ist.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Bericht der Zahnärztlichen Mitteilungen über die Studie. <a href="https://www.zm-online.de/news/detail/jeder-dritte-kardiovaskulaere-todesfall-geht-auf-falsche-ernaehrung-zurueck" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-destatis">
+        <h3>Lebenserwartung und Gesundheitsausgaben in Deutschland</h3>
+        <div class="wer">Statistisches Bundesamt; Deutsche Diabetes Gesellschaft</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Amtliche Sterbetafel 2021/23 und Gesundheitsausgabenrechnung; Factsheet der Deutschen Diabetes Gesellschaft 2026.</dd><dt>Was kam heraus?</dt><dd>Ein 50-jähriger Mann hat im Schnitt noch rund 30 Jahre vor sich, eine Frau rund 34. Deutschland gab 2024 für Gesundheit 538 Mrd. € aus, 6.444 € je Einwohner. 9,3 Millionen Menschen haben Diabetes, jedes Jahr kommen rund 450.000 dazu.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Die Sterbetafel ist die Grundlage für die Lebenserwartung (Schritt 5), die Ausgaben je Einwohner für die Hochrechnung der Kosten.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Destatis: Sterbetafel 2021/23 und Gesundheitsausgaben 2024; DDG-Factsheet 2026. <a href="https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Gesundheit/Gesundheitsausgaben/_inhalt.html" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+    </div>
   </div>
 </div>
 <div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Wir können uns die Zukunft leisten“. Die Ergebnisse sind Größenordnungen, können Fehler enthalten und ersetzen keine ärztliche, Steuer-, Rechts-, Finanz- oder Energieberatung. Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>
@@ -310,7 +422,7 @@ const ALLE = { kasse: 35, gesellschaft: 75 }; // Mrd. € im Jahr bei voller Wir
 const EINW = 83.5e6, LEBEN = 81;
 
 // ---------- Eingaben ----------
-const V = { sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, einheit: "pct", dm: false };
+const V = { sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, einheit: "pct", dm: false, bauchVor: 0, hbVor: 0, leben: false };
 const FELD = [["alter", "Alter", "Jahre", 1, 18, 95], ["groesse", "Körpergröße", "cm", 1, 120, 220], ["bauch", "Bauchumfang", "cm", 1, 50, 200]];
 FELD.forEach(([k, l, u, st, mi, ma]) => {
   const d = document.createElement("div"); d.className = "f";
@@ -322,7 +434,12 @@ FELD.forEach(([k, l, u, st, mi, ma]) => {
 const mmol = p => (p - 2.15) * 10.929, pct = m => m / 10.929 + 2.15;
 function zeigeHb() { $("i_hba1c").value = V.einheit === "pct" ? fmt(V.hba1c, 1).replace(",", ".") : Math.round(mmol(V.hba1c)); $("i_hba1c").step = V.einheit === "pct" ? 0.1 : 1; }
 $("i_hba1c").addEventListener("input", e => { const x = +e.target.value; if (x) { V.hba1c = V.einheit === "pct" ? x : pct(x); run(); } });
-$("i_einheit").addEventListener("change", e => { V.einheit = e.target.value; zeigeHb(); });
+$("i_einheit").addEventListener("change", e => { V.einheit = e.target.value; zeigeHb(); zeigeHbVor(); run(); });
+function zeigeHbVor() { $("u_hbVor").textContent = V.einheit === "pct" ? "%" : "mmol/mol"; $("i_hbVor").step = V.einheit === "pct" ? 0.1 : 1;
+  $("i_hbVor").value = V.hbVor ? (V.einheit === "pct" ? fmt(V.hbVor, 1).replace(",", ".") : Math.round(mmol(V.hbVor))) : ""; }
+$("i_bauchVor").addEventListener("input", e => { V.bauchVor = +e.target.value || 0; run(); });
+$("i_hbVor").addEventListener("input", e => { const x = +e.target.value; V.hbVor = x ? (V.einheit === "pct" ? x : pct(x)) : 0; run(); });
+$("i_leben").addEventListener("change", e => { V.leben = e.target.checked; run(); });
 $("i_dm").addEventListener("change", e => { V.dm = e.target.checked; run(); });
 function setSex(s) { V.sex = s; $("s_m").setAttribute("aria-pressed", s === "m"); $("s_f").setAttribute("aria-pressed", s === "f"); run(); }
 $("s_m").onclick = () => setSex("m"); $("s_f").onclick = () => setSex("f");
@@ -466,8 +583,70 @@ function run() {
   chart($("c_g"), { aria: "Verlorene Lebensjahre nach Langzeitzucker", x0: 4.5, x1: 11, y1: yg, xt: [5, 6, 7, 8, 9, 10, 11], xf: t => t + " %", yt: [...Array(yg / 2 + 1).keys()].map(i => i * 2), yf: t => t,
     xl: "Langzeitzucker HbA1c in %", zones: [[4.5, 5.7, "--z1"], [5.7, 6.5, "--z2"], [6.5, 11, "--z3"]], band: hb, lines: [{ p: hs, c: "--risk" }],
     dot: [r.h, meG.yll, `Du: ${jahre(meG.yll)}`] });
+  rechenweg(r, lo, hi);
+  zeigeBonus();
   lg($("lg_g"), [["--risk", "Jahre weniger (mittlere Schätzung)"], ["--band", "Spanne der Studien", "sq"], ["--z1", "normal", "sq"], ["--z2", "Vorstufe", "sq"], ["--z3", "Diabetes", "sq"]]);
   zucker();
+}
+
+// ---------- Gesundheitsbonus (Vorschlag, Kapitel 5): bis 480 € im Jahr (= Prämie 40 € im Monat), je 160 € für drei Ziele ----------
+// Ziel erreicht, wenn der Wert gesund ist ODER sich im letzten Jahr deutlich verbessert hat.
+const BONUS = { teil: 160, hbGesund: 5.7, hbBesser: 0.5, wGesund: 0.5, bauchBesser: 3 };
+function bonus(p) {
+  const w = p.bauch / p.groesse, z = [];
+  const hbG = !p.dm && p.hba1c < BONUS.hbGesund, hbB = p.hbVor > 0 && p.hbVor - p.hba1c >= BONUS.hbBesser - 1e-9;
+  z.push({ n: "Langzeitzucker", ok: hbG || hbB,
+    warum: hbG ? `gesund (${fmt(p.hba1c, 1)} % liegt unter 5,7 %)` : hbB ? `Fortschritt: ${fmt(p.hbVor - p.hba1c, 1)} Prozentpunkte weniger als vor einem Jahr` :
+      `noch nicht: unter 5,7 % oder mindestens 0,5 Prozentpunkte weniger als vor einem Jahr${p.hbVor ? "" : " (Wert vor einem Jahr eintragen)"}` });
+  const wG = w < BONUS.wGesund, wB = p.bauchVor > 0 && p.bauchVor - p.bauch >= BONUS.bauchBesser - 1e-9;
+  z.push({ n: "Bauchumfang", ok: wG || wB,
+    warum: wG ? `gesund (unter der halben Körpergröße, ${fmt(p.groesse / 2)} cm)` : wB ? `Fortschritt: ${fmt(p.bauchVor - p.bauch)} cm weniger als vor einem Jahr` :
+      `noch nicht: unter ${fmt(p.groesse / 2)} cm oder mindestens 3 cm weniger als vor einem Jahr${p.bauchVor ? "" : " (Wert vor einem Jahr eintragen)"}` });
+  z.push({ n: "Vorsorge, Nichtrauchen, Bewegung", ok: p.leben, warum: p.leben ? "Ziel erreicht" : "noch nicht: Haken setzen, wenn du das machst" });
+  return { z, summe: z.filter(x => x.ok).length * BONUS.teil };
+}
+function zeigeBonus() {
+  const b = bonus(V), fehlt = 3 * BONUS.teil - b.summe;
+  $("bonus").innerHTML = `<div class="kopf"><span class="k" style="font-weight:700">Dein Gesundheitsbonus im Jahr</span><span class="v">${fmt(b.summe)} € von ${fmt(3 * BONUS.teil)} €</span></div>
+    <ul>${b.z.map(x => `<li><span class="${x.ok ? "ja" : "nein"}">${x.ok ? "✓" : "○"}</span><span><b>${x.n}:</b> ${x.warum}</span><b class="e ${x.ok ? "ja" : "nein"}">${x.ok ? fmt(BONUS.teil) + " €" : "0 €"}</b></li>`).join("")}</ul>
+    <p class="note">${fehlt ? `Noch ${fmt(fehlt)} € im Jahr möglich. Wer gesund ist, bekommt den Bonus, und wer krank ist und Fortschritte macht, bekommt ihn genauso.` : "Du bekommst den vollen Bonus. 480 € im Jahr sind genau die Prämie der Krankenkasse im Vorschlag des Buchs, 40 € im Monat: Wer gesund lebt, zahlt im Ergebnis keine Prämie. Ausgezahlt wird der Bonus vom Bund, bezahlt aus der Gesundheitsabgabe."} Der Messwert bleibt beim Arzt, die Kasse erfährt nur, ob das Ziel erreicht ist. Wer wegen Typ-1-Diabetes oder Veranlagung ein Ziel nicht schaffen kann, bekommt den Teil für die Teilnahme an einem Programm.</p>`;
+}
+
+// ---------- Rechenweg mit den eigenen Zahlen ----------
+const q = (id, t) => `<a href="#${id}">${t}</a>`;
+const f2 = v => fmt(v, 2), f1 = v => fmt(v, 1);
+function rechenweg(r, lo, hi) {
+  const x = r.x, sexT = V.sex === "m" ? "Männer" : "Frauen", hw = Math.exp(r.lw), hg = Math.exp(r.lg), dmJ = V.dm || r.h >= 6.5;
+  const st = [];
+  st.push(["Verhältnis Bauch zu Größe", `Bauchumfang geteilt durch Körpergröße. Der Wert ist für große und kleine Menschen vergleichbar.`,
+    `${fmt(V.bauch)} cm ÷ ${fmt(V.groesse)} cm = <b>${f2(r.w)}</b> &nbsp;→ ${katW(r.w)[0]}`]);
+  st.push(["Faktor für den Bauch", `Über 0,5 steigt das Risiko, in jedem Jahr zu sterben, je 0,1 um 24 % (${q("q-jayedi", "Jayedi 2020")}). Ein Faktor 1,24 heißt also: 24 % höheres Risiko als mit gesundem Bauch.`,
+    r.w <= 0.5 ? `${f2(r.w)} liegt nicht über 0,5, also Faktor <b>1,00</b> (kein Aufschlag)` : `1,24 hoch (${f2(r.w)} − 0,5) ÷ 0,1 = 1,24 hoch ${f2((r.w - 0.5) / 0.1)} = <b>${f2(hw)}</b>`]);
+  let zt, zc;
+  if (V.dm || r.h >= 7) {
+    const g = ip(HR_DM[V.sex], x);
+    zt = `Bei Diabetes zählt zuerst das Alter: Wer mit ${fmt(x)} Jahren Diabetes hat, verliert so viele Jahre, wie die große Studie ${q("q-erfc", "ERFC 2023")} gefunden hat; dazu gehört bei ${V.sex === "m" ? "Männern" : "Frauen"} dieses Alters ein Faktor ${f2(g)}. Jeder Prozentpunkt über 7 % HbA1c erhöht das Risiko um weitere 15 % (${q("q-zhang", "Zhang 2012")}).`;
+    zc = `${f2(g)} × 1,15 hoch ${f1(Math.max(0, r.h - 7))} = <b>${f2(hg)}</b>`;
+  } else if (r.h >= 6) {
+    zt = `Zwischen 6,0 und 7,0 % ohne festgestellten Diabetes geht der Rechner fließend von der Vorstufe zum Diabetes über, weil das Risiko in Wirklichkeit nicht an einer Grenze springt (${q("q-zhong", "Zhong 2016")}).`;
+    zc = `Übergang Vorstufe → Diabetes bei ${f1(r.h)} %: Faktor <b>${f2(hg)}</b>`;
+  } else if (r.h >= 5.7) {
+    zt = `In der Vorstufe (5,7 bis 6,4 %) steigt das Risiko leicht, bis 6,4 % um 13 % (${q("q-huang", "Huang 2016")}).`;
+    zc = `1,13 hoch (${f1(r.h)} − 5,7) ÷ 0,7 = <b>${f2(hg)}</b>`;
+  } else { zt = `Unter 5,7 % ist der Langzeitzucker normal, das Risiko steigt nicht (${q("q-zhong", "Zhong 2016")}).`; zc = `${f1(r.h)} % liegt unter 5,7 %, also Faktor <b>1,00</b>`; }
+  st.push(["Faktor für den Blutzucker", zt, zc]);
+  st.push(["Beides zusammen", `Die Faktoren werden malgenommen. Weil ein Teil des Bauch-Risikos über den Diabetes läuft, zieht der Rechner 30 % des kleineren Teils wieder ab, damit nichts doppelt zählt.`,
+    r.lw > 0 && r.lg > 0 ? `${f2(hw)} × ${f2(hg)} = ${f2(hw * hg)}, abzüglich Überschneidung = <b>${f2(r.hr)}</b>` : `${f2(hw)} × ${f2(hg)} = <b>${f2(r.hr)}</b>`]);
+  st.push(["Lebenserwartung mit und ohne Risiko", `Nach der amtlichen Sterbetafel (${q("q-destatis", "Statistisches Bundesamt")}) haben ${sexT} mit ${fmt(x)} Jahren im Schnitt noch ${f1(r.e0)} Jahre vor sich. Der Rechner geht Jahr für Jahr durch und erhöht das Sterberisiko in jedem Jahr um den Faktor aus Schritt 4.`,
+    `${f1(r.e0)} Jahre − ${f1(r.e1)} Jahre = <b>${jahre(r.yll)}</b> weniger (Spanne ${f1(lo.yll)} bis ${f1(hi.yll)})`]);
+  const wU = Math.max(0, r.w - 0.5) / 0.1, hA = 1 + KOST.dmJeProzent * Math.max(0, r.h - 7);
+  const kk = (dmJ ? KOST.dmDir * hA : 0) + wU * KOST.wDir - 0.5 * Math.min(dmJ ? KOST.dmDir * hA : 0, wU * KOST.wDir);
+  const ww = (dmJ ? KOST.dmInd * hA : 0) + wU * KOST.wInd - 0.5 * Math.min(dmJ ? KOST.dmInd * hA : 0, wU * KOST.wInd);
+  st.push(["Kosten in jedem Jahr", `Diabetes kostet die Krankenkasse 2.500 € im Jahr mehr und die Wirtschaft 3.000 € durch Krankheitstage und Frührente (${q("q-kora", "KORA-Studie")}); ein dicker Bauch je 0,1 über 0,5 rund 1.200 € und 1.000 € (${q("q-effertz", "Effertz 2016")}). Was sich überschneidet, zählt nur halb.${!dmJ && r.h >= 5.7 ? ` In der Vorstufe erkranken jedes Jahr ${fmt(inzidenz(r.h) * 100, 1)} % neu an Diabetes (${q("q-selvin", "Selvin 2010")}); ab dann zählen die Diabetes-Kosten mit.` : ""}`,
+    `heute im Jahr: Krankenkasse <b>${eur(kk)}</b>, Wirtschaft (bis 67) <b>${eur(ww)}</b>`]);
+  st.push(["Über das restliche Leben", `Die Jahreskosten werden für jedes künftige Jahr aufsummiert, gewichtet mit der Wahrscheinlichkeit, dieses Jahr zu erleben. Dazu kommen die Arbeitsjahre bis 67, die durch einen frühen Tod fehlen (45.000 € je Jahr). Alles in heutigen Euro.`,
+    `Krankenkasse ${eur(r.kasse)} + Wirtschaft ${eur(r.wirt + r.tod)} = <b>${eur(r.ges)}</b>`]);
+  $("rw").innerHTML = st.map(([t, e, c]) => `<li><b class="t">${t}</b><span>${e}</span><span class="calc">${c}</span></li>`).join("");
 }
 
 // ---------- Zuckerabgabe und Potenzial bis 2070 ----------
@@ -506,6 +685,45 @@ $("r_g").addEventListener("input", zucker); $("r_r").addEventListener("input", z
 run();
 </script>
 <script src="../tools-buchlinks.js"></script>
+<script src="../info.js"></script>
+<script>
+const K5 = ["kapitel-5.html#7-gesundheitsabgabe-und-gesundheitsbonus", "Kapitel 5"];
+Info.felder({
+  alter: ["Je jünger du bist, desto mehr Lebensjahre liegen noch vor dir und desto mehr kann ein Risiko kosten. Ein Diabetes, der mit 30 beginnt, kostet im Schnitt rund 13 Lebensjahre, mit 50 rund 5."],
+  groesse: ["Brauchst du, um den Bauch richtig einzuordnen: Ein großer Mensch hat natürlich einen größeren Bauch als ein kleiner. Deshalb rechnet der Rechner mit dem Verhältnis aus Bauch und Größe."],
+  bauch: ["Fett im Bauchraum ist besonders ungesund. Es sitzt um Leber und Darm, setzt Stoffe frei, die Entzündungen fördern, und lässt den Blutzucker steigen. Deshalb sagt der Bauchumfang mehr über das Risiko als das Gewicht.<br><b>Messen:</b> im Stehen, ausgeatmet, Maßband waagerecht zwischen unterster Rippe und Hüftknochen."],
+  hba1c: ["Der Langzeitzucker zeigt, wie hoch dein Blutzucker in den letzten 2 bis 3 Monaten im Schnitt war. Zucker im Blut bleibt am roten Blutfarbstoff haften; der HbA1c misst, wie viel davon „verzuckert“ ist.<br><b>Unter 5,7 %</b> normal · <b>5,7 bis 6,4 %</b> Vorstufe · <b>ab 6,5 %</b> Diabetes. Im Laborbefund steht er in % oder in mmol/mol (39 mmol/mol = 5,7 %)."],
+  i_dm: ["Wer Medikamente nimmt, hat oft einen guten Wert, obwohl der Diabetes da ist. Setze dann den Haken: Der Rechner rechnet mit dem Risiko eines Diabetes und deinem Wert unter Behandlung."],
+  r_g: ["Wie viel weniger Zucker die Menschen im Schnitt essen, wenn auf jeden zugesetzten Zucker eine Abgabe kommt. Heute sind es rund 90 g am Tag. Die Limonaden-Abgabe allein spart 2,3 g. Mit 12 g ist etwa ein Achtel weniger gemeint. Der Rechner rechnet das Limonaden-Ergebnis im gleichen Verhältnis hoch.", ...K5],
+  bauchVor: ["Für den Gesundheitsbonus: Wer seinen Bauchumfang in einem Jahr um mindestens 3 cm verringert, bekommt den Bauch-Teil des Bonus, auch wenn er noch nicht im gesunden Bereich ist.", ...K5],
+  hbVor: ["Für den Gesundheitsbonus: Wer seinen Langzeitzucker in einem Jahr um mindestens 0,5 Prozentpunkte senkt (z. B. von 7,5 auf 7,0 %), bekommt den Zucker-Teil des Bonus, auch mit Diabetes.", ...K5],
+  i_leben: ["Der dritte Teil des Bonus: regelmäßig zur Vorsorge gehen, nicht rauchen und sich bewegen. Nachgewiesen wird das wie bei den Bonusprogrammen, die es heute schon gibt.", ...K5],
+  r_r: ["Diabetes, Herzinfarkt und Schlaganfall entstehen über viele Jahre. Wer heute weniger Zucker isst, wird vor allem in 10 bis 30 Jahren gesünder sein. Der Rechner lässt die Wirkung deshalb langsam anwachsen."],
+});
+Info.texte(".main", {
+  "Geschlecht": ["Frauen leben in Deutschland im Schnitt rund 5 Jahre länger als Männer, und der Bauch wirkt bei ihnen etwas anders. Deshalb rechnet der Rechner für beide getrennt."],
+  "Taille geteilt durch Größe": ["Bauchumfang geteilt durch Körpergröße. Beispiel: 90 cm Bauch bei 180 cm Größe ergibt 0,5.<br><b>Unter 0,5</b> gesund · <b>0,5 bis 0,6</b> erhöht · <b>ab 0,6</b> stark erhöht. Die Faustregel „Bauch unter der halben Körpergröße“ gilt für Männer und Frauen."],
+  "Langzeitzucker": ["Dein HbA1c-Wert und was er bedeutet: unter 5,7 % normal, 5,7 bis 6,4 % Vorstufe (Prädiabetes), ab 6,5 % Diabetes. mmol/mol ist dieselbe Zahl in der Einheit, die viele Labore heute angeben."],
+  "Statistisch weniger Lebenszeit": ["So viele Jahre sterben Menschen mit deinen Werten im Durchschnitt früher als Menschen gleichen Alters und Geschlechts mit gesundem Bauch und normalem Zucker. Die Spanne zeigt die Unsicherheit zwischen den Studien.<br>„Sterberisiko ×1,5“ heißt: In jedem Jahr ist die Wahrscheinlichkeit zu sterben anderthalbmal so hoch."],
+  "Mehrkosten über das restliche Leben": ["Was Krankenkasse und Wirtschaft im Durchschnitt zusätzlich tragen, von heute bis zum Lebensende, in heutigen Euro. Die Tabelle darunter zeigt, wer was trägt."],
+  "Krankenkasse": ["Mehr Arztbesuche, Medikamente, Insulin, Krankenhaus, Behandlung von Folgeschäden an Herz, Nieren, Augen und Füßen. Bezahlt von allen Versicherten über die Beiträge."],
+  "Wirtschaft: Krankheitstage": ["Wer krank ist, fehlt bei der Arbeit oder geht früher in Rente. Dann fehlt seine Arbeit, und es fehlen Steuern und Beiträge. Gerechnet bis zum Alter 67."],
+  "Wirtschaft: Arbeitsjahre": ["Wer vor 67 stirbt, kann in den fehlenden Jahren nicht mehr arbeiten. Der Rechner setzt dafür 45.000 € Wirtschaftsleistung je Jahr an, gewichtet mit der Wahrscheinlichkeit, dass es dazu kommt."],
+  "Gesellschaft zusammen": ["Krankenkasse und Wirtschaft zusammen: das, was uns allen fehlt."],
+  "Dein Gesundheitsbonus": ["Vorschlag aus dem Buch: Die Abgabe auf Zucker fließt als Bonus an die Versicherten zurück, bis zu 480 € im Jahr, so viel wie die ganze Prämie der Krankenkasse (40 € im Monat). Der Bund zahlt ihn aus, bezahlt aus der Gesundheitsabgabe, nicht aus dem allgemeinen Haushalt. Er ersetzt die Prämie in der Höhe. Der Rechner teilt ihn in drei gleiche Teile zu je 160 €: Langzeitzucker, Bauchumfang sowie Vorsorge, Nichtrauchen und Bewegung. Jeden Teil bekommt, wer gesund ist oder sich im letzten Jahr deutlich verbessert hat. Die genaue Aufteilung ist ein Vorschlag.", ...K5],
+  "Gegenrechnung": ["Ehrlich gerechnet: Wer früher stirbt, verursacht in den verlorenen Jahren keine Gesundheitskosten mehr. Für die Kasse gleicht sich das teilweise aus. Für die Menschen nicht: Ihnen fehlen Lebensjahre."],
+});
+Info.texte("#zucker", {
+  "Limonaden-Abgabe": ["Abgabe auf gesüßte Getränke, gestaffelt nach Zuckergehalt, wie in Großbritannien seit 2018. Die Zahl stammt aus einer Studie der TU München für Deutschland und ist bis 2070 fortgeschrieben."],
+  "Abgabe auf allen Zucker": ["Der Vorschlag aus dem Buch: eine Abgabe je Kilogramm zugesetzten Zucker, 4 € ab 2030 und 9 € ab 2035. Hersteller ändern dann ihre Rezepte, und alle essen weniger Zucker.", ...K5],
+  "Alle essen gesund": ["Was möglich wäre, wenn sich alle so ernähren, wie es Fachleute empfehlen: weniger Zucker, Salz und gesättigte Fette. Das ist eine theoretische Obergrenze, die keine Steuer allein erreicht."],
+  "Fall": ["Die drei Fälle im Vergleich: was sie im Jahr sparen, wenn sie voll wirken, und woher die Zahlen kommen."],
+});
+Info.texte(".cols", {
+  "Bauch: Taille": ["Die Kurve zeigt für dein Alter und Geschlecht, wie viele Lebensjahre bei jedem Verhältnis von Bauch zu Größe statistisch fehlen. Der schwarze Punkt bist du. Grün ist gesund, gelb erhöht, rot stark erhöht."],
+  "Blutzucker: Langzeitwert": ["Die Kurve zeigt für dein Alter und Geschlecht, wie viele Lebensjahre bei jedem Langzeitzucker statistisch fehlen. Der schwarze Punkt bist du. Grün ist normal, gelb die Vorstufe, rot Diabetes."],
+});
+</script>
 <script id="druck-js">(() => {
   let alt = null, zu = [];
   addEventListener("beforeprint", () => {
