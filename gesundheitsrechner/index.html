@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<title>Bauch, Blutzucker und Lebenszeit</title>
+<meta name="description" content="Gesundheitsrechner zum Buch „Wir können uns die Zukunft leisten“: Was Bauchumfang und Langzeitzucker statistisch an Lebenszeit kosten, was das für Krankenkasse und Gesellschaft bedeutet und was eine Zuckerabgabe bis 2070 bringen kann. Mit Quellen.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout wie die anderen Rechner: Eingaben links, Ergebnis rechts; darunter die Kurven aus den Studien, die Zuckerabgabe bis 2070, Hinweise und Quellen */
+:root {
+  --bg: #f4f6f5; --panel: #ffffff; --fg: #17201e; --muted: #5a6763; --line: #d9dfdc; --grid: #e6ebe9; --field: #f8faf9;
+  --risk: #c4502b; --ok: #00907f; --mid: #c98a00; --good: #1d7a46; --bad: #b3401e; --hl: #e7f3f1; --band: rgb(196 80 43 / .16);
+  --z1: rgb(0 144 127 / .08); --z2: rgb(201 138 0 / .10); --z3: rgb(196 80 43 / .10);
+  --s1: #00907f; --s2: #c98a00; --s3: #5b6fd6;
+  --display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1415; --panel: #171e1f; --fg: #e7eceb; --muted: #9aa8a4; --line: #2b3536; --grid: #222b2c; --field: #1d2526;
+  --risk: #ef8a66; --ok: #1aa896; --mid: #e3a92a; --good: #5cc98a; --bad: #ef8a66; --hl: #183230; --band: rgb(239 138 102 / .20);
+  --z1: rgb(26 168 150 / .10); --z2: rgb(227 169 42 / .10); --z3: rgb(239 138 102 / .12);
+  --s1: #1aa896; --s2: #e3a92a; --s3: #8c9cf0; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1415; --panel: #171e1f; --fg: #e7eceb; --muted: #9aa8a4; --line: #2b3536; --grid: #222b2c; --field: #1d2526;
+  --risk: #ef8a66; --ok: #1aa896; --mid: #e3a92a; --good: #5cc98a; --bad: #ef8a66; --hl: #183230; --band: rgb(239 138 102 / .20);
+  --z1: rgb(26 168 150 / .10); --z2: rgb(227 169 42 / .10); --z3: rgb(239 138 102 / .12);
+  --s1: #1aa896; --s2: #e3a92a; --s3: #8c9cf0; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font: 16px/1.5 var(--body); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 56px; margin: 0 }
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 24px }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15 }
+h1 { font-size: clamp(28px, 4.2vw, 42px); font-weight: 800 }
+h2 { font-size: 21px; font-weight: 700 }
+h3 { font-size: 15px; font-weight: 700 }
+p { margin: 0; max-width: 72ch }
+.eyebrow { font: 700 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+header { display: grid; gap: 10px }
+.lead { color: var(--muted); font-size: 17px }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 20px; align-items: start }
+@media (max-width: 900px) { .main { grid-template-columns: minmax(0, 1fr) } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 16px; min-width: 0 }
+.grp { display: grid; gap: 10px; align-content: start }
+.f { display: grid; gap: 3px; align-content: start }
+.f label { font-size: 13.5px; color: var(--muted) }
+.f .in { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 7px; background: var(--field); overflow: hidden }
+.f input, .f select { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--fg); font: 600 15px var(--body); padding: 7px 9px; font-variant-numeric: tabular-nums }
+.f .u { padding: 0 9px; color: var(--muted); font-size: 13px; white-space: nowrap }
+.f small { font-size: 12px; color: var(--muted); line-height: 1.35 }
+.row2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; background: var(--bg); justify-self: start }
+.seg button { font: 700 14px var(--body); border: 0; background: transparent; color: var(--muted); padding: 6px 14px; border-radius: 999px; cursor: pointer }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg) }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13px; color: var(--muted) }
+.presets button { font: 600 13px var(--body); border: 1px solid var(--line); background: var(--field); color: var(--fg); border-radius: 999px; padding: 4px 11px; cursor: pointer }
+.chk { display: flex; gap: 8px; align-items: flex-start; font-size: 14.5px }
+.chk input { margin-top: 4px; accent-color: var(--ok) }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--ok); outline-offset: 2px }
+.verdict { background: var(--hl); border-radius: 8px; padding: 14px 16px; font-size: 17px; line-height: 1.45 }
+.verdict b { font-family: var(--display) }
+.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px }
+.tiles.t3 { grid-template-columns: repeat(3, minmax(0, 1fr)) }
+@media (max-width: 560px) { .tiles, .tiles.t3 { grid-template-columns: minmax(0, 1fr) } }
+.tile { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 2px; align-content: start }
+.tile .k { font-size: 13px; color: var(--muted) }
+.tile .v { font: 800 24px/1.15 var(--display); font-variant-numeric: tabular-nums }
+.tile .s { font-size: 12.5px; color: var(--muted) }
+.tag { display: inline-block; font: 700 12px/1 var(--body); padding: 4px 8px; border-radius: 999px; color: #fff; vertical-align: middle; margin-left: 4px }
+.tag.g { background: var(--ok) } .tag.m { background: var(--mid) } .tag.r { background: var(--risk) }
+.chart { position: relative }
+.chart svg { width: 100%; height: auto; display: block }
+.chart text { fill: var(--muted); font: 12px var(--body); font-variant-numeric: tabular-nums }
+.chart text.lbl { fill: var(--fg); font-weight: 700 }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13.5px; color: var(--muted) }
+.legend span { display: inline-flex; align-items: center; gap: 6px }
+.legend i { width: 18px; height: 0; border-top: 2.5px solid; display: inline-block }
+.legend i.dash { border-top-style: dashed }
+.legend i.sq { width: 14px; height: 10px; border: 0; border-radius: 2px }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; align-items: start }
+.tbl { overflow-x: auto }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; font-variant-numeric: tabular-nums }
+th, td { text-align: right; padding: 7px 9px; border-bottom: 1px solid var(--line); vertical-align: top }
+th:first-child, td:first-child { text-align: left }
+td:not(:first-child), th:not(:first-child) { white-space: nowrap }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700 }
+tr.sum td { font-weight: 700 }
+ul.src, ol.src { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; color: var(--muted) }
+ul.txt { margin: 0; padding-left: 20px; display: grid; gap: 8px; max-width: 80ch }
+a { color: var(--ok) }
+.note { font-size: 13.5px; color: var(--muted) }
+.range { display: grid; gap: 4px; font-size: 13.5px }
+.range input { width: 100%; accent-color: var(--ok) }
+.warn { border-left: 4px solid var(--mid); padding: 8px 12px; background: var(--field); border-radius: 6px; font-size: 14.5px }
+details > summary { cursor: pointer; font-weight: 700 }
+[hidden] { display: none !important }
+</style>
+<style id="sitenav-css">
+.sitenav{background:#12372a;color:#fbf8f1;font:600 15px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sitenav{background:#0a1913}}
+:root[data-theme="dark"] .sitenav{background:#0a1913}
+.sitenav.flush{margin:-28px calc(-1 * max(16px, env(safe-area-inset-left, 0px))) 24px}
+.sitenav .sn-in{max-width:1180px;margin:0 auto;padding:10px max(16px, env(safe-area-inset-left, 0px));display:flex;align-items:center;justify-content:space-between;gap:10px 18px;flex-wrap:wrap}
+.sitenav a{color:#fbf8f1;text-decoration:none}
+.sitenav .sn-logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:14px}
+.sitenav .sn-logo b{color:#f2b33d;font-weight:800}
+.sitenav .sn-links{display:flex;align-items:center;gap:4px 16px;flex-wrap:wrap}
+.sitenav .sn-links a{padding:5px 0;border-bottom:2px solid transparent}
+.sitenav .sn-links a:hover,.sitenav .sn-links a[aria-current]{border-color:#f2b33d}
+.sitenav .sn-links a.sn-buch{background:#f2b33d;color:#12372a;border:0;border-radius:999px;padding:6px 14px;font-weight:700}
+.sitenav .sn-links a.sn-buch:hover{background:#ffc75a}
+.sitenav a:focus-visible{outline:2px solid #f2b33d;outline-offset:3px}
+.sitehinweis{max-width:1180px;margin:28px auto 8px;padding:0 max(16px, env(safe-area-inset-left, 0px));font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.sitehinweis p{max-width:none;margin:0;padding:10px 14px;border:1px solid #e0a52b;border-left-width:5px;border-radius:8px;background:#fff6dd;color:#3d2e05}
+.sitehinweis b{color:#7a4f00}
+.sitehinweis a{color:inherit;text-decoration:underline}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sitehinweis p{background:#2e2410;color:#f3e6c4;border-color:#a8790f}:root:not([data-theme="light"]) .sitehinweis b{color:#f2b33d}}
+:root[data-theme="dark"] .sitehinweis p{background:#2e2410;color:#f3e6c4;border-color:#a8790f}
+:root[data-theme="dark"] .sitehinweis b{color:#f2b33d}
+.sitenav .sn-links button.sn-druck{font:inherit;color:#fbf8f1;background:none;border:1px solid rgba(251,248,241,.45);border-radius:999px;padding:5px 12px;cursor:pointer}
+.sitenav .sn-links button.sn-druck:hover{border-color:#f2b33d}
+.druckkopf{display:none}
+.teil-druck{font:600 13px system-ui,sans-serif;border:1px solid currentColor;border-radius:999px;padding:4px 12px;background:none;color:inherit;opacity:.75;cursor:pointer;margin:0 0 10px}
+.teil-druck:hover{opacity:1}
+@media print{
+@page{margin:14mm 12mm}
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{background:#fff!important}
+#quellen,#fragen,#idee{display:none!important}
+body.druck-teil main > section:not(.druck-dieser){display:none!important}
+body.druck-teil header.top{display:none!important}
+.teil-druck{display:none!important}
+.sitenav,footer,.mbar,.tip,.ttip,.presets,.seg,button,.sn-druck{display:none!important}
+.druckkopf{display:block;font:12px/1.4 system-ui,sans-serif;color:#444;border-bottom:1px solid #999;padding-bottom:6px;margin-bottom:12px}
+.panel,.main > .panel{position:static!important;max-height:none!important;overflow:visible!important;box-shadow:none!important}
+svg,table,.verdict,.tile,.sitehinweis{break-inside:avoid}
+h1,h2,h3{break-after:avoid}
+.sitehinweis{max-width:none!important;margin:20px 0 0!important;padding:0!important;font-size:11.5px}
+.sitehinweis p{background:#fff6dd!important;color:#3d2e05!important;border-color:#e0a52b!important}
+.sitehinweis b{color:#7a4f00!important}
+}
+/* Große Bildschirme: ganze Breite nutzen */
+@media (min-width:1240px){.wrap,.sitenav .sn-in,.sitehinweis{max-width:none!important}.sitenav .sn-in,.sitehinweis{padding-left:max(32px, env(safe-area-inset-left, 0px));padding-right:max(32px, env(safe-area-inset-right, 0px))}}
+/* Cockpit (Energie, E-Auto, Heizung): Eingaben links, Ergebnis rechts, beide Spalten bleiben stehen und scrollen einzeln */
+@media (min-width:1200px) and (min-height:620px){
+.sitenav.flush ~ .wrap{gap:14px}
+.sitenav.flush ~ .wrap > header{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 28px;align-items:end}
+.sitenav.flush ~ .wrap > header .eyebrow{grid-column:1/-1}
+.sitenav.flush ~ .wrap > header h1{font-size:26px;max-width:22em}
+.sitenav.flush ~ .wrap > header .lead{font-size:13.5px;line-height:1.45;margin:0}
+.sitenav.flush ~ .wrap .main{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px}
+.sitenav.flush ~ .wrap .main > .panel{position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto;padding:14px;gap:12px;scrollbar-width:thin}
+.sitenav.flush ~ .wrap .main .f label{font-size:12.5px}
+.sitenav.flush ~ .wrap .main .f input,.sitenav.flush ~ .wrap .main .f select{font-size:14px;padding:4px 8px}
+.sitenav.flush ~ .wrap .main .f small{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sitenav.flush ~ .wrap .main .row2{gap:8px}
+.sitenav.flush ~ .wrap .main h2{font-size:18px}
+.sitenav.flush ~ .wrap .main h3{font-size:15px}
+.sitenav.flush ~ .wrap .main .verdict{font-size:15.5px;padding:10px 14px}
+.sitenav.flush ~ .sitehinweis{margin-bottom:10px}
+.sitenav.flush ~ .sitehinweis p{padding:6px 12px;font-size:12.5px}
+}
+@media (max-width:640px){.sitenav .sn-links{gap:2px 14px;font-size:14px}.sitenav .sn-logo span{display:none}}
+</style>
+</head>
+<body>
+<nav class="sitenav flush" aria-label="Hauptmenü"><div class="sn-in"><a class="sn-logo" href="../" aria-label="Mut zur Zukunft, zur Startseite"><svg viewBox="0 0 100 100" width="34" height="34" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#f2b33d" stroke-width="3"/><path d="M30,64 A20,20 0 0 1 70,64 Z" fill="#f2b33d"/><path d="M50,64 L50,33" stroke="#fbf8f1" stroke-width="4" stroke-linecap="round"/><path d="M50,47 C41,46 33,39 31,28 C41,29 48,36 50,47 Z" fill="#9fd8b0"/><path d="M50,40 C57,37 65,30 68,19 C58,20 51,28 50,40 Z" fill="#9fd8b0"/><line x1="17" y1="64" x2="83" y2="64" stroke="#fbf8f1" stroke-width="3.5" stroke-linecap="round"/></svg><span>Mut zur <b>Zukunft</b></span></a><div class="sn-links"><a class="sn-buch" href="../buch/">Zum Buch</a><a href="../">Start</a><a href="../steuerrechner/">Steuerrechner</a><a href="../eauto-rechner/">E-Auto-Rechner</a><a href="../heizungsrechner/">Heizung und Dämmung</a><a href="../energie-rechner/">Energie-Rechner</a><a href="../balkon-rechner/">Balkon-Rechner</a><a href="../gesundheitsrechner/" aria-current="page">Gesundheitsrechner</a><a href="../ueber-mich.html">Über mich</a><button type="button" class="sn-druck" onclick="print()" title="Eingaben und Ergebnisse drucken oder als PDF speichern">Drucken / PDF</button></div></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Gesundheit über das ganze Leben</div>
+    <h1>Bauchumfang und Langzeitzucker: Was kostet das an Lebenszeit und Geld?</h1>
+    <p class="lead">Gib Körpergröße, Bauchumfang und deinen Langzeitzucker (HbA1c) ein. Der Rechner zeigt, wie viele Lebensjahre Menschen mit diesen Werten im Durchschnitt verlieren, was das die Krankenkassen kostet und was es die Gesellschaft kostet. Alles beruht auf großen Studien mit Millionen Menschen. Es sind Durchschnittswerte, keine Vorhersage für dich persönlich.</p>
+  </header>
+
+  <div class="main">
+    <div class="panel">
+      <div class="seg" role="group" aria-label="Geschlecht">
+        <button type="button" id="s_m" aria-pressed="true">Mann</button>
+        <button type="button" id="s_f" aria-pressed="false">Frau</button>
+      </div>
+      <div class="row2" id="eing"></div>
+      <div class="grp">
+        <div class="f">
+          <label for="i_hba1c">Langzeitzucker (HbA1c)</label>
+          <div class="in"><input id="i_hba1c" type="number" inputmode="decimal" step="0.1" min="3"><select id="i_einheit" aria-label="Einheit" style="flex:0 0 auto;width:auto;border-left:1px solid var(--line)"><option value="pct">%</option><option value="mmol">mmol/mol</option></select></div>
+          <small>steht im Laborbefund; gesund unter 5,7 % (39 mmol/mol)</small>
+        </div>
+        <label class="chk"><input type="checkbox" id="i_dm"> <span>Bei mir ist Diabetes schon festgestellt (dann zählt der Wert unter Behandlung)</span></label>
+      </div>
+      <div class="presets"><span>Beispiele:</span><button type="button" data-p="gesund">Gesund</button><button type="button" data-p="bauch">Bauch, Zucker noch normal</button><button type="button" data-p="prae">Vorstufe Diabetes</button><button type="button" data-p="dm">Diabetes, schlecht eingestellt</button></div>
+      <p class="note">So misst du den Bauchumfang: im Stehen, nach dem Ausatmen, mit dem Maßband waagerecht in der Mitte zwischen unterster Rippe und Hüftknochen (meist knapp über dem Bauchnabel). Faustregel: Der Bauchumfang sollte weniger als die Hälfte der Körpergröße sein.</p>
+    </div>
+
+    <div class="panel">
+      <h2>Ergebnis</h2>
+      <div class="verdict" id="verdict"></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="tbl"><table id="t_kosten"></table></div>
+      <p class="note" id="n_kosten"></p>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div class="panel">
+      <h2>Bauch: Taille geteilt durch Körpergröße</h2>
+      <div class="legend" id="lg_w"></div>
+      <div class="chart" id="c_w"></div>
+      <p class="note">Statistisch verlorene Lebensjahre nur durch den Bauch, bei normalem Blutzucker, für dein Alter und Geschlecht. Die Linie folgt der großen Auswertung von 72 Studien (Jayedi u. a. 2020), die Fläche zeigt die Spanne bis zur britischen Studie von Ashwell u. a. (2014), die für sehr dicke Bäuche deutlich mehr verlorene Jahre findet.</p>
+    </div>
+    <div class="panel">
+      <h2>Blutzucker: Langzeitwert HbA1c</h2>
+      <div class="legend" id="lg_g"></div>
+      <div class="chart" id="c_g"></div>
+      <p class="note">Statistisch verlorene Lebensjahre nur durch den Blutzucker, bei gesundem Bauchumfang. Unter 5,7 % steigt das Risiko kaum, in der Vorstufe (5,7 bis 6,4 %) leicht, ab 6,5 % (Diabetes) deutlich (der Übergang ist in der Kurve zwischen 6 und 7 % geglättet), und jeder Prozentpunkt über 7 % kostet weitere Jahre.</p>
+    </div>
+  </div>
+
+  <div class="panel" id="zucker">
+    <div class="eyebrow">Für alle gerechnet</div>
+    <h2>Was eine Zuckerabgabe bringt und was gesunde Ernährung insgesamt bringen könnte</h2>
+    <p>Großbritannien erhebt seit 2018 eine Abgabe auf gesüßte Getränke, gestaffelt nach dem Zuckergehalt. Die Hersteller haben daraufhin ihre Rezepte geändert: Der Zucker in den betroffenen Getränken sank um mehr als 40 %, und bei Mädchen in der 6. Klasse ging Fettleibigkeit um rund 8 % zurück. Für Deutschland hat ein Team der TU München und der Universität Oxford das 2023 durchgerechnet. Der Rechner schreibt diese Ergebnisse bis 2070 fort und vergleicht sie mit der Abgabe auf allen zugesetzten Zucker aus dem Buch und mit dem, was möglich wäre, wenn sich alle gesund ernähren.</p>
+    <div class="row2" style="align-items:end">
+      <div class="range"><label for="r_g">Abgabe auf allen Zucker (Buch): Menschen essen im Schnitt <b id="o_g"></b> Zucker weniger am Tag</label><input id="r_g" type="range" min="2" max="30" step="1" value="12"><small class="note">Heute rund 90 g zugesetzter Zucker am Tag. Die Limonaden-Abgabe allein spart 2,3 g.</small></div>
+      <div class="range"><label for="r_r">Volle Wirkung erreicht nach <b id="o_r"></b></label><input id="r_r" type="range" min="10" max="30" step="1" value="20"><small class="note">Krankheiten wie Diabetes entstehen über Jahre, deshalb wirkt gesünderes Essen erst nach und nach.</small></div>
+    </div>
+    <div class="tiles t3" id="tiles_z"></div>
+    <div class="legend" id="lg_z"></div>
+    <div class="chart" id="c_z"></div>
+    <p class="note">Aufsummierte Einsparung für Krankenkassen und Wirtschaft von 2027 bis 2070, in heutigen Euro, ohne Abzinsung. Gestrichelt: nur der Teil, der bei den Krankenkassen ankommt.</p>
+    <div class="tbl"><table id="t_z"></table></div>
+  </div>
+
+  <div class="cols">
+    <div class="panel">
+      <h2>Was die Zahlen bedeuten und was nicht</h2>
+      <ul class="txt">
+        <li><b>Zusammenhang ist nicht gleich Ursache.</b> Die Studien beobachten, dass Menschen mit großem Bauch oder hohem Blutzucker früher sterben. Ein Teil davon geht auf Dinge zurück, die oft zusammen auftreten: Bewegungsmangel, Rauchen, Armut, Veranlagung. Die Studien rechnen das so gut es geht heraus. Dass Abnehmen und ein besserer Blutzucker wirklich helfen, zeigen zusätzlich Versuche mit Programmen und Medikamenten.</li>
+        <li><b>Durchschnitt, keine Vorhersage.</b> Wer heute einen großen Bauch hat, kann trotzdem sehr alt werden, und wer schlank ist, kann früh krank werden. Die Zahlen gelten für viele Menschen zusammen.</li>
+        <li><b>Bauch und Zucker überschneiden sich.</b> Ein Teil des Risikos durch den Bauch läuft über den Diabetes. Der Rechner zählt das deshalb nicht voll doppelt, sondern zieht 30 % des kleineren Teils ab.</li>
+        <li><b>Wer früher stirbt, kostet die Krankenkasse in den verlorenen Jahren nichts mehr.</b> Eine Studie aus den Niederlanden (van Baal u. a. 2008) fand deshalb, dass Menschen mit starkem Übergewicht über das ganze Leben sogar etwas weniger Gesundheitskosten verursachen als gesund Lebende, weil sie im Schnitt fünf Jahre früher sterben. Der Rechner zeigt diesen Betrag offen. Ein früher Tod ist aber kein Gewinn: verlorene Lebensjahre, Krankheit, Pflege und fehlende Arbeitskraft wiegen schwerer. Gesund leben heißt vor allem: länger und besser leben.</li>
+        <li><b>Keine ärztliche Beratung.</b> Bei einem HbA1c ab 5,7 % oder einem Bauchumfang über der halben Körpergröße lohnt sich ein Gespräch mit der Hausärztin oder dem Hausarzt. Für Kinder und Schwangere gilt der Rechner nicht.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h2>So rechnet der Rechner</h2>
+      <ul class="src">
+        <li><b>Sterblichkeit:</b> Sterbetafel 2021/23 des Statistischen Bundesamts, nachgebildet mit einer Gompertz-Kurve. Bauch und Zucker erhöhen das Sterberisiko in jedem Alter um einen festen Faktor; die verlorenen Jahre sind die Differenz der Lebenserwartung.</li>
+        <li><b>Bauch:</b> je 0,1 über einem Verhältnis von 0,5 ein um 24 % höheres Sterberisiko (Spanne 12 bis 36 %), aus 72 Studien (Jayedi u. a. 2020, BMJ). Obere Grenze der Spanne: Ashwell u. a. 2014.</li>
+        <li><b>Zucker ohne Diabetes:</b> unter 5,7 % kein Aufschlag, bis 6,4 % auf +13 % steigend (Vorstufe; Huang u. a. 2016, BMJ: +13 bis +32 %).</li>
+        <li><b>Diabetes:</b> so viele verlorene Jahre, wie die Emerging Risk Factors Collaboration 2023 für Europa fand (Feststellung mit 30 Jahren rund 13 Jahre, mit 40 rund 9, mit 50 rund 5), bezogen auf einen HbA1c von 7 %. Jeder Prozentpunkt darüber erhöht das Sterberisiko um 15 % (Zhang u. a. 2012).</li>
+        <li><b>Vorstufe zu Diabetes:</b> Jedes Jahr erkranken bei 5,7 % rund 1,5 %, bei 6,4 % rund 6 % der Betroffenen neu an Diabetes (nach Selvin u. a. 2010, NEJM). Die Kosten zählen ab dann.</li>
+        <li><b>Kosten Diabetes:</b> 2.500 € im Jahr mehr bei der Krankenkasse und 3.000 € im Jahr weniger Wirtschaftsleistung durch Krankheitstage und Frührente bis 67, nach der KORA-Studie (Ulrich u. a. 2016) auf heutige Preise hochgerechnet; je Prozentpunkt HbA1c über 7 % 12 % mehr (Annahme, wegen Folgeschäden).</li>
+        <li><b>Kosten Bauch:</b> je 0,1 über 0,5 rund 1.200 € im Jahr bei der Krankenkasse und 1.000 € weniger Wirtschaftsleistung bis 67, abgeleitet aus Effertz u. a. 2016 (Fettleibigkeit kostet in Deutschland jährlich 29 Mrd. € direkt und 34 Mrd. € indirekt).</li>
+        <li><b>Früher Tod vor 67:</b> 45.000 € Wirtschaftsleistung je fehlendem Jahr (durchschnittliches Arbeitnehmerentgelt mal Erwerbsquote).</li>
+        <li>Alle Beträge in heutigen Euro, nicht abgezinst, gewichtet mit der Wahrscheinlichkeit, das jeweilige Alter zu erleben. Pflegekosten und Leid sind nicht eingerechnet.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel" id="quellen">
+    <h2>Quellen</h2>
+    <ol class="src">
+      <li>Jayedi A. u. a. (2020): Central fatness and risk of all cause mortality: systematic review and dose-response meta-analysis of 72 prospective cohort studies. <i>BMJ</i> 370:m3324. <a href="https://www.bmj.com/content/370/bmj.m3324" target="_blank" rel="noopener">bmj.com</a></li>
+      <li>Ashwell M., Mayhew L., Richardson J., Rickayzen B. (2014): Waist-to-height ratio is more predictive of years of life lost than body mass index. <i>PLOS ONE</i> 9(9):e103483. <a href="https://openaccess.city.ac.uk/id/eprint/4058/" target="_blank" rel="noopener">City University London</a></li>
+      <li>Emerging Risk Factors Collaboration (2023): Life expectancy associated with different ages at diagnosis of type 2 diabetes in high-income countries. <i>Lancet Diabetes &amp; Endocrinology</i> 11(10):731–742. <a href="https://www.cam.ac.uk/research/news/type-2-diabetes-diagnosis-at-age-30-reduces-life-expectancy-by-as-much-as-14-years" target="_blank" rel="noopener">Universität Cambridge</a></li>
+      <li>Zhang Y. u. a. (2012): Glycosylated hemoglobin in relationship to cardiovascular outcomes and death in patients with type 2 diabetes: a systematic review and meta-analysis. <i>PLOS ONE</i> 7(8):e42551. <a href="https://pubmed.ncbi.nlm.nih.gov/22912709/" target="_blank" rel="noopener">PubMed</a></li>
+      <li>Selvin E. u. a. (2010): Glycated hemoglobin, diabetes, and cardiovascular risk in nondiabetic adults. <i>New England Journal of Medicine</i> 362:800–811. <a href="https://pubmed.ncbi.nlm.nih.gov/20200384/" target="_blank" rel="noopener">PubMed</a></li>
+      <li>Zhong G.-C. u. a. (2016): HbA1c and risks of all-cause and cause-specific death in subjects without known diabetes: a dose-response meta-analysis. <i>Scientific Reports</i> 6:24071. <a href="https://www.nature.com/articles/srep24071" target="_blank" rel="noopener">nature.com</a></li>
+      <li>Huang Y. u. a. (2016): Association between prediabetes and risk of cardiovascular disease and all cause mortality. <i>BMJ</i> 355:i5953. <a href="https://www.bmj.com/content/355/bmj.i5953" target="_blank" rel="noopener">bmj.com</a></li>
+      <li>Ulrich S. u. a. (2016): Cost burden of type 2 diabetes in Germany: results from the population-based KORA studies. <i>BMJ Open</i> 6:e012527. <a href="https://bmjopen.bmj.com/content/6/11/e012527" target="_blank" rel="noopener">bmjopen.bmj.com</a></li>
+      <li>Effertz T. u. a. (2016): The costs and consequences of obesity in Germany: a new approach from a prevalence and life-cycle perspective. <i>European Journal of Health Economics</i> 17:1141–1158. <a href="https://link.springer.com/article/10.1007/s10198-015-0751-4" target="_blank" rel="noopener">Springer</a></li>
+      <li>van Baal P. u. a. (2008): Lifetime medical costs of obesity: prevention no cure for increasing health expenditure. <i>PLOS Medicine</i> 5(2):e29. <a href="https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0050029" target="_blank" rel="noopener">plos.org</a></li>
+      <li>Jacobs E. u. a. (2017): Burden of mortality attributable to diagnosed diabetes: a nationwide analysis based on claims data from 65 million people in Germany. <i>Diabetes Care</i> 40(12):1703–1709. <a href="https://www.dzd-ev.de/en/article/diabetes-related-mortality-in-germany-higher-than-expected/" target="_blank" rel="noopener">DZD</a></li>
+      <li>Deutsche Diabetes Gesellschaft: Factsheet 2026 (9,3 Mio. Menschen mit Diabetes, 450.000 neue Fälle im Jahr, rund 30 Mrd. € Kosten). <a href="https://www.ddg.info/fileadmin/user_upload/DDG_Factsheet_2026.pdf" target="_blank" rel="noopener">ddg.info</a></li>
+      <li>Emmert-Fees K. u. a. (2023): Projected health and economic impacts of sugar-sweetened beverage taxation in Germany: a cross-validation modelling study. <i>PLOS Medicine</i> 20(11):e1004311. <a href="https://www.tum.de/en/news-and-events/all-news/press-releases/details/sugar-tax-could-save-as-much-as-16-billion-euros" target="_blank" rel="noopener">TU München</a></li>
+      <li>Rogers N. T. u. a. (2023): Associations between trajectories of obesity prevalence in English primary school children and the UK soft drinks industry levy. <i>PLOS Medicine</i> 20(1):e1004160. <a href="https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1004160" target="_blank" rel="noopener">plos.org</a></li>
+      <li>Meier T. u. a. (2015): Cardiovascular mortality attributable to dietary risk factors and healthcare costs of excessive intake of sugar, salt and saturated fat in Germany. <i>PLOS ONE</i> 10(9):e0135990 (16,8 Mrd. € Behandlungskosten 2008, rund 7 % aller Krankheitskosten). <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0135990" target="_blank" rel="noopener">plos.org</a></li>
+      <li>Pörschmann T., Meier T., Lorkowski S. (2024): Cardiovascular mortality attributable to dietary risk factors in 54 countries in the WHO European Region from 1990 to 2019. <i>European Journal of Preventive Cardiology</i> (31 % der Herz-Kreislauf-Todesfälle in Deutschland durch ungünstige Ernährung). <a href="https://www.zm-online.de/news/detail/jeder-dritte-kardiovaskulaere-todesfall-geht-auf-falsche-ernaehrung-zurueck" target="_blank" rel="noopener">zm-online.de</a></li>
+      <li>Statistisches Bundesamt: Gesundheitsausgaben 2024: 538 Mrd. €, 6.444 € je Einwohner; Sterbetafel 2021/23. <a href="https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Gesundheit/Gesundheitsausgaben/_inhalt.html" target="_blank" rel="noopener">destatis.de</a></li>
+    </ol>
+  </div>
+</div>
+<div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Wir können uns die Zukunft leisten“. Die Ergebnisse sind Größenordnungen, können Fehler enthalten und ersetzen keine ärztliche, Steuer-, Rechts-, Finanz- oder Energieberatung. Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>
+<footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Der Rechner läuft im Browser und speichert keine Eingaben. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
+<script>
+const $ = id => document.getElementById(id);
+const fmt = (v, d = 0) => (+v).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const eur = v => fmt(Math.round(v / 100) * 100) + " €";
+const tsd = v => Math.abs(v) >= 1e6 ? fmt(v / 1e6, 1) + " Mio. €" : fmt(Math.round(v / 1000)) + " Tsd. €";
+const mrd = v => v >= 1000 ? fmt(v / 1000, 1) + " Bio. €" : fmt(v, v < 10 ? 1 : 0) + " Mrd. €";
+
+// ---------- Annahmen (alle mit Quelle, siehe Seite) ----------
+const GOMP = { m: { A: 0.0002, B: 1.699e-5, b: 0.103 }, f: { A: 0.0002, B: 3.089e-6, b: 0.119 } }; // Sterbetafel 2021/23 nachgebildet
+const HR_W = { lo: 1.12, mid: 1.24, hi: 1.36 };                 // je 0,1 Taille/Größe über 0,5 (Jayedi 2020)
+const ASHWELL = { // verlorene Jahre, Nichtraucher, Alter 30/50/70, WHtR 0.5/0.6/0.7/0.8 (Ashwell 2014, Tab. 3)
+  m: { 30: [0, 1.7, 7.2, 20.2], 50: [0, 1.4, 5.8, 14.3], 70: [0, 0.5, 2.9, 6.7] },
+  f: { 30: [0.1, 1.4, 4.6, 10.6], 50: [0.1, 1.3, 4.1, 9.2], 70: [0, 0.8, 2.7, 5.9] } };
+// Diabetes: Faktor auf das Sterberisiko, so geeicht, dass die verlorenen Jahre der ERFC 2023 (Europa) herauskommen
+const HR_DM = { m: [[30, 3.86], [40, 2.65], [50, 1.77], [60, 1.47], [70, 1.28], [80, 1.16], [95, 1.05]],
+                f: [[30, 4.5], [40, 2.93], [50, 1.86], [60, 1.49], [70, 1.28], [80, 1.15], [95, 1.05]] };
+const HB = { proProzent: { lo: 1.11, mid: 1.15, hi: 1.20 }, prae: { lo: 1.05, mid: 1.13, hi: 1.30 }, dmSpanne: { lo: 0.7, mid: 1, hi: 1.3 } };
+const KOST = { dmDir: 2500, dmInd: 3000, dmJeProzent: 0.12, wDir: 1200, wInd: 1000, lohn: 45000, rente: 67, ueberlapp: 0.3 };
+const ZUCKER = { // Emmert-Fees 2023: gestaffelte Limonaden-Abgabe, 2023 bis 2043
+  g: 2.3, gesellschaft20: 16, kasse20: 4, tote20: 29300 };
+const ALLE = { kasse: 35, gesellschaft: 75 }; // Mrd. € im Jahr bei voller Wirkung (Meier 2015 auf 2024 hochgerechnet, Effertz-Verhältnis)
+const EINW = 83.5e6, LEBEN = 81;
+
+// ---------- Eingaben ----------
+const V = { sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, einheit: "pct", dm: false };
+const FELD = [["alter", "Alter", "Jahre", 1, 18, 95], ["groesse", "Körpergröße", "cm", 1, 120, 220], ["bauch", "Bauchumfang", "cm", 1, 50, 200]];
+FELD.forEach(([k, l, u, st, mi, ma]) => {
+  const d = document.createElement("div"); d.className = "f";
+  d.innerHTML = `<label for="i_${k}">${l}</label><div class="in"><input id="i_${k}" type="number" inputmode="decimal" step="${st}" min="${mi}" max="${ma}"><span class="u">${u}</span></div>`;
+  $("eing").append(d);
+  const el = d.querySelector("input"); el.value = V[k];
+  el.addEventListener("input", () => { V[k] = +el.value || 0; run(); });
+});
+const mmol = p => (p - 2.15) * 10.929, pct = m => m / 10.929 + 2.15;
+function zeigeHb() { $("i_hba1c").value = V.einheit === "pct" ? fmt(V.hba1c, 1).replace(",", ".") : Math.round(mmol(V.hba1c)); $("i_hba1c").step = V.einheit === "pct" ? 0.1 : 1; }
+$("i_hba1c").addEventListener("input", e => { const x = +e.target.value; if (x) { V.hba1c = V.einheit === "pct" ? x : pct(x); run(); } });
+$("i_einheit").addEventListener("change", e => { V.einheit = e.target.value; zeigeHb(); });
+$("i_dm").addEventListener("change", e => { V.dm = e.target.checked; run(); });
+function setSex(s) { V.sex = s; $("s_m").setAttribute("aria-pressed", s === "m"); $("s_f").setAttribute("aria-pressed", s === "f"); run(); }
+$("s_m").onclick = () => setSex("m"); $("s_f").onclick = () => setSex("f");
+const PRESET = { gesund: { bauch: 0.45, hba1c: 5.2, dm: false }, bauch: { bauch: 0.62, hba1c: 5.5, dm: false }, prae: { bauch: 0.6, hba1c: 6.1, dm: false }, dm: { bauch: 0.66, hba1c: 8.5, dm: true } };
+document.querySelectorAll("[data-p]").forEach(b => b.onclick = () => {
+  const p = PRESET[b.dataset.p]; V.bauch = Math.round(p.bauch * V.groesse); V.hba1c = p.hba1c; V.dm = p.dm;
+  $("i_bauch").value = V.bauch; $("i_dm").checked = V.dm; zeigeHb(); run();
+});
+zeigeHb();
+
+// ---------- Rechenkern ----------
+const ip = (tab, x) => { if (x <= tab[0][0]) return tab[0][1]; for (let i = 1; i < tab.length; i++) if (x <= tab[i][0]) { const [x0, y0] = tab[i - 1], [x1, y1] = tab[i]; return y0 + (y1 - y0) * (x - x0) / (x1 - x0); } return tab[tab.length - 1][1]; };
+// Überlebenskurve ab Alter x in Jahresschritten bis 110; hr = Faktor auf das Sterberisiko
+function surv(x, sex, hr) {
+  const g = GOMP[sex], S = [1];
+  for (let a = x; a < 110; a++) S.push(S[S.length - 1] * Math.exp(-(g.A + g.B * Math.exp(g.b * (a + 0.5))) * hr));
+  return S;
+}
+const leS = S => S.reduce((s, v, i) => i ? s + (S[i - 1] + v) / 2 : s, 0);
+const le = (x, sex, hr) => leS(surv(x, sex, hr));
+const yll = (x, sex, hr) => le(x, sex, 1) - le(x, sex, hr);
+function hrFuerYll(x, sex, y) { if (y <= 0.01) return 1; let lo = 1, hi = 60; for (let i = 0; i < 40; i++) { const m = (lo + hi) / 2; if (yll(x, sex, m) < y) lo = m; else hi = m; } return lo; }
+function ashwellYll(x, sex, w) {
+  const t = ASHWELL[sex], xs = [0.5, 0.6, 0.7, 0.8], wc = Math.min(Math.max(w, 0.5), 0.8);
+  const at = a => ip(xs.map((v, i) => [v, t[a][i]]), wc) * (w > 0.8 ? 1 + (w - 0.8) * 2 : 1);
+  return ip([[30, at(30)], [50, at(50)], [70, at(70)], [95, 0]], Math.max(x, 30));
+}
+// Faktoren auf das Sterberisiko; v = Variante lo/mid/hi
+function lnHrBauch(x, sex, w, v) {
+  if (w <= 0.5) return 0;
+  const lin = Math.log(HR_W[v]) * (w - 0.5) / 0.1;
+  if (v !== "hi") return lin;
+  return Math.max(lin, Math.log(hrFuerYll(x, sex, ashwellYll(x, sex, w))));
+}
+function lnHrZucker(x, sex, h, dm, v) {
+  const dmWert = hh => Math.log(ip(HR_DM[sex], x)) * HB.dmSpanne[v] + Math.log(HB.proProzent[v]) * Math.max(0, hh - 7);
+  const prae = hh => hh < 5.7 ? 0 : Math.log(HB.prae[v]) * (hh - 5.7) / 0.7;
+  if (dm || h >= 7) return dmWert(h);
+  if (h < 6) return prae(h);
+  // Ohne festgestellten Diabetes zwischen 6,0 und 7,0 %: fließender Übergang von der Vorstufe zum Diabetes
+  return prae(6) + (dmWert(7) - prae(6)) * (h - 6);
+}
+const kombi = (a, b) => a + b - KOST.ueberlapp * Math.min(a, b);
+// jährliche Neuerkrankung an Diabetes in der Vorstufe (über dem Grundrisiko)
+const inzidenz = h => h < 5.7 ? 0 : Math.min(0.06, 0.015 + (h - 5.7) / 0.7 * 0.045);
+const gesundAusgabe = a => Math.min(20000, 2500 * Math.exp(0.035 * (a - 20))); // Gesundheitsausgaben je Kopf nach Alter, Mittel ≈ 6.400 €
+
+function rechne(p, v = "mid") {
+  const x = Math.max(18, Math.min(95, p.alter)), w = p.bauch / p.groesse, h = p.hba1c;
+  const dmJetzt = p.dm || h >= 6.5;
+  const lw = lnHrBauch(x, p.sex, w, v), lg = lnHrZucker(x, p.sex, h, p.dm, v);
+  const hr = Math.exp(kombi(lw, lg));
+  const S0 = surv(x, p.sex, 1), S1 = surv(x, p.sex, hr);
+  const e0 = leS(S0), e1 = leS(S1);
+  const k = v === "lo" ? 0.6 : v === "hi" ? 1.5 : 1;
+  let pdm = dmJetzt ? 1 : 0; const inz = dmJetzt ? 0 : inzidenz(h);
+  let kasse = 0, wirt = 0, tod = 0, gespart = 0;
+  const wUeber = Math.max(0, w - 0.5) / 0.1, hAuf = 1 + KOST.dmJeProzent * Math.max(0, h - 7);
+  for (let i = 0; i < S1.length - 1; i++) {
+    const a = x + i, s = (S1[i] + S1[i + 1]) / 2, s0 = (S0[i] + S0[i + 1]) / 2;
+    const dDir = pdm * KOST.dmDir * hAuf, wDir = wUeber * KOST.wDir;
+    kasse += s * (dDir + wDir - 0.5 * Math.min(dDir, wDir)) * k;
+    if (a < KOST.rente) {
+      const dInd = pdm * KOST.dmInd * hAuf, wInd = wUeber * KOST.wInd;
+      wirt += s * (dInd + wInd - 0.5 * Math.min(dInd, wInd)) * k;
+      tod += Math.max(0, s0 - s) * KOST.lohn;
+    }
+    gespart += Math.max(0, s0 - s) * gesundAusgabe(a);
+    pdm = pdm + (1 - pdm) * inz;
+  }
+  return { w, h, dmJetzt, hr, lw, lg, e0, e1, yll: e0 - e1, kasse, wirt, tod, ges: kasse + wirt + tod, gespart, x };
+}
+
+// ---------- Diagramm ----------
+function chart(el, o) {
+  const W = o.W || 560, H = o.H || 300, L = 46, R = 14, T = 14, B = 40;
+  const X = v => L + (v - o.x0) / (o.x1 - o.x0) * (W - L - R), Y = v => H - B - v / o.y1 * (H - T - B);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria}">`;
+  (o.zones || []).forEach(([a, b, c]) => s += `<rect x="${X(a)}" y="${T}" width="${X(b) - X(a)}" height="${H - T - B}" fill="var(${c})"/>`);
+  o.yt.forEach(t => s += `<line x1="${L}" x2="${W - R}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--grid)"/><text x="${L - 6}" y="${Y(t) + 4}" text-anchor="end">${o.yf(t)}</text>`);
+  o.xt.forEach(t => s += `<text x="${X(t)}" y="${H - B + 17}" text-anchor="middle">${o.xf(t)}</text>`);
+  s += `<text x="${(L + W - R) / 2}" y="${H - 4}" text-anchor="middle">${o.xl}</text>`;
+  (o.vlines || []).forEach(([v, t]) => s += `<line x1="${X(v)}" x2="${X(v)}" y1="${T}" y2="${H - B}" stroke="var(--muted)" stroke-dasharray="3 3"/><text x="${X(v) + 4}" y="${T + 12}">${t}</text>`);
+  if (o.band) s += `<path d="M${o.band.map(([x, lo]) => `${X(x)},${Y(Math.min(lo, o.y1))}`).join("L")}L${o.band.slice().reverse().map(([x, , hi]) => `${X(x)},${Y(Math.min(hi, o.y1))}`).join("L")}Z" fill="var(--band)"/>`;
+  o.lines.forEach(l => s += `<path d="M${l.p.map(([x, y]) => `${X(x)},${Y(Math.min(y, o.y1))}`).join("L")}" fill="none" stroke="var(${l.c})" stroke-width="${l.w || 2.5}" ${l.d ? 'stroke-dasharray="6 4"' : ""}/>`);
+  if (o.dot) { const [dx, dy, t] = o.dot; const cx = X(Math.min(Math.max(dx, o.x0), o.x1)), cy = Y(Math.min(dy, o.y1));
+    s += `<circle cx="${cx}" cy="${cy}" r="6.5" fill="var(--fg)" stroke="var(--panel)" stroke-width="2.5"/><text class="lbl" x="${cx + (cx > W - 140 ? -10 : 10)}" y="${cy - 10}" text-anchor="${cx > W - 140 ? "end" : "start"}">${t}</text>`; }
+  (o.endLabels || []).forEach(([y, t, c]) => s += `<text x="${W - R - 4}" y="${Y(Math.min(y, o.y1)) - 6}" text-anchor="end" style="fill:var(${c});font-weight:700">${t}</text>`);
+  el.innerHTML = s + "</svg>";
+}
+const lg = (el, items) => el.innerHTML = items.map(([c, t, k]) => `<span><i class="${k || ""}" style="${k === "sq" ? "background" : "border-color"}:var(${c})"></i>${t}</span>`).join("");
+
+// ---------- Ausgabe ----------
+const katW = w => w < 0.4 ? ["sehr schlank", "m"] : w < 0.5 ? ["gesund", "g"] : w < 0.6 ? ["erhöht", "m"] : ["stark erhöht", "r"];
+const katH = (h, dm) => dm || h >= 6.5 ? ["Diabetes", "r"] : h >= 5.7 ? ["Vorstufe", "m"] : ["normal", "g"];
+const jahre = y => y < 0.05 ? "keine" : fmt(y, 1) + (Math.abs(y - 1) < 0.05 ? " Jahr" : " Jahre");
+
+function run() {
+  const r = rechne(V), lo = rechne(V, "lo"), hi = rechne(V, "hi");
+  const [kw, cw] = katW(r.w), [kh, ch] = katH(r.h, V.dm);
+  // Ziel: Taille 0,5 und HbA1c unter 5,7 (bei Diabetes 7 %)
+  const ziel = { ...V, bauch: Math.min(V.bauch, 0.5 * V.groesse), hba1c: (V.dm || r.h >= 6.5) ? Math.min(r.h, 7) : Math.min(r.h, 5.6) };
+  const rz = rechne(ziel);
+  const gewinn = r.yll - rz.yll;
+  let txt;
+  if (r.yll < 0.1) txt = `Mit diesen Werten liegst du im <b>gesunden Bereich</b>. Statistisch verlierst du durch Bauch und Blutzucker keine Lebenszeit. Deine Lebenserwartung liegt bei rund <b>${fmt(r.x + r.e1)} Jahren</b>, wie im Durchschnitt aller Menschen ohne diese Risiken.`;
+  else {
+    txt = `Menschen mit deinen Werten leben im Durchschnitt <b>${jahre(r.yll)} kürzer</b> (Spanne ${fmt(lo.yll, 1)} bis ${fmt(hi.yll, 1)}). Statt rund ${fmt(r.x + r.e0)} Jahren werden sie im Schnitt rund ${fmt(r.x + r.e1)} Jahre alt.`;
+    if (gewinn >= 0.1) txt += ` Wer den Bauchumfang auf die halbe Körpergröße (${fmt(ziel.bauch)} cm) bringt${ziel.hba1c < r.h ? ` und den Langzeitzucker auf ${fmt(ziel.hba1c, 1)} %` : ""}, gewinnt statistisch rund <b>${jahre(gewinn)}</b> zurück.`;
+  }
+  $("verdict").innerHTML = txt;
+  $("tiles").innerHTML = [
+    ["Taille geteilt durch Größe", `${fmt(r.w, 2)} <span class="tag ${cw}">${kw}</span>`, `gesund: unter 0,5, also Bauch unter ${fmt(V.groesse / 2)} cm`],
+    ["Langzeitzucker", `${fmt(r.h, 1)} % <span class="tag ${ch}">${kh}</span>`, `= ${fmt(mmol(r.h))} mmol/mol; normal unter 5,7 %, Diabetes ab 6,5 %`],
+    ["Statistisch weniger Lebenszeit", jahre(r.yll), `Spanne ${fmt(lo.yll, 1)} bis ${fmt(hi.yll, 1)} Jahre; Sterberisiko ×${fmt(r.hr, 2)}`],
+    ["Mehrkosten über das restliche Leben", tsd(r.ges), `davon Krankenkasse ${tsd(r.kasse)}; Spanne ${tsd(lo.ges)} bis ${tsd(hi.ges)}`],
+  ].map(([k, v, s]) => `<div class="tile"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`).join("");
+  $("t_kosten").innerHTML = `<tr><th>Wer trägt die Kosten</th><th>Mehrkosten bis Lebensende</th></tr>
+    <tr><td>Krankenkasse: Behandlung, Medikamente, Krankenhaus</td><td>${eur(r.kasse)}</td></tr>
+    <tr><td>Wirtschaft: Krankheitstage und Frührente bis 67</td><td>${eur(r.wirt)}</td></tr>
+    <tr><td>Wirtschaft: Arbeitsjahre, die durch frühen Tod vor 67 fehlen</td><td>${eur(r.tod)}</td></tr>
+    <tr class="sum"><td>Gesellschaft zusammen</td><td>${eur(r.ges)}</td></tr>
+    <tr><td style="color:var(--muted)">Gegenrechnung: Gesundheitskosten, die in den verlorenen Lebensjahren nicht mehr anfallen</td><td style="color:var(--muted)">${r.gespart >= 50 ? "−" : ""}${eur(r.gespart)}</td></tr>`;
+  $("n_kosten").textContent = `Durchschnittswerte in heutigen Euro, gewichtet mit der Wahrscheinlichkeit, jedes Alter zu erleben. Die Gegenrechnung zeigt: Wer früher stirbt, verursacht in diesen Jahren keine Kosten mehr. Für die Krankenkasse gleicht sich das teilweise aus, für die Menschen nicht.`;
+
+  // Kurven für Alter und Geschlecht
+  const ws = [], band = [];
+  for (let w = 0.4; w <= 0.851; w += 0.01) { const p = { ...V, hba1c: 5.2, dm: false, bauch: w * V.groesse };
+    ws.push([w, rechne(p).yll]); band.push([w, rechne(p, "lo").yll, rechne(p, "hi").yll]); }
+  const yw = Math.max(4, Math.ceil(Math.min(Math.max(...band.map(b => b[2])), 24) / 2) * 2);
+  const meW = rechne({ ...V, hba1c: 5.2, dm: false });
+  chart($("c_w"), { aria: "Verlorene Lebensjahre nach Taille geteilt durch Größe", x0: 0.4, x1: 0.85, y1: yw, xt: [0.4, 0.5, 0.6, 0.7, 0.8], xf: t => fmt(t, 1), yt: [...Array(yw / 2 + 1).keys()].map(i => i * 2).filter(t => t <= yw), yf: t => t,
+    xl: "Bauchumfang geteilt durch Körpergröße", zones: [[0.4, 0.5, "--z1"], [0.5, 0.6, "--z2"], [0.6, 0.85, "--z3"]], band, lines: [{ p: ws, c: "--risk" }],
+    dot: [r.w, meW.yll, `Du: ${jahre(meW.yll)}`] });
+  lg($("lg_w"), [["--risk", "Jahre weniger (mittlere Schätzung)"], ["--band", "Spanne der Studien", "sq"], ["--z1", "gesund", "sq"], ["--z2", "erhöht", "sq"], ["--z3", "stark erhöht", "sq"]]);
+  const hs = [], hb = [];
+  for (let h = 4.5; h <= 11.001; h += 0.1) { const p = { ...V, bauch: 0.48 * V.groesse, hba1c: h, dm: false };
+    hs.push([h, rechne(p).yll]); hb.push([h, rechne(p, "lo").yll, rechne(p, "hi").yll]); }
+  const yg = Math.max(4, Math.ceil(Math.min(Math.max(...hb.map(b => b[2])), 24) / 2) * 2);
+  const meG = rechne({ ...V, bauch: 0.48 * V.groesse });
+  chart($("c_g"), { aria: "Verlorene Lebensjahre nach Langzeitzucker", x0: 4.5, x1: 11, y1: yg, xt: [5, 6, 7, 8, 9, 10, 11], xf: t => t + " %", yt: [...Array(yg / 2 + 1).keys()].map(i => i * 2), yf: t => t,
+    xl: "Langzeitzucker HbA1c in %", zones: [[4.5, 5.7, "--z1"], [5.7, 6.5, "--z2"], [6.5, 11, "--z3"]], band: hb, lines: [{ p: hs, c: "--risk" }],
+    dot: [r.h, meG.yll, `Du: ${jahre(meG.yll)}`] });
+  lg($("lg_g"), [["--risk", "Jahre weniger (mittlere Schätzung)"], ["--band", "Spanne der Studien", "sq"], ["--z1", "normal", "sq"], ["--z2", "Vorstufe", "sq"], ["--z3", "Diabetes", "sq"]]);
+  zucker();
+}
+
+// ---------- Zuckerabgabe und Potenzial bis 2070 ----------
+function zucker() {
+  const g = +$("r_g").value, ramp = +$("r_r").value;
+  $("o_g").textContent = g + " g"; $("o_r").textContent = ramp + " Jahren";
+  const rampSum20 = Array.from({ length: 20 }, (_, i) => Math.min(1, (i + 1) / ramp)).reduce((a, b) => a + b, 0);
+  // Volle jährliche Wirkung so geeicht, dass in den ersten 20 Jahren die Ergebnisse von Emmert-Fees herauskommen
+  const lim = { ges: ZUCKER.gesellschaft20 / rampSum20, kasse: ZUCKER.kasse20 / rampSum20 };
+  const S = [
+    { n: "Limonaden-Abgabe in Stufen (wie Großbritannien)", c: "--s1", ges: lim.ges, kasse: lim.kasse, tote: ZUCKER.tote20 / rampSum20 },
+    { n: `Abgabe auf allen Zucker (Buch), ${g} g weniger am Tag`, c: "--s2", ges: lim.ges * g / ZUCKER.g, kasse: lim.kasse * g / ZUCKER.g, tote: ZUCKER.tote20 / rampSum20 * g / ZUCKER.g },
+    { n: "Alle ernähren sich gesund (theoretisch)", c: "--s3", ges: ALLE.gesellschaft, kasse: ALLE.kasse },
+  ];
+  const jahreZ = []; for (let j = 2027; j <= 2070; j++) jahreZ.push(j);
+  S.forEach(s => { let c = 0, ck = 0; s.cum = []; s.cumK = [];
+    jahreZ.forEach((j, i) => { const f = Math.min(1, (i + 1) / ramp); c += s.ges * f; ck += s.kasse * f; s.cum.push([j, c]); s.cumK.push([j, ck]); });
+    s.sum = c; s.sumK = ck; s.leben = s.ges * 1e9 / EINW * LEBEN; });
+  const y1 = Math.ceil(S[2].sum / 500) * 500;
+  chart($("c_z"), { W: 1000, H: 360, aria: "Aufsummierte Einsparung bis 2070", x0: 2027, x1: 2070, y1, xt: [2030, 2040, 2050, 2060, 2070], xf: t => t,
+    yt: Array.from({ length: y1 / 500 + 1 }, (_, i) => i * 500), yf: t => t ? fmt(t / 1000, 1).replace(",0", "") + " Bio." : "0", xl: "Jahr",
+    lines: S.flatMap(s => [{ p: s.cum, c: s.c }, { p: s.cumK, c: s.c, d: 1, w: 1.8 }]),
+    endLabels: S.map(s => [s.sum, mrd(s.sum), s.c]) });
+  lg($("lg_z"), S.map(s => [s.c, s.n]).concat([["--muted", "davon Krankenkassen", "dash"]]));
+  $("tiles_z").innerHTML = [
+    ["Limonaden-Abgabe bis 2070", mrd(S[0].sum), `davon Krankenkassen ${mrd(S[0].sumK)}; ≈ ${eur(S[0].leben)} je Mensch über ein Leben`],
+    ["Abgabe auf allen Zucker bis 2070", mrd(S[1].sum), `davon Krankenkassen ${mrd(S[1].sumK)}; ≈ ${eur(S[1].leben)} je Mensch über ein Leben`],
+    ["Alle essen gesund, bis 2070", mrd(S[2].sum), `davon Krankenkassen ${mrd(S[2].sumK)}; ≈ ${eur(S[2].leben)} je Mensch über ein Leben`],
+  ].map(([k, v, s]) => `<div class="tile"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`).join("");
+  $("t_z").innerHTML = `<tr><th>Fall</th><th>Ersparnis im Jahr bei voller Wirkung</th><th>davon Krankenkassen</th><th>Woher die Zahl kommt</th></tr>
+    <tr><td>Limonaden-Abgabe in Stufen</td><td>${mrd(S[0].ges)}</td><td>${mrd(S[0].kasse)}</td><td style="white-space:normal">Emmert-Fees u. a. 2023: 16 Mrd. € für die Gesellschaft und 4 Mrd. € für die Kassen in 20 Jahren, rund 29.300 Todesfälle vermieden oder aufgeschoben, 1,9 Mio. Jahre mit Diabetes weniger</td></tr>
+    <tr><td>Abgabe auf allen Zucker</td><td>${mrd(S[1].ges)}</td><td>${mrd(S[1].kasse)}</td><td style="white-space:normal">Limonaden-Ergebnis im Verhältnis der eingesparten Zuckermenge hochgerechnet (${g} statt 2,3 g am Tag). Grobe Schätzung: Ob die Wirkung genau mitwächst, ist nicht erforscht.</td></tr>
+    <tr><td>Alle essen gesund</td><td>${mrd(S[2].ges)}</td><td>${mrd(S[2].kasse)}</td><td style="white-space:normal">Zu viel Zucker, Salz und gesättigte Fette verursachten 2008 rund 7 % aller Krankheitskosten (Meier u. a. 2015), heute rund 35 Mrd. €. Dazu Arbeitsausfall im Verhältnis von Effertz u. a. 2016. Theoretische Obergrenze; zu wenig Obst, Gemüse und Vollkorn ist nicht einmal eingerechnet.</td></tr>`;
+}
+$("r_g").addEventListener("input", zucker); $("r_r").addEventListener("input", zucker);
+run();
+</script>
+<script src="../tools-buchlinks.js"></script>
+<script id="druck-js">(() => {
+  let alt = null, zu = [];
+  addEventListener("beforeprint", () => {
+    const r = document.documentElement; alt = r.getAttribute("data-theme"); r.setAttribute("data-theme", "light");
+    zu = [...document.querySelectorAll("details:not([open])")].filter(d => d.querySelector("input,select") && !d.closest("#quellen,#fragen")); zu.forEach(d => d.open = true);
+    if (!document.querySelector(".druckkopf")) { const k = document.createElement("div"); k.className = "druckkopf";
+      k.textContent = `${document.title} · Ausdruck vom ${new Date().toLocaleDateString("de-DE")} · ${location.href.split("#")[0]}`; document.body.prepend(k); }
+  });
+  // Steuerrechner: jeden Rechner-Teil einzeln drucken
+  document.querySelectorAll("section.block[id]").forEach(sec => { const h = sec.querySelector("h2"); if (!h || !sec.querySelector(".calc, form")) return;
+    const b = document.createElement("button"); b.type = "button"; b.className = "teil-druck"; b.textContent = "Diesen Teil drucken";
+    b.onclick = () => { document.body.classList.add("druck-teil"); sec.classList.add("druck-dieser"); print(); }; h.after(b); });
+  addEventListener("afterprint", () => { document.body.classList.remove("druck-teil"); document.querySelectorAll(".druck-dieser").forEach(e => e.classList.remove("druck-dieser")); const r = document.documentElement; alt === null ? r.removeAttribute("data-theme") : r.setAttribute("data-theme", alt); zu.forEach(d => d.open = false); });
+})();</script>
+<script src="../satz.js" defer></script>
+</body>
+</html>
