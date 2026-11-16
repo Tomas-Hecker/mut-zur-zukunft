@@ -1,23 +1,24 @@
-/* Säulenbild für den Steuerrechner: „Brutto, Abzüge und was im Portemonnaie bleibt“ (Stand 15.11.2026).
+/* Säulenbild für den Steuerrechner: „Brutto, Abzüge und was im Portemonnaie bleibt“ (Stand 16.11.2026).
    Alle Klassen beginnen mit sb-, damit nichts mit den Klassen des Rechners zusammenstößt (.seg, .track, .info, .verdict gibt es dort schon).
    Von der Seite kommen: --fg --bg --muted --line --surface --sunk --accent --accent-fill --good --bad --s1 bis --s5 --font-display. */
 .sb {
   --sb-bleibt: #12372a; --sb-on-bleibt: #fbf8f1; --sb-u: #a39c8a; --sb-on-u: #16261f;
   --sb-on-s1: #ffffff; --sb-on-s2: #16261f; --sb-on-s3: #16261f; --sb-on-s4: #16261f; --sb-on-s5: #16261f;
   --sb-mehr: #3f8f63; --sb-weniger: #c8532c; --sb-on-accent: #12372a; --sb-plot-h: 320px;
+  --sb-firma: #6b4f7a; --sb-on-firma: #ffffff;
   display: flex; flex-direction: column; gap: 14px; min-width: 0;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .sb {
     --sb-bleibt: #9fd8b0; --sb-on-bleibt: #0a1913; --sb-u: #6f8378; --sb-on-u: #0a1913;
     --sb-on-s1: #0a1913; --sb-on-s2: #0a1913; --sb-on-s3: #0a1913; --sb-on-s4: #0a1913; --sb-on-s5: #0a1913;
-    --sb-mehr: #6cc58f; --sb-weniger: #f08a80;
+    --sb-mehr: #6cc58f; --sb-weniger: #f08a80; --sb-firma: #c7a3d6; --sb-on-firma: #0a1913;
   }
 }
 :root[data-theme="dark"] .sb {
   --sb-bleibt: #9fd8b0; --sb-on-bleibt: #0a1913; --sb-u: #6f8378; --sb-on-u: #0a1913;
   --sb-on-s1: #0a1913; --sb-on-s2: #0a1913; --sb-on-s3: #0a1913; --sb-on-s4: #0a1913; --sb-on-s5: #0a1913;
-  --sb-mehr: #6cc58f; --sb-weniger: #f08a80;
+  --sb-mehr: #6cc58f; --sb-weniger: #f08a80; --sb-firma: #c7a3d6; --sb-on-firma: #0a1913;
 }
 .sb [hidden] { display: none !important; }
 .sb-head { display: flex; align-items: center; gap: 10px; }
@@ -32,6 +33,19 @@
 .sb-chip:hover { border-color: var(--accent); }
 .sb-chip[aria-pressed="true"] { background: var(--accent-fill); border-color: var(--accent-fill); color: var(--sb-on-accent); font-weight: 600; }
 .sb :focus-visible { outline: 3px solid var(--accent-fill); outline-offset: 2px; border-radius: 4px; }
+/* GmbH: Schieber für die Investitionsquote und was mit dem Gewinn geschieht */
+.sb-inv { background: var(--sunk); border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.sb-inv-regler { display: flex; flex-direction: column; gap: 2px; }
+.sb-inv-kopf { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.sb-inv-kopf label { font-weight: 700; font-size: .95rem; color: var(--fg); margin: 0; }
+.sb-inv-kopf output { font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; color: var(--fg); }
+.sb-range { display: block; width: 100%; margin: 0; padding: 0; height: 30px; accent-color: var(--accent-fill); cursor: pointer; background: transparent; border: 0; }
+.sb-inv-skala { display: flex; justify-content: space-between; gap: 10px; font-size: .75rem; color: var(--muted); }
+.sb-inv-skala span:last-child { text-align: right; }
+.sb-inv-satz { margin: 0; font-size: .9rem; max-width: 66ch; }
+.sb-t.sb-gt { font-size: .88rem; }
+.sb-kurz { display: none; }
+.sb-t.sb-gt tbody tr:last-child td { border-bottom: 0; font-weight: 600; }
 /* Säulen */
 .sb-plot { position: relative; display: flex; justify-content: center; align-items: flex-end; padding: 8px 12px 0; border-bottom: 1.5px solid var(--line); }
 .sb-colwrap { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; flex: 0 0 auto; width: clamp(64px, 30%, 136px); height: calc(var(--sb-plot-h) + 112px); }
@@ -42,7 +56,7 @@
 .sb-col { display: flex; flex-direction: column-reverse; gap: 2px; width: 100%; }
 .sb-seg { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: .8rem; font-weight: 600; line-height: 1.15; overflow: hidden; text-align: center; font-variant-numeric: tabular-nums; cursor: default; }
 .sb-seg small { font-weight: 500; font-size: .72rem; opacity: .92; }
-.sb-seg.sb-bleibt { font-size: .95rem; }
+.sb-seg.sb-bleibt, .sb-seg.sb-firma { font-size: .95rem; }
 .sb-col .sb-seg:last-child { border-radius: 4px 4px 0 0; }
 .sb-direkt { background-color: var(--sunk); background-color: color-mix(in srgb, var(--s1) 18%, var(--surface)); color: var(--fg); outline: 1.5px dashed var(--s1); outline-offset: -1.5px;
   background-image: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in srgb, var(--s1) 45%, transparent) 6px 8px); }
@@ -62,6 +76,8 @@
 .sb-t td:not(:first-child) { white-space: nowrap; }
 .sb-t th { font-size: .78rem; color: var(--muted); font-weight: 600; text-transform: none; letter-spacing: 0; background: none; }
 .sb-t tr.sb-sum td { font-weight: 700; border-top: 2px solid var(--fg); }
+.sb-t tr.sb-rest td { border-top: 2px solid var(--fg); }
+.sb-t tr.sb-rest + tr.sb-sum td { border-top: 0; }
 .sb-t tr.sb-sub td { color: var(--muted); font-size: .86rem; }
 .sb-t tr.sb-sub td:first-child { padding-left: 26px; }
 .sb-t td small { display: block; color: var(--muted); font-size: .78rem; font-weight: 400; padding-left: 18px; }
@@ -73,20 +89,27 @@
   .sb-t th, .sb-t td { padding: 5px 4px; }
   .sb-t tr.sb-sub td:first-child { padding-left: 10px; }
   .sb-t td:first-child small { display: none; }
+  .sb-lang { display: none; }
+  .sb-kurz { display: inline; }
 }
 /* Was sich ändert */
-.sb-dv { display: flex; flex-direction: column; gap: 9px; }
+.sb-dv { display: flex; flex-direction: column; gap: 9px; container-type: inline-size; }
 .sb-dvkey { display: flex; gap: 16px; flex-wrap: wrap; font-size: .8rem; color: var(--muted); }
-.sb-dvrow { display: grid; grid-template-columns: minmax(150px, 250px) 1fr 84px; gap: 10px; align-items: center; font-size: .92rem; }
+.sb-dvrow { display: grid; grid-template-columns: minmax(150px, 250px) 1fr var(--sb-vw, 84px); gap: 10px; align-items: center; font-size: .92rem; }
+/* schmale Spalte (etwa die mittlere Spalte des Rechners bei 1.200 px): Name über dem Balken, sonst bleibt für den Balken kein Platz */
+@container (max-width: 430px) {
+  .sb-dvrow { grid-template-columns: 1fr var(--sb-vw, 84px); }
+  .sb-dvrow .sb-n { grid-column: 1 / -1; }
+}
 .sb-dvrow .sb-track { position: relative; height: 18px; }
 .sb-dvrow .sb-zero { position: absolute; top: -5px; bottom: -5px; width: 1.5px; background: var(--muted); }
 .sb-dvrow .sb-bar { position: absolute; top: 0; bottom: 0; }
-.sb-dvrow .sb-v { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.sb-dvrow .sb-v { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .sb-dvrow.sb-net { border-top: 2px solid var(--fg); padding-top: 10px; font-weight: 700; }
 .sb-note { font-size: .88rem; color: var(--muted); margin: 0; }
 @media (max-width: 600px) {
   .sb { --sb-plot-h: 280px; }
-  .sb-dvrow { grid-template-columns: 1fr 84px; }
+  .sb-dvrow { grid-template-columns: 1fr var(--sb-vw, 84px); }
   .sb-dvrow .sb-n { grid-column: 1 / -1; }
 }
 .sb-tip { position: fixed; z-index: 30; max-width: 250px; background: var(--fg); color: var(--bg); font-size: .82rem; line-height: 1.35; padding: 7px 10px; border-radius: 6px; pointer-events: none; }

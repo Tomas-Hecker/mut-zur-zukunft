@@ -19,13 +19,22 @@ def rep(a, b):
 m = re.findall(r'  // Balken\n.*?\n  \$\("legend"\)\.innerHTML = "";\n', s, flags=re.S)
 assert len(m) == 1, len(m)
 s = s.replace(m[0], '''  // Säulenbild: Brutto, Abzüge und was im Portemonnaie bleibt (saeulenbild.js)
-  const sbd = sbDaten(h, r), sbA = () => sbAenderung($("sbAend"), sbd);
-  sbZeichnen($("bars"), sbd, { praemieMonat: A.KVPraem / 12, namen: ["Heute", "Reform"], nachWechsel: sbA }); sbA();
+  const sbd = sbDaten(h, r, { kst: A.KStS }), sbA = () => sbAenderung($("sbAend"), sbd);
+  // Schieber „Investitionsquote“ (nur bei GmbH): setzt die Ausschüttung auf Gewinn × (1 − Körperschaftsteuer − Quote) und rechnet neu
+  const sbInv = { setze: q => { zeigeGeld("aus", Math.max(0, h.gmbh * (1 - A.KStS - q))); if (aktiv !== -1) { aktiv = -1; renderPresets(); } updateHH(); postHeight(); } };
+  sbZeichnen($("bars"), sbd, { praemieMonat: A.KVPraem / 12, namen: ["Heute", "Reform"], nachWechsel: sbA, invest: sbInv }); sbA();
   $("legend").innerHTML = "";
 ''')
 # 2) Platz für „Was sich ändert“ unter dem Bild; die alte Rasterklasse des Balkens entfällt
 rep('<div class="bars" id="bars"></div>', '<div id="bars"></div>\n        <div id="sbAend"></div>')
 # 3) Stil und Skript
+# mittlere Spalte darf nicht breiter werden als ihr Feld (1.150 bis 1.290 px): Rasterspur begrenzen, die zwei großen Zahlen umbrechen lassen
+css += """
+.panel.mitte { grid-template-columns: minmax(0, 1fr); }
+.duo { grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); }
+.duo > div { min-width: 0; }
+.duo .v { overflow-wrap: anywhere; }
+"""
 i = s.index('</style>'); s = s[:i] + css + s[i:]
 rep('\nfunction updateHH() {', '\n' + js + '\nfunction updateHH() {')
 open(p, 'w', encoding='utf-8').write(s)

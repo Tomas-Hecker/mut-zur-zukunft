@@ -45,7 +45,7 @@ if 'qin' not in s:
 
 if 'qEinh' not in s:
     rep('''      const wert = u && k in A && typeof A[k] === "number"
-        ? `<span class="qe"><input class="qin" type="number" step="any" inputmode="decimal" data-k="${esc(k)}" data-u="${u}" value="${qAnz(A[k], u)}" aria-label="${esc(lbl)}"><span class="qu">${Q_EINH[u] || ""}</span></span>`''',
+            ? `<span class="qe"><input class="qin" type="number" step="any" inputmode="decimal" data-k="${esc(k)}" data-u="${u}" value="${qAnz(A[k], u)}" aria-label="${esc(lbl)}"><span class="qu">${Q_EINH[u] || ""}</span></span>`''',
         '''      const qe = typ !== "Berechnet" && k in A && typeof A0[k] === "number" ? qEinh(anz, A0[k], u) : null;
       const wert = qe
         ? `<span class="qe"><input class="qin" type="number" step="any" inputmode="decimal" data-k="${esc(k)}" data-u="${qe.u}" value="${qAnz(A[k], qe.u)}" aria-label="${esc(lbl)}"><span class="qu">${esc(qe.t)}</span></span>`''')
