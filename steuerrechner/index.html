@@ -1840,7 +1840,7 @@ const SB_DIREKT = {
 };
 const SB_NEU = { gs: "Höhere Grundsicherung", bsz: "Bestandsschutz für heutige Rentner", ausgl: "Ausgleich", rpz: "Zuschlag zur Rente" };
 // Name eines Postens „neu vom Staat“. Beim Zuschlag zur Rente mit dem Prozentsatz, wenn die Seite ihn nennt (p.rpzProzent in sbDaten).
-const sbNeuName = (k, d) => k === "rpz" && d.rpzProzent > 0 ? `${SB_NEU.rpz}: Sie kauft ${String(d.rpzProzent).replace(".", ",")}\u00a0% mehr` : SB_NEU[k];
+const sbNeuName = (k, d) => k === "rpz" && d.rpzProzent > 0 ? `${SB_NEU.rpz}: bei gleichem Einkauf mindestens ${String(d.rpzProzent).replace(".", ",")}\u00a0% mehr Geld` : SB_NEU[k];
 const sbSum = o => Object.values(o || {}).reduce((a, x) => a + x, 0);
 
 function sbDaten(h, r, p = {}) {
@@ -2087,7 +2087,7 @@ function updateHH() {
     if (r.rentePlus > 0.5) t.push(`die Rentenversicherung zahlt ihren Anteil an der Krankenkasse als höhere Rente aus: ${eur(r.rentePlus)}`);
     if (r.gsPlus > 0.5) t.push(r.bjPlus > 0.5 ? `statt der Grundsicherung gibt es den Lohn im Bürgerjob, ${eur((h.transfer + r.gsPlus) / h.erw / 12)} im Monat: ${eur(r.gsPlus)} mehr (Prämie, Ausgleich der Mehrwertsteuer und ${eur(r.bjPlus / h.erw / 12)} im Monat für die Arbeit)` : `die Grundsicherung steigt um die Prämie und den Ausgleich der Mehrwertsteuer: ${eur(r.gsPlus)}`);
     if (r.bsz > 0.5) t.push(`Bestandsschutz: Wer beim Start schon Rente bezieht, kann mit seiner Rente so viel einkaufen wie heute. Er beträgt ${eur(r.bsz)} im Jahr; er wird beim Start einmal festgestellt und sinkt bei jeder Rentenerhöhung um die Hälfte der Erhöhung${r.fz > 1 ? `. Den Sicherheitszuschlag zahlen alle` : ``}`);
-    if (r.rpz > 0.5) t.push(`Zuschlag zur Rente: Wer beim Start schon Rente bezieht, kann mit seiner Rente ${pct(A.AusgRPProz, 0)} mehr kaufen als heute: ${eur(r.rpz)} im Jahr`);
+    if (r.rpz > 0.5) t.push(`Zuschlag zur Rente: Wer beim Start schon Rente bezieht, hat mit seiner Rente bei gleichem Einkauf mindestens ${pct(A.AusgRPProz, 0)} mehr Geld als heute: ${eur(r.rpz)} im Jahr`);
     if (r.ausgB + r.ausgR > 0.5) t.push(`Ausgleich: ${eur(A.AusgBonusEur)} im Monat für ${h.erw === 2 ? "jeden Erwachsenen" : "jeden Erwachsenen"}${r.ausgR > 0.5 ? `, dazu für heutige Rentner das Minus bis ${eur(A.AusgRentKap)} im Monat, solange sie leben` : ""}: ${eur(r.ausgB + r.ausgR)} im Jahr`);
     if (r.anr > 0.5) t.push(`Steuer und Beiträge zusammen sind auf ${pct(A.AnrGrenze, 0)} je Euro Lohn begrenzt; angerechnet werden ${eur(r.anr)}`);
     st.push(`<li><div><b>Gegengerechnet: ${eur(r.gut)}</b><div class="why">${t.join("; ")}.</div></div></li>`); }
