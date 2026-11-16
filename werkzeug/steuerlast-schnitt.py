@@ -1,5 +1,5 @@
 from PIL import Image, ImageDraw
-D='/mnt/project-files/rechenmodell-mikrosim/steuerlast/'
+D='/mnt/project-files/rechenmodell-mikrosim/v0.3/steuerlast/'
 O='/home/user/mut-zur-zukunft/bilder/steuerlast/'
 plan={
  'steuerlast-feld-einkommen-vermoegen':[(8,100),(200,1440)],

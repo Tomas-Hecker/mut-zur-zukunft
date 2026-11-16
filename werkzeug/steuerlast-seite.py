@@ -2,9 +2,9 @@
 import re
 R = '/home/user/mut-zur-zukunft/'
 import json
-M = '/mnt/project-files/rechenmodell-mikrosim/'
+M = '/mnt/project-files/rechenmodell-mikrosim/v0.3/'
 J = json.load(open(M + 'steuerlast.json'))
-UB = json.load(open(M + 'uebergabe-buch.json'))
+UB = json.load(open(M + 'uebergabe-v35.json'))
 def k(x, n=1):
     t = f"{abs(x):,.{n}f}".replace(",", "X").replace(".", ",").replace("X", ".")
     return ("−" if x < 0 else "") + t
@@ -13,10 +13,12 @@ Z = J['zehntel']; ein = {a['art'] if 'art' in a else a['name']: a for a in J['ar
 def diff(name, lang=False, liste='einkommen'):
     a = next(a for a in J['arten'][liste] if a['name'] == name)
     return a['reform_lang_mrd' if lang else 'reform_mrd'] - a['heute_mrd']
-sp = re.search(r'Version 32 ([0-9,]+) bis ([0-9,]+) Mio\. \(Standard ([0-9,]+)\)', UB['spanne'])
-assert sp.group(3) == f"{J['weniger_mio']:.1f}".replace('.', ','), ('Spanne passt nicht zu steuerlast.json', sp.group(3), J['weniger_mio'])
+E, MS = J['erwachsene'], J['menschen']
+sp = next(x for x in UB['spanne_erwachsene'] if x['fall'].startswith('Rechenkern V35: '))
+assert abs(sp['standard_weniger_mio'] - E['mit_weniger_mio']) < 0.05, ('Spanne passt nicht zu steuerlast.json', sp, E)
 N = dict(
- mehr=k(J['mehr_prozent']), weniger=k(J['weniger_mio']), sp1=sp.group(1), sp2=sp.group(2),
+ emehr=str(E['von_100']['mehr']), eweniger=str(E['weniger_zusammen']), mmehr=str(MS['von_100']['mehr']), erw=k(E['erwachsene_mio'], 1), mensch=k(MS['menschen_mio'], 1),
+ weniger=k(E['mit_weniger_mio']), wmittel=k(E['weniger_im_mittel_monat'], 0), sp1=k(sp['von_weniger_mio']), sp2=k(sp['bis_weniger_mio']),
  z1h=k(Z[0]['quote_heute']), z1r=k(Z[0]['quote_reform']), z10h=k(Z[9]['quote_heute']), z10r=k(Z[9]['quote_reform']),
  uh=k(sum(z['anteil_heute'] for z in Z[:5])), ur=k(sum(z['anteil_reform'] for z in Z[:5])),
  oh=k(Z[9]['anteil_heute']), orr=k(Z[9]['anteil_reform']),
@@ -40,10 +42,10 @@ footer = re.search(r'<footer>.*?</footer>', u, re.S).group(0).replace('href="', 
 G = [
  ("steuerlast-feld-einkommen-vermoegen", 1688, 1362, "Wer hat mehr Geld, wer weniger",
   "Farbfeld nach Einkommen und Vermögen: Bis rund 310.000 € Vermögen haben fast alle Gruppen mehr Geld als heute, zwischen 310.000 und 490.000 € bleibt es fast gleich, darüber haben die Gruppen weniger.",
-  "Jedes Feld ist eine Gruppe von Haushalten. Nach rechts steigt das Einkommen, nach unten das Vermögen. Grün heißt: Die Haushalte haben im Mittel mehr Geld als heute, in Prozent ihres Einkommens. Rot heißt: weniger. Bis rund 310.000 € Vermögen ist fast alles grün, zwischen 310.000 und 490.000 € bleibt es fast gleich, weniger haben vor allem Haushalte mit mehr als 490.000 € Vermögen. Auch in grünen Feldern haben einzelne Haushalte weniger. Schraffierte Felder: zu wenige Haushalte für eine Aussage."),
+  "Jedes Feld ist eine Gruppe von Erwachsenen, geordnet nach Einkommen und Vermögen ihres Haushalts. Nach rechts steigt das Einkommen, nach unten das Vermögen. Grün heißt: Die Erwachsenen der Gruppe haben im Mittel mehr Geld als heute, in Prozent ihres Einkommens. Rot heißt: weniger. Bis rund 310.000 € Vermögen ist fast alles grün, zwischen 310.000 und 490.000 € bleibt es fast gleich, weniger haben vor allem Erwachsene in Haushalten mit mehr als 490.000 € Vermögen. Auch in grünen Feldern haben einzelne weniger. Schraffierte Felder: zu wenige Fälle für eine Aussage."),
  ("steuerlast-nach-einkommen", 1688, 982, "Wie viel vom Einkommen an Steuern und Abgaben geht",
   "Punktgrafik nach Einkommenszehnteln: Das unterste Zehntel zahlt «z1r» statt «z1h» % seines Einkommens, das oberste «z10r» statt «z10h» %.",
-  "Zehn gleich große Gruppen von je 4,1 Mio. Haushalten, geordnet nach dem Einkommen vor Steuern (Löhne, Gewinne, Renten, Kapitalerträge, Grundsicherung). Die Zahl hinter der Gruppe ist ihr mittleres Einkommen im Monat, die Punkte zeigen den Durchschnitt der Gruppe. Das unterste Zehntel zahlt «z1r» statt «z1h» % seines Einkommens, das oberste «z10r» statt «z10h» %. „Mit weniger“ zählt die Haushalte der Gruppe, die trotzdem weniger haben als heute (bei gleichem Einkauf, ohne Erbe)."),
+  "Zehn gleich große Gruppen von je 4,1 Mio. Haushalten, geordnet nach dem Einkommen vor Steuern (Löhne, Gewinne, Renten, Kapitalerträge, Grundsicherung). Die Zahl hinter der Gruppe ist ihr mittleres Einkommen im Monat, die Punkte zeigen den Durchschnitt der Gruppe. Das unterste Zehntel zahlt «z1r» statt «z1h» % seines Einkommens, das oberste «z10r» statt «z10h» %. „Mit weniger“ zählt die Erwachsenen der Gruppe, die trotzdem weniger haben als heute (bei gleichem Einkauf, ohne Erbe)."),
  ("steuerlast-anteile", 1688, 722, "Wie viel vom Ganzen jede Gruppe trägt",
   "Balken: Das oberste Zehntel trägt «orr» statt «oh» % aller Steuern und Abgaben der Haushalte, die untere Hälfte «ur» statt «uh» %.",
   "Alle Haushalte zahlen mit der Reform «gr» Mrd. € im Jahr, heute «gh» Mrd. €. Das oberste Zehntel trägt mehr vom Ganzen als heute, «orr» statt «oh» %. Das oberste Prozent trägt im ersten Jahr «p1r» statt «p1h» %. Es spart viel und zahlt vor allem über das Erbe; wenn das Erbe voll wirkt, trägt es «p1l» %."),
@@ -52,11 +54,13 @@ G = [
   "Gruppen nach Nettovermögen. Mehr zahlen vor allem Haushalte mit eigenem Haus, das noch nicht abbezahlt ist: Auf den Mietwert des unbezahlten Teils fällt Ausgabensteuer an, ebenso auf ausgegebene Zinsen und Mieten. Der beim Start bezahlte Teil des Hauses und Ausgaben aus versteuertem Ersparten bleiben frei."),
  ("wer-bezahlt-einkommen-vermoegen", 1688, 1122, "Welche Einkommen und Vermögen die Reform bezahlen",
   "Balken nach Einkommens- und Vermögensart: Auf Löhne fallen «lohn» Mrd. € weniger, auf Gewinne eigener Firmen «gew» Mrd. € mehr, auf vererbte Firmen «firm» Mrd. € mehr.",
-  "Wie viel mehr oder weniger Steuern und Abgaben im Jahr auf jede Art von Einkommen und Vermögen fallen als heute, in Milliarden Euro. Auf Löhne fallen «lohn» Mrd. € weniger, auf Gewinne eigener Firmen «gew» Mrd. € mehr. Beim Erbe zahlen Firmen «firm» Mrd. € mehr, «firml» Mrd. €, wenn der Staatsanteil am Erbe voll wirkt: Heute sind vererbte Firmen zu 85 % verschont, mit der Reform zählt alles voll. Zusammen tragen die Haushalte «summe» Mrd. € weniger als heute, «ausgl» Mrd. € davon ist der Ausgleich für heutige Rentner (bis 300 € im Monat) und 10 € im Monat je Erwachsenem. Steuern von Firmen, die nicht den Haushalten gehören, sind nicht enthalten."),
+  "Wie viel mehr oder weniger Steuern und Abgaben im Jahr auf jede Art von Einkommen und Vermögen fallen als heute, in Milliarden Euro. Auf Löhne fallen «lohn» Mrd. € weniger, auf Gewinne eigener Firmen «gew» Mrd. € mehr. Beim Erbe zahlen Firmen «firm» Mrd. € mehr, «firml» Mrd. €, wenn der Staatsanteil am Erbe voll wirkt: Heute sind vererbte Firmen zu 85 % verschont, mit der Reform zählt alles voll. Zusammen tragen die Haushalte «summe» Mrd. € weniger als heute, «ausgl» Mrd. € davon sind die Zuschläge für heutige Rentner (ihre Rente kauft 4 % mehr) und für Beamte und Pensionäre (mindestens 2 % mehr). Steuern von Firmen, die nicht den Haushalten gehören, sind nicht enthalten."),
  ("vermoegen-sparen", 1688, 1057, "Wie Vermögen wächst",
   "Punktgrafik zum Sparen nach Vermögen: Haushalte unter 100.000 € Vermögen sparen mit der Reform «sr» € im Monat, heute «sh» €.",
   "Um wie viel Prozent das Vermögen der Haushalte im Jahr durch Sparen wächst. Haushalte mit weniger als 100.000 € Vermögen sparen heute im Mittel «sh» € im Monat, mit der Reform «sr» €, also «sq» % statt «qh» % ihres Einkommens. Weil sie im Mittel nur «vm» € besitzen, wirkt das als großer Sprung beim Wachstum des Vermögens. Gespart wird, was vom Einkommen nach Steuern und Abgaben bleibt, wenn der Haushalt so viel einkauft wie heute; was er mehr hat, legt er in dieser Rechnung ganz zurück. Nicht enthalten: Wertsteigerung von Häusern und Aktien, Erbschaften und Schenkungen."),
 ]
+from PIL import Image
+G = [(f, *Image.open(R + 'bilder/steuerlast/' + f + '.webp').size, t, alt, cap) for f, w, h, t, alt, cap in G]
 figs = "\n".join(f'''<figure id="{f}">
 <a href="../bilder/steuerlast/{f}.webp" title="{t}: Grafik groß öffnen"><img src="../bilder/steuerlast/{f}.webp" width="{w}" height="{h}" loading="lazy" alt="{alt}"></a>
 <figcaption>{cap}</figcaption>
@@ -68,7 +72,7 @@ html = f'''<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Wer die Reform bezahlt · Mut zur Zukunft</title>
-<meta name="description" content="Wer mit dem einheitlichen Steuersystem aus „Wir können uns die Zukunft leisten“ mehr Geld hat und wer weniger, nach Einkommen und Vermögen, gerechnet für 41 Mio. Haushalte.">
+<meta name="description" content="Wer mit dem einheitlichen Steuersystem aus „Wir können uns die Zukunft leisten“ mehr Geld hat und wer weniger, nach Einkommen und Vermögen, gerechnet für alle «erw» Mio. Erwachsenen.">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../style.css">
 <style>
@@ -97,19 +101,19 @@ html = f'''<!doctype html>
 <section class="sl-hero"><div class="wrap">
 <p class="eyebrow">Ein einheitliches Steuersystem</p>
 <h1>Wer die Reform bezahlt</h1>
-<p>Jedes Einkommen nach denselben Regeln: Wer hat mehr Geld als heute, wer weniger? Gerechnet für alle 41 Mio. Haushalte, nach Einkommen und nach Vermögen, im ersten Jahr der Reform und bei gleichem Einkauf wie heute.</p>
+<p>Jedes Einkommen nach denselben Regeln: Wer hat mehr Geld als heute, wer weniger? Gerechnet für alle «erw» Mio. Erwachsenen in 41 Mio. Haushalten, nach Einkommen und Vermögen, im ersten Jahr der Reform und bei gleichem Einkauf wie heute.</p>
 </div></section>
 <div class="wrap sl">
 <div class="facts">
-<div><b>«mehr» %</b><span>der Haushalte haben mehr Geld als heute, wenn sie so viel einkaufen wie heute.</span></div>
+<div><b>«emehr» von 100</b><span>Erwachsenen haben mehr Geld als heute, wenn sie so viel einkaufen wie heute. Mit den Kindern gezählt «mmehr» von 100 Menschen.</span></div>
 <div><b>«z1h» → «z1r» %</b><span>vom Einkommen zahlt das ärmste Zehntel an Steuern und Abgaben, heute und mit der Reform.</span></div>
 <div><b>«oh» → «orr» %</b><span>aller Steuern und Abgaben der Haushalte trägt das reichste Zehntel, heute und mit der Reform.</span></div>
 </div>
 {figs}
 <div class="methode">
 <h2>Wie gerechnet wurde</h2>
-<p>Rund 49.000 künstliche Haushalte stehen für alle 41 Mio. Haushalte in Deutschland. Sie sind auf amtliche Zahlen geeicht: Löhne und Konsum aus der Volkswirtschaftlichen Gesamtrechnung 2025, Lohn- und Einkommensteuer aus den Steuereinnahmen 2025, Vermögen aus der Vermögensbefragung der Bundesbank 2023 mit einer Zuschätzung der Reichsten, Sparen aus der Einkommens- und Verbrauchsstichprobe.</p>
-<p>Heute: Lohn- und Einkommensteuer mit Soli, Sozialbeiträge, Abgeltungsteuer, Körperschaftsteuer auf eigene Firmen, Mehrwertsteuer, Erbschaft- und Schenkungsteuer. Mit der Reform: Ausgabensteuer über dem Freibetrag, höhere Mehrwertsteuer auf denselben Einkauf, die verbleibenden Beiträge und der Staatsanteil am Erbe, abzüglich der Auszahlungen an die Haushalte. Das Erbe zählt als erwartete Steuer im Jahr. Wie jede Schätzung hängt das Ergebnis an Annahmen: Im gezeigten Fall haben «weniger» Mio. Haushalte weniger als heute, mit anderen vertretbaren Eichungen sind es «sp1» bis «sp2» Mio. Jeden einzelnen Haushalt rechnet der <a href="../steuerrechner/">Steuerrechner</a> nach, die ganze Rechnung steht im <a href="../buch/">Buch</a>.</p>
+<p>Rund 46.000 künstliche Haushalte stehen für alle 41 Mio. Haushalte in Deutschland, mit «erw» Mio. Erwachsenen und «mensch» Mio. Menschen. Sie sind auf amtliche Zahlen geeicht: Löhne und Konsum aus der Volkswirtschaftlichen Gesamtrechnung 2025, Lohn- und Einkommensteuer aus den Steuereinnahmen 2025, Vermögen aus der Vermögensbefragung der Bundesbank 2023 mit einer Zuschätzung der Reichsten, Sparen aus der Einkommens- und Verbrauchsstichprobe.</p>
+<p>Heute: Lohn- und Einkommensteuer mit Soli, Sozialbeiträge, Abgeltungsteuer, Körperschaftsteuer auf eigene Firmen, Mehrwertsteuer, Erbschaft- und Schenkungsteuer. Mit der Reform: Ausgabensteuer über dem Freibetrag, höhere Mehrwertsteuer auf denselben Einkauf, die verbleibenden Beiträge und der Staatsanteil am Erbe, abzüglich der Auszahlungen an die Haushalte. Das Erbe zählt als erwartete Steuer im Jahr. Wie jede Schätzung hängt das Ergebnis an Annahmen: Gezählt werden Erwachsene über 18: Jeder zählt mit dem Plus seines Haushalts geteilt durch die Erwachsenen darin, erwachsene Kinder bei den Eltern zählen für sich, Kinder unter 18 mit ihrem Haushalt. Im gezeigten Fall haben «weniger» Mio. Erwachsene weniger als heute, im Mittel «wmittel» € im Monat; mit anderen vertretbaren Eichungen sind es «sp1» bis «sp2» Mio. Die Grafiken ordnen nach Einkommen und Vermögen des Haushalts und zählen die erwachsenen Kinder bei den Eltern nicht mit. Jeden einzelnen Haushalt rechnet der <a href="../steuerrechner/">Steuerrechner</a> nach, die ganze Rechnung steht im <a href="../buch/">Buch</a>.</p>
 </div>
 </div>
 </main>
