@@ -40,7 +40,7 @@
     std2: e("Wochenstunden der zweiten Person."),
     rente: e("Die gesetzliche Rente im Jahr, vor Abzügen. Steht im Rentenbescheid."),
     kap: e("Was Geldanlagen im Jahr bringen: Zinsen, Dividenden und Kursgewinne. Im Vorschlag zählt nur, was davon ausgegeben wird, nicht was angelegt bleibt.", "invest"),
-    miet: e("Wer im eigenen Haus wohnt, spart die Miete. Dieser Mietwert zählt im Vorschlag wie eine Ausgabe, damit Mieter und Eigentümer gleich behandelt werden. Was beim Start schon bezahlt ist, bleibt frei.", "satz"),
+    miet: e("Wer im eigenen Haus wohnt, spart die Miete. Deshalb zählt der Mietwert wie eine Miete, aber nur für den Teil, der beim Start noch nicht bezahlt ist. Der bezahlte Teil wurde aus versteuertem Geld bezahlt und bleibt frei, bis zu 200 m², bis das Haus verkauft oder vererbt wird. Beispiel: Mietwert 1.000 € im Monat, 70 % bezahlt, dann zählen 300 €. Tilgung und Zinsen an die Bank sind keine Ausgabe und bleiben steuerfrei.<br>Wer nach dem Start kauft, für den gilt die Hausregel: Statt des Mietwerts zählt jedes Jahr ein Fünfzigstel des Kaufpreises, fest in Euro, 50 Jahre lang, für bis zu 40 m² je Erwachsenem und 15 m² je Kind. Für die übrige Fläche zählt der Mietwert.", "satz"),
     hb: e("Welcher Teil des eigenen Hauses beim Start schon abbezahlt ist. Für diesen Teil fällt keine Steuer auf den Mietwert an, bis zum Verkauf oder Erbfall."),
     spar: e("Welcher Teil des Einkommens gespart wird. Im Vorschlag ist Sparen steuerfrei, besteuert wird erst, was ausgegeben wird.", "idee"),
     mini: e("Lohn aus einem Minijob im Jahr, bis 603 € im Monat."),
