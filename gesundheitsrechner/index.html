@@ -113,6 +113,9 @@ details > summary { cursor: pointer; font-weight: 700 }
 .studie .fund { font-size: 13.5px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 6px; margin-top: 2px }
 .ampel { display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px }
 .ampel span { border-radius: 999px; padding: 3px 10px; background: var(--field); border: 1px solid var(--line) }
+.annahmen { border: 1px dashed var(--muted); border-radius: 10px; padding: 12px 14px; display: grid; gap: 10px; background: var(--field) }
+.annahmen h3 { margin: 0 }
+.annahmen .chk { display: flex; gap: 8px; align-items: center; font-size: 14.5px }
 .bonus { border: 2px solid var(--ok); border-radius: 10px; padding: 12px 14px; display: grid; gap: 8px }
 .bonus .kopf { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px }
 .bonus .kopf .v { font: 800 24px/1.15 var(--display); color: var(--ok) }
@@ -322,6 +325,24 @@ h1,h2,h3{break-after:avoid}
     <h2>Wenn alle gesund leben: was das bis 2070 bringen könnte</h2>
     <p>Was wäre, wenn ab 2027 alle gesund essen, niemand mehr raucht, kaum jemand Alkohol trinkt und sich alle genug bewegen? Für jeden dieser Punkte gibt es Studien, die ausrechnen, was er Deutschland heute jedes Jahr kostet: bei den Krankenkassen und in der Wirtschaft durch Krankheitstage, Frührente und frühen Tod. Der Rechner zeigt, wie viel davon bis 2070 zusammenkäme.</p>
     <p class="note"><b>Ehrlich gesagt:</b> Das ist eine Hoffnung, keine Vorhersage. Kein Land der Welt hat das geschafft. Die Zahlen zeigen, wie groß der Schatz ist, der hier liegt, nicht wie viel eine einzelne Maßnahme hebt.</p>
+    <div class="annahmen" id="annahmen_a">
+      <h3>Annahmen zum Verstellen</h3>
+      <div class="row2" style="align-items:end">
+        <div class="range"><label for="a_w">Wie stark wirkt die Gesundheitsreform? <b id="o_w"></b> des möglichen Nutzens</label><input id="a_w" type="range" min="5" max="100" step="5" value="100"><small class="note" id="o_w_hint"></small></div>
+        <div class="range"><label for="a_abg">Davon an Staat und Sozialkassen als Steuern und Beiträge: <b id="o_abg"></b></label><input id="a_abg" type="range" min="30" max="50" step="1" value="40"><small class="note">Abgabenquote in Deutschland: rund 40 % der Wirtschaftsleistung.</small></div>
+      </div>
+      <label class="chk"><input type="checkbox" id="a_rente" checked> Rente folgt der Lebenserwartung (Buch, Kapitel 5, Baustein 11)</label>
+      <details><summary>Feste Annahmen ansehen</summary>
+        <ul class="txt">
+          <li><b>Jährliche Kosten heute:</b> Rauchen 97 Mrd. €, ungesundes Essen 75 Mrd. €, Alkohol 57 Mrd. €, Bewegungsmangel 17 Mrd. € (Studien in der Tabelle unten).</li>
+          <li><b>Bis zur vollen Wirkung:</b> Rauchen 25 Jahre, Essen 20 Jahre, Alkohol und Bewegung je 10 Jahre.</li>
+          <li><b>Überschneidung:</b> Der größte Posten zählt voll, jeder weitere zur Hälfte.</li>
+          <li><b>Öffentlich bezahlt:</b> Rund drei Viertel der Gesundheitsausgaben tragen Krankenkassen, Pflegekasse und Staat (Statistisches Bundesamt).</li>
+          <li><b>Folgekosten in gewonnenen Lebensjahren:</b> ein Drittel bis die Hälfte der Ersparnis, wenn die Rente der Lebenserwartung folgt; sonst 60 bis 90 %, weil zusätzlich längere Renten zu zahlen sind. Grobe eigene Schätzung.</li>
+          <li><b>Euro:</b> in Preisen der jeweiligen Studie, ohne Zinsen und ohne Preissteigerung.</li>
+        </ul>
+      </details>
+    </div>
     <div class="tiles t3" id="tiles_a"></div>
     <div class="legend" id="lg_a"></div>
     <div class="chart" id="c_a"></div>
@@ -675,7 +696,7 @@ function rechne(p, v = "mid") {
 
 // ---------- Diagramm ----------
 function chart(el, o) {
-  const W = o.W || 560, H = o.H || 300, L = 46, R = 14, T = 14, B = 40;
+  const W = o.W || 560, H = o.H || 300, L = o.L || 46, R = 14, T = 14, B = 40;
   const X = v => L + (v - o.x0) / (o.x1 - o.x0) * (W - L - R), Y = v => H - B - v / o.y1 * (H - T - B);
   let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria}">`;
   (o.zones || []).forEach(([a, b, c]) => s += `<rect x="${X(a)}" y="${T}" width="${X(b) - X(a)}" height="${H - T - B}" fill="var(${c})"/>`);
@@ -882,37 +903,43 @@ const GESUND = [
 const STAAT = { oeffAnteil: 0.75, abgaben: 0.40, abzugLo: 1 / 3, abzugHi: 0.5 }; // grobe eigene Schätzung, siehe Text
 function gesamtKosten(xs) { const v = [...xs].sort((a, b) => b - a); return v[0] + GEMEINSAM * v.slice(1).reduce((a, b) => a + b, 0); }
 function allegesund() {
+  const w = +$("a_w").value / 100, abgQ = +$("a_abg").value / 100, rente = $("a_rente").checked;
+  $("o_w").textContent = Math.round(w * 100) + " %"; $("o_abg").textContent = Math.round(abgQ * 100) + " %";
+  $("o_w_hint").textContent = w >= 1 ? "100 % heißt: wirklich alle leben ab 2027 gesund. Das ist die theoretische Obergrenze." : `${Math.round(w * 100)} % heißt: Die Reform schafft so viel, als ob ${fmt(Math.round(w * 100))} von 100 Menschen gesund leben würden. Zum Vergleich: Die Zuckerabgabe aus dem Buch allein bringt rund 5 %.`;
+  const abzLo = rente ? STAAT.abzugLo : 0.6, abzHi = rente ? STAAT.abzugHi : 0.9;
+  const G = GESUND.map(s => ({ ...s, ges: s.ges * w, kasse: s.kasse * w }));
   const jahreA = []; for (let j = 2027; j <= 2070; j++) jahreA.push(j);
-  GESUND.forEach(s => { let c = 0, ck = 0; s.cum = []; s.cumK = [];
+  G.forEach(s => { let c = 0, ck = 0; s.cum = []; s.cumK = [];
     jahreA.forEach((j, i) => { const f = Math.min(1, (i + 1) / s.aufbau); c += s.ges * f; ck += s.kasse * f; s.cum.push([j, c]); s.cumK.push([j, ck]); });
     s.sum = c; s.sumK = ck; s.leben = s.ges * 1e9 / EINW * LEBEN; });
   const T = { n: "Alles zusammen", c: "--fg", cum: [], cumK: [] };
-  jahreA.forEach((j, i) => { T.cum.push([j, gesamtKosten(GESUND.map(s => s.cum[i][1]))]); T.cumK.push([j, gesamtKosten(GESUND.map(s => s.cumK[i][1]))]); });
+  jahreA.forEach((j, i) => { T.cum.push([j, gesamtKosten(G.map(s => s.cum[i][1]))]); T.cumK.push([j, gesamtKosten(G.map(s => s.cumK[i][1]))]); });
   T.sum = T.cum.at(-1)[1]; T.sumK = T.cumK.at(-1)[1];
-  T.ges = gesamtKosten(GESUND.map(s => s.ges)); T.kasse = gesamtKosten(GESUND.map(s => s.kasse)); T.leben = T.ges * 1e9 / EINW * LEBEN;
-  const y1 = Math.ceil(T.sum / 1000) * 1000;
-  chart($("c_a"), { W: 1000, H: 380, aria: "Aufsummierte Einsparung bis 2070, wenn alle gesund leben", x0: 2027, x1: 2070, y1, xt: [2030, 2040, 2050, 2060, 2070], xf: t => t,
-    yt: Array.from({ length: y1 / 1000 + 1 }, (_, i) => i * 1000), yf: t => t ? fmt(t / 1000, 0) + " Bio." : "0", xl: "Jahr",
-    lines: GESUND.map(s => ({ p: s.cum, c: s.c })).concat([{ p: T.cum, c: T.c, w: 3.2 }, { p: T.cumK, c: T.c, d: 1, w: 1.8 }]),
-    endLabels: [[T.sum, mrd(T.sum), T.c], [GESUND[0].sum, mrd(GESUND[0].sum), GESUND[0].c]] });
-  lg($("lg_a"), GESUND.map(s => [s.c, s.n]).concat([["--fg", "Alles zusammen"], ["--fg", "davon Krankenkassen (alles zusammen)", "dash"]]));
-  $("tiles_a").innerHTML = GESUND.concat([T]).map(s => `<div class="tile"><span class="k">${s.n} bis 2070</span><span class="v">${mrd(s.sum)}</span><span class="s">davon Krankenkassen ${mrd(s.sumK)}; ≈ ${eur(s.leben)} je Mensch über ein Leben</span></div>`).join("");
+  T.ges = gesamtKosten(G.map(s => s.ges)); T.kasse = gesamtKosten(G.map(s => s.kasse)); T.leben = T.ges * 1e9 / EINW * LEBEN;
+  const st = T.sum > 2000 ? 1000 : T.sum > 800 ? 250 : 100, y1 = Math.max(st, Math.ceil(T.sum / st) * st);
+  chart($("c_a"), { W: 1000, H: 380, L: 74, aria: "Aufsummierte Einsparung bis 2070, wenn alle gesund leben", x0: 2027, x1: 2070, y1, xt: [2030, 2040, 2050, 2060, 2070], xf: t => t,
+    yt: Array.from({ length: Math.round(y1 / st) + 1 }, (_, i) => i * st), yf: t => t ? (t >= 1000 ? fmt(t / 1000, t % 1000 ? 2 : 0) + " Bio." : fmt(t) + " Mrd.") : "0", xl: "Jahr",
+    lines: G.map(s => ({ p: s.cum, c: s.c })).concat([{ p: T.cum, c: T.c, w: 3.2 }, { p: T.cumK, c: T.c, d: 1, w: 1.8 }]),
+    endLabels: [[T.sum, mrd(T.sum), T.c], [G[0].sum, mrd(G[0].sum), G[0].c]] });
+  lg($("lg_a"), G.map(s => [s.c, s.n]).concat([["--fg", "Alles zusammen"], ["--fg", "davon Krankenkassen (alles zusammen)", "dash"]]));
+  $("tiles_a").innerHTML = G.concat([T]).map(s => `<div class="tile"><span class="k">${s.n} bis 2070${w < 1 ? ", zu " + Math.round(w * 100) + " %" : ""}</span><span class="v">${mrd(s.sum)}</span><span class="s">davon Krankenkassen ${mrd(s.sumK)}; ≈ ${eur(s.leben)} je Mensch über ein Leben</span></div>`).join("");
   $("t_a").innerHTML = `<tr><th>Was sich ändert</th><th>Ersparnis im Jahr bei voller Wirkung</th><th>davon Krankenkassen</th><th style="text-align:left">Woher die Zahl kommt</th></tr>` +
-    GESUND.map(s => `<tr><td>${s.n}</td><td>${mrd(s.ges)}</td><td>${mrd(s.kasse)}</td><td style="white-space:normal;text-align:left"><a href="#${s.q}">${s.qn}</a>: ${s.t}</td></tr>`).join("") +
+    G.map(s => `<tr><td>${s.n}</td><td>${mrd(s.ges)}</td><td>${mrd(s.kasse)}</td><td style="white-space:normal;text-align:left"><a href="#${s.q}">${s.qn}</a>: ${s.t}</td></tr>`).join("") +
     `<tr class="sum"><td>Alles zusammen</td><td>${mrd(T.ges)}</td><td>${mrd(T.kasse)}</td><td style="white-space:normal;text-align:left;font-weight:400">Größter Posten voll, jeder weitere zur Hälfte, weil sich die Ursachen überschneiden. Zum Vergleich: Deutschland gibt heute rund 500 Mrd. € im Jahr für Gesundheit aus.</td></tr>`;
   // Was beim Staat ankommt (grobe Schätzung)
-  const oeff = T.kasse * STAAT.oeffAnteil, abg = (T.ges - T.kasse) * STAAT.abgaben, brutto = oeff + abg;
-  const nLo = brutto * (1 - STAAT.abzugHi), nHi = brutto * (1 - STAAT.abzugLo), volleJahre = T.sum / T.ges;
+  const oeff = T.kasse * STAAT.oeffAnteil, abg = (T.ges - T.kasse) * abgQ, brutto = oeff + abg;
+  const nLo = brutto * (1 - abzHi), nHi = brutto * (1 - abzLo), volleJahre = T.sum / T.ges;
   const ohne = t => t.replace(/ (Bio|Mrd)\. €/, "");
   $("t_staat").innerHTML = `<tr><th>Posten</th><th>im Jahr bei voller Wirkung</th></tr>
     <tr><td>Nutzen für die ganze Gesellschaft</td><td>${mrd(T.ges)}</td></tr>
     <tr><td>Weniger Gesundheitsausgaben: davon zahlen Krankenkassen, Pflegekasse und Staat rund drei Viertel</td><td>${mrd(oeff)}</td></tr>
-    <tr><td>Mehr Arbeit statt Krankheit und frühem Tod: davon gehen rund 40 % als Steuern und Beiträge an Staat und Sozialkassen</td><td>${mrd(abg)}</td></tr>
+    <tr><td>Mehr Arbeit statt Krankheit und frühem Tod: davon gehen rund ${Math.round(abgQ * 100)} % als Steuern und Beiträge an Staat und Sozialkassen</td><td>${mrd(abg)}</td></tr>
     <tr class="sum"><td>Für Staat und Sozialkassen, brutto</td><td>${mrd(brutto)}</td></tr>
-    <tr><td>Abzug: In den gewonnenen Lebensjahren fallen später Arzt- und Pflegekosten an (ein Drittel bis die Hälfte)</td><td>−${ohne(mrd(brutto * STAAT.abzugLo))} bis −${mrd(brutto * STAAT.abzugHi)}</td></tr>
+    <tr><td>Abzug: In den gewonnenen Lebensjahren fallen später ${rente ? "Arzt- und Pflegekosten" : "Arzt-, Pflege- und längere Rentenkosten"} an (${rente ? "ein Drittel bis die Hälfte" : "60 bis 90 %"})</td><td>−${ohne(mrd(brutto * abzLo))} bis −${mrd(brutto * abzHi)}</td></tr>
     <tr class="sum"><td>Für Staat und Sozialkassen, netto</td><td>${ohne(mrd(nLo))} bis ${mrd(nHi)}</td></tr>`;
-  $("n_staat").innerHTML = `Bis 2070 wären das zusammen grob <b>${ohne(mrd(nLo * volleJahre))} bis ${mrd(nHi * volleJahre)}</b> für Staat und Sozialkassen, wenn wirklich alle ab 2027 gesund leben. Zum Vergleich: Bund, Länder und Gemeinden haben heute rund 2,7 Bio. € Schulden. Das ist eine grobe eigene Schätzung: Die drei Viertel stammen aus der Gesundheitsausgabenrechnung des Statistischen Bundesamts, die 40 % entsprechen der Abgabenquote. Der Abzug reicht nur, wenn die Rente der Lebenserwartung folgt (<a href="../buch/kapitel-5.html#11-rente-folgt-der-lebenserwartung">Kapitel 5, Baustein 11</a>): Dann arbeiten wir in gewonnenen Jahren länger, statt länger Rente zu beziehen. Ohne diese Regel würden längere Renten einen großen Teil der Ersparnis wieder auffressen.`;
+  $("n_staat").innerHTML = `Bis 2070 wären das zusammen grob <b>${ohne(mrd(nLo * volleJahre))} bis ${mrd(nHi * volleJahre)}</b> für Staat und Sozialkassen, ${w >= 1 ? "wenn wirklich alle ab 2027 gesund leben" : "wenn die Reform " + Math.round(w * 100) + " % des möglichen Nutzens schafft"}. Zum Vergleich: Bund, Länder und Gemeinden haben heute rund 2,7 Bio. € Schulden. Das ist eine grobe eigene Schätzung: Die drei Viertel stammen aus der Gesundheitsausgabenrechnung des Statistischen Bundesamts, die 40 % entsprechen der Abgabenquote. ${rente ? `Der kleinere Abzug gilt, weil die Rente der Lebenserwartung folgt (<a href="../buch/kapitel-5.html#11-rente-folgt-der-lebenserwartung">Kapitel 5, Baustein 11</a>): Dann arbeiten wir in gewonnenen Jahren länger, statt länger Rente zu beziehen. Nimm oben den Haken weg, um zu sehen, was ohne diese Regel bliebe.` : `Ohne die Regel „Rente folgt der Lebenserwartung“ (<a href="../buch/kapitel-5.html#11-rente-folgt-der-lebenserwartung">Kapitel 5, Baustein 11</a>) fressen längere Renten einen großen Teil der Ersparnis wieder auf.`}`;
 }
+["a_w", "a_abg", "a_rente"].forEach(id => $(id).addEventListener("input", allegesund));
 $("r_g").addEventListener("input", zucker); $("r_r").addEventListener("input", zucker);
 run();
 allegesund();
@@ -966,6 +993,9 @@ Info.texte("#allegesund", {
   "Kaum noch Alkohol": ["Was es bringt, wenn fast niemand mehr Alkohol trinkt. Unfälle, Gewalt und Vergiftungen fallen sofort weg, Leberschäden und Krebs erst nach Jahren."],
   "Alle bewegen sich genug": ["Was es bringt, wenn sich alle mindestens 150 Minuten in der Woche bewegen, also gut 20 Minuten am Tag, zum Beispiel zügig gehen oder Rad fahren."],
   "Alles zusammen": ["Alle vier Punkte gleichzeitig. Weil sich die Ursachen überschneiden, zählt der größte Posten voll und jeder weitere nur zur Hälfte. „Je Mensch über ein Leben“ heißt: die Ersparnis im Jahr auf jeden Einwohner verteilt und mal 81 Lebensjahre genommen."],
+  "Wie stark wirkt die Gesundheitsreform": ["Niemand weiß, wie viele Menschen durch Gesundheitsabgabe und Gesundheitsbonus wirklich gesünder leben. Mit diesem Hebel stellst du es selbst ein: 100 % heißt, alle leben gesund; 20 % heißt, die Reform holt ein Fünftel des möglichen Nutzens.", ...K5],
+  "Davon an Staat und Sozialkassen": ["Wenn Menschen länger gesund arbeiten, entsteht mehr Einkommen. Davon gehen Steuern und Sozialbeiträge an Staat und Sozialkassen, im Schnitt rund 40 %."],
+  "Rente folgt der Lebenserwartung": ["Wer gesünder lebt, lebt länger und bekommt sonst auch länger Rente. Folgt das Rentenalter der Lebenserwartung, arbeiten wir in den gewonnenen Jahren länger, und die Ersparnis bleibt zum größten Teil erhalten. Nimm den Haken weg, um zu sehen, was ohne diese Regel bliebe.", "kapitel-5.html#11-rente-folgt-der-lebenserwartung", "Kapitel 5"],
   "Posten": ["Wie viel vom Nutzen für alle wirklich bei Staat und Sozialversicherung ankommt. Das ist eine grobe eigene Schätzung; die Annahmen stehen unter der Tabelle."],
   "Was sich ändert": ["Jeder Punkt für sich: was er im Jahr spart, wenn er voll wirkt, wie viel davon bei den Krankenkassen ankommt und aus welcher Studie die Zahl stammt."],
 });
