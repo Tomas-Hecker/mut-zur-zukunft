@@ -18,7 +18,7 @@ SG = UB['spanne_gewaehlt']
 assert SG['punktwert']['von_100'] == E['von_100']['mehr'], ('Spanne passt nicht zu steuerlast.json', SG['punktwert'], E['von_100'])
 N = dict(
  emehr=str(E['von_100']['mehr']), eweniger=str(E['weniger_zusammen']), mmehr=str(MS['von_100']['mehr']), erw=k(E['erwachsene_mio'], 1), mensch=k(MS['menschen_mio'], 1),
- sw1=k(SG['vertretbare_annahmen']['erwachsene_weniger_mio'][0]), sw2=k(SG['vertretbare_annahmen']['erwachsene_weniger_mio'][2]), swr=k(SG['rand']['erwachsene_weniger_mio_hoechstens']), satzb=SG['satz_buch'],
+ sw1=k(SG['gewaehlt']['erwachsene_weniger_mio_von_bis'][0]), sw2=k(SG['gewaehlt']['erwachsene_weniger_mio_von_bis'][1]), swr=k(SG['rand']['erwachsene_weniger_mio_hoechstens']), satzb=SG['satz_buch'],
  weniger=k(E['mit_weniger_mio']), wmittel=k(E['weniger_im_mittel_monat'], 0),
  z1h=k(Z[0]['quote_heute']), z1r=k(Z[0]['quote_reform']), z10h=k(Z[9]['quote_heute']), z10r=k(Z[9]['quote_reform']),
  uh=k(sum(z['anteil_heute'] for z in Z[:5])), ur=k(sum(z['anteil_reform'] for z in Z[:5])),
