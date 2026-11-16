@@ -3,7 +3,7 @@
 Quelle: broschuere-mut-zur-zukunft/version-35/rechner-v36-stufe4.md und beispiele-rechner-v36-roh.json (16.11.2026):
 Freibetrag 1.200 € im Monat (Grenze1 = Grenze2 = 2.052), Stufe 4 dauerhaft (Stufe4Jahre 99, Satz4 1,5 = 60 % vom Geld, das ins
 Private fließt, über 5.000 € Ausgaben im Monat je Erwachsenem). Die Stufe 4 steckt im Haushalt in tarif() und xtInv().
-In der Gesamtrechnung bleibt sie ein eigener Posten (stufe4()), Aufkommen und Bausteine rechnen ohne sie, sonst zählte sie doppelt.
+In der Gesamtrechnung bleibt sie ein eigener Posten (stufe4()), Aufkommen und Bausteine rechnen mit tarifG (ohne Stufe 4, Raster FBGesamt), sonst zählte sie doppelt.
 Läuft nach v35-vorab.py. Ein zweiter Lauf ändert nichts."""
 p = 'steuerrechner/index.html'
 s = open(p, encoding='utf-8').read()
@@ -19,14 +19,21 @@ Object.assign(ANNAHMEN, { Grenze1: 2052, Grenze2: 2052, Stufe4Jahre: 99, Satz4: 
 Object.assign(ANNAHMEN.SicherheitWerte, { Grenze1: 2052, Grenze2: 2052 });
 const A = structuredClone(ANNAHMEN);''')
 
-# Tarif: Stufe 4 im Haushalt, wenn sie dauerhaft gilt (wie ctax im Rechenkern); ohne4 für Aufkommen und Bausteine des Staates
+# Tarif: Stufe 4 im Haushalt, wenn sie dauerhaft gilt (wie ctax im Rechenkern); tarifG für Aufkommen und Bausteine des Staates
 rep('''function tarif(x) { // Ausgabensteuer je Erwachsenem auf Ausgaben x über dem Existenzminimum
   x = Math.max(0, x);
   return A.Satz1 * Math.min(x, A.Grenze1) + A.Satz2 * Math.max(0, Math.min(x, A.Grenze2) - A.Grenze1) + A.Satz3 * Math.max(0, x - Math.max(A.Grenze1, A.Grenze2));
-}''', '''function tarif(x, ohne4) { // Ausgabensteuer je Erwachsenem auf Ausgaben x über dem Existenzminimum
+}''', '''function tarif(x) { // Ausgabensteuer je Erwachsenem auf Ausgaben x über dem Existenzminimum
   x = Math.max(0, x);
   return A.Satz1 * Math.min(x, A.Grenze1) + A.Satz2 * Math.max(0, Math.min(x, A.Grenze2) - A.Grenze1) + A.Satz3 * Math.max(0, x - Math.max(A.Grenze1, A.Grenze2))
-    + (!ohne4 && A.Stufe4Jahre >= 99 ? (A.Satz4 - A.Satz3) * Math.max(0, x - A.Grenze3) : 0);   // Paket 6: Stufe 4 dauerhaft
+    + (A.Stufe4Jahre >= 99 ? (A.Satz4 - A.Satz3) * Math.max(0, x - A.Grenze3) : 0);   // Paket 6: Stufe 4 dauerhaft (wie ctax im Rechenkern)
+}
+// Version 36 (wie ctax_g im Rechenkern): Tarif der Hochrechnung und der Bausteine, ohne Stufe 4 und auf dem Raster mit FBGesamt;
+// was der Freibetrag darüber kostet und die Stufe 4 stehen als eigene Posten in der Gesamtrechnung
+function tarifG(x) {
+  x = Math.max(0, x);
+  const g1 = A.Grenze1G ?? A.Grenze1, g2 = A.Grenze2G ?? A.Grenze2;
+  return A.Satz1 * Math.min(x, g1) + A.Satz2 * Math.max(0, Math.min(x, g2) - g1) + A.Satz3 * Math.max(0, x - Math.max(g1, g2));
 }''')
 rep('''  if (C <= f2) return F0 + E * G1 + (C - f1) / (1 + A.Satz2);
   return F0 + E * G2 + (C - f2) / (1 + A.Satz3);''', '''  if (C <= f2) return F0 + E * G1 + (C - f1) / (1 + A.Satz2);
@@ -36,12 +43,12 @@ rep('''  if (C <= f2) return F0 + E * G1 + (C - f1) / (1 + A.Satz2);
   }
   return F0 + E * G2 + (C - f2) / (1 + A.Satz3);''')
 # Gesamtrechnung: Aufkommen und Bausteine ohne Stufe 4, sie kommt als eigener Posten dazu
-rep('  for (const z of Z) s += tarif(Math.exp(mu + A.Sigma * z) - exm);', '  for (const z of Z) s += tarif(Math.exp(mu + A.Sigma * z) - exm, true);')
-rep('(A.RentN * (tarif(rx) - tarif(Math.max(0, rx - A.RentVerd)))', '(A.RentN * (tarif(rx, true) - tarif(Math.max(0, rx - A.RentVerd), true))')
+rep('  for (const z of Z) s += tarif(Math.exp(mu + A.Sigma * z) - exm);', '  for (const z of Z) s += tarifG(Math.exp(mu + A.Sigma * z) - exm);')
+rep('(A.RentN * (tarif(rx) - tarif(Math.max(0, rx - A.RentVerd)))', '(A.RentN * (tarifG(rx) - tarifG(Math.max(0, rx - A.RentVerd)))')
 rep('(A.RMiniN * (tarif(xm) - tarif(Math.max(0, xm - 12 * A.RMiniV))) + A.RMidiN * (tarif(xd) - tarif(Math.max(0, xd - miniFrei(12 * A.RMidiV)))))',
-    '(A.RMiniN * (tarif(xm, true) - tarif(Math.max(0, xm - 12 * A.RMiniV), true)) + A.RMidiN * (tarif(xd, true) - tarif(Math.max(0, xd - miniFrei(12 * A.RMidiV)), true)))')
-rep('(tarif(xh) - tarif(Math.max(0, xh - rentMehr(A.RMehrW, A.RMehrH))))', '(tarif(xh, true) - tarif(Math.max(0, xh - rentMehr(A.RMehrW, A.RMehrH)), true))')
-rep('const K = g.e * (tarif(g.ue / g.e) - tarif(Math.max(0, g.ue - J) / g.e));', 'const K = g.e * (tarif(g.ue / g.e, true) - tarif(Math.max(0, g.ue - J) / g.e, true));')
+    '(A.RMiniN * (tarifG(xm) - tarifG(Math.max(0, xm - 12 * A.RMiniV))) + A.RMidiN * (tarifG(xd) - tarifG(Math.max(0, xd - miniFrei(12 * A.RMidiV)))))')
+rep('(tarif(xh) - tarif(Math.max(0, xh - rentMehr(A.RMehrW, A.RMehrH))))', '(tarifG(xh) - tarifG(Math.max(0, xh - rentMehr(A.RMehrW, A.RMehrH))))')
+rep('const K = g.e * (tarif(g.ue / g.e) - tarif(Math.max(0, g.ue - J) / g.e));', 'const K = g.e * (tarifG(g.ue / g.e) - tarifG(Math.max(0, g.ue - J) / g.e));')
 # Haushalt: der getrennte Hinweis auf die befristete Stufe 4 entfällt, sie steckt dauerhaft im Ergebnis
 rep('const s4 = A.Stufe4Jahre > 0 ? h.erw', 'const s4 = A.Stufe4Jahre > 0 && A.Stufe4Jahre < 99 ? h.erw')
 rep('function stufe4(mitMiete) { // Mehreinnahmen der befristeten Stufe 4, Mrd. €', 'function stufe4(mitMiete) { // Mehreinnahmen der Stufe 4, Mrd. € (Paket 6: dauerhaft)')

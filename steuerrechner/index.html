@@ -1099,14 +1099,28 @@ Object.assign(ANNAHMEN.SicherheitWerte, { Grenze1: 1572, Grenze2: 1572 });
 // Vorab Paket 6 (Buch Version 36): Freibetrag 1.200 € im Monat, Stufe 4 dauerhaft mit 60 % über 5.000 € im Monat
 Object.assign(ANNAHMEN, { Grenze1: 2052, Grenze2: 2052, Stufe4Jahre: 99, Satz4: 1.5 });
 Object.assign(ANNAHMEN.SicherheitWerte, { Grenze1: 2052, Grenze2: 2052 });
+// Rechenkern Version 36 (Staatsseite): neue und geänderte Annahmen aus modell-v36 (Stand 16.11.2026)
+Object.assign(ANNAHMEN, {"FBGesamt": 1160, "FBJeEuro": 0.512, "S4Mikro": 64.8, "KVJung": 0.282, "LohnErs": 32.5, "AutoStufeS": 0.75, "AutoStufeL": 0.0, "PlastikE": 1.25, "PestizidE": 0.6, "FlugE": 0.35, "ErbAnteilAnd": 0.6, "BilMehr": 0.0, "InvJahr": 20, "InvDauer": 10, "InvRend": 0.05, "InvLag": 15, "InvN": 40, "VhSparGS": 0.0, "VhSpar30": 0.06, "VhSpar60": 0.14, "VhSpar100": 0.19, "VhSparUeber": 0.57, "VhSparRent": 0.19, "VhGewGS": 7.43252, "VhGew30": 11.74002, "VhGew60": 25.36268, "VhGew100": 18.53111, "VhGewUeber": 26.7506, "VhGewRent": 5.35774, "AusgRentAn": 0, "AusgRentA5": 0.82356, "AusgRentA10": 0.59654, "AusgRentA15": 0.37226, "AusgRentA20": 0.18726, "AusgRentA25": 0.06745, "AusgRentA30": 0.01475, "AusgRentA35": 0.00186, "AusgRentA40": 0.00029, "AusgRentA45": 4e-05, "AusgBonusAn": 0, "AusgRPA5": 0.85236, "AusgRPA10": 0.63417, "AusgRPA15": 0.40538, "AusgRPA20": 0.20743, "AusgRPA25": 0.07488, "AusgRPA30": 0.01571, "AusgRPA35": 0.00154, "AusgRPA40": 0.00012, "AusgRPA45": 1e-05, "AusgRPPlus": 0.2274, "AStundAn": 1, "AStundKap": 150, "AStundZins": 0.02, "AStundGrenze": 0.5, "EPAn": 1, "EPAb": 2028, "EPLohn": 1265, "EPKrippe0": 0.025, "EPKrippe1": 0.393, "EPKrippe2": 0.692, "EPGeschw": 0.04, "EPEG": 11462, "EPEGQuote": 0.92, "EPEGUeber": 684, "EPEGMin": 300, "EPGSElt": 212532, "EPGSEltEG": 0.5, "EPGSPfl": 71276, "EPPflP": 1.1, "EPPG2": 0.4, "EPPG3": 0.4, "EPPG4": 0.15, "EPPG5": 0.05, "EPPGeld2": 347, "EPPGeld3": 599, "EPPGeld4": 800, "EPPGeld5": 990, "EPLohnPG2": 0.5, "EPPGeldAnt": 0.88248, "EPPfl2021": 5.0, "EPPfl2055": 6.8, "EPPfl2070": 6.9, "EPPlus": 0.89, "HRFlErw": 40, "HRFlKind": 15, "ZpGesBis": 2035, "ZpGesPlus": 0.005, "ZpVerw": 0.0, "ZpTraeger": 1.0, "KifoAn": 1, "KifoKita": 5.0, "KifoKitaJahre": 5, "KifoForsch": 10.0, "KifoForschJahre": 10, "KifoProto": 1.0, "KifoAnerk": 0.5, "KifoStaat": 0.4, "UebMikro": 1, "MikroMietSt": 210.4, "AVKGrenzeF": 0.5, "BJOfTn": 0.3, "BJOfStd": 10, "BJML": 13.9, "BJKdA": 936.0, "SprTn": 0.3, "SprHandy": 320, "SprIKTn": 0.1, "SprIKUE": 700, "SprBSKTn": 0.1, "SprBSKUE": 400, "SprKES": 4.58, "BJErzPfl": 0.2838, "FondsKauf": 40, "FondsJahre": 10, "FondsDiv": 0.03, "FondsWert": 0.035, "FondsWertLo": 0.015, "FondsWertHi": 0.05, "FondsAb": 31, "FondsRegel": 0.035, "Infl": 0.02, "KVPausch": 371.952, "ExMinPraem": 4.08, "BeamtAusgl": 10.812, "Zins": 0.03, "VhPlus0": 92.98039, "VhMinus0": 143.67875, "AusgRP0": 9.734, "BSKost": 75.465, "RTJahrgang": 0.504, "RTEur": 288, "HAKost": 61.2, "AusgRPA": [0.85236, 0.63417, 0.40538, 0.20743, 0.07488, 0.01571, 0.00154, 0.00012, 1e-05]});
+// Version 36: Übergangsregeln Jahr für Jahr aus der eigenen Mikrosimulation, Mrd. € in heutigen Preisen, 2028 bis 2072 (MIKRO im Rechenkern)
+const MIKRO = {"hf": [171.5, 166.4, 161.5, 156.5, 151.5, 146.7, 141.8, 136.9, 131.9, 127.0, 122.2, 117.4, 112.4, 107.8, 103.1, 98.7, 94.3, 90.0, 86.1, 82.0, 78.0, 74.3, 70.8, 67.2, 63.5, 60.3, 57.0, 53.7, 50.8, 47.7, 44.9, 42.2, 39.7, 37.0, 34.6, 32.5, 30.0, 28.0, 26.0, 24.3, 22.6, 21.2, 19.9, 18.6, 17.3], "hr": [0.0, 0.6, 1.2, 1.9, 2.6, 3.3, 4.1, 5.0, 5.9, 6.9, 7.9, 8.9, 10.0, 11.1, 12.3, 13.4, 14.7, 15.9, 17.1, 18.3, 19.6, 20.8, 22.1, 23.4, 24.7, 26.0, 27.3, 28.5, 29.8, 31.0, 32.2, 33.6, 34.9, 36.2, 37.4, 38.6, 39.9, 41.1, 42.2, 43.2, 44.2, 45.3, 46.3, 47.3, 48.3], "bs": [67.3, 62.1, 56.8, 51.4, 45.9, 40.4, 35.0, 29.9, 25.0, 20.6, 16.6, 13.1, 10.1, 7.6, 5.6, 3.9, 2.6, 1.7, 1.0, 0.5, 0.3, 0.1, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "zul": [19.6, 17.0, 14.5, 12.3, 10.2, 8.3, 6.6, 5.2, 4.0, 3.0, 2.4, 1.9, 1.6, 1.3, 1.1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.3, 0.3, 0.2, 0.2, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rplus": [9.7, 9.5, 9.2, 8.8, 8.4, 8.0, 7.5, 6.9, 6.4, 5.8, 5.3, 4.8, 4.3, 3.8, 3.4, 3.0, 2.6, 2.3, 2.0, 1.7, 1.5, 1.2, 1.0, 0.9, 0.7, 0.6, 0.4, 0.3, 0.2, 0.2, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "avk": [45.7, 44.0, 42.4, 40.8, 39.2, 37.6, 36.0, 34.4, 32.8, 31.3, 29.7, 28.2, 26.2, 23.8, 21.4, 18.8, 16.7, 15.0, 13.4, 11.8, 10.3, 8.8, 7.4, 6.1, 4.9, 3.8, 2.8, 2.0, 1.2, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]};
+const mikro = (key, k) => { const L = MIKRO[key]; return k > 0 && k <= L.length ? L[k - 1] : 0; };
+// Stundung der Ausgabensteuer für heutige Rentner: neu gestundet und zurück, Mrd. € je Reformjahr (eigene Mikrosimulation)
+const ASTUND = {"neu": [14.7805, 13.7546, 12.8753, 12.0507, 11.2275, 10.42, 9.636, 8.891, 8.175, 7.487, 6.8207, 6.1487, 5.5356, 4.9233, 4.355, 3.834, 3.3546, 2.9106, 2.5226, 2.1647, 1.8348, 1.5384, 1.2673, 1.0167, 0.803, 0.6301, 0.4827, 0.3629, 0.2685, 0.1984, 0.146, 0.1064, 0.0759, 0.0556, 0.0409, 0.0312, 0.024, 0.0181, 0.0141, 0.0109, 0.008, 0.0057, 0.0041, 0.0028, 0.0018], "zur": [0.3962, 0.9043, 1.5046, 2.1728, 2.8878, 3.6279, 4.3772, 5.1208, 5.8441, 6.5368, 7.1889, 7.7902, 8.333, 8.8046, 9.1946, 9.4927, 9.6883, 9.7724, 9.7368, 9.5754, 9.2853, 8.87, 8.3354, 7.6929, 6.9642, 6.1754, 5.3566, 4.5381, 3.7519, 3.0261, 2.3822, 1.8342, 1.3877, 1.0397, 0.7796, 0.5929, 0.4627, 0.3723, 0.3078, 0.2582, 0.2164, 0.1784, 0.1428, 0.11, 0.0807]};
 const A = structuredClone(ANNAHMEN);
 const A0 = structuredClone(ANNAHMEN);
 const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
 
-function tarif(x, ohne4) { // Ausgabensteuer je Erwachsenem auf Ausgaben x über dem Existenzminimum
+function tarif(x) { // Ausgabensteuer je Erwachsenem auf Ausgaben x über dem Existenzminimum
   x = Math.max(0, x);
   return A.Satz1 * Math.min(x, A.Grenze1) + A.Satz2 * Math.max(0, Math.min(x, A.Grenze2) - A.Grenze1) + A.Satz3 * Math.max(0, x - Math.max(A.Grenze1, A.Grenze2))
-    + (!ohne4 && A.Stufe4Jahre >= 99 ? (A.Satz4 - A.Satz3) * Math.max(0, x - A.Grenze3) : 0);   // Paket 6: Stufe 4 dauerhaft
+    + (A.Stufe4Jahre >= 99 ? (A.Satz4 - A.Satz3) * Math.max(0, x - A.Grenze3) : 0);   // Paket 6: Stufe 4 dauerhaft (wie ctax im Rechenkern)
+}
+// Version 36 (wie ctax_g im Rechenkern): Tarif der Hochrechnung und der Bausteine, ohne Stufe 4 und auf dem Raster mit FBGesamt;
+// was der Freibetrag darüber kostet und die Stufe 4 stehen als eigene Posten in der Gesamtrechnung
+function tarifG(x) {
+  x = Math.max(0, x);
+  const g1 = A.Grenze1G ?? A.Grenze1, g2 = A.Grenze2G ?? A.Grenze2;
+  return A.Satz1 * Math.min(x, g1) + A.Satz2 * Math.max(0, Math.min(x, g2) - g1) + A.Satz3 * Math.max(0, x - Math.max(g1, g2));
 }
 function estTarif(z) {
   if (z <= A.GFB) return 0;
@@ -1139,6 +1153,9 @@ function abgeleitet() {
   A.Gast5E = A.Gast5 * (1 - A.Einkauf + A.Einkauf * fD); A.Mehr5E = A.Mehr5 * (1 - A.Einkauf + A.Einkauf * fD); A.NullMedE = A.NullMed * (1 - A.Einkauf + A.Einkauf * fN);
   A.AntL = 2 * A.AntJahre - 2 * ((1 + A.AntWert) ** A.AntJahre - 1) / A.Zins;   // Version 29: Anteil am Hauswert wie ein zinsloser Kredit über diese Laufzeit
   A.DaemL = A.HKL = A.EigL = A.AntL;
+  A.Grenze1G = 12 * A.FBGesamt - A.GFB; A.Grenze2G = A.Grenze2 - (A.Grenze1 - A.Grenze1G);   // Version 36: Raster mit FBGesamt
+  const _g = ["GS", "30", "60", "100", "Ueber", "Rent"];   // Version 35: Sparquote nach Einkommen, gewichtet mit dem Plus je Gruppe
+  A.VhPlusSofort = 1 - _g.reduce((a, k) => a + A["VhSpar" + k] * A["VhGew" + k], 0) / _g.reduce((a, k) => a + A["VhGew" + k], 0);
 }
 // Einkauf ohne Ausgabensteuer, wenn C samt Steuer ausgegeben wird und F0 frei bleibt (wie xt_inv im Rechenkern)
 function xtInv(C, E, F0) {
@@ -1331,7 +1348,7 @@ function aufkommen(mitMiete) { // Ausgabensteuer über die Konsumverteilung, Mrd
   const exm = A.GFB + A.Kinder * (A.KIDA + 12 * A.KIDM) / A.Erw;
   const mu = Math.log(avg) - A.Sigma * A.Sigma / 2;
   let s = 0;
-  for (const z of Z) s += tarif(Math.exp(mu + A.Sigma * z) - exm, true);
+  for (const z of Z) s += tarifG(Math.exp(mu + A.Sigma * z) - exm);
   return s / Z.length * A.Erw * 1e6 / 1e9;
 }
 
@@ -1367,9 +1384,11 @@ function gesamt() {
   const gb = A.GBAn * (A.Erw * A.GBE + A.Kinder * A.GBK) * 12 * 0.07 / 1.07 / 1000;
   const erst = A.ErstAn * (A.Erw * A.RBE * 12 * A.MwStRB + A.Kinder * A.RBK * 12 * A.MwStRB) / 1000;
   const bild = A.BildAn * ((A.Stud + A.WBTn) * (A.GFB + A.ExMinPlus + A.KVPraem + A.GSMwStJ) / 1000 - A.BAfoeg - A.KG18 + A.Azubi - A.WBheute);
-  const bj = A.BJAn * (A.BJTn * (A.GFB + A.ExMinPlus + (A.BJArb ?? 1) * (A.BJPlus || 0) + A.KVPraem + (1 - A.RVPVSt) * A.BJPV + A.BJAnl) / 1000 - A.BJheuteTn * A.BJheute / 1000 - A.BJVerw + A.BJAnr);
+  const bj = A.BJAn * (A.BJTn * (A.GFB + A.ExMinPlus + (A.BJArb ?? 1) * (A.BJPlus || 0) + A.KVPraem + (1 - A.RVPVSt) * A.BJPV + A.BJAnl) / 1000 - A.BJheuteTn * A.BJheute / 1000 - A.BJVerw + A.BJAnr
+    + A.BJOfTn * (A.BJOfStd * 52 * A.BJML + A.BJAnl * A.BJOfStd / 20) / 1000 + (A.BJTn * (A.BJArb ?? 1) + A.BJOfTn) * A.BJKdA / 1000
+    + (A.SprTn * A.SprHandy + (A.SprIKTn * A.SprIKUE + A.SprBSKTn * A.SprBSKUE) * A.SprKES) / 1000 + A.BJErzPfl * (A.BJPlus || 0) / 1000);
   // Grundschutz aus der Steuer (Modell 2.4)
-  const kasse = A.KVPausch - A.KVBZ - A.BGKV + A.ExMinPraem, boden = A.BodenKost - A.GSAlter;
+  const kasse = A.KVPausch - A.KVBZ - A.BGKV + A.ExMinPraem + A.KVJung, boden = A.BodenKost - A.GSAlter;
   const gsMwSt = (A.GSMwStN * (A.GSMwStJ + A.ExMinPlus) + A.GSKinder * 12 * A.KIDM) / 1000;
   const start = A.StartAn * A.StartN * (A.StartGrund + A.StartSatz * Math.max(0, A.StartLohn - A.StartAb)) / 1000;
   // Mehreinnahmen aller Punkte: bei gleichem Einkauf linear, bei gleichen Euro nicht linear (bei hohem Satz bringt jeder Punkt etwas weniger)
@@ -1377,17 +1396,17 @@ function gesamt() {
   const mwstH = mwstAll - A.RVPkt * A.NormJePkt - A.NullSatzE;
   const coach = A.CoachAn * (A.CoachN * A.CoachK / 1e9 + A.KILernN * A.KILernEur * 12 / 1e3);   // mit KI-Lernguthaben
   const rx = Math.max(0, A.RentKonsum - A.GFB);
-  const rent = A.RentAn * (A.RentN * (tarif(rx, true) - tarif(Math.max(0, rx - A.RentVerd), true)) / 1000 - A.RentDyn);
+  const rent = A.RentAn * (A.RentN * (tarifG(rx) - tarifG(Math.max(0, rx - A.RentVerd))) / 1000 - A.RentDyn);
   // Minijob und Mehrarbeit im Rentenalter frei (nur wenn nicht schon alle Arbeit im Rentenalter frei ist)
   const xm = Math.max(0, A.RMiniKonsum - A.GFB), xd = Math.max(0, A.RMidiKonsum - A.GFB), xh = Math.max(0, A.RMehrKonsum - A.GFB);
-  const rentMiniK = (1 - A.RentAn) * A.RentMini * (A.RMiniN * (tarif(xm, true) - tarif(Math.max(0, xm - 12 * A.RMiniV), true)) + A.RMidiN * (tarif(xd, true) - tarif(Math.max(0, xd - miniFrei(12 * A.RMidiV)), true))) / 1000;
-  const rentMehrK = (1 - A.RentAn) * A.RentMehrAn * A.RMehrN * (tarif(xh, true) - tarif(Math.max(0, xh - rentMehr(A.RMehrW, A.RMehrH)), true)) / 1000;
+  const rentMiniK = (1 - A.RentAn) * A.RentMini * (A.RMiniN * (tarifG(xm) - tarifG(Math.max(0, xm - 12 * A.RMiniV))) + A.RMidiN * (tarifG(xd) - tarifG(Math.max(0, xd - miniFrei(12 * A.RMidiV))))) / 1000;
+  const rentMehrK = (1 - A.RentAn) * A.RentMehrAn * A.RMehrN * (tarifG(xh) - tarifG(Math.max(0, xh - rentMehr(A.RMehrW, A.RMehrH)))) / 1000;
   let mehrK = 0;
   for (const g of A.MehrGruppen) {
     const sch = mehrSchwelle(g.k, g.u6, g.u3, g.pg);
     const fr = (l, h) => { if (h <= 0 || l <= 0) return 0; let f = l * Math.max(0, h - sch) / h; const cp = mehrCap(g.k, g.pg); return cp > 0 ? Math.min(cp, f) : f; };
     const J = fr(g.l1, g.h1) + fr(g.l2, g.h2);
-    const K = g.e * (tarif(g.ue / g.e, true) - tarif(Math.max(0, g.ue - J) / g.e, true));
+    const K = g.e * (tarifG(g.ue / g.e) - tarifG(Math.max(0, g.ue - J) / g.e));
     mehrK += g.n * K / 1000;
   }
   mehrK *= A.MehrAn;
@@ -1422,7 +1441,9 @@ function gesamt() {
   const nr1 = neueRegeln(1);
   const fam = A.FamAn * A.FamEP * A.FamGeb * A.FamRW * 12 * A.FamJ / 1000;
   let s4 = [0, 0];
-  if (A.Stufe4Jahre > 0) { const a0 = stufe4(false), am = stufe4(true) - a0; s4 = [a0 + am * (1 - A.Stundung), a0 + am]; }
+  if (A.Stufe4Jahre > 0) { const a0 = stufe4(false), am = stufe4(true) - a0; s4 = [a0 + am * (1 - A.Stundung), a0 + am]; if (A.S4Mikro > 0) s4 = [A.S4Mikro, A.S4Mikro * s4[1] / s4[0]]; }
+  const fbPlus = (A.Grenze1 - A.Grenze1G) / 12 * A.FBJeEuro;   // Version 36: Freibetrag über FBGesamt (fb_plus)
+  const erbAnd = lang => { const d = Math.max(0, A.ErbAnteilAnd - erbQuote()); return A.ErbVol * A.ErbBasis * (1 - A.FamAnteil - A.EheAnteil) * (1 - A.AndFreiQ) * d * (lang ? A.RealLang : A.RealStart) * (1 + A.J3An * A.Satz3 / (1 + A.Satz3)); };
   const ausgaben = [
     ["Kindergeld, bisher mit der Lohnsteuer verrechnet", kindergeld, kindergeld],
     ["Grundbedarf ohne Mehrwertsteuer", gb, gb],
@@ -1430,7 +1451,7 @@ function gesamt() {
     [`Keine Beiträge zu Pflege und Rente auf Lohn bis ${eur(A.SVFB / 12)} im Monat`, (1 - A.RVPVSt) * A.SVKost, (1 - A.RVPVSt) * A.SVKost],
     ["Rente und Pflege aus der Steuer: Beiträge entfallen", A.RVPVSt * A.RVPVKost, A.RVPVSt * A.RVPVKost],
     ["Strom mit 5 % Mehrwertsteuer und ohne Umlagen", A.StromKost, A.StromKost],
-    ["Neuwagen: Mehrwertsteuer auf die ersten 10.000 € eines Elektroautos erstattet", A.AutoKost * (A.Sicherheit ? 1 - A.SecAuto : 1), A.AutoKost * (A.Sicherheit ? 1 - A.SecAuto : 1)],
+    ["Neuwagen: Mehrwertsteuer auf die ersten 10.000 € eines Elektroautos erstattet, weniger, je mehr Elektroautos verkauft werden", A.AutoKost * A.AutoStufeS * (A.Sicherheit ? 1 - A.SecAuto : 1), A.AutoKost * A.AutoStufeL * (A.Sicherheit ? 1 - A.SecAuto : 1)],
     ["Wärmepumpen ohne Mehrwertsteuer", A.WPKost, A.WPKost],
     ["Material für die Dämmung ohne Mehrwertsteuer", A.DaemKost, A.DaemKost],
     ["Material in Eigenleistung ohne Mehrwertsteuer (mit Energieberater)", A.EigenKost, A.EigenKost],
@@ -1459,7 +1480,7 @@ function gesamt() {
     [`Rentenboden ${eur((A.GFB + A.ExMinPlus + A.KVPraem + A.GSMwStJ) / 12)} im Monat, nach Abzug der Grundsicherung im Alter`, boden, boden],
     [`Obergrenze: Steuer und Beiträge höchstens ${pct(A.AnrGrenze, 0)} je Euro Lohn`, (1 - A.RVPVSt) * A.AnrKost, (1 - A.RVPVSt) * A.AnrKost],
     [`Ausgleich der Mehrwertsteuer und Existenzminimum ${eur((A.GFB + A.ExMinPlus + A.KVPraem + A.GSMwStJ) / 12)} in Grundsicherung, Bürgerjob und Rentenboden`, gsMwSt, gsMwSt],
-    ["Ausgleichszulage für heutige Beamte und Pensionäre (schmilzt ab)", A.BeamtAusgl, 0],
+    ["Ausgleichszulage für heutige Beamte und Pensionäre (schmilzt ab)", bz1, 0],
     ["Bestandsschutz für heutige Rentner (schmilzt ab)", ueb1.bs, 0],
     ["Elterngeld besser: 4 + 6 + 4 Monate, 80 und 65 %, 430 bis 2.600 €", A.EgAn * A.EgKost, A.EgAn * A.EgKost],
     ["Startprämie für Fachkräfte aus dem Ausland", start, start],
@@ -1467,7 +1488,9 @@ function gesamt() {
     ["Sanierung: zinsloser Kredit für die Technik, Anteil am Hauswert für Dämmung und Einbau (entgangene Zinsen)", enStart * A.ZinsStart, enBestand * A.Zins],
     [`Familienrente: Erziehung zählt wie Lohn, ${fmt(3 + A.FamEP)} statt 3 Entgeltpunkte je Kind`, fam / A.FamJ, fam],
     ["Aufbau der KI-tauglichen Verwaltung", it, 0],
-    ["Altvermögenskonto: versteuertes Erspartes bleibt frei (läuft in " + fmt(A.AVKJahre) + " Jahren aus)", A.AltUeb, 0],
+    ["Lohnersatz vom neuen Lohn: Arbeitslosengeld, Krankengeld, Elterngeld, Wohngeld und weitere", A.LohnErs, A.LohnErs],
+    [`Freibetrag ${eur((A.Grenze1 + A.GFB) / 12)} statt ${eur(A.FBGesamt)} im Monat (eigene Mikrosimulation)`, fbPlus, fbPlus],
+    ["Altvermögenskonto: versteuertes Erspartes bleibt frei, mit Obergrenze (läuft aus)", nr1.avk, 0],
     ["Rententeil für neue Rentner frei, wie nach heutigem Recht", nr1.rt, 0],
     [A.HAAn ? "Härteausgleich auf Antrag (schmilzt in " + fmt(A.HAJahre) + " Jahren ab, nicht im Vorschlag)" : "Härteausgleich (nicht im Vorschlag)", nr1.ha, 0],
     ["Mehr für Verteidigung (1,5 % des BIP)", A.Verteidigung, A.Verteidigung],
@@ -1481,12 +1504,16 @@ function gesamt() {
     ["Staatsanteil an Erbschaften, über dem Familienfreibetrag von " + eur(A.FamFrei) + " je Nachlass (je weiteres Kind " + eur(A.FamFrei * A.FamKindQ) + " mehr, übrige Erben " + eur(A.AndFrei) + ")", erbS, erbL],
     ["Ehegatten und Lebensgefährten erben frei, abgerechnet beim zweiten Erbgang", -nr1.ehe, 0],
     ["Erbe nach dem Staatsanteil gilt als versteuert (Altvermögenskonto)", -erbJ3(false), -erbJ3(true)],
+    [`Übrige Erben: Staatsanteil ${pct(A.ErbAnteilAnd, 0)} über ihrem Freibetrag`, erbAnd(false), erbAnd(true)],
     ["Luxusstufe der Mehrwertsteuer (nicht im Vorschlag)", lux, lux],
     [`Mehrwertsteuer ${fmt(19 + A.NormPkt)} % statt 19 %, abzüglich Nullsatz${A.RVPkt ? "; " + fmt(A.RVPkt) + " Punkte für die Rente" : ""}`, mwstH, mwstH],
     ["Gesundheitsabgabe auf Tabak, Alkohol und Zucker", A.GesAbg, A.GesAbg],
     ["Dieselprivileg endet", A.DieselE, A.DieselE],
     ["Quellensteuer auf Gewinne an Privatanleger im Ausland, wie heute nach den Doppelbesteuerungsabkommen", A.QuelleE, A.QuelleE],
     ["Dienstwagen: private Nutzung an der Quelle besteuert", A.DienstwE, A.DienstwE],
+    ["Plastik ohne Recycling: die Abgabe an die EU zahlen Hersteller und Importeure", A.PlastikE, A.PlastikE],
+    ["Abgabe auf Pflanzenschutzmittel nach ihrem Risiko", A.PestizidE, A.PestizidE],
+    ["Luftverkehrsteuer: die Senkung vom 1. Juli 2026 zurückgenommen", A.FlugE, A.FlugE],
     ["Stufenrente: nach 45 Jahren zwei Jahre die halbe Rente, weniger Rente und mehr Steuern", stuf / A.StufJ, stuf],
     ["Einsparung in der Verwaltung", 0, verwE],
     ["Weniger Stellen für Beamte mit KI", 0, beamtKI],
@@ -1508,6 +1535,7 @@ function freiAnteil(n, knoten) {
   const [a, va] = pts[pts.length - 1]; return Math.max(0, va * (1 - (n - a) / 10));
 }
 function uebergang(k, miet) {   // Reformjahr k (1 = erstes Jahr), Mrd. €: Steuer auf den Mietwert, die beim bezahlten Haus entfällt, und Zuschläge des Bestandsschutzes
+  if (A.UebMikro) return { hf: A.HausFrei * mikro("hf", k) * miet / A.MikroMietSt, bs: A.BSAn * mikro("bs", k) };   // Version 36
   const n = k - 1, fr = freiAnteil(n, [A.HFR10, A.HFR20, A.HFR30]), fe = freiAnteil(n, [A.HFE10, A.HFE20, A.HFE30, A.HFE40]);
   return { hf: A.HausFrei * miet * (A.HFRent * fr + A.HFErw * A.HFBez * fe), bs: A.BSAn * A.BSKost * fr * Math.max(0, 1 - n / A.BSJahre) ** 2 };
 }
@@ -1537,7 +1565,7 @@ function ueberlebenRente(n) {
   return (A.RTMixF * sf + A.RTMixM * sm + A.RTMixP * (sf + sm - sf * sm)) / (A.RTMixF + A.RTMixM + A.RTMixP);
 }
 function neueRegeln(k) {
-  const avk = A.AltUeb * Math.max(0, 1 - (k - 1) / A.AVKJahre);
+  const avk = A.UebMikro ? A.AVKGrenzeF * mikro("avk", k) : A.AltUeb * Math.max(0, 1 - (k - 1) / A.AVKJahre);   // Version 36
   const ehe = A.ErbVol * A.ErbBasis * erbQuote() * erbReal(k) * A.EheAnteil * (Math.max(A.EheVerbr, 1 - (k - 1) / A.EheJahre) - A.EheVerbr);
   let rt = 0; for (let j = 1; j <= k; j++) rt += Math.max(0, A.RTAnteil - A.RTSchritt * (j - 1)) * 100 * ueberlebenRente(k - j);
   rt *= A.RTAn * A.RTJahrgang * A.RTEur / 1000;
@@ -1551,14 +1579,15 @@ function njSchwelle(k, u6 = 0, u3 = 0, pg = 0, vz = 0) {   // wie nj_schwelle im
 }
 const njKost = () => A.NJAn * A.NJN * A.NJQ * 12 * Math.min(A.NJLohn * (1 + A.RVPVSt * A.MiniQ), A.FreiGrenze) * A.Satz3 / (1 + A.Satz3) / 1000;
 function gesamtSecZ() { const alt = { Sicherheit: A.Sicherheit, Verteidigung: A.Verteidigung, SubvAbbau: A.SubvAbbau, SecZ: A.SecZ }; Object.assign(A, { Sicherheit: 1, Verteidigung: A.SicherheitWerte.Verteidigung, SubvAbbau: A.SicherheitWerte.SubvAbbau }); const z = gesamt().secZ; Object.assign(A, alt); return z; }
-const zulageBeamte = k => A.BeamtAusgl * Math.max(0, 1 - (k - 1) / A.BZJahre) ** 3;
+const zulageBeamte = k => A.UebMikro ? mikro("zul", k) : A.BeamtAusgl * Math.max(0, 1 - (k - 1) / A.BZJahre) ** 3;
 const stundungStart = miet => miet * A.Stundung * (A.StundRent * (1 - A.HausFrei) + (1 - A.StundRent) * (1 - A.HausFrei * A.HFBez));
 // Zins für Bundesanleihen im Reformjahr y (1 = 2028): linear von ZinsStart bis Zins nach ZinsJahre Jahren
 const zinsJ = y => A.ZinsStart + (A.Zins - A.ZinsStart) * Math.min(1, (y - 1) / A.ZinsJahre);
 // Version 32 (Rechenkern 2.8): Ausgleich für heutige Rentner, solange sie leben; Hausregel für Käufe nach dem Start; neue Einsparungen; Verhalten
 function rpAnteil(n) { const t = [1, ...A.AusgRPA], j = Math.floor(n / 5); return j >= t.length - 1 ? 0 : t[j] + (t[j + 1] - t[j]) * (n - 5 * j) / 5; }
 function rentnerAnteil(n) { const t = [1, ...A.AusgRentA], j = Math.floor(n / 5); return j >= t.length - 1 ? 0 : t[j] + (t[j + 1] - t[j]) * (n - 5 * j) / 5; }
-function hausregelPfad(ny) {
+function hausregelPfad(ny, miet) {
+  if (A.UebMikro) return Array.from({ length: ny }, (_, i) => A.HRAn * mikro("hr", i + 1) * miet / A.MikroMietSt);   // Version 36
   const nn = A.HRNurNeu, f0 = A.HRSatz / A.HRMietQ, rest = 1 - A.HFRent - A.HFErw, g = A.HRWachs, h = A.HRWeiter;
   const kR = [A.HFR10, A.HFR20, A.HFR30], kE = [A.HFE10, A.HFE20, A.HFE30, A.HFE40];
   const rho = a => a < 50 ? f0 * Math.exp(-g * a) : 0;
@@ -1576,13 +1605,28 @@ function hausregelPfad(ny) {
   const sk = nn ? 1 : A.HRStart / (A.HRW * (teile[0][0] + teile[0][1]));
   return teile.map(([a, l], i) => A.HRAn * A.HRW * (a * sk + l * (i === 0 ? sk : 1)));
 }
-function ausgleichPfad(ny) {
-  const hr = hausregelPfad(ny), bon = A.AusgAn * A.Erw * A.AusgBonusEur * 12 / 1000, out = [];
+// Version 35, Teil 8: Erziehung und Pflege als Bürgerjob für alle (ep_pfl, ep_kosten, erzpfl im Rechenkern)
+function epPfl(jahr) { const y = Math.min(jahr, 2070); return y <= 2055 ? A.EPPfl2021 + (A.EPPfl2055 - A.EPPfl2021) * (y - 2021) / (2055 - 2021) : A.EPPfl2055 + (A.EPPfl2070 - A.EPPfl2055) * (y - 2055) / (2070 - 2055); }
+function epKosten() {
+  const L = A.EPLohn, geb = A.FamGeb * 1e6;
+  const monate = geb * 12 * ((1 - A.EPKrippe0) + (1 - A.EPKrippe1) + (1 - A.EPKrippe2)) * (1 - A.EPGeschw);
+  const eltern = (monate - A.EPGSElt * 12) * L - (geb * A.EPEGQuote * (A.EPEG - A.EPEGUeber) - A.EPGSElt * A.EPGSEltEG * 12 * A.EPEGMin);
+  const je = [2, 3, 4, 5].reduce((a, g) => a + A["EPPG" + g] * Math.max(0, (g === 2 ? A.EPLohnPG2 : 1) * L - A.EPPGeldAnt * A["EPPGeld" + g]), 0);
+  return [eltern / 1e9, (A.EPPflP * 1e6 - A.EPGSPfl) * je * 12 / 1e9];
+}
+function erzPfl(jahr) { if (!A.EPAn || jahr < A.EPAb) return 0; const [e, p] = epKosten(); return e + p * epPfl(jahr) / epPfl(A.Prognose.ReformStart); }
+function ausgleichPfad(ny, miet) {
+  const hr = hausregelPfad(ny, miet), bon = A.AusgAn * A.Erw * A.AusgBonusEur * 12 / 1000, out = [];
   for (let i = 0; i < ny; i++) {
     const k = i + 1, jahr = A.Prognose.ReformStart + i;
     const sp = A.SparAn * (jahr >= 2045 ? A.Spar2045 : k === 1 ? A.Spar1 : k === 2 ? (A.Spar1 + A.Spar3) / 2 : k === 3 ? A.Spar3 : A.SparVoll);
-    const rent = A.AusgAn * A.AusgRent0 * rentnerAnteil(i) + (A.AusgRPAn || 0) * A.AusgRP0 * rpAnteil(i);
-    out.push({ rentner: rent, bonus: bon, haus: hr[i], sparen: sp, plus: A.AusgBonusPlus * bon + A.HRPlus * hr[i], minus: rent + (1 - A.AusgBonusPlus) * bon + (1 - A.HRPlus) * hr[i] });
+    const rent = A.AusgAn * A.AusgRent0 * rentnerAnteil(i);
+    const rp = (A.AusgRPAn || 0) * (A.UebMikro ? mikro("rplus", i + 1) : A.AusgRP0 * rpAnteil(i));   // Rente +4 % für heutige Rentner
+    const st = A.AStundAn && i < ASTUND.neu.length ? ASTUND.neu[i] - ASTUND.zur[i] : 0;   // Stundung: was der Kasse fehlt
+    const ep = erzPfl(jahr);   // Erziehung und Pflege als Bürgerjob, aus dem Überschuss
+    out.push({ rentner: rent, bonus: bon, haus: hr[i], sparen: sp, rplus: rp, stund: st, erzpfl: ep,
+      plus: A.AusgBonusPlus * bon + A.HRPlus * hr[i] + A.AusgRPPlus * rp + A.EPPlus * ep,
+      minus: rent + (1 - A.AusgBonusPlus) * bon + (1 - A.HRPlus) * hr[i] + (1 - A.AusgRPPlus) * rp + (1 - A.EPPlus) * ep });
   }
   return out;
 }
@@ -1609,11 +1653,11 @@ function kredit(saldoS, saldoL, jahre = 45, s4 = [0, 0]) {
   for (let y = 1; y <= ny; y++) {
     const u = uebergang(y, miet);
     steuer.push(((y - 1 >= A.Jahre) ? saldoL : sb + (saldoL - sb) * (y - 1) / A.Jahre) - u.hf - u.bs - zulageBeamte(y) - neueRegeln(y).sum + (y === 1 ? nj1 : 0)
-      + (y <= A.Stufe4Jahre ? s4[0] + (s4[1] - s4[0]) * (y - 1) / A.Jahre : 0));   // befristete Stufe 4
+      + (y <= A.Stufe4Jahre ? s4[0] + (s4[1] - s4[0]) * Math.min(1, (y - 1) / A.Jahre) : 0));   // Version 36: dauerhaft, nach der Übergangsphase gleich   // befristete Stufe 4
   }
   // Version 32: Ausgleich, Hausregel und Einsparungen ergeben den Saldo bei gleichem Einkauf, dazu das Verhalten der Haushalte
-  const ag = ausgleichPfad(ny), vh = verhalten(steuer, ag);
-  const gleich = steuer.map((x, i) => x - ag[i].rentner - ag[i].bonus - ag[i].haus + ag[i].sparen);
+  const ag = ausgleichPfad(ny, miet), vh = verhalten(steuer, ag);
+  const gleich = steuer.map((x, i) => x - ag[i].rentner - ag[i].bonus - ag[i].haus + ag[i].sparen - ag[i].rplus - ag[i].stund - ag[i].erzpfl);
   for (let y = 1; y <= jahre; y++) {
     const B = gleich[y - 1] + vh[y - 1];
     const C = D * zinsJ(y);
@@ -2188,7 +2232,7 @@ function updateGesamt() {
   const tile = (k, v, s, cls) => `<div class="tile ${cls}"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
   const cl = x => x >= 0 ? "good" : "bad";
   const s0 = kr.rows[0].saldo, j70 = kr.rows.find(r => r.jahr === 2070);
-  const ohneA = `Bei gleichem Einkauf und ohne Ausgleich wären es ${mrd(g.saldoS)} Mrd. €.`;
+  const ohneA = `Bei gleichem Einkauf und ohne Ausgleich wären es ${mrd(g.saldoS + (A.Stufe4Jahre >= 99 ? g.s4[0] : 0))} Mrd. €.`;
   let t = tile("Saldo am Start", mrd(s0) + " Mrd. €", (s0 < 0 && -s0 / A.BIP <= A.SBRaum ? `${pct(-s0 / A.BIP, 2)} des BIP; passt in die Schuldenbremse (${pct(A.SBRaum, 2)}).` : (s0 >= 0 ? `${pct(s0 / A.BIP, 2)} des BIP; Überschuss vom ersten Jahr an.` : `${pct(s0 / A.BIP, 2)} des BIP; negativ heißt Lücke.`)) + ` Mit Ausgleich, Einsparungen und Verhalten der Haushalte. ${ohneA}`, cl(s0));
   t += tile("Saldo langfristig", mrd(g.saldoL) + " Mrd. €", `${pct(g.saldoL / A.BIP, 1)} des BIP, nach ${A.Jahre} Jahren, bei gleichem Einkauf` + (j70 ? `; mit Verhalten der Haushalte 2070 rund ${mrd(j70.saldo)} Mrd. €` : ""), cl(g.saldoL));
   let tilg;
