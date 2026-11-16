@@ -2356,7 +2356,8 @@ const qAnz = (v, u) => u === "pct" ? +(v * 100).toFixed(4) : +v.toFixed(6);
       updateAll();
       const z = document.getElementById("ann-" + k), el = z && z.querySelector(".qin"); if (el) el.focus({ preventScroll: true });
     }
-    function renderQuellen() {
+    const Q_FEST = new Set(["Stufe4Jahre", "Satz4", "Grenze3", "SichPkt"]);   // fest, bis der Rechenkern sie richtig rechnet
+function renderQuellen() {
   const f = $("qfilter");
   if (!f.childElementCount) {
     [["", "Alle verwendeten Werte"], ...TYPEN, ["aus", "Werte, die das Gesamtpaket nicht verwendet"]].forEach(([k, n]) => {
@@ -2375,7 +2376,7 @@ const qAnz = (v, u) => u === "pct" ? +(v * 100).toFixed(4) : +v.toFixed(6);
     if (!rows.length) return "";
     const tr = rows.map(([k, lbl, typ, anz, her, qu, bu, aktiv, nv, u]) => {
       const geaendert = u && k in A && typeof A[k] === "number" && A[k] !== A0[k];
-      const qe = typ !== "Berechnet" && k in A && typeof A0[k] === "number" ? qEinh(anz, A0[k], u) : null;
+      const qe = typ !== "Berechnet" && !Q_FEST.has(k) && k in A && typeof A0[k] === "number" ? qEinh(anz, A0[k], u) : null;
       const wert = qe
         ? `<span class="qe"><input class="qin" type="number" step="any" inputmode="decimal" data-k="${esc(k)}" data-u="${qe.u}" value="${qAnz(A[k], qe.u)}" aria-label="${esc(lbl)}"><span class="qu">${esc(qe.t)}</span></span>`
               + (geaendert ? `<small class="qalt">Buch: ${esc(anz)} <button type="button" class="qback" data-k="${esc(k)}">zurück</button></small>` : "")

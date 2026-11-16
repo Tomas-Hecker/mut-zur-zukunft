@@ -63,3 +63,11 @@ function qEinh(anz, v, u) {
 const qAnz = (v, u) =>''')
 open(p, 'w', encoding='utf-8').write(s)
 print('Annahmen einstellbar')
+
+# Schritt 3: Stufe 4 und zusätzliche Mehrwertsteuer-Punkte nicht einstellbar, bis das Buch den Rechenkern dafür berichtigt hat
+# (Prüf-Thread 16.11.2026: Stufe 4 wird nicht von der Kopfzahl abgezogen, SichPkt hebt die Preise der Haushalte nicht)
+s = open(p, encoding='utf-8').read()
+if 'Q_FEST' not in s:
+    rep('''      const qe = typ !== "Berechnet" && k in A''', '''      const qe = typ !== "Berechnet" && !Q_FEST.has(k) && k in A''')
+    rep('function renderQuellen(', 'const Q_FEST = new Set(["Stufe4Jahre", "Satz4", "Grenze3", "SichPkt"]);   // fest, bis der Rechenkern sie richtig rechnet\nfunction renderQuellen(')
+    open(p, 'w', encoding='utf-8').write(s)
