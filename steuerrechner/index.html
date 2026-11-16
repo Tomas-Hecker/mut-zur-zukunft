@@ -2229,7 +2229,7 @@ function updateGesamt() {
     const mwMax = reihen.reduce((m, r) => r.mw > m.mw ? r : m, reihen[0]), mw30 = reihen.find(r => r.jahr === 2030).mw;
     const sq = x => x < -0.005 ? pct(-x, 0) + " Vermögen" : pct(Math.max(0, x), 0);
     const frei = reihen.find(r => r.jahr >= A.Prognose.ReformStart && r.plan <= 1e-9);
-    t += tile("Staatsschulden 2070", sq(e.plan), `${frei ? "schuldenfrei " + frei.jahr + ", " : ""}mit Zukunftsplan; Reform allein ${sq(e.quote)}, ohne Reform ${sq(e.ohne)}`, e.plan < e.ohne ? "good" : "bad");
+    t += tile("Staatsschulden 2070", sq(e.plan), `${frei ? "schuldenfrei " + frei.jahr + ", " : ""}mit Zukunftsplan; ohne Reform ${sq(e.ohne)}`, e.plan < e.ohne ? "good" : "bad");
     t += fixAuf > 0 ? tile("Mehrwertsteuer-Aufschlag", "fest " + fmt(fixAuf, 2) + " Punkte" + (fixAuf > 2.2 && fixAuf < 2.3 ? " (knapp 2,3)" : fixAuf > 4.5 && fixAuf < 5 ? " (knapp 5)" : fixAuf > 8.25 && fixAuf < 8.5 ? " (knapp 8,5)" : fixAuf > 7.5 && fixAuf < 8.5 ? " (rund 8)" : ""), `ab 2030 auf den Normalsatz (${fmt(19 + A.NormPkt + A.SichPkt, A.SichPkt ? 1 : 0)} auf ${fmt(19 + A.NormPkt + A.SichPkt + fixAuf, 1)} %), rund ${fmt(fixMrd(fixAuf), 1)} Mrd. € im Jahr; so sind die Schulden 2070 bei null`) : tile("Mehrwertsteuer-Aufschlag", mwMax.mw > 0.05 ? "bis " + fmt(mwMax.mw, 1) + " Punkte" : "keiner", mwMax.mw > 0.05 ? `über ${fmt(19 + A.NormPkt + A.SichPkt, A.SichPkt ? 1 : 0)} %, höchstens ${mwMax.jahr}; 2030: ${fmt(mw30, 1)} Punkte; in ${reihen.filter(r => r.mw > 0.05).length} Jahren` : "Die Schuldenregel braucht keinen Aufschlag.", mwMax.mw > 5 ? "bad" : "good");
   }
   $("tiles").innerHTML = t;
@@ -2273,7 +2273,7 @@ function drawChart(rows) {
   const W = clamp(Math.round($("chartBox").clientWidth || 640), 340, 640), H = W < 500 ? 300 : 290, L = 44, R = W < 500 ? 112 : 150, T = 14, B = 30;
   const hatDemo = rows[0].demo !== undefined;
   const hatPlan = rows[0].plan !== undefined;
-  const maxY = Math.max(0.8, ...rows.map(r => Math.max(r.quote, r.ohne, hatDemo ? r.demo : 0, r.ov ?? 0, r.oz ?? 0, r.pv ?? 0, r.pz ?? 0))) * 1.05;
+  const maxY = Math.max(0.8, ...rows.map(r => Math.max(hatPlan ? 0 : r.quote, r.ohne, hatDemo ? r.demo : 0, r.ov ?? 0, r.oz ?? 0, r.pv ?? 0, r.pz ?? 0))) * 1.05;
   const hatBand = hatPlan && rows[0].pz !== undefined;
   const minY = Math.min(0, ...rows.map(r => hatPlan ? Math.min(r.plan, hatBand ? r.pz : 0, hatBand ? r.pv : 0) : 0));
   const y0 = rows[0].jahr, y1 = rows[rows.length - 1].jahr;
@@ -2310,11 +2310,11 @@ function drawChart(rows) {
   }
   g += `<path class="ln" d="${path("ohne")}" style="stroke:var(--bad)"/>`;
   if (hatDemo) g += `<path class="ln" d="${path("demo")}" style="stroke:var(--s1)" stroke-dasharray="5 4"/>`;
-  g += `<path class="ln" d="${path("quote")}" style="stroke:var(--reform)"/>`;
+  if (!hatPlan) g += `<path class="ln" d="${path("quote")}" style="stroke:var(--reform)"/>`;
   if (hatPlan) g += `<path class="ln" d="${path("plan")}" style="stroke:var(--good);stroke-width:3"/>`;
   const last = rows[rows.length - 1];
   const sq = v => v < -0.005 ? pct(-v, 0) + " Vermögen" : pct(Math.max(0, v), 0) + " Schulden";
-  const labs = [["ohne", "Ohne Reform", "var(--bad)"], ["quote", hatPlan ? "Reform allein" : "Mit Reform", "var(--reform)"]];
+  const labs = [["ohne", "Ohne Reform", "var(--bad)"], ...(hatPlan ? [] : [["quote", "Mit Reform", "var(--reform)"]])];
   if (hatPlan) labs.push(["plan", "Mit Zukunftsplan", "var(--good)"]);
   if (hatDemo) labs.push(["demo", "Ohne Alterung", "var(--s1)"]);
   const pos = labs.map(([k, t, c]) => ({ k, t, c, y: yy(last[k]) })).sort((p, q) => p.y - q.y);
@@ -2331,7 +2331,7 @@ function drawChart(rows) {
     const pt = svg.getBoundingClientRect(); const sx = (e.clientX - pt.left) / pt.width * W;
     const i = clamp(Math.round((sx - L) / (W - L - R) * (rows.length - 1)), 0, rows.length - 1); const r = rows[i];
     hair.setAttribute("x1", x(r.jahr)); hair.setAttribute("x2", x(r.jahr)); hair.setAttribute("visibility", "visible");
-    showTip(e, `<b>${r.jahr}</b>${r.plan !== undefined ? `<br>Mit Plan und Regel: ${r.plan < 0 ? `Vermögen ${pct(-r.plan, 0)}` : pct(r.plan, 0)}${r.mw > 0.05 ? ` (MwSt +${fmt(r.mw, 1)} Punkte)` : ""}` : ""}<br>Mit Reform: ${pct(r.quote, 0)}<br>Ohne Reform: ${pct(r.ohne, 0)}${r.demo !== undefined ? `<br>Ohne Alterung: ${pct(r.demo, 0)}` : ""}`);
+    showTip(e, `<b>${r.jahr}</b>${r.plan !== undefined ? `<br>Mit Plan und Regel: ${r.plan < 0 ? `Vermögen ${pct(-r.plan, 0)}` : pct(r.plan, 0)}${r.mw > 0.05 ? ` (MwSt +${fmt(r.mw, 1)} Punkte)` : ""}` : ""}${r.plan === undefined ? `<br>Mit Reform: ${pct(r.quote, 0)}` : ""}<br>Ohne Reform: ${pct(r.ohne, 0)}${r.demo !== undefined ? `<br>Ohne Alterung: ${pct(r.demo, 0)}` : ""}`);
   };
   $("hit").onpointerleave = () => { hair.setAttribute("visibility", "hidden"); hideTip(); };
 }

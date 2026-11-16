@@ -29,7 +29,7 @@ rep('''    reihen = mit.map((r, i) => ({ jahr: r.jahr, quote: r.v, ohne: ohne[i]
 
 # 2) Achsen schließen das Band ein, Band hinter den Linien
 rep('''  const maxY = Math.max(0.8, ...rows.map(r => Math.max(r.quote, r.ohne, hatDemo ? r.demo : 0))) * 1.05;''',
-    '''  const maxY = Math.max(0.8, ...rows.map(r => Math.max(r.quote, r.ohne, hatDemo ? r.demo : 0, r.ov ?? 0, r.oz ?? 0, r.pv ?? 0, r.pz ?? 0))) * 1.05;''')
+    '''  const maxY = Math.max(0.8, ...rows.map(r => Math.max(hatPlan ? 0 : r.quote, r.ohne, hatDemo ? r.demo : 0, r.ov ?? 0, r.oz ?? 0, r.pv ?? 0, r.pz ?? 0))) * 1.05;''')
 rep('''  const minY = Math.min(0, ...rows.map(r => hatPlan ? r.plan : 0));''',
     '''  const hatBand = hatPlan && rows[0].pz !== undefined;
   const minY = Math.min(0, ...rows.map(r => hatPlan ? Math.min(r.plan, hatBand ? r.pz : 0, hatBand ? r.pv : 0) : 0));''')
@@ -41,6 +41,12 @@ rep('''  const path = k => rows.map((r, i) => (i ? "L" : "M") + x(r.jahr).toFixe
     const band = (a, b) => "M" + rows.map(r => pt(r, a)).join("L") + "L" + rows.slice().reverse().map(r => pt(r, b)).join("L") + "Z";
     g += `<path d="${band("ov", "oz")}" style="fill:var(--bad);fill-opacity:.16;stroke:none"/><path d="${band("pv", "pz")}" style="fill:var(--good);fill-opacity:.2;stroke:none"/>`;
   }''')
+# Linie „Reform allein“ entfällt, sobald der Zukunftsplan gezeigt wird (Buch-Thread, 16.11. 14:17: „Ohne Reform“ enthält die höheren
+# Verteidigungsausgaben nicht, die Reform trägt sie; der Vergleich wäre schief). Schuldenfrei wird der Staat mit dem Zukunftsplan.
+rep('''  g += `<path class="ln" d="${path("quote")}" style="stroke:var(--reform)"/>`;''', '''  if (!hatPlan) g += `<path class="ln" d="${path("quote")}" style="stroke:var(--reform)"/>`;''')
+rep('''["quote", hatPlan ? "Reform allein" : "Mit Reform", "var(--reform)"]];''', '''...(hatPlan ? [] : [["quote", "Mit Reform", "var(--reform)"]])];''')
+rep('''<br>Mit Reform: ${pct(r.quote, 0)}''', '''${r.plan === undefined ? `<br>Mit Reform: ${pct(r.quote, 0)}` : ""}''')
+rep('''mit Zukunftsplan; Reform allein ${sq(e.quote)}, ohne Reform''', '''mit Zukunftsplan; ohne Reform''')
 # 3) Erklärung unter dem Bild
 rep('''  drawChart(reihen);''', '''  if (szenario === "mittel") $("chartNote").textContent += " Die Linien zeigen den wahrscheinlichsten Verlauf. Das helle Band dahinter zeigt die Spanne vom vorsichtigen bis zum zuversichtlichen Fall, hellrot ohne Reform, hellgrün mit Zukunftsplan.";
   drawChart(reihen);''')
