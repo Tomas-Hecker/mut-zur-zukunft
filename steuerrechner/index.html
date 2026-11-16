@@ -1798,6 +1798,8 @@ function renderPresets() {
 /* Säulenbild für den Steuerrechner: „Brutto, Abzüge und was im Portemonnaie bleibt“ (Stand 16.11.2026, von Tomas freigegeben: eine Säule je Seite).
    sbDaten(h, r, p)     macht aus den Eingaben h und dem Ergebnis r = haushalt(h) die Werte der beiden Säulen, alles in € im Jahr.
                         p.kst: Satz der Körperschaftsteuer mit Soli (A.KStS, Standard 0,15825), nur für Haushalte mit GmbH.
+                        p.rpzProzent: um wie viel Prozent die Rente in der Reform mehr kauft (ab Rechenkern V35, etwa 2). Steht dann im Namen des Postens
+                        „Zuschlag zur Rente“. Fehlt der Wert, steht nur „Zuschlag zur Rente“.
    sbZeichnen(el, d, o) zeichnet Titel, Info-Knopf, Schalter „im Monat / im Jahr“, die zwei Säulen und die Tabelle in das Element el.
                         o.praemieMonat: Prämie der Krankenkasse für den Infotext (Standard 50); o.nachWechsel: Funktion, die nach dem Umschalten Monat/Jahr läuft.
                         o.invest.setze(q): läuft, wenn der Schieber „Investitionsquote“ bewegt wird (nur bei GmbH). q ist der Anteil des Gewinns, der im
@@ -1823,7 +1825,9 @@ const SB_DIREKT = {
   ag: ["Arbeitgeberanteile", "Zahlt der Betrieb heute zusätzlich zum Brutto direkt an die Sozialkassen. In der Reform werden sie als Lohn ausgezahlt.", "heute direkt an die Sozialkassen, in der Reform als Lohn ausgezahlt", "Arbeitgeberanteile, als Lohn ausgezahlt"],
   rente: ["Anteil der Rentenkasse an der Krankenkasse", "Zahlt die Rentenkasse heute zusätzlich zur Rente direkt an die Krankenkasse. In der Reform wird er als Rente ausgezahlt.", "heute direkt an die Krankenkasse, in der Reform als Rente ausgezahlt", "Anteil der Rentenkasse, als Rente ausgezahlt"],
 };
-const SB_NEU = { gs: "Höhere Grundsicherung", bsz: "Bestandsschutz für heutige Rentner", ausgl: "Ausgleich", rpz: "Zuschlag zur Rente: Sie kauft 2 % mehr" };
+const SB_NEU = { gs: "Höhere Grundsicherung", bsz: "Bestandsschutz für heutige Rentner", ausgl: "Ausgleich", rpz: "Zuschlag zur Rente" };
+// Name eines Postens „neu vom Staat“. Beim Zuschlag zur Rente mit dem Prozentsatz, wenn die Seite ihn nennt (p.rpzProzent in sbDaten).
+const sbNeuName = (k, d) => k === "rpz" && d.rpzProzent > 0 ? `${SB_NEU.rpz}: Sie kauft ${String(d.rpzProzent).replace(".", ",")}\u00a0% mehr` : SB_NEU[k];
 const sbSum = o => Object.values(o || {}).reduce((a, x) => a + x, 0);
 
 function sbDaten(h, r, p = {}) {
@@ -1844,7 +1848,7 @@ function sbDaten(h, r, p = {}) {
     firma = { gewinn: h.gmbh, kst, aus, inv, privat: h.gmbh - inv, quote: inv / h.gmbh, max: 1 - satz };
     heute.firma = inv; reform.firma = inv; heute.bleibt -= inv; reform.bleibt -= inv;
   }
-  return { heute, reform, firma, plus: r.vgl + r.entfall };
+  return { heute, reform, firma, plus: r.vgl + r.entfall, rpzProzent: p.rpzProzent || 0 };
 }
 
 function sbFmt() {
@@ -1942,7 +1946,9 @@ function sbZeichnen(el, d, o = {}) {
     const gn = document.createElement("div"); gn.className = "sb-gname"; gn.textContent = titel; axis.append(gn);
     if (gi === 0) { const m = document.createElement("div"); m.className = "sb-mid"; plot.append(m); axis.append(m.cloneNode()); }
   });
-  el.querySelector(".sb-unit").textContent = `Alle Beträge in Euro ${F.einheit}, bei gleichem Einkauf wie heute.`;
+  // Sind die Abzüge höher als das Geld, das zur Verfügung steht (etwa wenn die GmbH fast alles behält), hat die Säule kein Feld „Bleibt“. Dann sagt es ein Satz.
+  const fehlt = [[namen[0], H], [namen[1], V]].filter(([, s]) => s.bleibt < -0.5 * SB.teiler).map(([n, s]) => ` ${n} fehlen ${F.eur(-s.bleibt)}: Die Abzüge sind höher als das Geld, das ins Private fließt.`).join("");
+  el.querySelector(".sb-unit").textContent = `Alle Beträge in Euro ${F.einheit}, bei gleichem Einkauf wie heute.${fehlt}`;
   // Unterschied: gestrichelte Linie auf Höhe „bleibt heute“ bis zur Reform-Säule, Marke am Rand der Reform-Säule, Zahl in der Lücke
   const plus = V.bleibt - H.bleibt;
   requestAnimationFrame(() => {
@@ -1968,7 +1974,7 @@ function sbZeichnen(el, d, o = {}) {
   let t = `<thead><tr><th>Euro ${F.einheit}</th><th>${namen[0]}</th><th>${namen[1]}</th></tr></thead><tbody>`;
   t += z(`<b>Brutto</b>`, `<b>${F.zahl(H.brutto)}</b>`, `<b>${F.zahl(V.brutto)}</b>`);
   for (const k in SB_DIREKT) if (H.direkt[k] > 0.5) t += z(`<i class="sb-sw sb-direkt"></i>${SB_DIREKT[k][0]}<small>${SB_DIREKT[k][2]}</small>`, `+${F.zahl(H.direkt[k])}<small>zusätzlich</small>`, `<small>im Brutto</small>`, "sb-sub");
-  for (const k in SB_NEU) if (V.neu[k] > 0.5) t += z(`neu vom Staat: ${SB_NEU[k]}`, "", "+" + F.zahl(V.neu[k]), "sb-sub");
+  for (const k in SB_NEU) if (V.neu[k] > 0.5) t += z(`neu vom Staat: ${sbNeuName(k, d)}`, "", "+" + F.zahl(V.neu[k]), "sb-sub");
   for (const [k, nH, nV, bg] of [...SB_ABZ].reverse()) if (H.abz[k] > 0.5 || V.abz[k] > 0.5)
     t += z(`${sw(bg)}${nH}${nV ? `<small>in der Reform: ${nV}</small>` : ""}${k === "ausg" && V.bszAbzug > 0.5 ? `<small>Bestandsschutz für heutige Rentner schon abgezogen: ${F.zahl(V.bszAbzug)}</small>` : ""}${k === "kap" && fi && fi.kst > 0.5 ? `<small>darin Körperschaftsteuer der GmbH: ${F.zahl(fi.kst)}</small>` : ""}`, H.abz[k] > 0.5 ? "−" + F.zahl(H.abz[k]) : "0", V.abz[k] > 0.5 ? "−" + F.zahl(V.abz[k]) : "0");
   if (fi && fi.inv > 0.5) t += z(`${sw("--sb-firma")}Bleibt im Unternehmen<small>investiert</small>`, F.zahl(fi.inv), F.zahl(fi.inv), "sb-rest");
@@ -1980,7 +1986,7 @@ function sbAenderung(el, d) {
   const F = sbFmt(), H = d.heute, V = d.reform, plus = V.bleibt - H.bleibt;
   const items = [["Steuern und Beiträge von heute fallen weg", H.abz.sv + H.abz.est + H.abz.kap]];
   for (const k in SB_DIREKT) if (V.direkt[k] > 0.5) items.push([SB_DIREKT[k][3], V.direkt[k]]);
-  for (const k in SB_NEU) if (V.neu[k] > 0.5) items.push([SB_NEU[k], V.neu[k]]);
+  for (const k in SB_NEU) if (V.neu[k] > 0.5) items.push([sbNeuName(k, d), V.neu[k]]);
   items.push(["Unterhalt für Kinder in Ausbildung entfällt", H.abz.unterhalt - V.abz.unterhalt], ["Prämie der Krankenkasse", -V.abz.sv], ["Derselbe Einkauf kostet mehr: höhere Mehrwertsteuer", -(V.abz.mwst - H.abz.mwst)], ["Ausgabensteuer (neu)", -(V.abz.ausg || 0)]);
   const rows = items.filter(([, v]) => Math.abs(v) > 0.5);
   const L = Math.max(1, ...rows.map(([, v]) => Math.max(0, -v)), Math.max(0, -plus)), R = Math.max(1, ...rows.map(([, v]) => Math.max(0, v)), Math.max(0, plus)), z0 = 100 * L / (L + R);
