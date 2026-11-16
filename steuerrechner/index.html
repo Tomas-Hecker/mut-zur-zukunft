@@ -2234,7 +2234,8 @@ function updateGesamt() {
   const s0 = kr.rows[0].saldo, j70 = kr.rows.find(r => r.jahr === 2070);
   const ohneA = `Bei gleichem Einkauf und ohne Ausgleich wären es ${mrd(g.saldoS + (A.Stufe4Jahre >= 99 ? g.s4[0] : 0))} Mrd. €.`;
   let t = tile("Saldo am Start", mrd(s0) + " Mrd. €", (s0 < 0 && -s0 / A.BIP <= A.SBRaum ? `${pct(-s0 / A.BIP, 2)} des BIP; passt in die Schuldenbremse (${pct(A.SBRaum, 2)}).` : (s0 >= 0 ? `${pct(s0 / A.BIP, 2)} des BIP; Überschuss vom ersten Jahr an.` : `${pct(s0 / A.BIP, 2)} des BIP; negativ heißt Lücke.`)) + ` Mit Ausgleich, Einsparungen und Verhalten der Haushalte. ${ohneA}`, cl(s0));
-  t += tile("Saldo langfristig", mrd(g.saldoL) + " Mrd. €", `${pct(g.saldoL / A.BIP, 1)} des BIP, nach ${A.Jahre} Jahren, bei gleichem Einkauf` + (j70 ? `; mit Verhalten der Haushalte 2070 rund ${mrd(j70.saldo)} Mrd. €` : ""), cl(g.saldoL));
+  const sL4 = g.saldoL + (A.Stufe4Jahre >= 99 ? g.s4[1] : 0);
+  t += tile("Saldo langfristig", mrd(sL4) + " Mrd. €", `${pct(sL4 / A.BIP, 1)} des BIP, nach ${A.Jahre} Jahren, bei gleichem Einkauf` + (j70 ? `; mit Verhalten der Haushalte 2070 rund ${mrd(j70.saldo)} Mrd. €` : ""), cl(sL4));
   let tilg;
   if (kr.unendlich) tilg = tile("Kredit am Start", "nicht getilgt", "Der Überschuss reicht nicht aus. Erhöhe die Sätze oder schalte Ausgaben ab.", "bad");
   else if (kr.peak <= 0.05) tilg = tile("Kredit am Start", "keiner", "Das System trägt sich von Anfang an.", "good");

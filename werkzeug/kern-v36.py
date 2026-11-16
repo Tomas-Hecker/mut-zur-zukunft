@@ -97,5 +97,9 @@ rep('''      + (y <= A.Stufe4Jahre ? s4[0] + (s4[1] - s4[0]) * (y - 1) / A.Jahre
 # Saldo bei gleichem Einkauf ohne Ausgleich: mit der dauerhaften Stufe 4 (Blatt Kredit, Spalte Z), sonst wirkt der Start viel schlechter
 rep('const ohneA = `Bei gleichem Einkauf und ohne Ausgleich wären es ${mrd(g.saldoS)} Mrd. €.`;',
     'const ohneA = `Bei gleichem Einkauf und ohne Ausgleich wären es ${mrd(g.saldoS + (A.Stufe4Jahre >= 99 ? g.s4[0] : 0))} Mrd. €.`;')
+# Saldo langfristig mit der dauerhaften Stufe 4 (staat-v36.json: 249,6 Mrd. €)
+rep('t += tile("Saldo langfristig", mrd(g.saldoL) + " Mrd. €", `${pct(g.saldoL / A.BIP, 1)} des BIP,',
+    'const sL4 = g.saldoL + (A.Stufe4Jahre >= 99 ? g.s4[1] : 0);\n  t += tile("Saldo langfristig", mrd(sL4) + " Mrd. €", `${pct(sL4 / A.BIP, 1)} des BIP,')
+rep('2070 rund ${mrd(j70.saldo)} Mrd. €` : ""), cl(g.saldoL));', '2070 rund ${mrd(j70.saldo)} Mrd. €` : ""), cl(sL4));')
 open(p, 'w', encoding='utf-8').write(s)
 print('Staatsseite auf Rechenkern Version 36')
