@@ -42,8 +42,6 @@ rep('''    const rent = A.AusgAn * A.AusgRent0 * rentnerAnteil(i);''',
     '''    const rent = A.AusgAn * A.AusgRent0 * rentnerAnteil(i) + (A.AusgRPAn || 0) * A.AusgRP0 * rpAnteil(i);''')
 # Säulenbild: Prozentsatz des Zuschlags zur Rente nennen
 rep('sbDaten(h, r, { kst: A.KStS })', 'sbDaten(h, r, { kst: A.KStS, rpzProzent: (A.AusgRPProz || 0) * 100 })')
-# Name des Postens im Säulenbild: 4 % mehr Geld bei gleichem Einkauf, nicht 4 % mehr Kaufkraft (Buch, 16.11. 06:22 UTC, bis Tomas entscheidet)
-rep('`${SB_NEU.rpz}: Sie kauft ${String(d.rpzProzent).replace(".", ",")}\\u00a0% mehr`', '`${SB_NEU.rpz}: bei gleichem Einkauf mindestens ${String(d.rpzProzent).replace(".", ",")}\\u00a0% mehr Geld`')
 # Texte, die die neuen Werte nennen
 rep('Bis 13.800 € Ausgaben im Jahr (1.150 € im Monat) je Erwachsenem', 'Bis 13.920 € Ausgaben im Jahr (1.160 € im Monat) je Erwachsenem')
 rep('eine steuerfreie Prämie von 600 € im Jahr, 50 € im Monat;', 'eine steuerfreie Prämie von 480 € im Jahr, 40 € im Monat;')

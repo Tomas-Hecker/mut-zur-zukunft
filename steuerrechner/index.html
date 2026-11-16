@@ -1811,7 +1811,7 @@ function renderPresets() {
 /* Säulenbild für den Steuerrechner: „Brutto, Abzüge und was im Portemonnaie bleibt“ (Stand 16.11.2026, von Tomas freigegeben: eine Säule je Seite).
    sbDaten(h, r, p)     macht aus den Eingaben h und dem Ergebnis r = haushalt(h) die Werte der beiden Säulen, alles in € im Jahr.
                         p.kst: Satz der Körperschaftsteuer mit Soli (A.KStS, Standard 0,15825), nur für Haushalte mit GmbH.
-                        p.rpzProzent: um wie viel Prozent die Rente in der Reform mehr kauft (ab Rechenkern V35, etwa 2). Steht dann im Namen des Postens
+                        p.rpzProzent: um wie viel Prozent man von der Rente bei gleichem Einkauf mehr Geld hat (Rechenkern V35: 4). Steht dann im Namen des Postens
                         „Zuschlag zur Rente“. Fehlt der Wert, steht nur „Zuschlag zur Rente“.
    sbZeichnen(el, d, o) zeichnet Titel, Info-Knopf, Schalter „im Monat / im Jahr“, die zwei Säulen und die Tabelle in das Element el.
                         o.praemieMonat: Prämie der Krankenkasse für den Infotext (Standard 50); o.nachWechsel: Funktion, die nach dem Umschalten Monat/Jahr läuft.
@@ -1840,7 +1840,9 @@ const SB_DIREKT = {
 };
 const SB_NEU = { gs: "Höhere Grundsicherung", bsz: "Bestandsschutz für heutige Rentner", ausgl: "Ausgleich", rpz: "Zuschlag zur Rente" };
 // Name eines Postens „neu vom Staat“. Beim Zuschlag zur Rente mit dem Prozentsatz, wenn die Seite ihn nennt (p.rpzProzent in sbDaten).
-const sbNeuName = (k, d) => k === "rpz" && d.rpzProzent > 0 ? `${SB_NEU.rpz}: bei gleichem Einkauf mindestens ${String(d.rpzProzent).replace(".", ",")}\u00a0% mehr Geld` : SB_NEU[k];
+// Wortlaut seit 16.11.2026, 06:25 UTC (Wahl von Tomas im Buch-Faden): „bei gleichem Einkauf 4 % mehr Geld“, nicht mehr „Sie kauft 4 % mehr“
+// (4 % mehr Geld bei gleichem Einkauf sind 1,8 % mehr Kaufkraft, weil die Preise steigen).
+const sbNeuName = (k, d) => k === "rpz" && d.rpzProzent > 0 ? `${SB_NEU.rpz}: bei gleichem Einkauf ${String(d.rpzProzent).replace(".", ",")}\u00a0% mehr Geld` : SB_NEU[k];
 const sbSum = o => Object.values(o || {}).reduce((a, x) => a + x, 0);
 
 function sbDaten(h, r, p = {}) {

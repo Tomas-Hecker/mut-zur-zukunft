@@ -14,10 +14,12 @@ def diff(name, lang=False, liste='einkommen'):
     a = next(a for a in J['arten'][liste] if a['name'] == name)
     return a['reform_lang_mrd' if lang else 'reform_mrd'] - a['heute_mrd']
 E, MS = J['erwachsene'], J['menschen']
+SG = UB['spanne_gewaehlt']
 sp = next(x for x in UB['spanne_erwachsene'] if x['fall'].startswith('Rechenkern V35: '))
 assert abs(sp['standard_weniger_mio'] - E['mit_weniger_mio']) < 0.05, ('Spanne passt nicht zu steuerlast.json', sp, E)
 N = dict(
  emehr=str(E['von_100']['mehr']), eweniger=str(E['weniger_zusammen']), mmehr=str(MS['von_100']['mehr']), erw=k(E['erwachsene_mio'], 1), mensch=k(MS['menschen_mio'], 1),
+ sw1=k(SG['vertretbare_annahmen']['erwachsene_weniger_mio'][0]), sw2=k(SG['vertretbare_annahmen']['erwachsene_weniger_mio'][2]), swr=k(SG['rand']['erwachsene_weniger_mio_hoechstens']), satzb=SG['satz_buch'],
  weniger=k(E['mit_weniger_mio']), wmittel=k(E['weniger_im_mittel_monat'], 0), sp1=k(sp['von_weniger_mio']), sp2=k(sp['bis_weniger_mio']),
  z1h=k(Z[0]['quote_heute']), z1r=k(Z[0]['quote_reform']), z10h=k(Z[9]['quote_heute']), z10r=k(Z[9]['quote_reform']),
  uh=k(sum(z['anteil_heute'] for z in Z[:5])), ur=k(sum(z['anteil_reform'] for z in Z[:5])),
@@ -113,7 +115,7 @@ html = f'''<!doctype html>
 <div class="methode">
 <h2>Wie gerechnet wurde</h2>
 <p>Rund 46.000 künstliche Haushalte stehen für alle 41 Mio. Haushalte in Deutschland, mit «erw» Mio. Erwachsenen und «mensch» Mio. Menschen. Sie sind auf amtliche Zahlen geeicht: Löhne und Konsum aus der Volkswirtschaftlichen Gesamtrechnung 2025, Lohn- und Einkommensteuer aus den Steuereinnahmen 2025, Vermögen aus der Vermögensbefragung der Bundesbank 2023 mit einer Zuschätzung der Reichsten, Sparen aus der Einkommens- und Verbrauchsstichprobe.</p>
-<p>Heute: Lohn- und Einkommensteuer mit Soli, Sozialbeiträge, Abgeltungsteuer, Körperschaftsteuer auf eigene Firmen, Mehrwertsteuer, Erbschaft- und Schenkungsteuer. Mit der Reform: Ausgabensteuer über dem Freibetrag, höhere Mehrwertsteuer auf denselben Einkauf, die verbleibenden Beiträge und der Staatsanteil am Erbe, abzüglich der Auszahlungen an die Haushalte. Das Erbe zählt als erwartete Steuer im Jahr. Wie jede Schätzung hängt das Ergebnis an Annahmen: Gezählt werden Erwachsene über 18: Jeder zählt mit dem Plus seines Haushalts geteilt durch die Erwachsenen darin, erwachsene Kinder bei den Eltern zählen für sich, Kinder unter 18 mit ihrem Haushalt. Im gezeigten Fall haben «weniger» Mio. Erwachsene weniger als heute, im Mittel «wmittel» € im Monat. Mit anderen vertretbaren Annahmen, die zu den amtlichen Zahlen über Einkauf und Sparen passen, haben zwischen 66 und 72 von 100 Erwachsenen mehr; auch wenn man einzelne Annahmen bis an den Rand verschiebt, mindestens 61. Die Grafiken ordnen nach Einkommen und Vermögen des Haushalts und zählen die erwachsenen Kinder bei den Eltern nicht mit. Jeden einzelnen Haushalt rechnet der <a href="../steuerrechner/">Steuerrechner</a> nach, die ganze Rechnung steht im <a href="../buch/">Buch</a>.</p>
+<p>Heute: Lohn- und Einkommensteuer mit Soli, Sozialbeiträge, Abgeltungsteuer, Körperschaftsteuer auf eigene Firmen, Mehrwertsteuer, Erbschaft- und Schenkungsteuer. Mit der Reform: Ausgabensteuer über dem Freibetrag, höhere Mehrwertsteuer auf denselben Einkauf, die verbleibenden Beiträge und der Staatsanteil am Erbe, abzüglich der Auszahlungen an die Haushalte. Das Erbe zählt als erwartete Steuer im Jahr. Wie jede Schätzung hängt das Ergebnis an Annahmen: Gezählt werden Erwachsene über 18: Jeder zählt mit dem Plus seines Haushalts geteilt durch die Erwachsenen darin, erwachsene Kinder bei den Eltern zählen für sich, Kinder unter 18 mit ihrem Haushalt. Im gezeigten Fall haben rund 70 von 100 Erwachsenen mehr Geld. «satzb» Weniger haben im gezeigten Fall «weniger» Mio. Erwachsene, im Mittel «wmittel» € im Monat; mit anderen vertretbaren Annahmen «sw1» bis «sw2» Mio., am Rand höchstens «swr» Mio. Die Grafiken ordnen nach Einkommen und Vermögen des Haushalts und zählen die erwachsenen Kinder bei den Eltern nicht mit. Jeden einzelnen Haushalt rechnet der <a href="../steuerrechner/">Steuerrechner</a> nach, die ganze Rechnung steht im <a href="../buch/">Buch</a>.</p>
 </div>
 </div>
 </main>
