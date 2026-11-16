@@ -263,7 +263,7 @@ ul.qarten .typ { color: var(--ink, inherit); min-width: 92px; }
 @media (max-width: 480px) { .stufe { grid-template-columns: 96px minmax(0,1fr) 76px; } }
 
 /* Cockpit: auf großen Bildschirmen Eingaben links, Ergebnis heute und Reform in der Mitte, Stellschrauben rechts, ohne Scrollen der Seite */
-@media (min-width: 1200px) and (min-height: 620px) {
+@media (min-width: 1360px) and (min-height: 620px) {
   #haushalt { padding-top: 20px; padding-bottom: 20px; }
   #haushalt .lead, #haushalt .howto, #haushalt .eyebrow { display: none; }
   #haushalt h2 { font-size: 1.5rem; margin: 0 0 10px; }
@@ -2086,7 +2086,7 @@ function updateHH() {
     if (r.ausSum + r.agRP > 0.5) t.push(`Der Betrieb zahlt seine Anteile ${A.RVPVSt ? "zu Krankenkasse, Arbeitslosenversicherung, Rente und Pflege" : "zu Krankenkasse und Arbeitslosenversicherung"} als Lohn aus${A.RVPVSt && h.mini > 0 ? " (beim Minijob die Pauschale von " + pct(A.MiniQ, 0) + ")" : ""}: ${eur(r.ausSum + r.agRP)} mehr brutto`);
     if (r.rentePlus > 0.5) t.push(`die Rentenversicherung zahlt ihren Anteil an der Krankenkasse als höhere Rente aus: ${eur(r.rentePlus)}`);
     if (r.gsPlus > 0.5) t.push(r.bjPlus > 0.5 ? `statt der Grundsicherung gibt es den Lohn im Bürgerjob, ${eur((h.transfer + r.gsPlus) / h.erw / 12)} im Monat: ${eur(r.gsPlus)} mehr (Prämie, Ausgleich der Mehrwertsteuer und ${eur(r.bjPlus / h.erw / 12)} im Monat für die Arbeit)` : `die Grundsicherung steigt um die Prämie und den Ausgleich der Mehrwertsteuer: ${eur(r.gsPlus)}`);
-    if (r.bsz > 0.5) t.push(`Bestandsschutz: Wer beim Start schon Rente bezieht, kann mit seiner Rente so viel einkaufen wie heute. Der Zuschlag zur Rente beträgt ${eur(r.bsz)} im Jahr; er wird beim Start einmal festgestellt und sinkt bei jeder Rentenerhöhung um die Hälfte der Erhöhung${r.fz > 1 ? `. Den Sicherheitszuschlag zahlen alle` : ``}`);
+    if (r.bsz > 0.5) t.push(`Bestandsschutz: Wer beim Start schon Rente bezieht, kann mit seiner Rente so viel einkaufen wie heute. Er beträgt ${eur(r.bsz)} im Jahr; er wird beim Start einmal festgestellt und sinkt bei jeder Rentenerhöhung um die Hälfte der Erhöhung${r.fz > 1 ? `. Den Sicherheitszuschlag zahlen alle` : ``}`);
     if (r.rpz > 0.5) t.push(`Zuschlag zur Rente: Wer beim Start schon Rente bezieht, kann mit seiner Rente ${pct(A.AusgRPProz, 0)} mehr kaufen als heute: ${eur(r.rpz)} im Jahr`);
     if (r.ausgB + r.ausgR > 0.5) t.push(`Ausgleich: ${eur(A.AusgBonusEur)} im Monat für ${h.erw === 2 ? "jeden Erwachsenen" : "jeden Erwachsenen"}${r.ausgR > 0.5 ? `, dazu für heutige Rentner das Minus bis ${eur(A.AusgRentKap)} im Monat, solange sie leben` : ""}: ${eur(r.ausgB + r.ausgR)} im Jahr`);
     if (r.anr > 0.5) t.push(`Steuer und Beiträge zusammen sind auf ${pct(A.AnrGrenze, 0)} je Euro Lohn begrenzt; angerechnet werden ${eur(r.anr)}`);
