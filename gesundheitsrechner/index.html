@@ -262,7 +262,7 @@ h1,h2,h3{break-after:avoid}
           <div class="f" id="f_zig" hidden><label for="i_zig">Zigaretten am Tag</label><div class="in"><input id="i_zig" type="number" inputmode="decimal" step="1" min="0" max="80"><span class="u">Stück</span></div><small>bei früheren Rauchern: wie viele es damals waren</small></div>
           <div class="f" id="f_aufh" hidden><label for="i_aufh">Aufgehört mit</label><div class="in"><input id="i_aufh" type="number" inputmode="decimal" step="1" min="10" max="95"><span class="u">Jahren</span></div></div>
           <div class="f"><label for="i_glaeser">Alkohol: Gläser pro Woche</label><div class="in"><input id="i_glaeser" type="number" inputmode="decimal" step="1" min="0" max="150"><span class="u">Gläser</span></div><small id="s_glaeser">1 Glas = 0,3 l Bier, 0,125 l Wein oder 4 cl Schnaps, rund 12 g Alkohol</small></div>
-          <div class="f"><label for="i_bewegung">Bewegung pro Woche</label><div class="in"><input id="i_bewegung" type="number" inputmode="decimal" step="10" min="0" max="2000"><span class="u">Minuten</span></div><small>zügig gehen, Rad fahren, Sport; anstrengender Sport zählt doppelt</small></div>
+          <div class="f"><label for="i_bewegung">Bewegung</label><div class="in"><input id="i_bewegung" type="number" inputmode="decimal" step="10" min="0" max="40000"><select id="i_bewEinheit" aria-label="Einheit der Bewegung" style="flex:0 0 auto;width:auto;border-left:1px solid var(--line)"><option value="min">Min./Woche</option><option value="schritte">Schritte/Tag</option></select></div><small id="h_bewegung">zügig gehen, Rad fahren, Sport; anstrengender Sport zählt doppelt</small></div>
         </div>
         <div class="chk"><input type="checkbox" id="i_vorsorge"> <label for="i_vorsorge">Ich gehe zu den empfohlenen Vorsorgeuntersuchungen</label></div>
       </div>
@@ -444,6 +444,12 @@ h1,h2,h3{break-after:avoid}
         <dl><dt>Was wurde untersucht?</dt><dd>Gemeinsame Auswertung von 83 Langzeitstudien mit rund 600.000 Menschen, die Alkohol trinken, aus 19 reichen Ländern.</dd><dt>Was kam heraus?</dt><dd>Über 100 g Alkohol in der Woche steigt das Sterberisiko. Mit 40 Jahren leben Menschen mit 100 bis 200 g in der Woche rund ein halbes Jahr kürzer, mit 200 bis 350 g 1 bis 2 Jahre, mit mehr als 350 g 4 bis 5 Jahre.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Grundlage für den Alkohol: Der Rechner rechnet die Jahre in einen Faktor auf das Sterberisiko um (Spanne ±40 %).</dd></dl>
         <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract); Pressemitteilung der Universität Glasgow. <a href="https://www.gla.ac.uk/news/archiveofnews/2018/april/headline_578314_en.html" target="_blank" rel="noopener">Zur Studie ›</a></div>
       </article>
+      <article class="studie" id="q-paluch">
+        <h3>Schritte am Tag: schon 6.000 bis 8.000 bringen viel</h3>
+        <div class="wer">Paluch A. E. u. a. (2022), <i>The Lancet Public Health</i> 7:e219</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>15 Studien aus vier Erdteilen mit 47.471 Erwachsenen, deren Schritte mit einem Schrittzähler gemessen wurden. Danach wurde rund 7 Jahre beobachtet, wer stirbt.</dd><dt>Was kam heraus?</dt><dd>Im Vergleich zum Viertel mit den wenigsten Schritten (im Mittel 3.553 am Tag) war das Sterberisiko bei rund 5.800 Schritten um 40 % niedriger, bei rund 7.800 um 45 % und bei rund 10.900 um 53 %. Ab 60 Jahren flacht der Nutzen bei 6.000 bis 8.000 Schritten ab, unter 60 bei 8.000 bis 10.000.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Wenn du Schritte eingibst, rechnet der Rechner mit diesen Werten statt mit den Minuten aus Arem 2015. Bezugswert sind rund 7.800 Schritte, für den Bonus zählen 7.500. Vorsicht: Wer krank ist, geht weniger; ein Teil des Unterschieds ist Folge, nicht Ursache. Deshalb wirken die Schritte im Rechner etwas stärker als die Minuten.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract), Hazard Ratios je Viertel und Altersgruppen. <a href="https://pubmed.ncbi.nlm.nih.gov/35247352/" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
       <article class="studie" id="q-arem">
         <h3>Bewegung: 150 Minuten in der Woche bringen viel</h3>
         <div class="wer">Arem H. u. a. (2015), <i>JAMA Internal Medicine</i> 175:959</div>
@@ -585,10 +591,14 @@ const RAUCH = { hr20: { lo: 2.5, mid: 3.0, hi: 3.5 }, expo: 0.35,            // 
 const ALK = { gGlas: 12, schwelle: 100, ylls40: [[100, 0], [150, 0.5], [275, 1.5], [450, 4.5]], spanne: { lo: 0.6, mid: 1, hi: 1.4 }, // Wood 2018
   dirJeG: 13, indJeG: 13 };                                                  // 16,6 Mrd. € direkt, 40,4 Mrd. € indirekt (DHS), 8,6 Mio. riskant Trinkende
 const BEW = { pts: [[0, 1 / 0.69], [75, 0.80 / 0.69], [150, 1], [300, 0.63 / 0.69], [450, 0.61 / 0.69], [2000, 0.61 / 0.69]], spanne: { lo: 0.75, mid: 1, hi: 1.2 } }; // Arem 2015
-const NEUTRAL = { rauch: "nie", zig: 0, glaeser: 0, bewegung: 150 };
+// Schritte am Tag (Paluch 2022): Sterberisiko je Viertel, bezogen auf das dritte Viertel (Median 7.842 Schritte)
+const SCHRITTE = { pts: [[0, 1 / 0.55], [3553, 1 / 0.55], [5801, 0.60 / 0.55], [7842, 1], [10901, 0.47 / 0.55], [40000, 0.47 / 0.55]], plateau60: 8000, ziel: 7500,
+  ausMin: m => Math.round((4000 + 25 * m) / 100) * 100, zuMin: x => Math.max(0, Math.round((x - 4000) / 25 / 10) * 10) };
+const NEUTRAL = { rauch: "nie", zig: 0, glaeser: 0, bewEinheit: "min", bewegung: 150 };
+const bewOk = p => p.bewEinheit === "schritte" ? p.schritte >= SCHRITTE.ziel : p.bewegung >= 150;
 
 // ---------- Eingaben ----------
-const V = { sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, einheit: "pct", dm: false, bauchVor: 0, hbVor: 0, glVor: 0, rauch: "nie", zig: 15, aufh: 40, glaeser: 3, bewegung: 150, vorsorge: false };
+const V = { sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, einheit: "pct", dm: false, bauchVor: 0, hbVor: 0, glVor: 0, rauch: "nie", zig: 15, aufh: 40, glaeser: 3, bewegung: 150, bewEinheit: "min", schritte: 7800, vorsorge: false };
 const FELD = [["alter", "Alter", "Jahre", 1, 18, 95], ["groesse", "Körpergröße", "cm", 1, 120, 220], ["bauch", "Bauchumfang", "cm", 1, 50, 200]];
 FELD.forEach(([k, l, u, st, mi, ma]) => {
   const d = document.createElement("div"); d.className = "f";
@@ -606,7 +616,11 @@ function zeigeHbVor() { $("u_hbVor").textContent = V.einheit === "pct" ? "%" : "
 $("i_bauchVor").addEventListener("input", e => { V.bauchVor = +e.target.value || 0; run(); });
 $("i_glVor").addEventListener("input", e => { V.glVor = +e.target.value || 0; run(); });
 $("i_hbVor").addEventListener("input", e => { const x = +e.target.value; V.hbVor = x ? (V.einheit === "pct" ? x : pct(x)) : 0; run(); });
-["zig", "aufh", "glaeser", "bewegung"].forEach(k => { const el = $("i_" + k); el.value = V[k]; el.addEventListener("input", () => { V[k] = Math.max(0, +el.value || 0); run(); }); });
+["zig", "aufh", "glaeser"].forEach(k => { const el = $("i_" + k); el.value = V[k]; el.addEventListener("input", () => { V[k] = Math.max(0, +el.value || 0); run(); }); });
+function zeigeBew() { const st = V.bewEinheit === "schritte"; $("i_bewegung").value = st ? V.schritte : V.bewegung; $("i_bewegung").step = st ? 500 : 10;
+  $("h_bewegung").textContent = st ? "zeigen Handy oder Uhr an; Durchschnitt der letzten Wochen" : "zügig gehen, Rad fahren, Sport; anstrengender Sport zählt doppelt"; }
+$("i_bewegung").addEventListener("input", e => { const x = Math.max(0, +e.target.value || 0); if (V.bewEinheit === "schritte") { V.schritte = x; V.bewegung = SCHRITTE.zuMin(x); } else { V.bewegung = x; V.schritte = SCHRITTE.ausMin(x); } run(); });
+$("i_bewEinheit").addEventListener("change", e => { V.bewEinheit = e.target.value; zeigeBew(); run(); });
 $("i_vorsorge").addEventListener("change", e => { V.vorsorge = e.target.checked; run(); });
 function setRauch(r) { V.rauch = r; document.querySelectorAll("[data-r]").forEach(b => b.setAttribute("aria-pressed", b.dataset.r === r)); $("f_zig").hidden = r === "nie"; $("f_aufh").hidden = r !== "frueher"; run(); }
 document.querySelectorAll("[data-r]").forEach(b => b.onclick = () => setRauch(b.dataset.r));
@@ -617,10 +631,11 @@ const PRESET = { gesund: { bauch: 0.45, hba1c: 5.2, dm: false, rauch: "nie", gla
   prae: { bauch: 0.6, hba1c: 6.1, dm: false, rauch: "frueher", zig: 15, aufh: 40, glaeser: 7, bewegung: 90 }, dm: { bauch: 0.66, hba1c: 8.5, dm: true, rauch: "ja", zig: 20, glaeser: 14, bewegung: 0 } };
 document.querySelectorAll("[data-p]").forEach(b => b.onclick = () => {
   const p = PRESET[b.dataset.p]; V.bauch = Math.round(p.bauch * V.groesse); V.hba1c = p.hba1c; V.dm = p.dm;
-  ["zig", "aufh", "glaeser", "bewegung"].forEach(k => { if (k in p) { V[k] = p[k]; $("i_" + k).value = p[k]; } });
+  ["zig", "aufh", "glaeser"].forEach(k => { if (k in p) { V[k] = p[k]; $("i_" + k).value = p[k]; } });
+  V.bewegung = p.bewegung; V.schritte = SCHRITTE.ausMin(p.bewegung); zeigeBew();
   $("i_bauch").value = V.bauch; $("i_dm").checked = V.dm; zeigeHb(); setRauch(p.rauch);
 });
-zeigeHb();
+zeigeHb(); zeigeBew();
 
 // ---------- Rechenkern ----------
 const ip = (tab, x) => { if (x <= tab[0][0]) return tab[0][1]; for (let i = 1; i < tab.length; i++) if (x <= tab[i][0]) { const [x0, y0] = tab[i - 1], [x1, y1] = tab[i]; return y0 + (y1 - y0) * (x - x0) / (x1 - x0); } return tab[tab.length - 1][1]; };
@@ -676,7 +691,9 @@ function lnHrAlk(p, v) {
   const sex = p.sex, hr = hrFuerYll(40, sex, y * ALK.spanne[v]);
   return Math.log(hr);
 }
-function lnHrBew(p, v) { const h = ip(BEW.pts, p.bewegung); return Math.log(h) * BEW.spanne[v]; }
+function lnHrBew(p, v) {
+  const h = p.bewEinheit === "schritte" ? ip(SCHRITTE.pts, p.alter >= 60 ? Math.min(p.schritte, SCHRITTE.plateau60) : p.schritte) : ip(BEW.pts, p.bewegung);
+  return Math.log(h) * BEW.spanne[v]; }
 const lnHrLeben = (p, v) => lnHrRauch(p, v) + lnHrAlk(p, v) + lnHrBew(p, v);
 // jährliche Neuerkrankung an Diabetes in der Vorstufe (über dem Grundrisiko)
 const inzidenz = h => h < 5.7 ? 0 : Math.min(0.06, 0.015 + (h - 5.7) / 0.7 * 0.045);
@@ -742,7 +759,7 @@ function run() {
   const [kw, cw] = katW(r.w), [kh, ch] = katH(r.h, V.dm);
   // Ziel: Taille 0,5 und HbA1c unter 5,7 (bei Diabetes 7 %)
   const ziel = { ...V, bauch: Math.min(V.bauch, 0.5 * V.groesse), hba1c: (V.dm || r.h >= 6.5) ? Math.min(r.h, 7) : Math.min(r.h, 5.6),
-    rauch: V.rauch === "ja" ? "frueher" : V.rauch, aufh: V.rauch === "ja" ? V.alter : V.aufh, glaeser: Math.min(V.glaeser, 8), bewegung: Math.max(V.bewegung, 150) };
+    rauch: V.rauch === "ja" ? "frueher" : V.rauch, aufh: V.rauch === "ja" ? V.alter : V.aufh, glaeser: Math.min(V.glaeser, 8), bewegung: Math.max(V.bewegung, 150), schritte: Math.max(V.schritte, SCHRITTE.ziel) };
   const rz = rechne(ziel);
   const gewinn = r.yll - rz.yll;
   let txt;
@@ -755,7 +772,7 @@ function run() {
     if (ziel.hba1c < r.h) schritte.push(`den Langzeitzucker auf ${fmt(ziel.hba1c, 1)} % senkt`);
     if (V.rauch === "ja" && V.zig > 0) schritte.push("heute mit dem Rauchen aufhört");
     if (ziel.glaeser < V.glaeser) schritte.push("höchstens 8 Gläser Alkohol in der Woche trinkt");
-    if (ziel.bewegung > V.bewegung) schritte.push("sich 150 Minuten in der Woche bewegt");
+    if (!bewOk(V)) schritte.push(V.bewEinheit === "schritte" ? "jeden Tag 7.500 Schritte geht" : "sich 150 Minuten in der Woche bewegt");
     if (gewinn >= 0.1 && schritte.length) txt += ` Wer ${schritte.length > 1 ? schritte.slice(0, -1).join(", ") + " und " + schritte[schritte.length - 1] : schritte[0]}, gewinnt statistisch rund <b>${jahre(gewinn)}</b> zurück.`;
   }
   $("verdict").innerHTML = txt;
@@ -768,7 +785,7 @@ function run() {
   const allein = q => rechne({ ...V, bauch: 0.48 * V.groesse, hba1c: 5.2, dm: false, ...NEUTRAL, ...q }).yll;
   const teile = [
     ["Bauch", allein({ bauch: V.bauch })], ["Blutzucker", allein({ hba1c: V.hba1c, dm: V.dm })],
-    ["Rauchen", allein({ rauch: V.rauch, zig: V.zig, aufh: V.aufh })], ["Alkohol", allein({ glaeser: V.glaeser })], ["Bewegung", allein({ bewegung: V.bewegung })],
+    ["Rauchen", allein({ rauch: V.rauch, zig: V.zig, aufh: V.aufh })], ["Alkohol", allein({ glaeser: V.glaeser })], ["Bewegung", allein({ bewEinheit: V.bewEinheit, bewegung: V.bewegung, schritte: V.schritte })],
   ];
   $("t_herkunft").innerHTML = `<tr><th>Woher die Jahre kommen</th><th>jeder Punkt für sich allein</th></tr>` + teile.map(([n, y]) =>
     `<tr><td>${n}</td><td class="${y > 0.05 ? "bad" : y < -0.05 ? "good" : ""}">${Math.abs(y) < 0.05 ? "kein Einfluss" : (y > 0 ? "−" : "+") + jahre(y)}</td></tr>`).join("") +
@@ -821,7 +838,7 @@ function bonus(p) {
   z.push({ n: "Bauchumfang", ok: wG || wB,
     warum: wG ? `gesund (unter der halben Körpergröße, ${fmt(p.groesse / 2)} cm)` : wB ? `Fortschritt: ${fmt(p.bauchVor - p.bauch)} cm weniger als vor einem Jahr` :
       `noch nicht: unter ${fmt(p.groesse / 2)} cm oder mindestens 3 cm weniger als vor einem Jahr${p.bauchVor ? "" : " (Wert vor einem Jahr eintragen)"}` });
-  const bw = p.bewegung >= 150, fehlt3 = [!p.vorsorge && "Vorsorge", !bw && "150 Minuten Bewegung"].filter(Boolean);
+  const bw = bewOk(p), fehlt3 = [!p.vorsorge && "Vorsorge", !bw && (p.bewEinheit === "schritte" ? "7.500 Schritte am Tag" : "150 Minuten Bewegung")].filter(Boolean);
   z.push({ n: "Vorsorge und Bewegung", ok: !fehlt3.length, wert: BONUS.teil, warum: !fehlt3.length ? "Ziel erreicht" : `noch nicht: es fehlt ${fehlt3.join(" und ")}` });
   const nr = p.rauch !== "ja" || !(p.zig > 0);
   z.push({ n: "Rauchfrei", ok: nr, wert: BONUS.klein, warum: nr ? (p.rauch === "frueher" ? "Ziel erreicht: Du hast aufgehört. Nachweis per Urintest beim Check-up" : "Ziel erreicht. Nachweis per Urintest beim Check-up") : "noch nicht: Wer aufhört, bekommt ihn im nächsten Jahr genauso" });
@@ -866,7 +883,9 @@ function rechenweg(r, lo, hi) {
   const rT = V.rauch === "ja" && V.zig > 0 ? `Rauchen: ${fmt(V.zig)} Zigaretten am Tag ergeben Faktor ${f2(hr_)}. Wer 20 am Tag raucht, hat etwa das dreifache Sterberisiko (${q("q-jha", "Jha 2013")}), schon 1 bis 10 am Tag fast das doppelte (${q("q-inoue", "Inoue-Choi 2017")}).`
     : V.rauch === "frueher" && V.zig > 0 ? `Rauchen: Wer mit ${fmt(V.aufh)} aufgehört hat, behält nur noch einen Teil des Risikos (${q("q-jha", "Jha 2013")}): Faktor ${f2(hr_)}.` : "Rauchen: kein Aufschlag.";
   const aT = alkG(V) > ALK.schwelle ? `Alkohol: ${fmt(alkG(V))} g in der Woche liegen über 100 g, ab da sinkt die Lebenserwartung (${q("q-wood", "Wood 2018")}): Faktor ${f2(ha)}.` : `Alkohol: bis 100 g in der Woche (rund 8 Gläser) kein Aufschlag (${q("q-wood", "Wood 2018")}).`;
-  const bT = `Bewegung: ${fmt(V.bewegung)} Minuten in der Woche ergeben Faktor ${f2(hbw)}. Gar keine Bewegung erhöht das Risiko um 45 %, 150 Minuten sind der Bezugswert, mehr senkt es noch etwas (${q("q-arem", "Arem 2015")}).`;
+  const bT = V.bewEinheit === "schritte"
+    ? `Bewegung: ${fmt(V.schritte)} Schritte am Tag ergeben Faktor ${f2(hbw)}. Bezugswert sind rund 7.800 Schritte; wer nur rund 3.500 geht, hat ein um 80 % höheres Sterberisiko, rund 11.000 senken es noch etwas${V.alter >= 60 ? "; ab 60 bringen mehr als 8.000 Schritte keinen weiteren Vorteil" : ""} (${q("q-paluch", "Paluch 2022")}).`
+    : `Bewegung: ${fmt(V.bewegung)} Minuten in der Woche ergeben Faktor ${f2(hbw)}. Gar keine Bewegung erhöht das Risiko um 45 %, 150 Minuten sind der Bezugswert, mehr senkt es noch etwas (${q("q-arem", "Arem 2015")}).`;
   st.push(["Rauchen, Alkohol und Bewegung", `${rT} ${aT} ${bT} Die Vorsorge verändert die Rechnung nicht, weil große Studien keinen Einfluss allgemeiner Check-ups auf die Sterblichkeit finden (${q("q-cochrane", "Cochrane 2019")}).`,
     `Rauchen ${f2(hr_)} × Alkohol ${f2(ha)} × Bewegung ${f2(hbw)} = <b>${f2(hr_ * ha * hbw)}</b>`]);
   const alle = [["Bauch", r.lw], ["Zucker", r.lg], ["Rauchen", r.lr], ["Alkohol", r.la], ["Bewegung", r.lb]].filter(([, l]) => l > 1e-6).sort((a, b) => b[1] - a[1]);
@@ -989,7 +1008,7 @@ Info.felder({
   zig: ["Schon wenige Zigaretten schaden: 1 bis 10 am Tag fast verdoppeln das Sterberisiko, 20 am Tag verdreifachen es. Raucher verlieren im Schnitt rund 10 Lebensjahre. Bei früheren Rauchern: wie viele es damals am Tag waren."],
   aufh: ["Aufhören lohnt sich in jedem Alter: Wer vor 35 aufhört, hat fast kein erhöhtes Risiko mehr; mit 45 bis 54 gewinnt man noch rund 6 Jahre, mit 55 bis 64 rund 4."],
   glaeser: ["Zähl alle Getränke einer normalen Woche zusammen. 1 Glas = 0,3 l Bier, 0,125 l Wein oder 4 cl Schnaps, jeweils rund 12 g reiner Alkohol. Bis 100 g in der Woche (gut 8 Gläser) fand die große Studie keine kürzere Lebenserwartung, darüber schon: bei mehr als 350 g rund 4 bis 5 Jahre."],
-  bewegung: ["Alles, was dich etwas außer Atem bringt: zügiges Gehen, Rad fahren, Gartenarbeit, Sport. Anstrengender Sport wie Joggen zählt doppelt. 150 Minuten in der Woche, also gut 20 Minuten am Tag, senken das Sterberisiko um fast ein Drittel gegenüber gar keiner Bewegung."],
+  bewegung: ["Du kannst Minuten oder Schritte eingeben, rechts umschalten.<br><b>Minuten pro Woche:</b> alles, was dich etwas außer Atem bringt: zügiges Gehen, Rad fahren, Gartenarbeit, Sport. Anstrengender Sport wie Joggen zählt doppelt. 150 Minuten in der Woche, also gut 20 Minuten am Tag, senken das Sterberisiko um fast ein Drittel gegenüber gar keiner Bewegung (Arem 2015).<br><b>Schritte am Tag:</b> zeigen die meisten Handys und Uhren von selbst an. Nimm den Durchschnitt der letzten Wochen. Wer rund 7.800 Schritte geht, hat ein fast halb so hohes Sterberisiko wie wer nur rund 3.500 geht (Paluch 2022). Ab 60 bringen mehr als 6.000 bis 8.000 Schritte kaum noch etwas, unter 60 lohnen sich 8.000 bis 10.000.<br><b>Umrechnung, grob:</b> Im Alltag kommt man ohne Bewegung auf rund 4.000 Schritte. Zügiges Gehen sind rund 100 Schritte in der Minute, und 150 Minuten in der Woche sind gut 20 Minuten am Tag. Zusammen mit etwas mehr Alltag entspricht das etwa 7.500 bis 8.000 Schritten am Tag. Beim Umschalten rechnet der Rechner: Schritte ≈ 4.000 + 25 × Minuten pro Woche."],
   i_vorsorge: ["Zum Beispiel Gesundheits-Check-up beim Hausarzt, Darmkrebs- und Hautkrebs-Früherkennung. Ehrlich gesagt: Große Studien finden keinen messbaren Einfluss allgemeiner Check-ups auf die Lebenserwartung, deshalb ändert der Haken die Jahre nicht. Er zählt aber für den Gesundheitsbonus, und wer früh von Diabetes oder Bluthochdruck erfährt, kann rechtzeitig handeln.", ...K5],
   r_r: ["Diabetes, Herzinfarkt und Schlaganfall entstehen über viele Jahre. Wer heute weniger Zucker isst, wird vor allem in 10 bis 30 Jahren gesünder sein. Der Rechner lässt die Wirkung deshalb langsam anwachsen."],
 });
