@@ -4,7 +4,7 @@ R = '/home/user/mut-zur-zukunft/'
 import json
 M = '/mnt/project-files/rechenmodell-mikrosim/v0.3/'
 J = json.load(open(M + 'steuerlast.json'))
-UB = json.load(open(M + 'uebergabe-v35.json'))
+UB = json.load(open(M + 'uebergabe-v36.json'))   # Paket 6 (uebergabe-v35.json ist der Stand ohne Paket)
 def k(x, n=1):
     t = f"{abs(x):,.{n}f}".replace(",", "X").replace(".", ",").replace("X", ".")
     return ("−" if x < 0 else "") + t
@@ -25,9 +25,9 @@ N = dict(
  oh=k(Z[9]['anteil_heute']), orr=k(Z[9]['anteil_reform']),
  gh=k(J['gesamt']['heute_mrd'], 0), gr=k(J['gesamt']['reform_mrd'], 0),
  p1h=k(J['oberstes_prozent']['anteil_heute']), p1r=k(J['oberstes_prozent']['anteil_reform']), p1l=k(J['oberstes_prozent']['anteil_reform_lang']),
- lohn=k(-diff('Löhne und Gehälter')), gew=k(diff('Gewinne eigener Firmen')),
+ lohn=k(abs(diff('Löhne und Gehälter'))), lohnw='mehr' if diff('Löhne und Gehälter') > 0 else 'weniger', gew=k(diff('Gewinne eigener Firmen')),
  firm=k(diff('Firmen', liste='erbe')), firml=k(diff('Firmen', True, 'erbe')),
- summe=k(J['gesamt']['heute_mrd'] - J['gesamt']['reform_mrd'], 0), ausgl=k(J["ausgleich_mrd"], 1),
+ summe=k(abs(J['gesamt']['heute_mrd'] - J['gesamt']['reform_mrd']), 0), summew='weniger' if J['gesamt']['heute_mrd'] > J['gesamt']['reform_mrd'] else 'mehr', ausgl=k(J["ausgleich_mrd"], 1),
  wh=k(J['aufbau'][0]['wachstum_heute']), wr=k(J['aufbau'][0]['wachstum_reform']),
  sh=k(J['aufbau'][0]['sparen_heute_monat'], 0), sr=k(J['aufbau'][0]['sparen_reform_monat'], 0),
  qh=k(J['aufbau'][0]['sparquote_heute']), qr=k(J['aufbau'][0]['sparquote_reform']),
@@ -54,8 +54,8 @@ G = [
   "Punktgrafik nach Vermögen: Haushalte unter 100.000 € Vermögen zahlen «vp» Punkte weniger von ihrem Einkommen, Haushalte mit mehr Vermögen mehr, am meisten zwischen 400.000 € und 1 Mio. €.",
   "Gruppen nach Nettovermögen. Mehr zahlen vor allem Haushalte, die viel ausgeben, ohne dafür zu arbeiten: Wer Zinsen, Dividenden oder Mieten ausgibt, zahlt darauf wie auf Lohn. Ausgaben aus versteuertem Ersparten bleiben frei. Wer im eigenen Haus wohnt, zahlt nur für den Teil, der beim Start noch nicht bezahlt ist, auf den Mietwert wie auf eine Miete; Tilgung und Zinsen für den Kredit bleiben steuerfrei. Wer sein Haus noch abzahlt, hat zum Start mindestens so oft mehr Geld wie Mieter. Mit bezahltem Haus hat mehr als die Hälfte weniger. Das liegt nicht am Haus, das bleibt frei, sondern daran, wer dort wohnt: Von denen mit weniger sind mehr als 8 von 10 im Ruhestand oder haben ein Vermögen ab 400.000 €. Bei gleichem Vermögen und gleicher Lage steht man mit bezahltem Haus gleich gut oder besser da als zur Miete."),
  ("wer-bezahlt-einkommen-vermoegen", 1688, 1122, "Welche Einkommen und Vermögen die Reform bezahlen",
-  "Balken nach Einkommens- und Vermögensart: Auf Löhne fallen «lohn» Mrd. € weniger, auf Gewinne eigener Firmen «gew» Mrd. € mehr, auf vererbte Firmen «firm» Mrd. € mehr.",
-  "Wie viel mehr oder weniger Steuern und Abgaben im Jahr auf jede Art von Einkommen und Vermögen fallen als heute, in Milliarden Euro. Auf Löhne fallen «lohn» Mrd. € weniger, auf Gewinne eigener Firmen «gew» Mrd. € mehr. Beim Erbe zahlen Firmen «firm» Mrd. € mehr, «firml» Mrd. €, wenn der Staatsanteil am Erbe voll wirkt: Heute sind vererbte Firmen zu 85 % verschont, mit der Reform zählt alles voll. Zusammen tragen die Haushalte «summe» Mrd. € weniger als heute. Darin sind «ausgl» Mrd. € Zuschlag für heutige Rentner: Ihre Rente kauft 4 % mehr. Steuern von Firmen, die nicht den Haushalten gehören, sind nicht enthalten."),
+  "Balken nach Einkommens- und Vermögensart: Auf Löhne fallen «lohn» Mrd. € «lohnw», auf Gewinne eigener Firmen «gew» Mrd. € mehr, auf vererbte Firmen «firm» Mrd. € mehr.",
+  "Wie viel mehr oder weniger Steuern und Abgaben im Jahr auf jede Art von Einkommen und Vermögen fallen als heute, in Milliarden Euro. Auf Löhne fallen «lohn» Mrd. € «lohnw», auf Gewinne eigener Firmen «gew» Mrd. € mehr. Beim Erbe zahlen Firmen «firm» Mrd. € mehr, «firml» Mrd. €, wenn der Staatsanteil am Erbe voll wirkt: Heute sind vererbte Firmen zu 85 % verschont, mit der Reform zählt alles voll. Zusammen tragen die Haushalte «summe» Mrd. € «summew» als heute. Darin sind «ausgl» Mrd. € Zuschlag für heutige Rentner: Ihre Rente kauft 4 % mehr. Steuern von Firmen, die nicht den Haushalten gehören, sind nicht enthalten."),
  ("vermoegen-sparen", 1688, 1057, "Wie Vermögen wächst",
   "Punktgrafik zum Sparen nach Vermögen: Haushalte unter 100.000 € Vermögen sparen mit der Reform «sr» € im Monat, heute «sh» €.",
   "Um wie viel Prozent das Vermögen der Haushalte im Jahr durch Sparen wächst. Haushalte mit weniger als 100.000 € Vermögen sparen heute im Mittel «sh» € im Monat, mit der Reform «sr» €, also «sq» % statt «qh» % ihres Einkommens. Sie besitzen im Mittel «vm» €. Gespart wird, was vom Einkommen nach Steuern und Abgaben bleibt, wenn der Haushalt so viel einkauft wie heute; was er mehr hat, legt er in dieser Rechnung ganz zurück. Nicht enthalten: Wertsteigerung von Häusern und Aktien, Erbschaften und Schenkungen."),
