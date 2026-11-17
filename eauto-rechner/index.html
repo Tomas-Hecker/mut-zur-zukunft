@@ -401,7 +401,7 @@ function rechne(v) {
     const eSt = kj > befreitBis ? v.eSteuerNach : 0;
     const spritCO2 = v.iVerb / 100 * KG_L[v.iKraft || "benzin"] / 1000 * (v.reform ? co2Reform(kj) - co2Preis(2026) : co2Preis(kj) - co2Preis(v.kaufjahr)) * (v.reform ? 1.5 : 1.19);   // €/km mehr als heute
     const thg = kj <= v.thgBis ? v.thg : 0;
-    const kI = v.reform ? kmAbgabe(v, kj, "i") : 0, kE = v.reform ? kmAbgabe(v, kj, "e") : 0;
+    const kI = v.reform ? kmAbgabe(v, kj, "i") + (v.iKraft === "diesel" && kj >= KMA.dieselAb ? KMA.dieselMehr * 1.5 * v.iVerb / 100 * v.km : 0) : 0, kE = v.reform ? kmAbgabe(v, kj, "e") : 0;
     i += v.iSteuer + v.iVers + v.iWart + v.km * (iEnergie + spritCO2) + kI;
     e += eSt + v.eVers + v.eWart + v.km * eEnergie + (v.eGrund || 0) - thg + kE;
     jahre.push({ j: n, i, e, eSt, sC: v.km * spritCO2, thg, kI, kE });
@@ -429,22 +429,19 @@ function rechne(v) {
 // MwSt auf die ersten 10.000 € eines neuen E-Autos zurück (bis 5.000 €), CO₂-Preispfad 100 € 2028 bis 300 € 2040, zinsloses Darlehen (hier ohne Zinsen ohnehin)
 const CO2R = [[2026, 60], [2027, 65], [2028, 100], [2030, 150], [2035, 200], [2040, 300]];
 const co2Reform = j => { const p = CO2R; if (j <= p[0][0]) return p[0][1]; for (let i = 1; i < p.length; i++) if (j <= p[i][0]) { const [a, pa] = p[i - 1], [b, pb] = p[i]; return pa + (pb - pa) * (j - a) / (b - a); } return p.at(-1)[1]; };
-// Kilometerabgabe (Vorschlag aus dem Buch, Straßenfonds Fassung B). ENTWURF 17.11.2026, Werte noch nicht final: nur die Zahlen in KMA tauschen.
-// Satz je kWh laut Hersteller für alle Pkw, Preise von 2026. Beim Verbrenner wird die Energiesteuer angerechnet (nominal fest, also real weniger wert).
-// Übergang: Autos mit Erstzulassung vor 2028 zahlen 2030 25 % des Betrags eines neuen Autos, jedes Jahr 10 Punkte mehr, ab 2038 voll.
-const KMA = { j: [2030, 2032, 2035, 2038, 2040, 2045, 2050], satz: [14.6, 12.5, 12.6, 14.2, 16.2, 22.3, 25.2],   // ct je kWh, Satz mit Übergang
-  // Energiesteuer real: Anteil des heutigen Werts je Stützjahr, aus der Tabelle des Buchs zurückgerechnet (neuer Benziner, 7 l, 13.500 km)
-  estF: [0.883, 0.867, 0.837, 0.821, 0.812, 0.774, 0.734],
-  kwhL: { benzin: 62 / 7, diesel: 9.9 }, est: { benzin: 0.6545, diesel: 0.6545 },   // kWh je Liter, Energiesteuer €/l (Diesel wie Benzin)
-  ueVor: 2028, ueStart: 2030, ue0: 0.25, ueSchritt: 0.10 };
-const kmaLin = (y, j) => { const x = KMA.j; if (j <= x[0]) return y[0]; for (let i = 1; i < x.length; i++) if (j <= x[i]) return y[i - 1] + (y[i] - y[i - 1]) * (j - x[i - 1]) / (x[i] - x[i - 1]); return y.at(-1); };
-const kmaSatz = j => j < KMA.j[0] ? 0 : kmaLin(KMA.satz, j) / 100;
+// Kilometerabgabe (Vorschlag aus dem Buch, Straßenfonds Fassung B, fonds40.py vom 17.11.2026). ENTWURF: endgültig mit Version 40, nur die Zahlen in KMA tauschen.
+// Abgabe = Satz je kWh × Verbrauch laut Hersteller × km, alles real in Preisen von 2025. Beim Verbrenner wird die Energiesteuer des eigenen Verbrauchs angerechnet.
+// Übergang: Autos mit Erstzulassung vor 2028 zahlen 2030 25 % ihres Betrags, jedes Jahr 10 Punkte mehr, ab 2038 voll. Satz nach 2050 gleich.
+const KMA = { start: 2030, satz: [15.64, 14.16, 13.53, 13.19, 13.47, 13.85, 14.33, 14.85, 15.59, 16.58, 17.61, 18.74, 19.88, 21.05, 22.18, 23.13, 23.90, 24.47, 24.90, 25.19, 25.39],   // ct je kWh, 2030 bis 2050
+  aufschlag: 0,                                          // ct je kWh obendrauf, je nach Gegenfinanzierung (offen: 1,61 oder 3,23)
+  kwhL: { benzin: 8.86, diesel: 9.9 }, est: 0.6545,     // kWh je Liter; Energiesteuer €/l, mit der Reform ab 2028 auch für Diesel
+  dieselAb: 2028, dieselMehr: 0.6545 - 0.4704,           // Ende des Dieselprivilegs: Energiesteuer auf Diesel wie Benzin, netto €/l
+  ueVor: 2028, ue0: 0.25, ueSchritt: 0.10 };
+const kmaSatz = j => j < KMA.start ? 0 : (KMA.satz[Math.min(j - KMA.start, KMA.satz.length - 1)] + KMA.aufschlag) / 100;
 function kmAbgabe(v, j, art) {   // € im Jahr j, art "e" oder "i"
   const s = kmaSatz(j); if (!s) return 0;
-  let b;
-  if (art === "e") b = s * v.eVerb / 100 * v.km;
-  else { const k = v.iKraft || "benzin", l = v.iVerb / 100 * v.km; b = Math.max(0, s * l * KMA.kwhL[k] - KMA.est[k] * l * kmaLin(KMA.estF, j)); }
-  return b * (v.kaufjahr < KMA.ueVor ? Math.max(0, Math.min(1, KMA.ue0 + KMA.ueSchritt * (j - KMA.ueStart))) : 1);
+  const b = art === "e" ? s * v.eVerb / 100 * v.km : Math.max(0, (s * KMA.kwhL[v.iKraft || "benzin"] - KMA.est) * v.iVerb / 100 * v.km);
+  return b * (v.kaufjahr < KMA.ueVor ? Math.max(0, Math.min(1, KMA.ue0 + KMA.ueSchritt * (j - KMA.start))) : 1);
 }
 function reformV(v) {
   const f = 1.5 / 1.19, st = x => Math.max(0, (x / 1.19 - 0.0205 - 0.0295) * 1.05), d = 1.05 / 1.19;
@@ -614,9 +611,9 @@ function run() {
   $("verdict").innerHTML = txt;
   if (!dienst) { const rv = reformV(V), rr = rechne(rv), J = [2030, 2035, 2040, 2045, 2050].filter(j => j >= V.kaufjahr && j < V.kaufjahr + V.jahre);
     const sk = rr.teile["Kilometerabgabe (Vorschlag)"] || [0, 0], kr = (V.iKraft || "benzin") === "diesel" ? "Diesel" : "Benziner";
-    $("kmaBox").innerHTML = `<h3 data-info="Vorschlag aus dem Buch: Ab 2030 zahlen alle Pkw eine Abgabe je Kilometer, nach dem Verbrauch laut Hersteller in kWh. Beim Verbrenner wird die Energiesteuer im Sprit angerechnet, er zahlt nur den Betrag darüber. Autos mit Erstzulassung vor 2028 zahlen 2030 erst 25 % davon, jedes Jahr 10 Punkte mehr, ab 2038 voll. Das Geld geht in einen Straßenfonds. Entwurf, die Sätze sind noch nicht endgültig.">Kilometerabgabe mit der Reform (Entwurf)</h3>`
-      + (J.length ? `<div class="tbl"><table><thead><tr><th>Jahr</th><th>Satz je kWh</th><th>E-Auto</th><th>${kr}, über der Energiesteuer</th></tr></thead><tbody>`
-        + J.map(j => `<tr><td>${j}</td><td>${fmt(kmaSatz(j) * 100, 1)} ct</td><td>${eur(kmAbgabe(rv, j, "e"))}</td><td>${eur(kmAbgabe(rv, j, "i"))}</td></tr>`).join("")
+    $("kmaBox").innerHTML = `<h3 data-info="Vorschlag aus dem Buch: Ab 2030 zahlen alle Pkw eine Abgabe je Kilometer, nach dem Verbrauch laut Hersteller in kWh. Beim Verbrenner wird die Energiesteuer im Sprit angerechnet, er zahlt nur den Betrag darüber. Autos mit Erstzulassung vor 2028 zahlen 2030 erst 25 % davon, jedes Jahr 10 Punkte mehr, ab 2038 voll. Diesel zahlt ab 2028 die Energiesteuer von Benzin. Das Geld geht in einen Straßenfonds. Entwurf, die Sätze sind noch nicht endgültig.">Kilometerabgabe mit der Reform (Entwurf)</h3>`
+      + (J.length ? `<div class="tbl"><table><thead><tr><th>Jahr</th><th>Satz je kWh</th><th>E-Auto</th><th>${kr}, über der Energiesteuer${kr === "Diesel" ? " (mit Ende des Dieselprivilegs)" : ""}</th></tr></thead><tbody>`
+        + J.map(j => `<tr><td>${j}</td><td>${fmt(kmaSatz(j) * 100, 1)} ct</td><td>${eur(rr.jahre[j - V.kaufjahr + 1].kE)}</td><td>${eur(rr.jahre[j - V.kaufjahr + 1].kI)}</td></tr>`).join("")
         + `<tr class="sum"><td>${fmt(V.jahre)} Jahre zusammen</td><td></td><td>${eur(sk[1])}</td><td>${eur(sk[0])}</td></tr></tbody></table></div>`
         : `<p class="note">In deinen ${fmt(V.jahre)} Jahren ab ${V.kaufjahr} fällt noch keine Kilometerabgabe an, sie beginnt 2030.</p>`)
       + `<p class="note">Bei ${fmt(V.km)} km im Jahr${V.kaufjahr < KMA.ueVor ? ", Auto vor 2028 zugelassen, mit Übergang" : ""}. Sie ist in „Mit der Reform“ unten schon eingerechnet.</p>`;
@@ -670,6 +667,7 @@ Methode.an($("verdict"), () => { const v = V, weg = Math.max(0, 100 - v.eAnteil 
     `Auto und Sprit 50 % Mehrwertsteuer, Strom 5 % ohne Stromsteuer und Umlagen, CO₂-Preis 150 € je Tonne 2030 und 300 € ab 2040.`,
     `<b>Kilometerabgabe ab 2030</b> für alle Pkw, nach dem Verbrauch laut Hersteller: ${fmt(kmaSatz(2030) * 100, 1)} ct je kWh 2030, ${fmt(kmaSatz(2040) * 100, 1)} ct 2040, ${fmt(kmaSatz(2050) * 100, 1)} ct 2050. Beim Verbrenner wird die Energiesteuer angerechnet.`,
     `<b>Übergang:</b> Autos mit Erstzulassung vor 2028 zahlen 2030 erst 25 %, jedes Jahr 10 Punkte mehr, ab 2038 voll.`,
+    v.iKraft === "diesel" && `<b>Diesel:</b> Ab 2028 gilt die Energiesteuer von Benzin (Ende des Dieselprivilegs), rund 28 Cent je Liter mehr mit Mehrwertsteuer. Das ist bei der Abgabe eingerechnet.`,
     `Entwurf: Die Sätze sind noch nicht endgültig.`]],
 ]; }, "So wird gerechnet");
 { const _rM = run; run = function () { const r = _rM.apply(this, arguments); Methode.neu(); return r; }; }
