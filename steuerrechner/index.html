@@ -98,6 +98,16 @@ section.block > .wrap > * { min-width: 0; }
 .calc { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 24px; align-items: start; }
 @media (max-width: 860px) { .calc { grid-template-columns: minmax(0, 1fr); } .flow { grid-template-columns: 1fr; } .flow .arrow { display: none; } }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 16px; min-width: 0; }
+.panel.szen { margin-bottom: 18px; gap: 12px; }
+.panel.szen h3 { margin: 0; }
+.szen .szgrp > .slider { margin-top: 14px; }
+.szr .row { flex-wrap: wrap; }
+.szr .row label { flex: 1 1 14em; }
+.szr .row output { margin-left: auto; text-align: right; }
+.szgrp:last-of-type { margin-bottom: 6px; }
+.szskala { display: flex; justify-content: space-between; font-size: .75rem; color: var(--muted); }
+.szwhy summary { cursor: pointer; font-size: .85rem; color: var(--accent); }
+.szwhy p { margin: 6px 0 0; }
 .presets { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { font: inherit; font-size: .88rem; padding: 6px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
 .chip:hover { border-color: var(--accent); }
@@ -659,6 +669,11 @@ h1,h2,h3{break-after:avoid}
     <div class="eyebrow">Der Staat</div>
     <h2>Rechnet sich das?</h2>
     <p class="lead">Sieben Steuern fallen weg, neue Leistungen kommen dazu. Dafür gibt es die Steuer auf das, was ins Private fließt, und den Staatsanteil an Erbschaften. Dreh an den Stellschrauben und sieh, ob die Rechnung aufgeht. Die Änderungen wirken auch oben auf deinen Haushalt.</p>
+    <div class="panel szen" id="szenWrap">
+      <h3>Annahmen: Wie sicher ist die Rechnung?</h3>
+      <p class="note">Wachstum, Zuwanderung, Zinsen, Sparen: Vieles weiß heute niemand genau. Jede dieser Annahmen hat einen wahrscheinlichen Wert und eine Spanne von ungünstig bis günstig. Stelle alle auf einmal um oder jede einzeln; die Ergebnisse unten rechnen sofort mit.</p>
+      <div id="szenBox"></div>
+    </div>
     <div class="calc">
       <div class="panel knobs" id="knobs"></div>
       <div class="panel">
@@ -1360,6 +1375,16 @@ function aufkommen(mitMiete) { // Ausgabensteuer über die Konsumverteilung, Mrd
   return s / Z.length * A.Erw * 1e6 / 1e9;
 }
 
+// Ausgabensteuer der oberen 10 % (für das Ausweichen, Annahme Nr. 15); Z ist aufsteigend sortiert
+function aufkommenOben(mitMiete) {
+  const avg = (A.Konsum - A.Miete - (A.FISIM || 0) + (mitMiete ? A.Nutzwert : 0) + A.KonsMehr) * 1e9 / (A.Erw * 1e6);
+  const exm = A.GFB + A.Kinder * (A.KIDA + 12 * A.KIDM) / A.Erw;
+  const mu = Math.log(avg) - A.Sigma * A.Sigma / 2;
+  let s = 0;
+  for (let i = Math.floor(Z.length * 0.9); i < Z.length; i++) s += tarifG(Math.exp(mu + A.Sigma * Z[i]) - exm);
+  return s / Z.length * A.Erw * 1e6 / 1e9;
+}
+
 function stufe4(mitMiete) { // Mehreinnahmen der Stufe 4, Mrd. € (Paket 6: dauerhaft)
   const avg = (A.Konsum - A.Miete - (A.FISIM || 0) + (mitMiete ? A.Nutzwert : 0) + A.KonsMehr) * 1e9 / (A.Erw * 1e6);
   const exm = A.GFB + A.Kinder * (A.KIDA + 12 * A.KIDM) / A.Erw, mu = Math.log(avg) - A.Sigma * A.Sigma / 2;
@@ -1507,6 +1532,7 @@ function gesamt() {
   const einnahmen = [
     ["Steuer auf das, was ins Private fließt", ausg0, ausg0],
     ["Dieselbe Steuer auf den Mietwert der eigenen Wohnung", mietSt, mietSt],
+    ...(A.Ausweich ? (o => [[`Ausweichen: ${pct(A.Ausweich, 0)} der Ausgabensteuer der oberen 10 % gehen verloren (Annahme Nr. 15)`, -A.Ausweich * o, -A.Ausweich * o]])(aufkommenOben(A.Nutzwert > 0)) : []),
     ["Eigenes Haus frei, soweit beim Start bezahlt, bis Verkauf oder Erbgang", -ueb1.hf, 0],
     ["Mietwert: Steuer gestundet bis Verkauf oder Erbfall", -stund, 0],
     ["Staatsanteil an Erbschaften, über dem Familienfreibetrag von " + eur(A.FamFrei) + " je Nachlass (je weiteres Kind " + eur(A.FamFrei * A.FamKindQ) + " mehr, übrige Erben " + eur(A.AndFrei) + ")", erbS, erbL],
@@ -1722,18 +1748,20 @@ function kifoPb(c, y) {
 function prognose(sz, fall, saldoPfad, fixPkt = 0) {
   const P = A.Prognose, Q = P.Plan;
   const reform = fall !== "ohne", plan = fall === "plan" || fall === "regel", regel = fall === "regel";
-  const c = A.Sicherheit && !plan && sz === "zuversichtlich" ? { ...P[sz], ...P.zuversichtlichC7 } : P[sz];
-  const PB = [P.PBG, P.PBU, (P.PBG + P.PBU) / 2][c.grund - 1];
-  const Demo = [P.DemoG, P.DemoU, (P.DemoG + P.DemoU) / 2][c.grund - 1];
+  const c = sz === "regler" ? SZ_C : A.Sicherheit && !plan && sz === "zuversichtlich" ? { ...P[sz], ...P.zuversichtlichC7 } : P[sz];
+  // Gewicht zwischen ungünstigem (0) und günstigem Szenario (1) des Tragfähigkeitsberichts; grund 1 günstig, 2 ungünstig, 3 Mitte
+  const gw = c.gw ?? [1, 0, 0.5][c.grund - 1], dw = c.dw ?? gw;
+  const PB = P.PBU + (P.PBG - P.PBU) * gw;
+  const Demo = P.DemoU + (P.DemoG - P.DemoU) * dw;
   let d = A.Schuld, dprev = d, nprev = 0, g = P.TBZins0, b = Q.AusgBasis, dab = d; const out = [{ jahr: P.Start, v: d, mw: 0 }];
   for (let y = P.Start + 1; y <= P.Ende; y++) {
     // Version 35: mit Zukunftsplan Zins auf neue Schulden ab 2028 von 3,24 % in 7 Jahren auf 3 %
     const zNeu = plan && Q.ZinsR != null && y >= P.ReformStart ? Q.ZinsStart + (Q.ZinsR - Q.ZinsStart) * Math.min(1, (y - P.ReformStart) / Q.ZinsJahre) : interp(y, P.ZinsNeu);
     g = g + (zNeu - g) / P.TBLaufzeit;
     const wG = interp(y, P.WachsG), wU = interp(y, P.WachsU);
-    let gr = [wG, wU, (wG + wU) / 2][c.grund - 1];
+    let gr = wU + (wG - wU) * gw;
     if (reform && y >= P.ReformStart && y < P.ReformStart + P.WachsJahre) gr += c.wachs / P.WachsJahre;
-    if (c.ki && y >= P.KI.von && y < P.KI.von + P.KI.jahre) gr += P.KI.dg;
+    if (y >= P.KI.von && y < P.KI.von + P.KI.jahre) gr += c.kiDg ?? (c.ki ? P.KI.dg : 0);
     if (plan && y >= 2030 && y < 2045) gr += c.bild / 15;
     if (plan && y >= 2028 && y < 2048) gr += c.binnen / 20;
     if (plan) gr += kifoGr(c, y);   // Kitas und Forschung
@@ -2245,14 +2273,14 @@ function renderKnobs() {
   box.append(fs);
   box.insertBefore(sfs, box.children[2]);
   const b = document.createElement("button"); b.type = "button"; b.className = "btn"; b.textContent = "Werte aus dem Buch wiederherstellen";
-  b.onclick = () => { Object.assign(A, structuredClone(A0)); sicherheitAnwenden(); renderKnobs(); updateAll(); };
+  b.onclick = () => { Object.assign(A, structuredClone(A0)); sicherheitAnwenden(); szAnwenden(); renderKnobs(); updateAll(); };
   box.append(b);
 }
 function syncKnobLabels() {
   KNOBS.forEach(g => g.items.forEach(it => { $("o_" + it.k).textContent = it.f(A[it.k]); $("s_" + it.k).textContent = it.sub(A[it.k]); }));
 }
 
-let szenario = "mittel", demoAus = false;
+let szenario = "regler", demoAus = false;
 $("demoAus").addEventListener("change", e => { demoAus = e.target.checked; updateGesamt(); });
 function updateGesamt() {
   const g = gesamt(); const kr = kredit(g.saldoS, g.saldoL, 45, g.s4);
@@ -2289,7 +2317,7 @@ function updateGesamt() {
       fixAuf = Math.round(x * 1000) / 1000; pl = prognose(szenario, "regel", pf, fixAuf);
     }
     reihen = mit.map((r, i) => ({ jahr: r.jahr, quote: r.v, ohne: ohne[i].v, plan: pl[i].v, mw: pl[i].mw }));
-    if (szenario === "mittel") { const pz = planFall("zuversichtlich", pf), pv = planFall("vorsichtig", pf); const oz = prognose("zuversichtlich", "ohne", pf), ov = prognose("vorsichtig", "ohne", pf); reihen.forEach((r, i) => { r.pz = pz[i] ? pz[i].v : r.plan; r.pv = pv[i] ? pv[i].v : r.plan; r.oz = oz[i] ? oz[i].v : r.ohne; r.ov = ov[i] ? ov[i].v : r.ohne; }); }
+    if (szenario === "regler") { const B = szBand(), pz = B[2].plan, pv = B[-2].plan, oz = B[2].ohne, ov = B[-2].ohne; reihen.forEach((r, i) => { r.pz = pz[i] ? pz[i].v : r.plan; r.pv = pv[i] ? pv[i].v : r.plan; r.oz = oz[i] ? oz[i].v : r.ohne; r.ov = ov[i] ? ov[i].v : r.ohne; }); }
     if (demoAus) { // gleiche Rechnung ohne Reform, aber die Kosten für Rente, Pflege und Gesundheit bleiben auf dem Anteil am BIP von 2023
       const P = A.Prognose, dg = P.DemoG, du = P.DemoU; P.DemoG = 0; P.DemoU = 0;
       const od = prognose(szenario, "ohne", pf); P.DemoG = dg; P.DemoU = du;
@@ -2313,13 +2341,13 @@ function updateGesamt() {
     t += fixAuf > 0 ? tile("Mehrwertsteuer-Aufschlag", "fest " + fmt(fixAuf, 2) + " Punkte" + (fixAuf > 2.2 && fixAuf < 2.3 ? " (knapp 2,3)" : fixAuf > 4.5 && fixAuf < 5 ? " (knapp 5)" : fixAuf > 8.25 && fixAuf < 8.5 ? " (knapp 8,5)" : fixAuf > 7.5 && fixAuf < 8.5 ? " (rund 8)" : ""), `ab 2030 auf den Normalsatz (${fmt(19 + A.NormPkt + A.SichPkt, A.SichPkt ? 1 : 0)} auf ${fmt(19 + A.NormPkt + A.SichPkt + fixAuf, 1)} %), rund ${fmt(fixMrd(fixAuf), 1)} Mrd. € im Jahr; so sind die Schulden 2070 bei null`) : tile("Mehrwertsteuer-Aufschlag", mwMax.mw > 0.05 ? "bis " + fmt(mwMax.mw, 1) + " Punkte" : "keiner", mwMax.mw > 0.05 ? `über ${fmt(19 + A.NormPkt + A.SichPkt, A.SichPkt ? 1 : 0)} %, höchstens ${mwMax.jahr}; 2030: ${fmt(mw30, 1)} Punkte; in ${reihen.filter(r => r.mw > 0.05).length} Jahren` : "Die Schuldenregel braucht keinen Aufschlag.", mwMax.mw > 5 ? "bad" : "good");
   }
   $("tiles").innerHTML = t;
-  const SZ = { vorsichtig: "Vorsichtig", mittel: "Mittel", zuversichtlich: "Zuversichtlich", basis: "Einfache Rechnung (Kapitel 6)" };
+  const SZ = { regler: "Mit den Annahmen oben", basis: "Einfache Rechnung (Kapitel 6)" };
   $("szenarien").innerHTML = Object.entries(SZ).map(([k, n]) => `<button type="button" class="chip" data-sz="${k}" aria-pressed="${k === szenario}">${n}</button>`).join("");
   $("szenarien").querySelectorAll("button").forEach(b => b.onclick = () => { szenario = b.dataset.sz; updateGesamt(); });
   $("chartNote").textContent = szenario === "basis"
     ? `Die einfache Rechnung aus Kapitel 6: Der Überschuss tilgt die heutigen Schulden. ${kr.bilFrei ? "In der Bilanz ist der Staat " + (A.Prognose.ReformStart - 1 + kr.bilFrei) + " schuldenfrei: Dann sind die Anteile der Gemeinschaft an Erbschaften und Häusern mehr wert als die heutigen Schulden. " : ""}${kr.altFrei ? "In Geld getilgt sind die Schulden " + (A.Prognose.ReformStart - 1 + kr.altFrei) + "." : ""} Nicht eingerechnet sind die steigenden Kosten durch die Alterung und mehr Wachstum durch die Reform.`
-    : `Mit den steigenden Kosten für Rente, Pflege und Gesundheit nach dem Tragfähigkeitsbericht des Finanzministeriums (2024). ${{ vorsichtig: "Vorsichtig: ungünstige Entwicklung, wenig zusätzliches Wachstum durch die Reform.", mittel: "Mittel: zwischen günstiger und ungünstiger Entwicklung, mittleres Wachstum durch die Reform.", zuversichtlich: "Zuversichtlich: günstige Entwicklung, mehr Wachstum durch die Reform." }[szenario]} Die Reform beginnt 2028. Der Zukunftsplan aus Kapitel 6 setzt dazu: Rente für 20 Jahre, Gesundheit, eine schlankere Verwaltung, Bildung, Kitas und Forschung, weniger Finanzhilfen, gesunde Ernährung, EU-Binnenmarkt und eine Ausgabenregel, solange der Staat Schulden hat. Die Schuldenregel: ab 2035 steigen die Schulden nicht mehr gegenüber dem Vorjahr, ab 2040 liegen sie nie über 63 % der Wirtschaftsleistung. Für den Kredit der ersten Jahre braucht es eine eigene Übergangsregel im Grundgesetz. Reicht der Plan nicht, steigt der Normalsatz der Mehrwertsteuer um die nötigen Punkte. Die höheren Ausgaben für Verteidigung (1,5 % der Wirtschaftsleistung) sind eingerechnet, bezahlt aus Kürzungen und dem Überschuss der Reform. Nach der Tilgung senkt die Hälfte des Überschusses die Steuern, die andere Hälfte wächst im Zukunftsfonds; unter null hat der Staat Vermögen.${A.Sicherheit ? " Mit Sicherheitszuschlag: die Verteidigung bis 2027 auf Kredit, danach aus Einsparungen und dem Sicherheitszuschlag." : ""}`;
-  if (szenario === "mittel") $("chartNote").textContent += " Die Linien zeigen den wahrscheinlichsten Verlauf. Das helle Band dahinter zeigt die Spanne vom vorsichtigen bis zum zuversichtlichen Fall, hellrot ohne Reform, hellgrün mit Zukunftsplan.";
+    : `Mit den steigenden Kosten für Rente, Pflege und Gesundheit nach dem Tragfähigkeitsbericht des Finanzministeriums (2024). Gerechnet mit den Annahmen oben: ${szStand()}. Die Reform beginnt 2028. Der Zukunftsplan aus Kapitel 6 setzt dazu: Rente für 20 Jahre, Gesundheit, eine schlankere Verwaltung, Bildung, Kitas und Forschung, weniger Finanzhilfen, gesunde Ernährung, EU-Binnenmarkt und eine Ausgabenregel, solange der Staat Schulden hat. Die Schuldenregel: ab 2035 steigen die Schulden nicht mehr gegenüber dem Vorjahr, ab 2040 liegen sie nie über 63 % der Wirtschaftsleistung. Für den Kredit der ersten Jahre braucht es eine eigene Übergangsregel im Grundgesetz. Reicht der Plan nicht, steigt der Normalsatz der Mehrwertsteuer um die nötigen Punkte. Die höheren Ausgaben für Verteidigung (1,5 % der Wirtschaftsleistung) sind eingerechnet, bezahlt aus Kürzungen und dem Überschuss der Reform. Nach der Tilgung senkt die Hälfte des Überschusses die Steuern, die andere Hälfte wächst im Zukunftsfonds; unter null hat der Staat Vermögen.${A.Sicherheit ? " Mit Sicherheitszuschlag: die Verteidigung bis 2027 auf Kredit, danach aus Einsparungen und dem Sicherheitszuschlag." : ""}`;
+  if (szenario === "regler") $("chartNote").textContent += " Die Linien zeigen den Verlauf mit den eingestellten Annahmen. Das helle Band dahinter zeigt die Spanne vom ungünstigen bis zum günstigen Fall, wenn alle Annahmen auf einmal so kommen, hellrot ohne Reform, hellgrün mit Zukunftsplan.";
   drawChart(reihen);
   // Tabelle
   const row = (n, s, l, cls = "") => `<tr class="${cls}"><td>${n}</td><td>${mrd(s)}</td><td>${mrd(l)}</td></tr>`;
@@ -2345,6 +2373,20 @@ function planFall(sz, pf) {
     pl = prognose(sz, "regel", pf, Math.round(x * 1000) / 1000);
   }
   return pl;
+}
+// Saldo-Pfad für die Prognose, wie in updateGesamt (mit Sicherheitsbeitrag ohne Verteidigung und Beitrag)
+function szPf(kr) {
+  if (!A.Sicherheit) return kr.rows.map(r => r.saldo);
+  const sic = { Verteidigung: A.Verteidigung, SubvAbbau: A.SubvAbbau, SichPkt: A.SichPkt, Sicherheit: A.Sicherheit };
+  Object.assign(A, { Verteidigung: 0, SubvAbbau: 0, SichPkt: 0, Sicherheit: 0 });
+  const gB = gesamt(), pf = kredit(gB.saldoS, gB.saldoL, 45, gB.s4).rows.map(r => r.saldo);
+  Object.assign(A, sic); return pf;
+}
+// Band: alle Annahmen ungünstig (−2) und alle günstig (+2)
+function szBand() {
+  const pos0 = { ...SZ_POS }, b0 = szBuch, res = {};
+  for (const s of [-2, 2]) { szAlle(s); szAnwenden(); const g = gesamt(), kr = kredit(g.saldoS, g.saldoL, 45, g.s4), pf = szPf(kr); res[s] = { plan: planFall("regler", pf), ohne: prognose("regler", "ohne", pf) }; }
+  Object.assign(SZ_POS, pos0); szBuch = b0; szAnwenden(); gesamt(); return res;
 }
 let chartRows = null;
 addEventListener("resize", () => { if (chartRows) drawChart(chartRows); });
@@ -2578,7 +2620,222 @@ $("moreBox").addEventListener("toggle", postHeight);
 document.querySelectorAll("details").forEach(d => d.addEventListener("toggle", postHeight));
 
 function sicherheitAnwenden() { if (A.Sicherheit) { const W = A.SicherheitWerte; Object.assign(A, { Verteidigung: W.Verteidigung, SubvAbbau: W.SubvAbbau, SichPkt: W.SichPkt, GSMwStJ: W.GSMwStJ, Grenze1: W.Grenze1, Grenze2: W.Grenze2 }); } }
+/* ---------- Annahmen: ungünstig, wahrscheinlich, günstig (Regler −2 … +2) ---------- */
+// Jede unsichere Annahme hat drei Werte: ungünstig (−2), wahrscheinlich (0), günstig (+2); ±1 liegt genau dazwischen.
+// Günstig heißt immer günstig für das Ergebnis (Staatskasse und Wohlstand). buch = der Wert, mit dem das Buch bisher rechnet.
+const KI_ANTEIL = [0.0050678761785646945, 0.015204, 0.030408257071388167];   // KI-Anteil in Nr. 4 (Anhang C5, mit dem Carnegie-Effekt), zählt nicht doppelt, wenn der KI-Schub läuft
+const SZ_C = {};      // Werte für die Prognose (prognose("regler", …))
+const SZEN = [
+  { g: "A", nr: 1, k: "bev", lbl: "Bevölkerung und Arbeitsmarkt: Geburten, Zuwanderung, Erwerbstätigkeit", w: [0, 0.5, 1], buch: 0.5,
+    f: v => v <= 0.001 ? "ungünstiges Szenario des Ministeriums" : v >= 0.999 ? "günstiges Szenario des Ministeriums" : Math.abs(v - 0.5) < 0.001 ? "Mitte der beiden Szenarien" : v < 0.5 ? "zwischen Mitte und ungünstig" : "zwischen Mitte und günstig",
+    set: v => { SZ_C.gw = v; },
+    why: "Das Finanzministerium rechnet im Tragfähigkeitsbericht 2024 ein günstiges und ein ungünstiges Szenario, die sich bei Geburten, Zuwanderung, Erwerbstätigkeit und Produktivität unterscheiden. Ohne Reform liegen die Schulden 2070 dort bei 140 % und 365 % der Wirtschaftsleistung.",
+    q: [["Sechster Tragfähigkeitsbericht (BMF 2024)", "https://dserver.bundestag.de/btd/20/112/2011235.pdf"], ["FiFo-Bericht 33", "https://kups.ub.uni-koeln.de/73469/1/FiFo-Berichte_Nr_33_2024.pdf"], ["Destatis: Bevölkerungsvorausberechnung", "https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Bevoelkerungsvorausberechnung/annahmen_ergebnisse_16te_kBv.html"]] },
+  { g: "A", nr: 2, k: "alter", lbl: "Mehrkosten des Alterns bis 2070 (Rente, Pflege, Gesundheit)", w: [0.088, 0.0615, 0.035], buch: 0.0615,
+    f: v => "+" + pct(v, 1) + " der Wirtschaftsleistung",
+    set: v => { SZ_C.dw = (0.088 - v) / (0.088 - 0.035); },
+    why: "Spanne des Tragfähigkeitsberichts: 3,5 % im günstigen, 8,8 % im ungünstigen Szenario.",
+    q: [["Sechster Tragfähigkeitsbericht (BMF 2024)", "https://dserver.bundestag.de/btd/20/112/2011235.pdf"]] },
+  { g: "A", nr: 3, k: "zins", lbl: "Zins auf neue Bundesanleihen ab 2035", w: [0.05, 0.04, 0.03], buch: 0.04,
+    f: v => pct(v, 1) + " im Jahr",
+    set: v => { A.Zins = v; A.Prognose.ZinsNeu = [[2023, 0.027], [2035, v], [2070, v]]; },
+    why: "Heute rund 3,2 %. 3 bis 5 % ist die Spanne der letzten 20 Jahre ohne die Jahre mit Nullzins.",
+    q: [["Bundesbank: Renditen der Bundeswertpapiere", "https://www.bundesbank.de/resource/blob/964902/b6605dbe00daa0a816b46ad9b7ddb4cc/472B63F073F071307366337C94F8C870/2026-10-06-rendite-download.pdf"], ["Zeitreihe seit 2006", "https://kapitalmarktanzeiger.de/zeitreihen/bundesanleihe-10-jahre/"]] },
+  { g: "A", nr: 4, k: "anreize", lbl: "Mehr Wirtschaftsleistung durch die Anreize aus Kapitel 4 und 5, nach 20 Jahren", w: [0.013706719558586973, 0.032492565155950748, 0.07538457286086185], buch: 0.032492565155950748,
+    f: v => "+" + pct(v, 1),
+    set: (v, s) => { SZ_C.w4 = v; SZ_C.pbx = szWert([0.001, 0.0025, 0.005], s); SZ_C.kiAnteil = szWert(KI_ANTEIL, s); },
+    why: "Summe der Studienspannen in Anhang C5: Arbeit im Rentenalter, Bürgerjob, Weiterbildung, KI, Erben. Der bessere Primärsaldo läuft mit (0,1 / 0,25 / 0,5 % der Wirtschaftsleistung).",
+    q: [["Anhang C5", "../buch/anhang-c.html#c5"], ["OECD: KI in den G7", "https://www.suerf.org/publications/suerf-policy-notes-and-briefs/macroeconomic-productivity-gains-from-artificial-intelligence-in-g7-economies/"]] },
+  { g: "A", nr: 5, k: "ki", lbl: "KI-Schub, 2027 bis 2041", w: [0, 0.003, 0.008], buch: 0,
+    f: v => v < 1e-6 ? "kein Schub" : "+" + fmt(v * 100, 2) + " Punkte Wachstum im Jahr",
+    set: v => { SZ_C.kiDg = v; },
+    why: "IAB, BIBB und GWS rechnen mit 0,8 Punkten mehr Wachstum im Jahr, die OECD mit 0,2 bis 1,3, das IW erwartet kein Wunder. Wahrscheinlich: 0,3 Punkte. Der KI-Anteil aus Nr. 4 zählt dann nicht doppelt.",
+    q: [["IAB-Forschungsbericht 23/2025", "https://doku.iab.de/forschungsbericht/2025/fb2325.pdf#page=27"], ["OECD: KI in den G7", "https://www.suerf.org/publications/suerf-policy-notes-and-briefs/macroeconomic-productivity-gains-from-artificial-intelligence-in-g7-economies/"]] },
+  { g: "A", nr: 6, k: "weitere", lbl: "Weitere Vorschläge: steuerfreie Gewinne im Betrieb, weniger Bürokratie, Fachkräfte, Gründungen", w: [0, 0.057750 - 0.032492565155950748, 0.12695009498140045 - 0.07538457286086185 + 0.030408257071388167], buch: 0.057750 - 0.032492565155950748,
+    f: v => "+" + pct(v, 1),
+    set: v => { SZ_C.w6 = v; },
+    why: "Tabelle in Anhang C5, zusätzlich zu Nr. 4, nach Abzug der Überschneidungen. Ungünstig: Die Vorschläge bringen nichts zusätzlich.",
+    q: [["Anhang C5", "../buch/anhang-c.html#c5"], ["ifo: Kosten der Bürokratie", "https://www.ifo.de/pressemitteilung/2024-11-14/buerokratie-deutschland-kostet-jaehrlich-146-milliarden-euro"], ["OECD: Forschung und Produktivität", "https://www.oecd.org/science-and-technology/r-d-and-productivity-growth_652870318341"]] },
+  { g: "A", nr: 7, k: "plan", lbl: "Zukunftsplan: Bildung, Kitas, Forschung, gesunde Ernährung, EU-Binnenmarkt", w: [0, 1, 2], buch: 1,
+    f: v => ["schwache Wirkung", "mittlere Wirkung", "starke Wirkung"][Math.round(v)] || "dazwischen",
+    set: (v, s) => { for (const [k, w] of Object.entries({ bild: [0.0025, 0.005, 0.01], ern: [0.001, 0.002, 0.003], binnen: [0.01, 0.02, 0.035], kita: [0.001, 0.002, 0.003], forsch: [0.004, 0.007, 0.015] })) SZ_C[k] = szWert(w, s); },
+    why: "Die Werte der Hebel im Zukunftsplan (Anhang C9), je mit einer kleinen, mittleren und großen Wirkung.",
+    q: [["Anhang C9", "../buch/anhang-c.html#c9"], ["IWF zum EU-Binnenmarkt", "https://www.imf.org/en/publications/fandd/issues/2025/06/europes-integration-imperative-alfred-kammer"]] },
+  { g: "A", nr: 8, k: "wachstum", lbl: "Wachstum der Wirtschaft in Euro (nominal), Blatt Kredit", w: [0.02, 0.025, 0.03], buch: 0.025,
+    f: v => pct(v, 1) + " im Jahr",
+    set: v => { A.Wachstum = v; },
+    why: "2025 waren es 3,3 %. Inflationsziel 2 % plus reales Wachstum von 0 bis 1 %.",
+    q: [["Statistisches Bundesamt: Inlandsprodukt", "https://www.destatis.de/DE/Themen/Wirtschaft/Volkswirtschaftliche-Gesamtrechnungen-Inlandsprodukt/Tabellen/lrvgr02.html"]] },
+  { g: "A", nr: 24, k: "aufbruch", lbl: "Aufbruch und Synergien: mehr Investitionen aus höherer Ersparnis, Technik, Gründungen, Beteiligungen", w: [-0.01, 0, 0.03], buch: 0,
+    f: v => (v > 0 ? "+" : v < 0 ? "−" : "") + pct(Math.abs(v), 1) + " nach 20 Jahren",
+    set: v => { SZ_C.w24 = v; },
+    why: "Simulationen für die USA finden beim Umstieg auf eine Steuer auf den Konsum langfristig bis zu 9 % mehr Wirtschaftsleistung, vor allem durch mehr Kapital; ein Teil davon steckt schon in Nr. 6. Schwach belegt: Eine Aufbruchstimmung lässt sich nicht messen, deshalb ist die Mitte 0.",
+    q: [["Altig, Auerbach, Kotlikoff u. a. (AER 2001)", "https://econpapers.repec.org/RePEc:aea:aecrev:v:91:y:2001:i:3:p:574-595"]] },
+
+  { g: "B", nr: 9, k: "sparen", lbl: "Sparen nach Einkommen: welcher Teil eines Plus gespart wird", w: [1.6, 1, 0.6], buch: 1,
+    f: v => { const r = sparQuoten(v); return `${pct(r.mittel, 0)} gespart (unten ${pct(r.unten, 0)}, oben ${pct(r.oben, 0)})`; },
+    set: v => { for (const k of ["GS", "30", "60", "100", "Ueber", "Rent"]) A["VhSpar" + k] = Math.min(0.95, A0["VhSpar" + k] * v); },
+    why: "Wer mehr verdient, spart von zusätzlichem Geld mehr: im Modell 0 % in der Grundsicherung bis 57 % bei hohen Einkommen, im Mittel rund ein Viertel. Studien finden im ersten Jahr im Mittel gut die Hälfte ausgegeben; ungünstig sparen alle Gruppen 60 % mehr, günstig 40 % weniger.",
+    q: [["Fagereng, Holm, Natvik (2021)", "https://econpapers.repec.org/RePEc:aea:aejmac:v:13:y:2021:i:4:p:1-54"], ["Jappelli, Pistaferri (2014)", "https://econpapers.repec.org/RePEc:aea:aejmac:v:6:y:2014:i:4:p:107-36"], ["Dynan, Skinner, Zeldes: Do the Rich Save More? (2004)", "https://econpapers.repec.org/RePEc:ucp:jpolec:v:112:y:2004:i:2:p:397-444"], ["EVS 2018", "https://www.statistischebibliothek.de/mir/servlets/MCRFileNodeServlet/DEHeft_derivate_00057921/2152604189004_korr19112020.pdf"]] },
+  { g: "B", nr: 11, k: "minusSofort", lbl: "Wer weniger hat: Teil, um den er gleich weniger einkauft", w: [0.5, 0.25, 0.1], buch: 0.25,
+    f: v => pct(v, 0),
+    set: v => { A.VhMinusSofort = v; },
+    why: "Wer viel hat, ändert seinen Konsum wenig. 50 % rechnet Anhang C8.",
+    q: [["Jappelli, Pistaferri (2014)", "https://econpapers.repec.org/RePEc:aea:aejmac:v:6:y:2014:i:4:p:107-36"], ["Anhang C8", "../buch/anhang-c.html#c8"]] },
+  { g: "B", nr: 12, k: "minusSpaeter", lbl: "Wer weniger hat: später weniger Konsum je fehlendem Euro Vermögen", w: [0.06, 0.04, 0], buch: 0.04,
+    f: v => pct(v, 0) + " im Jahr",
+    set: v => { A.VhMinusSpaeter = v; },
+    why: "Große Vermögen werden selten aufgebraucht; mit 0 % wird nur weniger vererbt (Anhang C8).",
+    q: [["Anhang C2 und C8", "../buch/anhang-c.html#c8"]] },
+  { g: "B", nr: 13, k: "konsum", lbl: "Konsum insgesamt nach der Umstellung", w: [-0.05, 0, 0.01], buch: 0,
+    f: v => (v > 0 ? "+" : v < 0 ? "−" : "") + pct(Math.abs(v), 0),
+    set: v => { A.Konsum = A0.Konsum * (1 + v); },
+    why: "Der empfindlichste Wert: 5 % weniger Konsum kostet im ersten Jahr rund 100 Mrd. €. Eine belastbare Studie für die Spanne fehlt noch.",
+    q: [["Anhang C8", "../buch/anhang-c.html#c8"]] },
+  { g: "B", nr: 14, k: "gini", lbl: "Wie ungleich der Konsum verteilt ist", w: [sigmaAusGini(0.28), A0.Sigma, sigmaAusGini(0.33)], buch: A0.Sigma,
+    f: v => "Gini " + fmt(2 * normCdf(v / Math.SQRT2) - 1, 2),
+    set: v => { A.Sigma = v; },
+    why: "Ungleicher heißt hier günstig, weil die Ausgabensteuer oben mehr bringt. Spanne wie in Anhang C8.",
+    q: [["EVS 2018", "https://www.statistischebibliothek.de/mir/servlets/MCRFileNodeServlet/DEHeft_derivate_00057921/2152604189004_korr19112020.pdf"], ["ifo Schnelldienst 2/2020", "https://www.ifo.de/DocDL/sd-2020-02-niehues-stockhausen-etal-ungleichheit-2020-02-12_0.pdf"]] },
+  { g: "B", nr: 15, k: "ausweich", lbl: "Ausweichen der Reichen: Konsum im Ausland, als Betriebsausgabe getarnt, Wegzug", w: [0.12, 0.05, 0.01], buch: 0,
+    f: v => pct(v, 0) + " der Ausgabensteuer der oberen 10 % gehen verloren",
+    set: v => { A.Ausweich = v; },
+    why: "Neu, das Buch rechnet bisher ohne. Ausweichen können vor allem die oberen 10 %, die einen großen Teil der Ausgabensteuer zahlen. Bei der Mehrwertsteuer gehen in Deutschland einige Prozent verloren; Wegzug wegen Steuern ist bei Millionären selten, bei Spitzenverdienern messbar. Grobe eigene Schätzung.",
+    q: [["EU-Kommission: VAT Gap Report 2024", "https://www.oxfordeconomics.com/resource/vat-gap-in-the-eu-2024-report/"], ["Kleven u. a.: Taxation and Migration (2020)", "https://www.aeaweb.org/doi/10.1257/jep.34.2.119"], ["Young u. a.: Millionaire Migration (2016)", "https://inequality.stanford.edu/node/7506"]] },
+
+  { g: "C", nr: 16, k: "erbvol", lbl: "Erbschaften und Schenkungen im Jahr", w: [300, 350, 400], buch: 350,
+    f: v => fmt(v) + " Mrd. €",
+    set: v => { A.ErbVol = v; },
+    why: "Studienspanne des DIW: 300 bis 400 Mrd. € im Jahr.",
+    q: [["DIW: bis zu 400 Mrd. € im Jahr", "https://www.diw.de/de/diw_01.c.560993.de/in_deutschland_werden_zwischen_2012_und_2027_bis_zu_400__mil___d_vererbt_werden__gut_ein_viertel_mehr_als_bisher_angenommen.html"], ["DIW Wochenbericht 5/2021", "https://www.diw.de/de/diw_01.c.809832.de/publikationen/wochenberichte/2021_05_1/haelfte_aller_erbschaften_und_schenkungen_geht_an_die_reichsten_zehn_prozent_aller_beguenstigten.html"]] },
+  { g: "C", nr: 17, k: "real", lbl: "Teil des Staatsanteils an Erbschaften, der langfristig im Jahr in der Kasse ankommt", w: [0.25, 0.5, 0.75], buch: 0.5,
+    f: v => pct(v, 0),
+    set: v => { A.RealLang = v; },
+    why: "Der Rest bleibt in Betrieben und Anlagen als Anteil der Gemeinschaft. 25 % rechnet Anhang C8.",
+    q: [["Anhang C2 und C8", "../buch/anhang-c.html#c8"]] },
+  { g: "C", nr: 18, k: "fonds", lbl: "Ertrag des Zukunftsfonds nach Inflation", w: [0.01, 0.03, 0.045], buch: 0.03,
+    f: v => pct(v, 1) + " im Jahr",
+    set: v => { A.Prognose.Plan.Rendite = (1 + v) * (1 + A.Prognose.Infl) - 1; },
+    why: "Spanne breit gestreuter Aktien über lange Zeiträume, nach Inflation.",
+    q: [["DAI: DAX-Rendite-Dreieck", "https://www.dai.de/fileadmin/user_upload/251231_DAX-Rendite-Dreieck_50_Jahre_Web.pdf"]] },
+  { g: "C", nr: 19, k: "haus", lbl: "Wertzuwachs der Häuser (Anteil der Gemeinschaft)", w: [0.015, 0.025, 0.035], buch: 0.015,
+    f: v => pct(v, 1) + " im Jahr",
+    set: v => { A.AntWert = v; },
+    why: "2010 bis 2025 gut 4 % im Jahr. Die Annahme wirkt in zwei Richtungen: günstig für den Staat, ungünstig für den Eigentümer, dessen Anteil bei einem Einbau teurer abzulösen ist. Der Regler folgt der Staatskasse.",
+    q: [["Anhang C10", "../buch/anhang-c.html#ann-AntWert"]] },
+
+  { g: "D", nr: 20, k: "verw", lbl: "Einsparungen in der Verwaltung", w: [0.5, 1, 1.2], buch: 1,
+    f: v => v === 1 ? "wie im Buch" : pct(v, 0) + " davon",
+    set: v => { A.VerwZiel = A0.VerwZiel * v; },
+    why: "Halb so viel rechnet Anhang C8.",
+    q: [["ifo: Kosten der Bürokratie", "https://www.ifo.de/pressemitteilung/2024-11-14/buerokratie-deutschland-kostet-jaehrlich-146-milliarden-euro"], ["Anhang C8", "../buch/anhang-c.html#c8"]] },
+  { g: "D", nr: 21, k: "rente", lbl: "Kosten von Rente und Pflege aus der Steuer", w: [1.1, 1, 0.95], buch: 1,
+    f: v => v === 1 ? "wie im Buch" : (v > 1 ? "+" : "−") + pct(Math.abs(v - 1), 0),
+    set: v => { A.RVPVKost = A0.RVPVKost * v; },
+    why: "10 % mehr rechnet Anhang C8.",
+    q: [["Anhang C8", "../buch/anhang-c.html#c8"]] },
+  { g: "D", nr: 22, k: "avk", lbl: "Kosten des Altvermögenskontos", w: [2, 1, 0.8], buch: 1,
+    f: v => v === 1 ? "wie im Buch" : fmt(v, 1) + "-fach",
+    set: v => { A.AltUeb = A0.AltUeb * v; if (A0.AVKGrenzeF != null) A.AVKGrenzeF = A0.AVKGrenzeF * v; },
+    why: "Doppelt so viel rechnet Anhang C8.",
+    q: [["Anhang C8", "../buch/anhang-c.html#c8"]] },
+  { g: "D", nr: 23, k: "zinsalt", lbl: "Zins auf die alten Staatsschulden", w: [0.04, 0.025, 0.02], buch: 0.025,
+    f: v => pct(v, 1) + " im Jahr",
+    set: v => { A.ZinsAlt = v; },
+    why: "4 % rechnet Anhang C8.",
+    q: [["Bundesbank: Maastricht-Schuldenstand", "https://www.bundesbank.de/de/statistiken/oeffentliche-finanzen/maastricht-defizit-und-schuldenstand"]] },
+];
+const SZ_GRUPPEN = { A: "Bevölkerung, Wachstum und Zinsen", B: "Wie die Haushalte reagieren", C: "Erbe und Vermögen", D: "Staat und Verwaltung" };
+const SZ_STUFE = { "-2": "ungünstig", "-1": "eher ungünstig", "0": "wahrscheinlich", "1": "eher günstig", "2": "günstig" };
+let SZ_POS = Object.fromEntries(SZEN.map(r => [r.k, 0])), szBuch = false;
+
+function szWert(w, s) { const [lo, mid, hi] = w; return s < 0 ? mid + (lo - mid) * (-s / 2) : mid + (hi - mid) * (s / 2); }
+function sigmaAusGini(G) { return Math.SQRT2 * normsinv((G + 1) / 2); }
+function sparQuoten(f) {
+  const g = ["GS", "30", "60", "100", "Ueber", "Rent"], q = k => Math.min(0.95, A0["VhSpar" + k] * f);
+  return { unten: q("GS"), oben: q("Ueber"), mittel: g.reduce((a, k) => a + q(k) * A0["VhGew" + k], 0) / g.reduce((a, k) => a + A0["VhGew" + k], 0) };
+}
+function szAnwenden() {
+  for (const r of SZEN) { const s = SZ_POS[r.k]; r.set(szBuch ? r.buch : szWert(r.w, s), szBuch ? null : s); }
+  if (szBuch) { SZ_C.pbx = 0.0025; SZ_C.kiAnteil = KI_ANTEIL[1]; for (const [k, v] of Object.entries({ bild: 0.005, ern: 0.002, binnen: 0.02, kita: 0.002, forsch: 0.007 })) SZ_C[k] = v; }
+  // Wachstum durch die Reform: Anreize + weitere Vorschläge + Aufbruch, ohne den KI-Anteil, wenn der KI-Schub eigens zählt
+  SZ_C.wachs = SZ_C.w4 + SZ_C.w6 + SZ_C.w24 - SZ_C.kiAnteil * Math.min(1, SZ_C.kiDg / A.Prognose.KI.dg);
+}
+// Gesamtschalter: alle Regler auf eine Stufe
+function szAlle(s) { szBuch = false; for (const r of SZEN) SZ_POS[r.k] = s; }
+function szStand() {
+  if (szBuch) return "Wie im Buch bisher";
+  const v = Object.values(SZ_POS), alle = v.every(x => x === v[0]);
+  return alle ? ({ "-2": "Ungünstiger Fall", "0": "Wahrscheinlicher Fall", "2": "Günstiger Fall" }[v[0]] || "Alle " + SZ_STUFE[v[0]]) : `Eigene Einstellung (${v.filter(x => x !== 0).length} Annahmen geändert)`;
+}
+function szUrl() {
+  try {
+    const p = new URLSearchParams(location.search), geaendert = SZEN.filter(r => SZ_POS[r.k] !== 0).map(r => r.k + ":" + SZ_POS[r.k]).join(",");
+    if (szBuch) p.set("annahmen", "buch"); else if (geaendert) p.set("annahmen", geaendert); else p.delete("annahmen");
+    const qs = p.toString(); history.replaceState(null, "", location.pathname + (qs ? "?" + qs : "") + location.hash);
+  } catch (e) {}
+}
+function szLesen() {
+  try {
+    const a = new URLSearchParams(location.search).get("annahmen"); if (!a) return;
+    if (a === "buch") { szBuch = true; return; }
+    for (const t of a.split(",")) { const [k, s] = t.split(":"); if (k in SZ_POS) SZ_POS[k] = clamp(Math.round(+s) || 0, -2, 2); }
+  } catch (e) {}
+}
+// Welche Annahmen bewegen das Ergebnis am meisten? Staatsschulden 2070 mit Zukunftsplan, je Annahme ungünstig gegen günstig
+function szWirkung() {
+  const pos0 = { ...SZ_POS }, buch0 = szBuch, ziel = () => { szAnwenden(); abgeleitet(); const g = gesamt(), kr = kredit(g.saldoS, g.saldoL, 45, g.s4); return prognose("regler", "plan", kr.rows.map(r => r.saldo)).at(-1).v; };
+  szBuch = false; const out = [];
+  for (const r of SZEN) { SZ_POS[r.k] = -2; const lo = ziel(); SZ_POS[r.k] = 2; const hi = ziel(); SZ_POS[r.k] = pos0[r.k]; out.push({ r, d: lo - hi }); }
+  Object.assign(SZ_POS, pos0); szBuch = buch0; szAnwenden(); abgeleitet();
+  return out.sort((a, b) => b.d - a.d);
+}
+function szRender() {
+  const box = $("szenBox"); if (!box) return;
+  const knopf = (s, n) => `<button type="button" class="chip" data-alle="${s}" aria-pressed="${!szBuch && Object.values(SZ_POS).every(x => x === s)}">${n}</button>`;
+  let h = `<div class="presets" role="group" aria-label="Alle Annahmen einstellen">${knopf(-2, "Ungünstig")}${knopf(0, "Wahrscheinlich")}${knopf(2, "Günstig")}<button type="button" class="chip" data-buch="1" aria-pressed="${szBuch}">Wie im Buch bisher</button></div>`;
+  h += `<p class="note" id="szStand"></p>`;
+  h += `<details class="more" id="szWirkBox"><summary>Welche Annahmen am meisten bewegen</summary><p class="note" id="szWirk">wird gerechnet …</p></details>`;
+  for (const [g, titel] of Object.entries(SZ_GRUPPEN)) {
+    h += `<details class="more szgrp"><summary>${titel}</summary>`;
+    for (const r of SZEN.filter(x => x.g === g)) {
+      h += `<div class="slider szr"><div class="row"><label for="sz_${r.k}">${r.nr}. ${r.lbl}</label><output id="szo_${r.k}"></output></div>`
+        + `<input type="range" id="sz_${r.k}" min="-2" max="2" step="1" value="${SZ_POS[r.k]}" aria-valuetext="${SZ_STUFE[SZ_POS[r.k]]}">`
+        + `<div class="szskala"><span>ungünstig</span><span>wahrscheinlich</span><span>günstig</span></div>`
+        + `<details class="szwhy"><summary>Warum diese Spanne?</summary><p class="note">Ungünstig: ${r.f(r.w[0])} · wahrscheinlich: ${r.f(r.w[1])} · günstig: ${r.f(r.w[2])}. Das Buch rechnete bisher mit ${r.f(r.buch)}.</p><p class="note">${r.why}</p><p class="note">Quellen: ${r.q.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(" · ")}</p></details></div>`;
+    }
+    h += `</details>`;
+  }
+  h += `<p class="note">Ungünstig und günstig sind die Ränder der Spanne, in der das Ergebnis etwa in 9 von 10 Fällen liegt. Günstig heißt immer günstig für die Staatskasse und den Wohlstand. Die Rechnung für deinen Haushalt oben hängt an keiner dieser Annahmen.</p>`;
+  box.innerHTML = h;
+  box.querySelectorAll("[data-alle]").forEach(b => b.onclick = () => { szAlle(+b.dataset.alle); szNeu(); });
+  box.querySelector("[data-buch]").onclick = () => { szBuch = true; szNeu(); };
+  for (const r of SZEN) $("sz_" + r.k).oninput = e => { szBuch = false; SZ_POS[r.k] = +e.target.value; szNeu(false); };
+  $("szWirkBox").addEventListener("toggle", e => { if (e.target.open) szWirkZeigen(); postHeight(); });
+  box.querySelectorAll("details").forEach(d => d.addEventListener("toggle", postHeight));
+  szLabels();
+}
+function szLabels() {
+  for (const r of SZEN) {
+    const v = szBuch ? r.buch : szWert(r.w, SZ_POS[r.k]), el = $("sz_" + r.k);
+    $("szo_" + r.k).textContent = r.f(v); el.value = SZ_POS[r.k]; el.setAttribute("aria-valuetext", SZ_STUFE[SZ_POS[r.k]]); el.disabled = false;
+  }
+  $("szStand").textContent = "Gerechnet wird: " + szStand() + (szBuch ? ". Das ist die Rechnung des Buchs vor der Umstellung auf die wahrscheinlichsten Werte." : Object.values(SZ_POS).every(x => x === -2) || Object.values(SZ_POS).every(x => x === 2) ? ". Alles auf einmal ungünstig oder günstig ist sehr unwahrscheinlich, denn die Annahmen hängen kaum voneinander ab." : ".");
+}
+function szWirkZeigen() {
+  const w = szWirkung().slice(0, 5);
+  $("szWirk").innerHTML = "Staatsschulden 2070 mit Zukunftsplan, wenn nur diese eine Annahme von ungünstig auf günstig wechselt: " + w.map(x => `${x.r.nr}. ${x.r.lbl}: ${fmt(x.d * 100)} Prozentpunkte`).join("; ") + ".";
+}
+function szNeu(neuZeichnen = true) {
+  szAnwenden(); szUrl();
+  if (neuZeichnen) szRender(); else szLabels();
+  if ($("szWirkBox")?.open) szWirkZeigen();
+  updateAll();
+}
+function szInit() { szLesen(); szAnwenden(); szRender(); }
+
 sicherheitAnwenden();
+szInit();
 setForm(BEISPIELE[DEFAULT_BEISPIEL].v);
 renderPresets();
 renderKnobs();
