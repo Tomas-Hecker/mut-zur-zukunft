@@ -401,7 +401,8 @@ function rechne(v) {
     const eSt = kj > befreitBis ? v.eSteuerNach : 0;
     const spritCO2 = v.iVerb / 100 * KG_L[v.iKraft || "benzin"] / 1000 * (v.reform ? co2Reform(kj) - co2Preis(2026) : co2Preis(kj) - co2Preis(v.kaufjahr)) * (v.reform ? 1.5 : 1.19);   // €/km mehr als heute
     const thg = kj <= v.thgBis ? v.thg : 0;
-    const mitK = v.reform && !v.ohneKma, kI = mitK ? kmAbgabe(v, kj, "i") + (v.iKraft === "diesel" && kj >= KMA.dieselAb ? KMA.dieselMehr * 1.5 * v.iVerb / 100 * v.km : 0) : 0, kE = mitK ? kmAbgabe(v, kj, "e") : 0;
+    const mitK = v.reform && !v.ohneKma, dP = v.reform && v.iKraft === "diesel" && kj >= KMA.dieselAb ? KMA.dieselMehr * 1.5 * v.iVerb / 100 * v.km : 0,
+      kI = (mitK ? kmAbgabe(v, kj, "i") : 0) + dP, kE = mitK ? kmAbgabe(v, kj, "e") : 0;
     i += v.iSteuer + v.iVers + v.iWart + v.km * (iEnergie + spritCO2) + kI;
     e += eSt + v.eVers + v.eWart + v.km * eEnergie + (v.eGrund || 0) - thg + kE;
     jahre.push({ j: n, i, e, eSt, sC: v.km * spritCO2, thg, kI, kE });
@@ -416,7 +417,7 @@ function rechne(v) {
     "Steigender CO₂-Preis im Sprit": [sCSum, 0],
     "THG-Prämie": [0, -thgSum],
   };
-  if (v.reform && !v.ohneKma) teile["Kilometerabgabe (Vorschlag)"] = [jahre.slice(1).reduce((a, r) => a + r.kI, 0), jahre.slice(1).reduce((a, r) => a + r.kE, 0)];
+  if (v.reform) teile[v.ohneKma ? "Ende des Dieselprivilegs" : "Kilometerabgabe (Vorschlag)"] = [jahre.slice(1).reduce((a, r) => a + r.kI, 0), jahre.slice(1).reduce((a, r) => a + r.kE, 0)];
   // Break-even: erster Zeitpunkt, an dem die aufsummierten Kosten des E-Autos unter denen des Verbrenners liegen
   let be = null;
   if (jahre[0].e <= jahre[0].i) be = 0;
