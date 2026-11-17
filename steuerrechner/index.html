@@ -1375,16 +1375,6 @@ function aufkommen(mitMiete) { // Ausgabensteuer über die Konsumverteilung, Mrd
   return s / Z.length * A.Erw * 1e6 / 1e9;
 }
 
-// Ausgabensteuer der oberen 10 % (für das Ausweichen, Annahme Nr. 15); Z ist aufsteigend sortiert
-function aufkommenOben(mitMiete) {
-  const avg = (A.Konsum - A.Miete - (A.FISIM || 0) + (mitMiete ? A.Nutzwert : 0) + A.KonsMehr) * 1e9 / (A.Erw * 1e6);
-  const exm = A.GFB + A.Kinder * (A.KIDA + 12 * A.KIDM) / A.Erw;
-  const mu = Math.log(avg) - A.Sigma * A.Sigma / 2;
-  let s = 0;
-  for (let i = Math.floor(Z.length * 0.9); i < Z.length; i++) s += tarifG(Math.exp(mu + A.Sigma * Z[i]) - exm);
-  return s / Z.length * A.Erw * 1e6 / 1e9;
-}
-
 function stufe4(mitMiete) { // Mehreinnahmen der Stufe 4, Mrd. € (Paket 6: dauerhaft)
   const avg = (A.Konsum - A.Miete - (A.FISIM || 0) + (mitMiete ? A.Nutzwert : 0) + A.KonsMehr) * 1e9 / (A.Erw * 1e6);
   const exm = A.GFB + A.Kinder * (A.KIDA + 12 * A.KIDM) / A.Erw, mu = Math.log(avg) - A.Sigma * A.Sigma / 2;
@@ -1532,7 +1522,7 @@ function gesamt() {
   const einnahmen = [
     ["Steuer auf das, was ins Private fließt", ausg0, ausg0],
     ["Dieselbe Steuer auf den Mietwert der eigenen Wohnung", mietSt, mietSt],
-    ...(A.Ausweich ? (o => [[`Ausweichen: ${pct(A.Ausweich, 0)} der Ausgabensteuer der oberen 10 % gehen verloren (Annahme Nr. 15)`, -A.Ausweich * o, -A.Ausweich * o]])(aufkommenOben(A.Nutzwert > 0)) : []),
+    ...(A.AusweichE ? [[`Ausweichen: Wer über 5.000 € im Monat ausgibt, kauft zum Teil weniger, anderswo oder später (Elastizität ${fmt(A.AusweichE, 2)}, wie im Buch ab Version 38; Annahme Nr. 15)`, -61.4 * A.AusweichE / 0.25, -65 * A.AusweichE / 0.25]] : []),
     ["Eigenes Haus frei, soweit beim Start bezahlt, bis Verkauf oder Erbgang", -ueb1.hf, 0],
     ["Mietwert: Steuer gestundet bis Verkauf oder Erbfall", -stund, 0],
     ["Staatsanteil an Erbschaften, über dem Familienfreibetrag von " + eur(A.FamFrei) + " je Nachlass (je weiteres Kind " + eur(A.FamFrei * A.FamKindQ) + " mehr, übrige Erben " + eur(A.AndFrei) + ")", erbS, erbL],
@@ -2697,11 +2687,11 @@ const SZEN = [
     set: v => { A.Sigma = v; },
     why: "Ungleicher heißt hier günstig, weil die Ausgabensteuer oben mehr bringt. Spanne wie in Anhang C8.",
     q: [["EVS 2018", "https://www.statistischebibliothek.de/mir/servlets/MCRFileNodeServlet/DEHeft_derivate_00057921/2152604189004_korr19112020.pdf"], ["ifo Schnelldienst 2/2020", "https://www.ifo.de/DocDL/sd-2020-02-niehues-stockhausen-etal-ungleichheit-2020-02-12_0.pdf"]] },
-  { g: "B", nr: 15, k: "ausweich", lbl: "Ausweichen der Reichen: Konsum im Ausland, als Betriebsausgabe getarnt, Wegzug", w: [0.12, 0.05, 0.01], buch: 0,
-    f: v => pct(v, 0) + " der Ausgabensteuer der oberen 10 % gehen verloren",
-    set: v => { A.Ausweich = v; },
-    why: "Neu, das Buch rechnet bisher ohne. Ausweichen können vor allem die oberen 10 %, die einen großen Teil der Ausgabensteuer zahlen. Bei der Mehrwertsteuer gehen in Deutschland einige Prozent verloren; Wegzug wegen Steuern ist bei Millionären selten, bei Spitzenverdienern messbar. Grobe eigene Schätzung.",
-    q: [["EU-Kommission: VAT Gap Report 2024", "https://www.oxfordeconomics.com/resource/vat-gap-in-the-eu-2024-report/"], ["Kleven u. a.: Taxation and Migration (2020)", "https://www.aeaweb.org/doi/10.1257/jep.34.2.119"], ["Young u. a.: Millionaire Migration (2016)", "https://inequality.stanford.edu/node/7506"]] },
+  { g: "B", nr: 15, k: "ausweich", lbl: "Ausweichen der Reichen: wer über 5.000 € im Monat ausgibt, kauft weniger, anderswo oder später", w: [0.4, 0.25, 0.1], buch: 0,
+    f: v => v < 1e-6 ? "nicht eingerechnet" : "Elastizität " + fmt(v, 2) + ", rund " + fmt(61.4 * v / 0.25) + " Mrd. € am Start",
+    set: v => { A.AusweichE = v; },
+    why: "Das Buch rechnet seit Version 38 mit einer Elastizität von 0,25: Am Start fehlen dadurch rund 61 Mrd. €, 2070 rund 65 Mrd. €. Studien zur Reaktion hoher Einkommen auf Steuern finden meist 0,1 bis 0,4. Wegzug wegen Steuern ist bei Millionären selten.",
+    q: [["Saez, Slemrod, Giertz: The Elasticity of Taxable Income (2012)", "https://econpapers.repec.org/RePEc:aea:jeclit:v:50:y:2012:i:1:p:3-50"], ["Kleven u. a.: Taxation and Migration (2020)", "https://www.aeaweb.org/doi/10.1257/jep.34.2.119"], ["Young u. a.: Millionaire Migration (2016)", "https://inequality.stanford.edu/node/7506"]] },
 
   { g: "C", nr: 16, k: "erbvol", lbl: "Erbschaften und Schenkungen im Jahr", w: [300, 350, 400], buch: 350,
     f: v => fmt(v) + " Mrd. €",
