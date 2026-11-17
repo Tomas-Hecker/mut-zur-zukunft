@@ -1752,6 +1752,7 @@ function prognose(sz, fall, saldoPfad, fixPkt = 0) {
     let gr = wU + (wG - wU) * gw;
     if (reform && y >= P.ReformStart && y < P.ReformStart + P.WachsJahre) gr += c.wachs / P.WachsJahre;
     if (y >= P.KI.von && y < P.KI.von + P.KI.jahre) gr += c.kiDg ?? (c.ki ? P.KI.dg : 0);
+    if (c.afDg && y >= 2030 && y < 2050) gr += c.afDg;   // autonomes Fahren, mit und ohne Reform
     if (plan && y >= 2030 && y < 2045) gr += c.bild / 15;
     if (plan && y >= 2028 && y < 2048) gr += c.binnen / 20;
     if (plan) gr += kifoGr(c, y);   // Kitas und Forschung
@@ -2646,6 +2647,11 @@ const SZEN = [
     set: v => { SZ_C.w25 = v; },
     why: "Deutschland nutzt KI langsam: Beschäftigte verbringen nicht einmal ein Drittel so viel Arbeitszeit mit KI wie in den USA, und rund die Hälfte sagt, bessere Schulung würde sie zur Nutzung bringen. Mit Berufscoach und Lernguthaben kommt die Einführung schneller; das zählt nur im Reformfall. Die EZB rechnet bei schneller statt langsamer Einführung mit rund 0,15 Punkten mehr Wachstum im Jahr, über 15 Jahre rund 2 %. Ungünstig: 0,5 %, günstig: Deutschland holt zu den Ländern mit schneller Einführung auf, 5 %.",
     q: [["Anhang C5", "../buch/anhang-c.html#c5"], ["Fed St. Louis: KI-Nutzung Europa und USA (2026)", "https://www.stlouisfed.org/on-the-economy/2026/mar/mind-gap-ai-adoption-europe-us"], ["EZB-Blog: Was Beschäftigte berichten (2026)", "https://www.ecb.europa.eu/press/blog/date/2026/html/ecb.blog20260826~e1c1a89999.en.html"], ["Brynjolfsson u. a.: KI im Kundendienst", "https://www.nber.org/papers/w31161"], ["OECD: KI in den G7", "https://www.suerf.org/publications/suerf-policy-notes-and-briefs/macroeconomic-productivity-gains-from-artificial-intelligence-in-g7-economies/"]] },
+  { g: "A", nr: 26, k: "autofahr", lbl: "Autonomes Fahren, 2030 bis 2049, kommt auch ohne Reform, nach 20 Jahren", w: [0, 0.005, 0.01], buch: 0,
+    f: v => v < 1e-6 ? "kein Schub" : "+" + pct(v, 1),
+    set: v => { SZ_C.afDg = v / 20; },
+    why: "Fahrerlose Lkw, Busse und Taxis sparen Lohnkosten und Unfälle, Pendler gewinnen Zeit. Eine belastbare Studie für Deutschland gibt es noch nicht; eigene Schätzung: wahrscheinlich 0,5 % mehr Wirtschaftsleistung nach 20 Jahren. Günstig 1 %, weil ein Teil im günstigen KI-Schub (Nr. 5) schon steckt.",
+    q: [["Deutsche Bahn: Studie autonomes Fahren (2026)", "https://www.deutschebahn.com/resource/blob/13715340/75e27b85b32425f5bebd77b57c63e425/01-2026_Kurzfassung_Studie-Autonomes-Fahren_FINAL_neu01-data.pdf"], ["Bundesregierung: Strategie autonomes Fahren", "https://www.bmv.de/SharedDocs/DE/Publikationen/StV/die-zukunft-faehrt-autonom.pdf?__blob=publicationFile"]] },
   { g: "A", nr: 6, k: "weitere", lbl: "Weitere Vorschläge: steuerfreie Gewinne im Betrieb, weniger Bürokratie, Fachkräfte, Gründungen", w: [0, 0.057750 - 0.032492565155950748, 0.12695009498140045 - 0.07538457286086185 + 0.030408257071388167], buch: 0.057750 - 0.032492565155950748,
     f: v => "+" + pct(v, 1),
     set: v => { SZ_C.w6 = v; },
@@ -2719,10 +2725,10 @@ const SZEN = [
     why: "2010 bis 2025 gut 4 % im Jahr. Die Annahme wirkt in zwei Richtungen: günstig für den Staat, ungünstig für den Eigentümer, dessen Anteil bei einem Einbau teurer abzulösen ist. Der Regler folgt der Staatskasse.",
     q: [["Anhang C10", "../buch/anhang-c.html#ann-AntWert"]] },
 
-  { g: "D", nr: 20, k: "verw", lbl: "Einsparungen in der Verwaltung", w: [0.5, 1, 1.2], buch: 1,
-    f: v => v === 1 ? "wie im Buch" : pct(v, 0) + " davon",
-    set: v => { A.VerwZiel = A0.VerwZiel * v; },
-    why: "Halb so viel rechnet Anhang C8.",
+  { g: "D", nr: 20, k: "verw", lbl: "Einsparungen in der Verwaltung durch KI und Automatisierung", w: [15 / 36, 1, 76 / 36], buch: 1,
+    f: v => v === 1 ? "wie im Buch, rund 12 % weniger Stellen" : pct(v, 0) + " davon",
+    set: v => { A.VerwZiel = A0.VerwZiel * v; A.BeamtKI = A0.BeamtKI * v; },
+    why: "Recherche vom 17.11.2026: Von rund 5,4 Mio. Stellen im öffentlichen Dienst lassen sich mit KI und Automatisierung wahrscheinlich 12 % einsparen, netto nach den laufenden KI-Kosten rund 36 Mrd. € im Jahr, voll erreicht 2043. Ungünstig 5 % (15 Mrd. €), günstig 25 % (76 Mrd. €, voll 2040). Heute lösen KI-Agenten kurze Aufgaben am Computer schon besser als Menschen, lange Vorgänge aber erst zu einem Drittel.",
     q: [["ifo: Kosten der Bürokratie", "https://www.ifo.de/pressemitteilung/2024-11-14/buerokratie-deutschland-kostet-jaehrlich-146-milliarden-euro"], ["Anhang C8", "../buch/anhang-c.html#c8"]] },
   { g: "D", nr: 21, k: "rente", lbl: "Kosten von Rente und Pflege aus der Steuer", w: [1.1, 1, 0.95], buch: 1,
     f: v => v === 1 ? "wie im Buch" : (v > 1 ? "+" : "−") + pct(Math.abs(v - 1), 0),
