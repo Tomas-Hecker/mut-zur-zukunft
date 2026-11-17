@@ -95,7 +95,7 @@ def rechner_umbauen(ordner: str) -> None:
 
 
 FIRMA_MENUE = [("start", "index.html", "Start"), ("leistungen", "leistungen.html", "Leistungen"),
-               ("projekte", "projekte.html", "Projekte"), ("rechner", "rechner.html", "Rechner"),
+               ("projekte", "projekte.html", "Referenzen"), ("rechner", "rechner.html", "Rechner"),
                ("ueber-uns", "ueber-uns.html", "Über uns"), ("kontakt", "kontakt.html", "Kontakt")]
 
 
