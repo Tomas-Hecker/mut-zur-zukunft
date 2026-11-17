@@ -2636,16 +2636,16 @@ const SZEN = [
     set: (v, s) => { SZ_C.w4 = v; SZ_C.pbx = szWert([0.001, 0.0025, 0.005], s); },
     why: "Summe der Studienspannen in Anhang C5: Arbeit im Rentenalter, Bürgerjob, Weiterbildung, KI, Erben. Der bessere Primärsaldo läuft mit (0,1 / 0,25 / 0,5 % der Wirtschaftsleistung).",
     q: [["Anhang C5", "../buch/anhang-c.html#c5"], ["OECD: KI in den G7", "https://www.suerf.org/publications/suerf-policy-notes-and-briefs/macroeconomic-productivity-gains-from-artificial-intelligence-in-g7-economies/"]] },
-  { g: "A", nr: 5, k: "ki", lbl: "KI-Schub, 2027 bis 2041, kommt auch ohne Reform", w: [0, 0.003, 0.008], buch: 0,
+  { g: "A", nr: 5, k: "ki", lbl: "KI-Schub, 2027 bis 2041, kommt auch ohne Reform", w: [0.0005, 0.0035, 0.01], buch: 0,
     f: v => v < 1e-6 ? "kein Schub" : "+" + fmt(v * 100, 2) + " Punkte Wachstum im Jahr",
     set: v => { SZ_C.kiDg = v; },
-    why: "IAB, BIBB und GWS rechnen mit 0,8 Punkten mehr Wachstum im Jahr, die OECD mit 0,2 bis 1,3, das IW erwartet kein Wunder. Wahrscheinlich: 0,3 Punkte. Der Schub kommt mit und ohne Reform. Was die Reform an schnellerer Einführung dazubringt, steht in Nr. 25.",
-    q: [["IAB-Forschungsbericht 23/2025", "https://doku.iab.de/forschungsbericht/2025/fb2325.pdf#page=27"], ["OECD: KI in den G7", "https://www.suerf.org/publications/suerf-policy-notes-and-briefs/macroeconomic-productivity-gains-from-artificial-intelligence-in-g7-economies/"]] },
-  { g: "A", nr: 25, k: "kireform", lbl: "KI schneller in allen Betrieben, dank Berufscoach und KI-Lernguthaben (nur mit Reform), nach 20 Jahren", w: KI_ANTEIL, buch: KI_ANTEIL[1],
+    why: "Stand 2026: KI-Agenten lösen abgegrenzte Aufgaben am Computer schon besser als Menschen (86 % gegen 72 % im Test OSWorld), lange Aufgaben über eine Stunde aber erst zu 31 %. Die EZB rechnet für den Euroraum mit 0,2 bis 0,4 Punkten mehr Wachstum im Jahr, die OECD für Länder mit viel Büroarbeit mit 0,4 bis 1,3, IAB, BIBB und GWS für Deutschland mit 0,8. Acemoglu erwartet höchstens 0,07. Wahrscheinlich: 0,35 Punkte. Der Schub kommt mit und ohne Reform; was die Reform an schnellerer Einführung dazubringt, steht in Nr. 25.",
+    q: [["IAB-Forschungsbericht 23/2025", "https://doku.iab.de/forschungsbericht/2025/fb2325.pdf#page=27"], ["EZB: KI und der Euroraum (2026)", "https://www.ecb.europa.eu/press/key/date/2026/html/ecb.sp260323_1~1e06784a89.en.html"], ["KI-Agenten 2026: OSWorld, Übersicht", "https://www.noxia.co.uk/field-notes/agents-beat-humans-and-still-finish-30-percent"], ["OECD: KI in den G7", "https://www.suerf.org/publications/suerf-policy-notes-and-briefs/macroeconomic-productivity-gains-from-artificial-intelligence-in-g7-economies/"]] },
+  { g: "A", nr: 25, k: "kireform", lbl: "KI schneller in allen Betrieben, dank Berufscoach und KI-Lernguthaben (nur mit Reform), nach 20 Jahren", w: [0.005, 0.02, 0.05], buch: KI_ANTEIL[1],
     f: v => "+" + pct(v, 1),
     set: v => { SZ_C.w25 = v; },
-    why: "Der KI-Schub aus Nr. 5 kommt auch ohne Reform. Mit Berufscoach und Lernguthaben können die Menschen KI früher und breiter nutzen; das zählt nur im Reformfall (Anhang C5). Läuft schon der volle KI-Schub von 0,8 Punkten, ist die Einführung bereits schnell und breit; dann zählt dieser Teil nicht noch einmal.",
-    q: [["Anhang C5", "../buch/anhang-c.html#c5"], ["Brynjolfsson u. a.: KI im Kundendienst", "https://www.nber.org/papers/w31161"], ["OECD: KI in den G7", "https://www.suerf.org/publications/suerf-policy-notes-and-briefs/macroeconomic-productivity-gains-from-artificial-intelligence-in-g7-economies/"]] },
+    why: "Deutschland nutzt KI langsam: Beschäftigte verbringen nicht einmal ein Drittel so viel Arbeitszeit mit KI wie in den USA, und rund die Hälfte sagt, bessere Schulung würde sie zur Nutzung bringen. Mit Berufscoach und Lernguthaben kommt die Einführung schneller; das zählt nur im Reformfall. Die EZB rechnet bei schneller statt langsamer Einführung mit rund 0,15 Punkten mehr Wachstum im Jahr, über 15 Jahre rund 2 %. Ungünstig: 0,5 %, günstig: Deutschland holt zu den Ländern mit schneller Einführung auf, 5 %.",
+    q: [["Anhang C5", "../buch/anhang-c.html#c5"], ["Fed St. Louis: KI-Nutzung Europa und USA (2026)", "https://www.stlouisfed.org/on-the-economy/2026/mar/mind-gap-ai-adoption-europe-us"], ["EZB-Blog: Was Beschäftigte berichten (2026)", "https://www.ecb.europa.eu/press/blog/date/2026/html/ecb.blog20260826~e1c1a89999.en.html"], ["Brynjolfsson u. a.: KI im Kundendienst", "https://www.nber.org/papers/w31161"], ["OECD: KI in den G7", "https://www.suerf.org/publications/suerf-policy-notes-and-briefs/macroeconomic-productivity-gains-from-artificial-intelligence-in-g7-economies/"]] },
   { g: "A", nr: 6, k: "weitere", lbl: "Weitere Vorschläge: steuerfreie Gewinne im Betrieb, weniger Bürokratie, Fachkräfte, Gründungen", w: [0, 0.057750 - 0.032492565155950748, 0.12695009498140045 - 0.07538457286086185 + 0.030408257071388167], buch: 0.057750 - 0.032492565155950748,
     f: v => "+" + pct(v, 1),
     set: v => { SZ_C.w6 = v; },
@@ -2754,8 +2754,8 @@ function szAnwenden() {
   for (const r of SZEN) { const s = SZ_POS[r.k]; r.set(szBuch ? r.buch : szWert(r.w, s), szBuch ? null : s); }
   if (szBuch) { SZ_C.pbx = 0.0025; for (const [k, v] of Object.entries({ bild: 0.005, ern: 0.002, binnen: 0.02, kita: 0.002, forsch: 0.007 })) SZ_C[k] = v; }
   // Wachstum durch die Reform: Anreize + weitere Vorschläge + Aufbruch + schnellere KI (Nr. 25). Der KI-Schub (Nr. 5) kommt auch ohne Reform als Sockel;
-  // die Beschleunigung durch die Reform zählt voll bis zum wahrscheinlichen Schub (0,3 Punkte) und läuft bis zum vollen Schub (0,8 Punkte) aus, weil die Einführung dann schon schnell ist
-  SZ_C.wachs = SZ_C.w4 + SZ_C.w6 + SZ_C.w24 + SZ_C.w25 * (1 - Math.max(0, Math.min(1, (SZ_C.kiDg - 0.003) / (A.Prognose.KI.dg - 0.003))));
+  // die schnellere Einführung durch die Reform (Nr. 25) zählt zusätzlich, nur im Reformfall
+  SZ_C.wachs = SZ_C.w4 + SZ_C.w6 + SZ_C.w24 + SZ_C.w25;
 }
 // Gesamtschalter: alle Regler auf eine Stufe
 function szAlle(s) {
