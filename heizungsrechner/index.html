@@ -349,6 +349,7 @@ h1,h2,h3{break-after:avoid}
 <script src="../wetter/ort.js"></script>
 <script src="../profil.js"></script>
 <script src="../methode.js"></script>
+<script src="../wirtschaft.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const fmt = (v, d = 0) => (+v).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -366,7 +367,7 @@ const V = {
 };
 const F = (k, lbl, u, step, sub, sel) => ({ k, lbl, u, step, sub, sel });
 const FELDER = {
-  haus: [F("waerme", "Wärme im Jahr", "kWh", 500, "Für Heizung und Warmwasser, ungefähr Gasverbrauch × 0,9; Einfamilienhaus meist 12.000 bis 25.000"), F("jahr", "Einbau im Jahr", "", 1), F("dauer", "Laufzeit", "Jahre", 1), F("steig", "Preissteigerung im Jahr", "%", 0.5, "für Gas, Öl und Strom, ohne CO₂-Preis"), F("zinsK", "Zins für einen Bankkredit", "%", 0.1, "Kauf und Dämmung über die Laufzeit finanziert; 0 = bar bezahlt, ohne Zinsen"), F("gasNeu", "Gas oder Öl: Pflicht zur Bio-Beimischung", "", 0, "gilt für Heizungen, die nach dem 29.7.2026 eingebaut werden", [["ja", "Ja, neue Heizung"], ["nein", "Nein, alte Heizung weiter nutzen"]])],
+  haus: [F("waerme", "Wärme im Jahr", "kWh", 500, "Für Heizung und Warmwasser, ungefähr Gasverbrauch × 0,9; Einfamilienhaus meist 12.000 bis 25.000"), F("jahr", "Einbau im Jahr", "", 1), F("dauer", "Laufzeit", "Jahre", 1), F("gasNeu", "Gas oder Öl: Pflicht zur Bio-Beimischung", "", 0, "gilt für Heizungen, die nach dem 29.7.2026 eingebaut werden", [["ja", "Ja, neue Heizung"], ["nein", "Nein, alte Heizung weiter nutzen"]])],
   g_wp: [F("wpPreis", "Kosten mit Einbau", "€", 500), F("wpJaz", "Jahresarbeitszahl", "", 0.1, "kWh Wärme je kWh Strom; Altbau 2,8 bis 3,5"), F("wpTarif", "Stromtarif", "", 0, "dynamisch: Börsenpreise 2024 und Netzentgelt nach § 14a Modul 3, die Wärmepumpe läuft gesteuert in billigen Stunden; stundengenau aus dem Energie-Rechner", [["fest", "Wärmepumpentarif, fester Preis"], ["dyn", "dynamisch, mit Steuerung"]]), F("wpLang", "Reform: Kredit für die Wärmepumpe", "", 0, "länger nur mit Nachweis: Hersteller belegt die Lebensdauer für Verdichter und Lager, ein unabhängiges Institut bestätigt das; der Anlagenbauer stellt die Regelung auf lange Laufzeiten ein und überwacht sie", [["20", "20 Jahre"], ["30", "30 Jahre: Nachweis, 1 Jahr überwacht"], ["40", "40 Jahre: Nachweis, 2 Jahre überwacht"]]), F("wpStrom", "Strompreis (Wärmepumpentarif)", "€/kWh", 0.01, "mit dem Vorschlag aus dem Buch, 8 Stunden ohne Netzentgelt, eher 0,20 €"), F("wpGrund", "Grundpreis Zähler", "€/Jahr", 10), F("wpWart", "Wartung", "€/Jahr", 10)],
   g_gas: [F("gasPreis", "Kosten mit Einbau", "€", 500), F("gasNutz", "Nutzungsgrad", "%", 1), F("gasKwh", "Gaspreis heute (mit CO₂-Preis)", "€/kWh", 0.005), F("gasGrund", "Grundpreis", "€/Jahr", 10), F("gasWart", "Wartung und Schornsteinfeger", "€/Jahr", 10), F("gasBio", "Mehrpreis Biogas", "€/kWh", 0.01, "Biomethan kostet heute rund 5 bis 8 Cent mehr")],
   g_oel: [F("oelPreis", "Kosten mit Einbau", "€", 500), F("oelNutz", "Nutzungsgrad", "%", 1), F("oelLiter", "Heizölpreis heute (mit CO₂-Preis)", "€/Liter", 0.01, "1 Liter ≈ 10 kWh"), F("oelWart", "Wartung, Schornsteinfeger, Tank", "€/Jahr", 10), F("oelBio", "Mehrpreis Bioöl", "€/kWh", 0.01)],
@@ -754,6 +755,9 @@ if (window.Profil) Profil.leiste($("profil"), { onEin: merk });
   const h = $("c_recht").querySelector("h3"), t = $("r_txt").textContent.trim();
   if (h && h.dataset.info !== t) { h.dataset.info = t; const b = h.querySelector(".ib"); if (b) b.remove(); if (window.Info) Info.attribute(); }
   const c = $("co2txt"); }; }
+/* Gemeinsame Annahmen zur Wirtschaftlichkeit (Zins, Inflation, Energiepreise), gelten für alle Rechner */
+{ const setzeW = w => { V.zinsK = w.zins; V.steig = w.steig; }; setzeW(Wirtschaft.an(document.querySelector(".col-more"), w => { setzeW(w); run(); }));
+  const _rW = run; run = function () { setzeW(Wirtschaft.werte()); return _rW.apply(this, arguments); }; }
 /* So wird gerechnet: Annahmen, mit den Werten, die gerade gelten */
 Methode.an($("verdict"), () => { const v = V, ort = (document.querySelector("#plz_status") || {}).textContent || "", p = PFAD[pfadVon(v)]; return [
   ["Haus und Klima", [
@@ -763,8 +767,8 @@ Methode.an($("verdict"), () => { const v = V, ort = (document.querySelector("#pl
     `<b>Gas und Öl:</b> Nutzungsgrad ${fmt(v.gasNutz)} % und ${fmt(v.oelNutz)} %. Neue Gas- und Ölheizungen müssen nach dem Gebäudeenergiegesetz steigende Anteile Biogas oder Bioöl nutzen.`]],
   ["Wirtschaftlichkeit", [
     `<b>Zeitraum:</b> ${fmt(v.dauer)} Jahre ab ${v.jahr}. Alle Zahlungen dieser Jahre werden zusammengezählt, ohne Abzinsung.`,
-    `<b>Preissteigerung:</b> ${fmt(v.steig, 1)} % im Jahr für Gas, Öl und Strom. Der CO₂-Preis kommt eigens dazu: ${p ? p.txt : ""}`,
-    `<b>Kauf:</b> ${v.zinsK > 0 ? `über einen Bankkredit mit ${fmt(v.zinsK, 1)} % Zins, in gleichen Raten über die Laufzeit` : "bar bezahlt, ohne Zinsen"}. Die Förderung ist abgezogen.`,
+    `<b>Preissteigerung:</b> ${fmt(v.steig, 1)} % im Jahr für Gas, Öl und Strom (Inflation 2 % wie im Buch, Energie real gleich teuer). Der CO₂-Preis kommt eigens dazu: ${p ? p.txt : ""}`,
+    `<b>Kauf:</b> ${v.zinsK > 0 ? `über einen Kredit mit ${fmt(v.zinsK, 1)} % Zins, in gleichen Raten über die Laufzeit. Der Zins ist der Durchschnitt, den Unternehmen im Euroraum für neue Kredite zahlen (EZB, August 2026: 3,77 %). Rechts unter „Zins, Inflation, Energiepreise“ änderbar, gilt dann für alle Rechner.` : "bar bezahlt, ohne Zinsen."} Die Förderung ist abgezogen.`,
     `<b>Wartung und Grundpreise:</b> bleiben gleich hoch.`,
     v.reform && `<b>Vorschlag aus dem Buch:</b> zinsloser Kredit für die Wärmepumpe, weniger Mehrwertsteuer auf Strom und Handwerk, höherer CO₂-Preis mit Klimageld.`]],
 ]; }, "So wird gerechnet");
