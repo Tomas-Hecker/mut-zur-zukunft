@@ -97,7 +97,7 @@ def rechner_umbauen(ordner: str) -> None:
     print(f"  {ordner}: {n0:,} → {len(s):,} Zeichen")
 
 
-FIRMA_MENUE = [("start", "index.html", "Start"), ("entwicklung", "entwicklung.html", "Entwicklung"),
+FIRMA_MENUE = [("start", "index.html", "Start"), ("lebenszyklus", "lebenszyklus.html", "Lebenszyklus"), ("entwicklung", "entwicklung.html", "Entwicklung"),
                ("schulung", "schulung.html", "Schulungen"), ("rechner", "rechner.html", "Rechner"),
                ("ueber-uns", "ueber-uns.html", "Über uns"), ("kontakt", "kontakt.html", "Kontakt")]
 
