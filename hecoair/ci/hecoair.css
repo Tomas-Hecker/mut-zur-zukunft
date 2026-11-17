@@ -1,0 +1,71 @@
+/* HeCoAir GmbH: Erscheinungsbild für die Rechner auf hecoair.org.
+   Farben und Schrift wie in den Planunterlagen (z. B. Erläuterungsbericht Pfarrhaus Niedernhausen):
+   Barlow, Dunkelgrün #36452a, Oliv #5c6e40, Gold #f2be4a, Orange #e9853a, Papier #f6f7f1.
+   Wird NACH dem Stil der Rechner eingebunden und überschreibt nur Farben, Schrift und Rahmen. */
+@import url(schrift.css);
+:root {
+  --hc-gruen: #36452a; --hc-oliv: #5c6e40; --hc-tinte: #1f2419; --hc-papier: #f6f7f1; --hc-linie: #d5dbc3;
+  --hc-gold: #f2be4a; --hc-orange: #e9853a; --hc-rost: #ad5716; --hc-blau: #4f86a0;
+  --bg: #f6f7f1; --panel: #ffffff; --fg: #1f2419; --muted: #5d6552; --line: #d5dbc3; --grid: #e7eadc; --field: #fafbf6;
+  --hl: #eef1e4; --sel: #fdf3d6; --acc: #36452a;
+  --hh: #4f86a0; --wp: #5c6e40; --ev: #e9853a; --pv: #c9961c; --pvf: rgb(242 190 74 / .30);
+  --good: #3f6b2a; --bad: #ad5716;
+  --display: "Barlow", "Arial Narrow", system-ui, sans-serif;
+  --body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #13160f; --panel: #1b1f16; --fg: #eceee4; --muted: #a5ac97; --line: #343b2a; --grid: #262c1e; --field: #20251a;
+  --hl: #26301b; --sel: #3a3214; --acc: #7d9a52;
+  --hh: #79acc4; --wp: #9cb86f; --ev: #f09a55; --pv: #f2be4a; --pvf: rgb(242 190 74 / .22);
+  --good: #9cc77a; --bad: #f09a55; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #13160f; --panel: #1b1f16; --fg: #eceee4; --muted: #a5ac97; --line: #343b2a; --grid: #262c1e; --field: #20251a;
+  --hl: #26301b; --sel: #3a3214; --acc: #7d9a52;
+  --hh: #79acc4; --wp: #9cb86f; --ev: #f09a55; --pv: #f2be4a; --pvf: rgb(242 190 74 / .22);
+  --good: #9cc77a; --bad: #f09a55; color-scheme: dark }
+
+body { font-family: var(--body); margin: 0 }
+h1, h2, h3 { font-family: var(--display); letter-spacing: -.005em }
+h1 { font-weight: 600 !important; color: var(--hc-gruen) }
+h2 { font-weight: 600 }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) h1 { color: var(--fg) } }
+:root[data-theme="dark"] h1 { color: var(--fg) }
+.eyebrow { color: var(--hc-oliv); font-weight: 600; letter-spacing: .18em }
+a { color: var(--hc-oliv) } a:hover { color: var(--hc-gruen) }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) a { color: #b7cf8e } }
+:root[data-theme="dark"] a { color: #b7cf8e }
+.panel { border-radius: 6px }
+thead th, th { color: var(--hc-gruen) }
+
+/* Kopfzeile: immer hell, damit das Logo in Originalfarben steht (wie im Briefkopf) */
+.hc-kopf, .hc-kopf.sitenav { background: #fff; color: var(--hc-tinte); font: inherit; border-bottom: 1px solid var(--hc-linie); margin: -28px calc(-1 * max(16px, env(safe-area-inset-left, 0px))) 24px; padding: 10px max(16px, env(safe-area-inset-left, 0px)) }
+.hc-kopf .hc-in { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; gap: 10px 24px; flex-wrap: wrap }
+.hc-kopf .hc-logo { display: inline-flex; align-items: center; text-decoration: none }
+.hc-kopf .hc-logo img { height: 34px; width: auto; display: block }
+.hc-kopf .hc-claim { font: 500 12px/1 var(--body); letter-spacing: .16em; text-transform: uppercase; color: var(--hc-oliv) }
+.hc-kopf nav { margin-left: auto; display: flex; flex-wrap: wrap; gap: 4px }
+.hc-kopf nav a, :root .hc-kopf nav a { font: 500 14.5px/1 var(--body); color: var(--hc-tinte); text-decoration: none; padding: 8px 11px; border-radius: 4px }
+.hc-kopf nav a:hover, :root .hc-kopf nav a:hover { background: var(--hc-papier); color: var(--hc-gruen) }
+:root .hc-kopf nav a[aria-current="page"] { background: var(--hc-gruen); color: var(--hc-gold) }
+.hc-kopf .hc-druck { font: 500 13px/1 var(--body); background: none; border: 1px solid var(--hc-linie); color: var(--hc-tinte); border-radius: 4px; padding: 7px 10px; cursor: pointer }
+@media (max-width: 720px) { .hc-kopf nav { margin-left: 0; width: 100% } .hc-kopf .hc-claim { display: none } }
+@media print { .hc-kopf nav, .hc-kopf .hc-druck { display: none } .hc-kopf { margin: 0 0 12px; padding: 0 0 8px } }
+
+/* Hinweis und Fußzeile */
+.sitehinweis p { background: var(--hc-papier) !important; color: var(--hc-tinte) !important; border: 1px solid var(--hc-linie) !important; border-left: 4px solid var(--hc-orange) !important; border-radius: 4px !important }
+.sitehinweis b { color: var(--hc-gruen) !important }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sitehinweis p { background: #20251a !important; color: var(--fg) !important; border-color: #343b2a !important; border-left-color: var(--hc-orange) !important } :root:not([data-theme="light"]) .sitehinweis b { color: var(--hc-gold) !important } }
+:root[data-theme="dark"] .sitehinweis p { background: #20251a !important; color: var(--fg) !important; border-color: #343b2a !important; border-left-color: var(--hc-orange) !important }
+:root[data-theme="dark"] .sitehinweis b { color: var(--hc-gold) !important }
+.hc-fuss { max-width: 1180px; margin: 28px auto 0; padding-top: 14px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 14px; color: var(--muted) }
+.hc-fuss p { margin: 0; max-width: none }
+.hc-fuss a { color: inherit }
+.hc-fuss .hc-firma { color: var(--hc-oliv); font-weight: 500 }
+
+/* Erklärungen (i-Knopf) im HeCoAir-Layout */
+.ib:hover, .ib:focus-visible, .ib[aria-expanded="true"] { color: var(--hc-oliv) !important }
+.ib-pop { background: #fff !important; color: var(--hc-tinte) !important; border: 1px solid var(--hc-linie) !important; border-top: 4px solid var(--hc-oliv) !important;
+  border-radius: 6px !important; box-shadow: 0 10px 30px rgba(31, 36, 25, .18) !important; font: 400 15px/1.5 var(--body) !important; padding: 14px 32px 14px 16px !important; max-width: min(400px, calc(100vw - 24px)) !important }
+.ib-pop p { color: var(--hc-tinte) !important }
+.ib-pop a { display: block !important; margin-top: 10px !important; padding-top: 8px; border-top: 1px solid var(--hc-linie); font-weight: 500 !important; font-size: 13.5px; color: var(--hc-oliv) !important }
+.ib-pop .x { color: var(--hc-oliv) !important }

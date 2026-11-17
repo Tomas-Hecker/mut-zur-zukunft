@@ -1,0 +1,13 @@
+# hecoair.org: immer HTTPS und ohne www. Die übrigen Domains (hecoair.eu, .ch, .net, .biz, .info) leitet Stefla hierher weiter.
+RewriteEngine On
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^ https://hecoair.org%{REQUEST_URI} [R=301,L]
+Options -Indexes
+AddDefaultCharset utf-8
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType application/json "access plus 1 week"
+</IfModule>
