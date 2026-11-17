@@ -45,7 +45,10 @@ def kopf(aktiv: str) -> str:
 HINWEIS = ('<div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> '
            'Die Rechner der HeCoAir GmbH sind vereinfachte Modelle. Die Ergebnisse sind Größenordnungen, '
            'können Fehler enthalten und ersetzen keine Energie-, Steuer-, Rechts- oder Finanzberatung. '
-           'Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>')
+           'Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p>'
+           '<p>Für die Planung Ihres Gebäudes: qualifizierte Energieberater vor Ort finden Sie in der '
+           '<a href="https://www.energie-effizienz-experten.de/" rel="noopener">Energieeffizienz-Expertenliste</a>, '
+           'eine unabhängige Erstberatung bei der <a href="https://verbraucherzentrale-energieberatung.de/" rel="noopener">Verbraucherzentrale</a>.</p></div>')
 
 FUSS = ('<footer class="hc-fuss"><p><span class="hc-firma">HeCoAir GmbH · Heizen · Kühlen · Lüften</span><br>'
         'Neutral und ohne Provision. Der Rechner läuft im Browser, deine Angaben bleiben auf deinem Gerät.</p>'
@@ -94,8 +97,8 @@ def rechner_umbauen(ordner: str) -> None:
     print(f"  {ordner}: {n0:,} → {len(s):,} Zeichen")
 
 
-FIRMA_MENUE = [("start", "index.html", "Start"), ("leistungen", "leistungen.html", "Leistungen"),
-               ("projekte", "projekte.html", "Referenzen"), ("rechner", "rechner.html", "Rechner"),
+FIRMA_MENUE = [("start", "index.html", "Start"), ("entwicklung", "entwicklung.html", "Entwicklung"),
+               ("schulung", "schulung.html", "Schulungen"), ("rechner", "rechner.html", "Rechner"),
                ("ueber-uns", "ueber-uns.html", "Über uns"), ("kontakt", "kontakt.html", "Kontakt")]
 
 
