@@ -162,8 +162,11 @@ h1,h2,h3{break-after:avoid}
 .chip { font: 600 13.5px var(--body); border: 1px solid var(--line); background: var(--field); color: var(--fg); border-radius: 999px; padding: 5px 12px; cursor: pointer }
 .chip:hover { border-color: var(--ev) } .chip[aria-pressed="true"] { background: var(--ev); border-color: var(--ev); color: #fff }
 select#paar, select#karte { width: 100%; font: 600 14.5px var(--body); color: var(--fg); background: var(--field); border: 1px solid var(--line); border-radius: 7px; padding: 7px 8px }
+.pe { display: grid; grid-template-columns: auto minmax(0,1.3fr) minmax(0,1fr); gap: 4px 8px; align-items: center; margin-top: 6px; font-size: 13px; color: var(--muted) }
+.pe label { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap } .pe i { width: 9px; height: 9px; border-radius: 2px; display: inline-block }
+.pe span { display: flex; align-items: center; gap: 4px; white-space: nowrap } .pe input { width: 100%; min-width: 0; padding: 4px 6px; font: 600 13.5px var(--body); color: var(--fg); background: var(--inbg, transparent); border: 1px solid var(--line); border-radius: 6px; text-align: right }
 .pair { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted) }
-.pair .q { flex-basis: 100%; font-size: 11.5px } .pair span { display: inline-flex; align-items: center; gap: 5px } .pair i { width: 9px; height: 9px; border-radius: 2px; display: inline-block }
+.pair .q { flex-basis: 100%; font-size: 11.5px; display: block !important } .pair span { display: inline-flex; align-items: center; gap: 5px } .pair i { width: 9px; height: 9px; border-radius: 2px; display: inline-block }
 .sl { display: grid; grid-template-columns: 92px minmax(0,1fr) minmax(74px,auto); gap: 8px; align-items: center; font-size: 13.5px; color: var(--muted) }
 .sl > :first-child { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap }
 .sl output { text-align: right }
@@ -232,6 +235,10 @@ tr.pk { cursor: pointer } tr.pk:hover td { background: var(--hl) } tr.pk.sel td 
       <div class="blk">
         <label class="blkT" for="paar" data-info="Beliebte E-Autos (Neuzulassungen Jan. bis Okt. 2026, beim Firmenwagen das Dienstwagen-Ranking 2026) mit dem Verbrenner, den man stattdessen kaufen würde. Preise, Verbrauch und Kosten sind Richtwerte der gängigen Ausstattung; alles lässt sich rechts unter „Genauer einstellen“ ändern. Alle Paare im Vergleich: Reiter „Alle Autopaare“.">Autopaar</label>
         <select id="paar"></select>
+        <div class="pe" id="pairEdit">
+          <label for="pe_ePreis"><i style="background:var(--ev)"></i>Elektroauto</label><span><input id="pe_ePreis" type="number" inputmode="decimal" step="100" min="0" aria-label="Preis Elektroauto"> €</span><span><input id="pe_eVerb" type="number" inputmode="decimal" step="0.1" min="0" aria-label="Verbrauch Elektroauto"> kWh</span>
+          <label for="pe_iPreis"><i style="background:var(--ice)"></i>Verbrenner</label><span><input id="pe_iPreis" type="number" inputmode="decimal" step="100" min="0" aria-label="Preis Verbrenner"> €</span><span><input id="pe_iVerb" type="number" inputmode="decimal" step="0.1" min="0" aria-label="Verbrauch Verbrenner"> l</span>
+        </div>
         <div class="pair" id="pairInfo"></div>
       </div>
       <div class="blk">
@@ -526,7 +533,7 @@ function feld(f) {
                     : `<input id="i_${f.k}" type="number" inputmode="decimal" step="${f.step}" min="0">`;
   d.innerHTML = `<label for="i_${f.k}"${f.sub ? ` data-info="${f.sub.replace(/"/g, "&quot;")}"` : ""}>${f.lbl}</label><div class="in">${ctl}${f.u ? `<span class="u">${f.u}</span>` : ""}</div>`;
   const el = d.querySelector("input,select");
-  el.addEventListener("input", () => { V[f.k] = f.sel ? el.value : (+el.value || 0); if (f.k === "eOff") V.karte = "eigen"; run(); });
+  el.addEventListener("input", () => { V[f.k] = f.sel ? el.value : (+el.value || 0); if (f.k === "eOff") V.karte = "eigen"; if (["iPreis", "ePreis", "iVerb", "eVerb"].includes(f.k) && V.paar !== "eigen") { V.paar = "eigen"; $("paar").value = "eigen"; } run(); });
   return d;
 }
 Object.entries(FELDER).forEach(([box, fs]) => fs.forEach(f => $(box).append(feld(f))));
@@ -539,7 +546,7 @@ function paarListe() { return AUTOS.filter(a => V.modus === "dienst" ? a.firma :
 function fuellePaare() {
   const g = {}; paarListe().forEach(a => (g[a.kl] = g[a.kl] || []).push(a));
   $("paar").innerHTML = Object.keys(KL).filter(k => g[k]).map(k => `<optgroup label="${KL[k][0]}">${g[k].map(a => `<option value="${a.id}">${a.e[0]} oder ${a.i[0]}</option>`).join("")}</optgroup>`).join("")
-    + `<option value="eigen">Eigene Werte (rechts eintragen)</option>`;
+    + `<option value="eigen">Eigene Autos eintragen</option>`;
   if (V.paar !== "eigen" && !paarListe().some(a => a.id === V.paar)) waehlePaar(paarListe()[0].id, false);
   $("paar").value = V.paar;
 }
@@ -549,6 +556,10 @@ function paarWerte(a) {
 }
 function waehlePaar(id, neu = true) { V.paar = id; const a = AUTOS.find(x => x.id === id); if (a) Object.assign(V, paarWerte(a)); if (neu) run(); }
 $("paar").onchange = e => waehlePaar(e.target.value);
+// Eigene Preise und Verbräuche direkt unter dem Autopaar: aus dem Paar wird „Eigene Autos“
+["ePreis", "eVerb", "iPreis", "iVerb"].forEach(k => $("pe_" + k).addEventListener("input", e => {
+  const x = parseFloat(String(e.target.value).replace(",", ".")); if (!isFinite(x)) return;
+  V[k] = x; if (V.paar !== "eigen") { V.paar = "eigen"; $("paar").value = "eigen"; } run(); }));
 $("karte").innerHTML = Object.entries(KARTEN).map(([k, c]) => `<option value="${k}">${c[0]}${c[1] != null ? ` · ${fmt((c[1] + c[2]) / 2 * 100)} ct${c[3] ? ` + ${fmt(c[3], 2)} €/Monat` : ""}` : ""}</option>`).join("");
 function waehleKarte(k) { V.karte = k; const c = KARTEN[k]; if (c[1] != null) { V.eOff = Math.round((c[1] + c[2]) / 2 * 1000) / 1000; V.eGrund = Math.round(c[3] * 12); } }
 $("karte").onchange = e => { waehleKarte(e.target.value); run(); };
@@ -605,7 +616,8 @@ function run() {
   $("paar").value = V.paar; $("karte").value = V.karte;
   $("l_eFirma").textContent = dienst ? "Firmen-Wallbox" : "Strom bei der Firma";
   const a = AUTOS.find(x => x.id === V.paar);
-  $("pairInfo").innerHTML = a ? `<span><i style="background:var(--ev)"></i>${eur(V.ePreis)} · ${fmt(V.eVerb, 1)} kWh</span><span><i style="background:var(--ice)"></i>${eur(V.iPreis)} · ${fmt(V.iVerb, 1)} l ${V.iKraft === "diesel" ? "Diesel" : "Benzin"}</span><span class="q">${a.q ? `E-Auto-Preis: <a href="${QUELLE[a.q][1]}" target="_blank" rel="noopener">${QUELLE[a.q][0]}</a>; sonst Richtwerte` : "Richtwerte, noch nicht einzeln geprüft"}</span>` : "";
+  ["ePreis", "eVerb", "iPreis", "iVerb"].forEach(k => { const el = $("pe_" + k); if (document.activeElement !== el) el.value = V[k]; });
+  $("pairInfo").innerHTML = a ? `<span class="q">${a.q ? `E-Auto-Preis: <a href="${QUELLE[a.q][1]}" target="_blank" rel="noopener">${QUELLE[a.q][0]}</a>; sonst Richtwerte` : "Richtwerte, noch nicht einzeln geprüft"}</span>` : `<span class="q">Eigene Werte. Versicherung, Wartung und mehr unter „Genauer einstellen“.</span>`;
   $("d_dw").hidden = !dienst; $("tabDw").hidden = !dienst; $("tabReform").hidden = dienst;
 
   const r = rechne(V);
