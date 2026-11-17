@@ -2752,7 +2752,9 @@ function szAnwenden() {
   SZ_C.wachs = SZ_C.w4 + SZ_C.w6 + SZ_C.w24 - SZ_C.kiAnteil * Math.min(1, SZ_C.kiDg / A.Prognose.KI.dg);
 }
 // Gesamtschalter: alle Regler auf eine Stufe
-function szAlle(s) { szBuch = false; for (const r of SZEN) SZ_POS[r.k] = s; }
+function szAlle(s) {
+  szBuch = false; for (const r of SZEN) SZ_POS[r.k] = s;
+}
 function szStand() {
   if (szBuch) return "Wie im Buch bisher";
   const v = Object.values(SZ_POS), alle = v.every(x => x === v[0]);
@@ -2798,7 +2800,12 @@ function szRender() {
   }
   h += `<p class="note">Ungünstig und günstig sind die Ränder der Spanne, in der das Ergebnis etwa in 9 von 10 Fällen liegt. Günstig heißt immer günstig für die Staatskasse und den Wohlstand. Die Rechnung für deinen Haushalt oben hängt an keiner dieser Annahmen.</p>`;
   box.innerHTML = h;
-  box.querySelectorAll("[data-alle]").forEach(b => b.onclick = () => { szAlle(+b.dataset.alle); szNeu(); });
+  box.querySelectorAll("[data-alle]").forEach(b => b.onclick = () => {
+    szAlle(+b.dataset.alle);
+    // Energie und Auto (Kasten aus energie-kasten.py): derselbe Fall, wirkt nur auf den eigenen Haushalt
+    const ef = document.getElementById("e_fall"), fall = { "-2": "ung", "0": "wahr", "2": "guen" }[b.dataset.alle]; if (ef && fall) ef.value = fall;
+    szNeu();
+  });
   box.querySelector("[data-buch]").onclick = () => { szBuch = true; szNeu(); };
   for (const r of SZEN) $("sz_" + r.k).oninput = e => { szBuch = false; SZ_POS[r.k] = +e.target.value; szNeu(false); };
   $("szWirkBox").addEventListener("toggle", e => { if (e.target.open) szWirkZeigen(); postHeight(); });
