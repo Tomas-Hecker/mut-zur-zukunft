@@ -354,10 +354,10 @@ function foerderung(v) {
   const satz = Math.min(R[0] + (v.foeEU === "ja" ? R[1] : 0) + (selbst && v.foeBonus === "ja" ? R[2] : 0) + (selbst ? +v.foeEink / 100 : 0), v.foeEink === "40" ? 0.8 : 0.7);
   return { satz, betrag: satz * Math.min(v.wpPreis, R[3]), max: R[3] };
 }
-// Vorschlag aus dem Buch: Strom 5 %, Stromsteuer auf dem europäischen Mindestmaß, ohne Umlagen, Gas und Öl 50 % Mehrwertsteuer, Dienstleistungen 5 %, Sanierung ohne Mehrwertsteuer.
+// Vorschlag aus dem Buch: Strom 5 %, ohne Stromsteuer und Umlagen, Gas und Öl 50 % Mehrwertsteuer, Dienstleistungen 5 %, Sanierung ohne Mehrwertsteuer.
 // Wärmepumpe: zinsloser Kredit über 20 Jahre, die ersten 3 ohne Tilgung; der Einbau (40 %) zählt zu den Bauteilen.
 // Bauteile (Einbau, Dämmung, Fenster): bezahlt der Staat gegen einen Anteil am Hauswert, abgelöst über 40 Jahre mit der Wertsteigerung.
-const RF = { stromSt: 0.0205 - 0.001, umlagen: 0.0295, strom: 1.05 / 1.19, fossil: 1.5 / 1.19, dienst: 1.05 / 1.19, einb: 0.4, mat: 0.5, tilgFrei: 3, lauf: 20, abl: 40 };
+const RF = { stromSt: 0.0205, umlagen: 0.0295, strom: 1.05 / 1.19, fossil: 1.5 / 1.19, dienst: 1.05 / 1.19, einb: 0.4, mat: 0.5, tilgFrei: 3, lauf: 20, abl: 40 };
 function reformPreise(v) {
   return { ...v, mwstF: 1.5, gasKwh: v.gasKwh * RF.fossil, gasBio: v.gasBio * RF.fossil, gasGrund: v.gasGrund * RF.fossil, oelLiter: v.oelLiter * RF.fossil, oelBio: v.oelBio * RF.fossil,
     wpStrom: Math.max(0, (v.wpStrom / 1.19 - RF.stromSt - RF.umlagen) * 1.05), wpGrund: v.wpGrund * RF.strom, wpWart: v.wpWart * RF.dienst, gasWart: v.gasWart * RF.dienst, oelWart: v.oelWart * RF.dienst };

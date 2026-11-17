@@ -298,7 +298,7 @@ const V = {
   wpAn: "ja", wpArt: "luft", waerme: 15000, ww: 2500, vl: 45, heizgr: 15, puffer: 10,
   evAn: "ja", km: 13500, evVerb: 18, evVerl: 10, evHaus: 80, evKw: 11, evModus: "pendler", ab: 7, an: 17,
   batMod: "auto", batKwh: 10, batFix: 1500, batKwhKost: 350, batJahre: 15, batWg: 90,
-  fest: 0.32, netz: 0.0867, abg: 0.066, aufs: 0.02, h8: 8,
+  fest: 0.37, netz: 0.0867, abg: 0.066, aufs: 0.02, h8: 8,
   zins: 3, steig: 2,
   aOff: 0.55, aVerb: 7.0, aSprit: 2.00,
   gasKwh: 0.115, gasNutz: 90, gasGrund: 180, gasWart: 250,
@@ -320,7 +320,7 @@ const FELDER = {
     F("ab", "Abfahrt werktags", "Uhr", 1), F("an", "Ankunft werktags", "Uhr", 1)],
   g_bat: [F("batMod", "Größe", "", 0, "", [["auto", "automatisch (wirtschaftlichste)"], ["fest", "selbst festlegen"]]), F("batKwh", "Kapazität, wenn selbst festgelegt", "kWh", 1),
     F("batFix", "Kosten fest", "€", 100, "Wechselrichter, Einbau"), F("batKwhKost", "Kosten je kWh", "€/kWh", 10), F("batJahre", "Lebensdauer", "Jahre", 1), F("batWg", "Wirkungsgrad Laden und Entladen", "%", 1)],
-  g_tar: [F("fest", "Festpreis", "€/kWh", 0.01, "brutto"), F("netz", "Netzentgelt", "€/kWh", 0.001, "netto, steht auf dem Preisblatt deines Netzbetreibers; Vorgabe: Syna 2026 (Idstein), 8,67 Cent"), F("abg", "Steuern, Abgaben, Umlagen", "€/kWh", 0.001, "netto: Stromsteuer, Konzession, Umlagen"),
+  g_tar: [F("fest", "Festpreis", "€/kWh", 0.01, "brutto; Vorgabe: Schnitt der Haushalte laut BDEW-Strompreisanalyse 10/2026, 37,3 Cent"), F("netz", "Netzentgelt", "€/kWh", 0.001, "netto, steht auf dem Preisblatt deines Netzbetreibers; Vorgabe: Syna 2026 (Idstein), 8,67 Cent"), F("abg", "Steuern, Abgaben, Umlagen", "€/kWh", 0.001, "netto: Stromsteuer, Konzession, Umlagen"),
     F("aufs", "Aufschlag des Anbieters", "€/kWh", 0.001, "netto"), F("h8", "Stunden ohne Netzentgelt (Vorschlag)", "h/Tag", 1)],
   g_wi: [F("zins", "Zins", "%", 0.5), F("steig", "Strompreisanstieg", "%/Jahr", 0.5)],
   g_auto: [F("aOff", "Strompreis unterwegs", "€/kWh", 0.01), F("aVerb", "Verbrenner: Verbrauch", "l/100 km", 0.1), F("aSprit", "Spritpreis", "€/l", 0.01)],
@@ -567,8 +567,8 @@ function rechne(v) {
 }
 
 
-// Vorschlag aus dem Buch (Entwurf): Strom 5 % Mehrwertsteuer, Stromsteuer auf dem EU-Minimum, keine Umlagen; zinsloser Kredit für die Anlage
-function reformStrom(v) { const ab = 0.0195 + 0.0295; return { ...v, mw: 1.05, fest: Math.max(0, (v.fest / 1.19 - ab) * 1.05), abg: Math.max(0, v.abg - ab), zins: 0, aOff: v.aOff !== undefined ? Math.max(0, (v.aOff / 1.19 - ab) * 1.05) : v.aOff }; }
+// Vorschlag aus dem Buch (Entwurf): Strom 5 % Mehrwertsteuer, ohne Stromsteuer und Umlagen (BDEW 10/2026: 2,05 und 2,95 ct netto); zinsloser Kredit für die Anlage
+function reformStrom(v) { const ab = 0.0205 + 0.0295; return { ...v, mw: 1.05, fest: Math.max(0, (v.fest / 1.19 - ab) * 1.05), abg: Math.max(0, v.abg - ab), zins: 0, aOff: v.aOff !== undefined ? Math.max(0, (v.aOff / 1.19 - ab) * 1.05) : v.aOff }; }
 // Was die Solaranlage (mit Speicher, wenn er sich lohnt) im Jahr bringt, bei der eingestellten Wärmepumpe und dem E-Auto: Kosten ohne PV minus Kosten mit PV,
 // jeweils im günstigsten Tarif (heute ohne, mit Reform mit den 8 Stunden ohne Netzentgelt)
 function pvBeitrag(r, tarife) { const best = row => Math.min(...tarife.map(t => row[t].jk)); return best(r.zellen[0]) - Math.min(best(r.zellen[1]), best(r.zellen[2])); }

@@ -241,7 +241,7 @@ const V = {
   hh: 2500,
   wp: 800, wr: 800, azi: "180", neig: "90", schatten: 0, verl: 10, pvKost: 400, montage: 0, pvJahre: 25, deg: 0.25, wrKost: 100, wrJahre: 15,
   batKwh: 0, batFix: 300, batKwhKost: 200, batWg: 90, batStand: 5, batJahre: 10, steuer: "smart", grund: 150,
-  tarif: "fest", fest: 0.32, netz: 0.0867, abg: 0.066, aufs: 0.02, einsp: 0,
+  tarif: "fest", fest: 0.37, netz: 0.0867, abg: 0.066, aufs: 0.02, einsp: 0,
   zins: 3, steig: 2, foerd: 0,
 };
 const F = (k, lbl, u, step, sub, sel) => ({ k, lbl, u, step, sub, sel });
@@ -360,8 +360,8 @@ const monat = i => { const d = Math.floor(i / 24); let m = 0; while (d >= MS[m] 
 const MN = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
 
 
-// Vorschlag aus dem Buch (Entwurf): Strom 5 % Mehrwertsteuer, Stromsteuer auf dem EU-Minimum, keine Umlagen; zinsloser Kredit für die Anlage
-function reformStrom(v) { const ab = 0.0195 + 0.0295; return { ...v, mw: 1.05, fest: Math.max(0, (v.fest / 1.19 - ab) * 1.05), abg: Math.max(0, v.abg - ab), zins: 0, aOff: v.aOff !== undefined ? Math.max(0, (v.aOff / 1.19 - ab) * 1.05) : v.aOff }; }
+// Vorschlag aus dem Buch (Entwurf): Strom 5 % Mehrwertsteuer, ohne Stromsteuer und Umlagen (BDEW 10/2026: 2,05 und 2,95 ct netto); zinsloser Kredit für die Anlage
+function reformStrom(v) { const ab = 0.0205 + 0.0295; return { ...v, mw: 1.05, fest: Math.max(0, (v.fest / 1.19 - ab) * 1.05), abg: Math.max(0, v.abg - ab), zins: 0, aOff: v.aOff !== undefined ? Math.max(0, (v.aOff / 1.19 - ab) * 1.05) : v.aOff }; }
 /* ---------- Wirtschaftlichkeit ---------- */
 function wirtschaft(v, r, r0) {
   const inv = Math.max(0, v.pvKost + v.montage - v.foerd) + (r.cap > 0 ? v.batFix + v.batKwhKost * r.cap : 0);
@@ -518,7 +518,7 @@ $("quellen").innerHTML = [
   "<b>Preise:</b> Set mit zwei Modulen und Wechselrichter 200 bis 300 €, Halterung 50 bis 100 € je Modul, zusammen 300 bis 500 €; beim privaten Kauf ohne Umsatzsteuer. Ein Speicher kostet 500 bis 1.000 € Aufpreis (<a href=\"https://www.verbraucherzentrale.de/wissen/energie/erneuerbare-energien/steckersolar-solarstrom-vom-balkon-direkt-in-die-steckdose-8189\" target=\"_blank\" rel=\"noopener\">Verbraucherzentrale, Stand Juli 2026</a>). Voreinstellung: 400 € für das Set und 700 € für 2 kWh Speicher.",
   "<b>Lebensdauer:</b> Module rund 30 Jahre und 0,25 % Leistungsverlust im Jahr, Wirkungsgrad eines Speichers 90 % (<a href=\"https://www.ise.fraunhofer.de/de/presse-und-medien/presseinformationen/2024/photovoltaik-mit-batteriespeicher-guenstiger-als-konventionelle-kraftwerke.html\" target=\"_blank\" rel=\"noopener\">Fraunhofer ISE, Stromgestehungskosten 2024</a>). Eigene Annahmen: Der Speicher hält 10 Jahre, der Wechselrichter 15 Jahre und kostet dann rund 100 €, die Elektronik des Speichers braucht 5 W. Für diesen Bereitschaftsverbrauch habe ich keine unabhängige Messung gefunden; er entscheidet bei kleinen Anlagen oft darüber, ob sich der Speicher lohnt.",
   "<b>Verbrauch nach Haushaltsgröße:</b> Stromspiegel für Wohnungen im Mehrfamilienhaus (<a href=\"https://www.co2online.de/energie-sparen/strom-sparen/strom-sparen-stromspartipps/stromverbrauch-im-haushalt/\" target=\"_blank\" rel=\"noopener\">co2online</a>). Ohne Warmwasser aus Strom: 1 Person 1.200, 2 Personen 1.900, 3 Personen 2.400, 4 Personen 2.600, 5 Personen 3.100 kWh. Mit Warmwasser aus Strom: 1.600, 2.500, 3.500, 4.000 und 5.000 kWh.",
-  "<b>Strompreis:</b> Festpreis 32 ct je kWh, wie im <a href=\"../energie-rechner/\" target=\"_blank\" rel=\"noopener\">Energie-Rechner</a>. Den dynamischen Tarif muss seit 2025 jeder Lieferant anbieten, wenn ein Smart Meter eingebaut ist (<a href=\"https://www.gesetze-im-internet.de/enwg_2005/__41a.html\" target=\"_blank\" rel=\"noopener\">§ 41a EnWG</a>). Der Smart Meter kostet auf Wunsch bis zu 100 € einmalig und 30 € im Jahr (<a href=\"https://www.verbraucherzentrale.de/wissen/energie/preise-tarife-anbieterwechsel/smart-meter-was-sie-ueber-die-stromzaehler-wissen-muessen-13275\" target=\"_blank\" rel=\"noopener\">Verbraucherzentrale</a>).",
+  "<b>Strompreis:</b> Festpreis 37 ct je kWh (Schnitt der Haushalte, BDEW 10/2026), wie im <a href=\"../energie-rechner/\" target=\"_blank\" rel=\"noopener\">Energie-Rechner</a>. Den dynamischen Tarif muss seit 2025 jeder Lieferant anbieten, wenn ein Smart Meter eingebaut ist (<a href=\"https://www.gesetze-im-internet.de/enwg_2005/__41a.html\" target=\"_blank\" rel=\"noopener\">§ 41a EnWG</a>). Der Smart Meter kostet auf Wunsch bis zu 100 € einmalig und 30 € im Jahr (<a href=\"https://www.verbraucherzentrale.de/wissen/energie/preise-tarife-anbieterwechsel/smart-meter-was-sie-ueber-die-stromzaehler-wissen-muessen-13275\" target=\"_blank\" rel=\"noopener\">Verbraucherzentrale</a>).",
   "<b>Grenzen der Stundenrechnung:</b> Im Stundenmittel verschwinden kurze Spitzen wie der Wasserkocher. Deshalb überschätzt der Rechner den Eigenverbrauch kleiner Anlagen etwas, und er unterschätzt den Nutzen eines Speichers etwas. Im Vortrag „<a href=\"../vortraege/strom-clever-managen/\" target=\"_blank\" rel=\"noopener\">Strom clever managen</a>“ steht deshalb rund 150 € statt der 172 €, die der Rechner für 800 Wp senkrecht nach Süden und 2.500 kWh ausgibt.",
   "Keine Rechts- oder Energieberatung. Der Rechner ist ein Prototyp und noch nicht unabhängig geprüft."
 ].map(t => `<li>${t}</li>`).join("");
