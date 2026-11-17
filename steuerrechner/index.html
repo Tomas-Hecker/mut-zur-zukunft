@@ -2727,8 +2727,8 @@ const SZEN = [
 
   { g: "D", nr: 20, k: "verw", lbl: "Einsparungen in der Verwaltung durch KI und Automatisierung", w: [15 / 36, 1, 76 / 36], buch: 1,
     f: v => v === 1 ? "wie im Buch, rund 12 % weniger Stellen" : pct(v, 0) + " davon",
-    set: v => { A.VerwZiel = A0.VerwZiel * v; A.BeamtKI = A0.BeamtKI * v; },
-    why: "Recherche vom 17.11.2026: Von rund 5,4 Mio. Stellen im öffentlichen Dienst lassen sich mit KI und Automatisierung wahrscheinlich 12 % einsparen, netto nach den laufenden KI-Kosten rund 36 Mrd. € im Jahr, voll erreicht 2043. Ungünstig 5 % (15 Mrd. €), günstig 25 % (76 Mrd. €, voll 2040). Heute lösen KI-Agenten kurze Aufgaben am Computer schon besser als Menschen, lange Vorgänge aber erst zu einem Drittel.",
+    set: (v, s) => { A.VerwZiel = A0.VerwZiel * v; A.BeamtKI = A0.BeamtKI * v; SZ_C.w20 = s == null ? 0 : szWert([0.001, 0.005, 0.01], s); },
+    why: "Recherche vom 17.11.2026: Von rund 5,4 Mio. Stellen im öffentlichen Dienst lassen sich mit KI und Automatisierung wahrscheinlich 12 % einsparen, netto nach den laufenden KI-Kosten rund 36 Mrd. € im Jahr, voll erreicht 2043. Ungünstig 5 % (15 Mrd. €), günstig 25 % (76 Mrd. €, voll 2040). Heute lösen KI-Agenten kurze Aufgaben am Computer schon besser als Menschen, lange Vorgänge aber erst zu einem Drittel. Wer in der Verwaltung nicht mehr gebraucht wird, arbeitet in Betrieben: 270.000 / 650.000 / 800.000 Menschen, nach Abzug der Überschneidung mit den Fachkräften 0,1 / 0,5 / 1,0 % mehr Wirtschaftsleistung nach 20 Jahren, nur mit Reform.",
     q: [["ifo: Kosten der Bürokratie", "https://www.ifo.de/pressemitteilung/2024-11-14/buerokratie-deutschland-kostet-jaehrlich-146-milliarden-euro"], ["Anhang C8", "../buch/anhang-c.html#c8"]] },
   { g: "D", nr: 21, k: "rente", lbl: "Kosten von Rente und Pflege aus der Steuer", w: [1.1, 1, 0.95], buch: 1,
     f: v => v === 1 ? "wie im Buch" : (v > 1 ? "+" : "−") + pct(Math.abs(v - 1), 0),
@@ -2761,7 +2761,7 @@ function szAnwenden() {
   if (szBuch) { SZ_C.pbx = 0.0025; for (const [k, v] of Object.entries({ bild: 0.005, ern: 0.002, binnen: 0.02, kita: 0.002, forsch: 0.007 })) SZ_C[k] = v; }
   // Wachstum durch die Reform: Anreize + weitere Vorschläge + Aufbruch + schnellere KI (Nr. 25). Der KI-Schub (Nr. 5) kommt auch ohne Reform als Sockel;
   // die schnellere Einführung durch die Reform (Nr. 25) zählt zusätzlich, nur im Reformfall
-  SZ_C.wachs = SZ_C.w4 + SZ_C.w6 + SZ_C.w24 + SZ_C.w25;
+  SZ_C.wachs = SZ_C.w4 + SZ_C.w6 + SZ_C.w24 + SZ_C.w25 + (SZ_C.w20 || 0);   // Nr. 20: frei gewordene Verwaltungskräfte arbeiten in Betrieben
 }
 // Gesamtschalter: alle Regler auf eine Stufe
 function szAlle(s) {
