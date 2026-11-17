@@ -32,14 +32,13 @@ ENTFERNEN = ["tools-buchlinks.js", "energie-link.js"]  # Buchlinks und Übergabe
 
 
 def kopf(aktiv: str) -> str:
-    links = "".join(
+    links = '<a href="../rechner.html">Alle Rechner</a>' + "".join(
         f'<a href="../{o}/"{" aria-current=\"page\"" if o == aktiv else ""}>{n}</a>' for o, n, _ in RECHNER)
     return ('<header class="hc-kopf sitenav flush"><div class="hc-in">'
             '<a class="hc-logo" href="../" aria-label="HeCoAir, zur Startseite">'
             '<img src="../ci/hecoair-logo-klein.png" width="182" height="34" alt="HeCoAir"></a>'
             '<span class="hc-claim">Heizen · Kühlen · Lüften</span>'
             f'<nav aria-label="Rechner">{links}</nav>'
-            '<button type="button" class="hc-druck" onclick="print()" title="Eingaben und Ergebnisse drucken oder als PDF speichern">Drucken / PDF</button>'
             '</div></header>')
 
 
@@ -50,7 +49,7 @@ HINWEIS = ('<div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unab
 
 FUSS = ('<footer class="hc-fuss"><p><span class="hc-firma">HeCoAir GmbH · Heizen · Kühlen · Lüften</span><br>'
         'Neutral und ohne Provision. Der Rechner läuft im Browser, deine Angaben bleiben auf deinem Gerät.</p>'
-        '<p><a href="../">Alle Rechner</a> · <a href="../impressum.html">Impressum</a> · '
+        '<p><a href="../">Start</a> · <a href="../rechner.html">Alle Rechner</a> · <a href="../kontakt.html">Kontakt</a> · <a href="../impressum.html">Impressum</a> · '
         '<a href="../datenschutz.html">Datenschutz</a></p></footer>')
 
 
@@ -59,6 +58,16 @@ def buch_links(s: str) -> str:
     for p in NUR_BUCH:
         s = s.replace("../" + p, BUCH_URL + p)
     return s
+
+
+def neutral(s: str) -> str:
+    """Reform-Vergleiche und Buch-Vorschläge entfernen; was dynamisch entsteht, räumt ci/neutral.js auf."""
+    # Energie-Rechner: Tarifspalte „8 h ohne Netzentgelt“ (Vorschlag) gar nicht erst rechnen
+    s = re.sub(r'\n\s*\{ k: "h8",[^\n]*vorschlag: true \},', "", s)
+    # Listenpunkte, die einen Vorschlag aus dem Buch beschreiben
+    s = re.sub(r'\s*<li>(?:<b>)?Vorschlag aus dem Buch.*?</li>', "", s, flags=re.S)
+    s = s.replace(", und der Vorschlag aus dem Buch, 8 Stunden am Tag ohne Netzentgelt, der heute noch nicht gilt", "")
+    return s.replace("</body>", '<script src="../ci/neutral.js"></script>\n</body>', 1)
 
 
 def rechner_umbauen(ordner: str) -> None:
@@ -77,6 +86,7 @@ def rechner_umbauen(ordner: str) -> None:
     assert n == 1, f"{ordner}: Fußzeile nicht gefunden"
     for js in ENTFERNEN:
         s = s.replace(f'<script src="../{js}"></script>\n', "")
+    s = neutral(s)
     s = buch_links(s)
     ziel = ZIEL / ordner / "index.html"
     ziel.parent.mkdir(parents=True, exist_ok=True)
@@ -84,60 +94,46 @@ def rechner_umbauen(ordner: str) -> None:
     print(f"  {ordner}: {n0:,} → {len(s):,} Zeichen")
 
 
-def startseite() -> None:
+FIRMA_MENUE = [("start", "index.html", "Start"), ("leistungen", "leistungen.html", "Leistungen"),
+               ("projekte", "projekte.html", "Projekte"), ("rechner", "rechner.html", "Rechner"),
+               ("ueber-uns", "ueber-uns.html", "Über uns"), ("kontakt", "kontakt.html", "Kontakt")]
+
+
+def seiten() -> None:
+    """Firmenseiten aus hecoair/seiten/*.html: erste Zeile ist ein Kommentar mit titel | beschreibung | aktiv | robots."""
     karten = "".join(
-        f'<a class="hc-karte" href="{o}/"><h2>{n}</h2><p>{t}</p><span>Rechner öffnen ›</span></a>' for o, n, t in RECHNER)
-    menue = "".join(f'<a href="{o}/">{n}</a>' for o, n, _ in RECHNER)
-    html = f"""<!doctype html>
+        f'<a class="karte" href="{o}/"><h3>{n}</h3><p>{t}</p><span class="mehr">Rechner öffnen ›</span></a>' for o, n, t in RECHNER)
+    fuss = FUSS.replace('href="../rechner.html"', 'href="rechner.html"').replace('href="../', 'href="')
+    for datei in sorted((WURZEL / "hecoair" / "seiten").glob("*.html")):
+        kopfzeile, inhalt = datei.read_text(encoding="utf-8").split("\n", 1)
+        meta = dict(teil.split(":", 1) for teil in kopfzeile.strip()[4:-3].split(" | "))
+        meta = {k.strip(): v.strip() for k, v in meta.items()}
+        menue = "".join(f'<a href="{h}"{" aria-current=\"page\"" if k == meta.get("aktiv") else ""}>{n}</a>' for k, h, n in FIRMA_MENUE)
+        titel = meta["titel"] if datei.stem == "start" else f'{meta["titel"]} · HeCoAir GmbH'
+        robots = f'<meta name="robots" content="{meta["robots"]}">\n' if meta.get("robots") else ""
+        html = f"""<!doctype html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Energie-Rechner · HeCoAir GmbH</title>
-<meta name="description" content="Neutrale Energie-Rechner der HeCoAir GmbH: Photovoltaik, Speicher, Wärmepumpe, Dämmung, E-Auto und Balkonkraftwerk. Kostenlos, ohne Provision, die Angaben bleiben auf deinem Gerät.">
-<link rel="icon" href="ci/favicon.png" type="image/png">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; base-uri 'self'; form-action 'self'">
+<title>{titel}</title>
+<meta name="description" content="{meta["beschreibung"]}">
+{robots}<link rel="icon" href="ci/favicon.png" type="image/png">
 <link rel="stylesheet" href="ci/hecoair.css">
-<style>
-* {{ box-sizing: border-box }}
-body {{ margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.55 var(--body); padding: 28px max(16px, env(safe-area-inset-left, 0px)) 56px }}
-.wrap {{ max-width: 1180px; margin: 0 auto }}
-.eyebrow {{ font-size: 12.5px; text-transform: uppercase }}
-.held {{ padding: 36px 0 28px; border-bottom: 1px solid var(--line); margin-bottom: 28px }}
-.held h1 {{ font-size: clamp(32px, 5vw, 52px); line-height: 1.08; margin: 10px 0 14px; max-width: 18ch }}
-.held p {{ max-width: 62ch; color: var(--muted); font-size: 19px; font-weight: 300; margin: 0 }}
-.hc-karten {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px }}
-.hc-karte {{ display: grid; gap: 8px; align-content: start; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--hc-oliv); border-radius: 6px; padding: 18px; text-decoration: none; color: var(--fg) }}
-.hc-karte:hover {{ border-top-color: var(--hc-orange) }}
-.hc-karte h2 {{ font-size: 22px; margin: 0; color: var(--fg) }}
-.hc-karte p {{ margin: 0; color: var(--muted); font-size: 15.5px }}
-.hc-karte span {{ color: var(--hc-oliv); font-weight: 600; font-size: 15px }}
-.leitsatz {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 32px }}
-.leitsatz div {{ border-left: 3px solid var(--hc-orange); padding: 2px 0 2px 14px }}
-.leitsatz b {{ display: block; font-family: var(--display); font-weight: 600; font-size: 17px }}
-.leitsatz p {{ margin: 4px 0 0; color: var(--muted); font-size: 15px }}
-</style>
+<link rel="stylesheet" href="ci/seite.css">
 </head>
 <body>
-<header class="hc-kopf"><div class="hc-in"><a class="hc-logo" href="./" aria-label="HeCoAir, zur Startseite"><img src="ci/hecoair-logo-klein.png" width="182" height="34" alt="HeCoAir"></a><span class="hc-claim">Heizen · Kühlen · Lüften</span><nav aria-label="Rechner">{menue}</nav></div></header>
-<main class="wrap">
-<section class="held">
-<p class="eyebrow">HeCoAir GmbH · Energie-Rechner</p>
-<h1>Selbst nachrechnen, bevor man kauft</h1>
-<p>Lohnt sich die Wärmepumpe, wie groß soll die Solaranlage sein, braucht es einen Speicher? Unsere Rechner zeigen es mit dem Wetter deines Orts, neutral und ohne Provision.</p>
-</section>
-<div class="hc-karten">{karten}</div>
-<div class="leitsatz">
-<div><b>Neutral</b><p>Wir verkaufen keine Geräte und bekommen keine Provision.</p></div>
-<div><b>Nachvollziehbar</b><p>Jede Annahme steht mit Quelle beim Rechner und lässt sich ändern.</p></div>
-<div><b>Privat</b><p>Alles läuft im Browser. Deine Angaben verlassen dein Gerät nicht.</p></div>
-</div>
-</main>
-{FUSS.replace('href="../', 'href="').replace('<a href="">Alle Rechner</a> · ', '')}
+<header class="hc-kopf"><div class="hc-in"><a class="hc-logo" href="./" aria-label="HeCoAir, zur Startseite"><img src="ci/hecoair-logo-klein.png" width="182" height="34" alt="HeCoAir"></a><span class="hc-claim">Heizen · Kühlen · Lüften</span><nav aria-label="Hauptmenü">{menue}</nav></div></header>
+<main>
+{inhalt.replace("{{RECHNERKARTEN}}", karten)}</main>
+{fuss}
 </body>
 </html>
 """
-    (ZIEL / "index.html").write_text(html, encoding="utf-8")
-    print("  Startseite")
+        ziel = "index.html" if datei.stem == "start" else datei.name
+        (ZIEL / ziel).write_text(html, encoding="utf-8")
+        print(f"  Seite {ziel}")
 
 
 def main() -> None:
@@ -146,6 +142,7 @@ def main() -> None:
     ZIEL.mkdir(parents=True)
     print(f"HeCoAir-Seite nach {ZIEL}")
     shutil.copytree(WURZEL / "hecoair" / "ci", ZIEL / "ci")
+    (ZIEL / ".htaccess").write_text((WURZEL / "hecoair" / "htaccess").read_text(encoding="utf-8"), encoding="utf-8")
     for name in KOPIEREN:
         q = WURZEL / name
         if not q.exists():
@@ -155,17 +152,26 @@ def main() -> None:
     info = ZIEL / "info.js"
     t = info.read_text(encoding="utf-8")
     t = t.replace('new URL("buch/", document.currentScript.src).href', f'"{BUCH_URL}buch/"')
+    t = t.replace('>Mehr im Buch${name ? ": " + name : ""} ›</a>', '>Quelle: „Wir können uns die Zukunft leisten“${name ? ", " + name : ""} ›</a>')
+    assert "Quelle: „Wir" in t, "info.js: Link-Text nicht gefunden"
     info.write_text(t, encoding="utf-8")
-    for p in ("impressum.html", "datenschutz.html"):
-        shutil.copy2(WURZEL / "hecoair" / p, ZIEL / p)
     for ordner, _, _ in RECHNER:
         rechner_umbauen(ordner)
-    startseite()
-    rest = [f"{d.name}: {m}" for d in ZIEL.iterdir() if d.is_dir() and d.name in {o for o, _, _ in RECHNER}
-            for m in re.findall(r'(?:href|src)="\.\./(?!"|ci/|wetter/|impressum|datenschutz|profil|satz|info|cockpit|(?:%s)/)[^"]*"' % "|".join(o for o, _, _ in RECHNER),
-                                (d / "index.html").read_text(encoding="utf-8"))]
-    if rest:
-        print("Achtung, Links ins Leere:", *rest, sep="\n  ")
+    seiten()
+    # Prüfen: jeder relative Link und jede Datei muss im Zielordner existieren
+    tot = []
+    for html in ZIEL.rglob("*.html"):
+        for ref in re.findall(r'(?:href|src)="([^"]*)"', html.read_text(encoding="utf-8")):
+            ref = ref.split("#")[0].split("?")[0]
+            if not ref or ":" in ref or ref.startswith("//") or "${" in ref:
+                continue
+            ziel = (html.parent / ref).resolve()
+            if ref.endswith("/"):
+                ziel = ziel / "index.html"
+            if not ziel.exists():
+                tot.append(f"{html.relative_to(ZIEL)}: {ref}")
+    if tot:
+        print("Achtung, Links ins Leere:", *sorted(set(tot)), sep="\n  ")
 
 
 if __name__ == "__main__":

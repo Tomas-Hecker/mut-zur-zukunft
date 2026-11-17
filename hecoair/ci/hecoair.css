@@ -61,3 +61,11 @@ thead th, th { color: var(--hc-gruen) }
 .hc-fuss p { margin: 0; max-width: none }
 .hc-fuss a { color: inherit }
 .hc-fuss .hc-firma { color: var(--hc-oliv); font-weight: 500 }
+
+/* Erklärungen (i-Knopf) im HeCoAir-Layout */
+.ib:hover, .ib:focus-visible, .ib[aria-expanded="true"] { color: var(--hc-oliv) !important }
+.ib-pop { background: #fff !important; color: var(--hc-tinte) !important; border: 1px solid var(--hc-linie) !important; border-top: 4px solid var(--hc-oliv) !important;
+  border-radius: 6px !important; box-shadow: 0 10px 30px rgba(31, 36, 25, .18) !important; font: 400 15px/1.5 var(--body) !important; padding: 14px 32px 14px 16px !important; max-width: min(400px, calc(100vw - 24px)) !important }
+.ib-pop p { color: var(--hc-tinte) !important }
+.ib-pop a { display: block !important; margin-top: 10px !important; padding-top: 8px; border-top: 1px solid var(--hc-linie); font-weight: 500 !important; font-size: 13.5px; color: var(--hc-oliv) !important }
+.ib-pop .x { color: var(--hc-oliv) !important }
