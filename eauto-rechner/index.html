@@ -442,10 +442,10 @@ function rechne(v) {
 // MwSt auf die ersten 10.000 € eines neuen E-Autos zurück (bis 5.000 €), CO₂-Preispfad 100 € 2028 bis 300 € 2040, zinsloses Darlehen (hier ohne Zinsen ohnehin)
 const CO2R = [[2026, 60], [2027, 65], [2028, 100], [2030, 150], [2035, 200], [2040, 300]];
 const co2Reform = j => { const p = CO2R; if (j <= p[0][0]) return p[0][1]; for (let i = 1; i < p.length; i++) if (j <= p[i][0]) { const [a, pa] = p[i - 1], [b, pb] = p[i]; return pa + (pb - pa) * (j - a) / (b - a); } return p.at(-1)[1]; };
-// Kilometerabgabe (Vorschlag aus dem Buch, Straßenfonds Fassung B, Paket A: Tomas' Wahl 17.11.2026). Kann sich mit Version 40 noch leicht verschieben, nur die Zahlen in KMA tauschen.
+// Kilometerabgabe (Vorschlag aus dem Buch, Straßenfonds Fassung B, Paket A, Buch Version 40, staat-v40.json satz_ct_kwh), nur die Zahlen in KMA tauschen.
 // Abgabe = Satz je kWh × Verbrauch laut Hersteller × km, alles real in Preisen von 2025. Beim Verbrenner wird die Energiesteuer des eigenen Verbrauchs angerechnet.
 // Übergang: Autos mit Erstzulassung vor 2028 zahlen 2030 25 % ihres Betrags, jedes Jahr 10 Punkte mehr, ab 2038 voll. Satz nach 2050 gleich.
-const KMA = { start: 2030, satz: [21.62, 19.59, 18.70, 18.19, 18.37, 18.70, 19.16, 19.69, 20.49, 21.59, 22.73, 23.98, 25.25, 26.54, 27.79, 28.85, 29.70, 30.33, 30.81, 31.13, 31.35],   // ct je kWh, 2030 bis 2050, Paket A: Grundsatz + d + v2
+const KMA = { start: 2030, satz: [21.62, 19.59, 18.70, 18.19, 18.37, 18.70, 19.16, 19.69, 20.49, 21.59, 22.73, 23.98, 25.25, 26.54, 27.79, 28.84, 29.70, 30.33, 30.81, 31.13, 31.35],   // ct je kWh, 2030 bis 2050, Paket A: Grundsatz + d + v2
   aufschlag: 0,                                          // ct je kWh obendrauf; in den Sätzen oben schon enthalten
   kwhL: { benzin: 8.86, diesel: 9.9 }, est: 0.6545,     // kWh je Liter; Energiesteuer €/l, mit der Reform ab 2028 auch für Diesel
   dieselAb: 2028, dieselMehr: 0.6545 - 0.4704,           // Ende des Dieselprivilegs: Energiesteuer auf Diesel wie Benzin, netto €/l
