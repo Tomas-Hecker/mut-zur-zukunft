@@ -176,7 +176,8 @@ input[type=range] { width: 100%; accent-color: var(--ev); margin: 0 }
 .bar3 i { display: block; flex: 0 0 auto; flex-basis: 0 } .bar3 .h { background: var(--ev) } .bar3 .f { background: #6aa9d8 } .bar3 .w { background: #b9a24a }
 .row2.tight { grid-template-columns: 1fr 1fr; gap: 8px }
 .reset { justify-self: start; font: 600 13px var(--body); background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 0 }
-.col-out { gap: 12px }
+.col-out { gap: 12px; grid-template-columns: minmax(0, 1fr) }
+.col-in, .col-more { grid-template-columns: minmax(0, 1fr) }
 .col-out .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)) }
 @media (max-width: 640px) { .col-out .tiles { grid-template-columns: 1fr 1fr } }
 .verdict .vk { font-size: 13px; color: var(--muted); font-weight: 700 }
