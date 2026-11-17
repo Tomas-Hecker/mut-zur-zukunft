@@ -190,6 +190,7 @@ h1,h2,h3{break-after:avoid}
     <div class="panel">
       <h2>Ergebnis</h2>
       <div class="verdict" id="verdict"></div>
+      <div id="zumSteuer"></div>
       <div class="tiles" id="tiles"></div>
       <p class="note">Der Rechner arbeitet mit Stundenmitteln. Kurze Spitzen beim Kochen oder Waschen zieht der Haushalt in Wirklichkeit zum Teil aus dem Netz, auch wenn die Sonne scheint. Der wirkliche Eigenverbrauch liegt deshalb meist etwas niedriger, grob um ein Zehntel. Rechne im Zweifel mit etwas weniger Ersparnis.</p>
       <h3>Mit oder ohne Speicher?</h3>
@@ -321,7 +322,7 @@ function last(hh) {
 }
 function preise(v) {
   const p = new Float64Array(N);
-  for (let i = 0; i < N; i++) p[i] = v.tarif === "dyn" ? (BOERSE[i] + v.netz + v.abg + v.aufs) * 1.19 : v.fest;
+  for (let i = 0; i < N; i++) p[i] = v.tarif === "dyn" ? (BOERSE[i] + v.netz + v.abg + v.aufs) * (v.mw || 1.19) : v.fest;
   return p;
 }
 
@@ -358,6 +359,9 @@ const MT = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31], MS = MT.reduce((a, 
 const monat = i => { const d = Math.floor(i / 24); let m = 0; while (d >= MS[m] && m < 11) m++; return m; };
 const MN = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
 
+
+// Vorschlag aus dem Buch (Entwurf): Strom 5 % Mehrwertsteuer, Stromsteuer auf dem EU-Minimum, keine Umlagen; zinsloser Kredit für die Anlage
+function reformStrom(v) { const ab = 0.0195 + 0.0295; return { ...v, mw: 1.05, fest: Math.max(0, (v.fest / 1.19 - ab) * 1.05), abg: Math.max(0, v.abg - ab), zins: 0, aOff: v.aOff !== undefined ? Math.max(0, (v.aOff / 1.19 - ab) * 1.05) : v.aOff }; }
 /* ---------- Wirtschaftlichkeit ---------- */
 function wirtschaft(v, r, r0) {
   const inv = Math.max(0, v.pvKost + v.montage - v.foerd) + (r.cap > 0 ? v.batFix + v.batKwhKost * r.cap : 0);
@@ -398,6 +402,9 @@ function run() {
   const grenze = V.wr > 800 ? `Achtung: Ein Steckersolargerät darf höchstens 800 W einspeisen, dein Wechselrichter hat ${fmt(V.wr)} W. ` : "";
   const modul = V.wp > 2000 ? `Achtung: Erlaubt sind höchstens 2.000 Wp Module. ` : V.wp > 960 ? `Über 960 Wp braucht es statt des Schukosteckers eine Energiesteckvorrichtung (Spezialsteckdose). ` : "";
   $("verdict").innerHTML += (grenze || modul) ? `<br><b>${grenze}${modul}</b>` : "";
+  if (window.ZumSteuerrechner) { const vR = reformStrom(V), rR0 = sim(vR, 0, false), rR = V.batKwh > 0 ? sim(vR, V.batKwh, false) : rR0, wR = wirtschaft(vR, rR, rR0);
+    ZumSteuerrechner.zeige($("zumSteuer"), { quelle: "Balkon-Rechner", was: "Balkonkraftwerk" + (V.batKwh > 0 ? " mit Speicher" : ""), heute: w.gewinn / V.pvJahre, reform: wR.gewinn / V.pvJahre,
+      reformText: "Strom 5 % Mehrwertsteuer ohne Umlagen: Jede selbst genutzte Kilowattstunde spart weniger. Dafür wird der ganze Strom aus dem Netz billiger, das zeigt der Steuerrechner, wenn du es dort einschaltest. Zinsloser Kredit für Speicher." }); }
   $("tiles").innerHTML = tile("Ertrag am Modul", kwh(r.G), `${fmt(r.G / (V.wp / 1000))} kWh je kWp`, "var(--pvf)")
     + tile("Selbst genutzt", kwh(r.self), `${pct(deck)} deines Verbrauchs${r.bat > 0.5 ? `, ${kwh(r.bat)} über den Speicher` : ""}`, "var(--pv)")
     + tile("Ins Netz", kwh(r.exp), r.clip > 0.5 ? `${kwh(r.clip)} kappt der Wechselrichter` : "", "var(--pvf)")
@@ -519,6 +526,8 @@ $("quellen").innerHTML = [
 <div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Wir können uns die Zukunft leisten“. Die Ergebnisse sind Größenordnungen, können Fehler enthalten und ersetzen keine ärztliche, Steuer-, Rechts-, Finanz- oder Energieberatung. Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>
 <footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Der Rechner läuft im Browser und speichert keine Eingaben. <a href="../">Startseite</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../vortraege/strom-clever-managen/">Vortrag</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
 <script src="../tools-buchlinks.js"></script>
+<script src="../energie-link.js"></script>
+<script>try { run(); } catch (e) {}</script>
 <script id="druck-js">(() => {
   let alt = null, zu = [];
   addEventListener("beforeprint", () => {

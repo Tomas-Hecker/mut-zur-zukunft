@@ -193,6 +193,7 @@ h1,h2,h3{break-after:avoid}
     <div class="panel">
       <h2>Ergebnis</h2>
       <div class="verdict" id="verdict"></div>
+      <div id="zumSteuer"></div>
       <div class="grp" style="border:0;padding:0">
         <div class="seg" role="group" aria-label="Steuerung">
           <button type="button" id="st_an" aria-pressed="true">Mit intelligenter Steuerung</button>
@@ -435,8 +436,8 @@ function preise(v, tk) {
     eeg[i] = BOERSE[i] < 0 ? 0 : v.eeg;
     if (tk === "fest") { pH[i] = pD[i] = v.fest; continue; }
     const basis = BOERSE[i] + v.abg + v.aufs;
-    pH[i] = (basis + (tk === "h8" && frei[i] ? 0 : v.netz)) * 1.19;
-    pD[i] = tk === "m3" ? (basis + m3(i) * v.netz / 0.0867) * 1.19 : pH[i];
+    pH[i] = (basis + (tk === "h8" && frei[i] ? 0 : v.netz)) * (v.mw || 1.19);
+    pD[i] = tk === "m3" ? (basis + m3(i) * v.netz / 0.0867) * (v.mw || 1.19) : pH[i];
   }
   return { pH, pD, eeg, frei };
 }
@@ -565,6 +566,21 @@ function rechne(v) {
   return { L, kwp, pv, pvInv, pvAnn, lcoe, zellen, bf, lev };
 }
 
+
+// Vorschlag aus dem Buch (Entwurf): Strom 5 % Mehrwertsteuer, Stromsteuer auf dem EU-Minimum, keine Umlagen; zinsloser Kredit für die Anlage
+function reformStrom(v) { const ab = 0.0195 + 0.0295; return { ...v, mw: 1.05, fest: Math.max(0, (v.fest / 1.19 - ab) * 1.05), abg: Math.max(0, v.abg - ab), zins: 0, aOff: v.aOff !== undefined ? Math.max(0, (v.aOff / 1.19 - ab) * 1.05) : v.aOff }; }
+// Was die Solaranlage (mit Speicher, wenn er sich lohnt) im Jahr bringt, bei der eingestellten Wärmepumpe und dem E-Auto: Kosten ohne PV minus Kosten mit PV,
+// jeweils im günstigsten Tarif (heute ohne, mit Reform mit den 8 Stunden ohne Netzentgelt)
+function pvBeitrag(r, tarife) { const best = row => Math.min(...tarife.map(t => row[t].jk)); return best(r.zellen[0]) - Math.min(best(r.zellen[1]), best(r.zellen[2])); }
+let tmrSt = 0;
+function zumSteuer() {
+  if (!window.ZumSteuerrechner) return;
+  const kwp = V.pvS + V.pvO + V.pvW; if (kwp <= 0) { $("zumSteuer").innerHTML = ""; return; }
+  const rH = R, rR = rechne(reformStrom(V));
+  ZumSteuerrechner.zeige($("zumSteuer"), { quelle: "Energie-Rechner", was: `Solaranlage ${fmt(kwp, 1)} kWp${V.wpAn === "ja" || V.evAn === "ja" ? " mit " + [V.wpAn === "ja" ? "Wärmepumpe" : "", V.evAn === "ja" ? "E-Auto" : ""].filter(Boolean).join(" und ") : ""}, günstigster Tarif`,
+    heute: pvBeitrag(rH, [0, 1, 2]), reform: pvBeitrag(rR, [0, 1, 2, 3]),
+    reformText: "Strom 5 % Mehrwertsteuer ohne Umlagen, 8 Stunden am Tag ohne Netzentgelt, zinsloser Kredit für Solaranlage und Speicher. Übernommen wird nur, was die Solaranlage bringt; Wärmepumpe und E-Auto mit ihrem Kauf rechnen Heizungs- und E-Auto-Rechner." });
+}
 /* ---------- Anzeige ---------- */
 const PVN = ["Ohne PV", "Mit PV", "PV + Speicher"];
 const KZS = [["jk", "Kosten im Jahr"], ["ev", "Strompreis Wallbox"], ["wp", "Strompreis Wärmepumpe"], ["evq", "Eigenverbrauch"]];
@@ -870,6 +886,7 @@ function run() {
   R = rechne(V);
   zeigeAusrichtung(V); zeigeWetter();
   zeigeVerdict(V); zeigeMatrix(V); zeigeAuswahl(V); zeigeBatterie(V); zeigeFormeln(V);
+  clearTimeout(tmrSt); tmrSt = setTimeout(zumSteuer, 300);
 }
 ["an", "aus"].forEach(k => $("st_" + k).onclick = () => { STEUERUNG = k === "an"; $("st_an").setAttribute("aria-pressed", STEUERUNG); $("st_aus").setAttribute("aria-pressed", !STEUERUNG); run(); });
 const _zeigeAuswahl = zeigeAuswahl;
@@ -880,6 +897,7 @@ run();
 <div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Wir können uns die Zukunft leisten“. Die Ergebnisse sind Größenordnungen, können Fehler enthalten und ersetzen keine ärztliche, Steuer-, Rechts-, Finanz- oder Energieberatung. Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>
 <footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Der Rechner läuft im Browser und speichert keine Eingaben. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../balkon-rechner/">Balkon-Rechner</a> · <a href="../vortraege/strom-clever-managen/">Vortrag</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
 <script src="../tools-buchlinks.js"></script>
+<script src="../energie-link.js"></script>
 <script id="druck-js">(() => {
   let alt = null, zu = [];
   addEventListener("beforeprint", () => {
