@@ -67,7 +67,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .legend i.sq { width: 12px; height: 12px; border: 0; border-radius: 2px }
 .chart { position: relative }
 .cumT { margin: 6px 0 -4px; font-size: 17px; line-height: 1.3 }
-.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 4px 16px rgb(0 0 0 / .12); min-width: 170px; font-variant-numeric: tabular-nums }
+.tip { position: absolute; pointer-events: none; background: #fff; color: #1d2321; border: 1px solid #c9cfcb; border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 4px 16px rgb(0 0 0 / .12); min-width: 170px; font-variant-numeric: tabular-nums }
 .tip .r { display: flex; justify-content: space-between; gap: 12px }
 .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; align-items: start }
 .tbl { overflow-x: auto }
@@ -164,7 +164,7 @@ h1,h2,h3{break-after:avoid}
 .chip:hover { border-color: var(--ev) } .chip[aria-pressed="true"] { background: var(--ev); border-color: var(--ev); color: #fff }
 select#paar, select#karte { width: 100%; font: 600 14.5px var(--body); color: var(--fg); background: var(--field); border: 1px solid var(--line); border-radius: 7px; padding: 7px 8px }
 .pair { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted) }
-.pair span { display: inline-flex; align-items: center; gap: 5px } .pair i { width: 9px; height: 9px; border-radius: 2px; display: inline-block }
+.pair .q { flex-basis: 100%; font-size: 11.5px } .pair span { display: inline-flex; align-items: center; gap: 5px } .pair i { width: 9px; height: 9px; border-radius: 2px; display: inline-block }
 .sl { display: grid; grid-template-columns: 92px minmax(0,1fr) 74px; gap: 8px; align-items: center; font-size: 13.5px; color: var(--muted) }
 .sl > :first-child { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap }
 .sl output { text-align: right }
@@ -299,7 +299,7 @@ tr.pk { cursor: pointer } tr.pk:hover td { background: var(--hl) } tr.pk.sel td 
         <li><b>Laden beim Arbeitgeber</b> ist steuerfrei (§ 3 Nr. 46 EStG), ebenso der Ersatz der Stromkosten zu Hause (§ 3 Nr. 50 EStG).</li>
         <li><b>CO₂-Preis im Sprit:</b> Heute im Spritpreis enthalten; danach EU-Emissionshandel für Verkehr und Gebäude, rund 60 € je Tonne 2028, 70 € 2030, 100 € 2035, 150 € 2040 (eigene Annahme). Benzin 2,37 kg CO₂ je Liter, Diesel 2,65 kg.</li>
         <li><b>THG-Prämie:</b> 2026 zahlen viele Anbieter 300 bis 380 € im Jahr. <a href="https://www.auto-motor-und-sport.de/verkehr/thg-praemie-2027-wann-beantragen-wie-viel-euro-gibt-es/" target="_blank" rel="noopener">auto motor und sport</a></li>
-        <li><b>Autopaare:</b> Auswahl nach den Neuzulassungen Januar bis Oktober 2026 (<a href="https://www.electrive.net/2026/11/06/neuzulassungen-im-oktober-elektrischer-mercedes-glc-schon-auf-platz-3/" target="_blank" rel="noopener">KBA via electrive</a>) und dem <a href="https://www.ayvens.com/de-de/ueber-uns/presse/presseinformationen/presseinfos-2026/top-10-beliebteste-dienstwagen-2026/" target="_blank" rel="noopener">Ayvens-Dienstwagen-Ranking 2026</a>. Preise und Verbrauch sind Richtwerte der gängigen Ausstattung (Entwurf, vor Veröffentlichung einzeln zu prüfen).</li>
+        <li><b>Autopaare:</b> Auswahl nach den Neuzulassungen Januar bis Oktober 2026 (<a href="https://www.electrive.net/2026/11/06/neuzulassungen-im-oktober-elektrischer-mercedes-glc-schon-auf-platz-3/" target="_blank" rel="noopener">KBA via electrive</a>) und dem <a href="https://www.ayvens.com/de-de/ueber-uns/presse/presseinformationen/presseinfos-2026/top-10-beliebteste-dienstwagen-2026/" target="_blank" rel="noopener">Ayvens-Dienstwagen-Ranking 2026</a>. E-Auto-Listenpreise mit Quelle, soweit geprüft (steht unter der Auswahl); Verbrenner-Preise, Verbräuche (WLTP) und Kfz-Steuer sind Richtwerte der gängigen Ausstattung. Versicherung und Wartung nach Fahrzeugklasse.</li>
         <li><b>Ladekarten:</b> Preise Stand 09/2026 laut <a href="https://www.ladeklar.de/ladekosten/ladekarten/" target="_blank" rel="noopener">ladeklar.de</a>. Unabhängige Auswahl, keine Provision.</li>
         <li><b>Strom zu Hause:</b> 37,3 ct/kWh, Schnitt der Haushalte (BDEW-Strompreisanalyse 10/2026), wie in den anderen Rechnern und im Buch. Firmenwagen an der Firmen-Wallbox: 32 ct (Gewerbetarif, Beispiel).</li>
         <li>Verbrauch nach Herstellerangabe (WLTP) ohne Ladeverluste; der Rechner schlägt sie auf. Im Winter braucht ein E-Auto rund 15 bis 25 % mehr.</li>
@@ -328,29 +328,33 @@ const V = { ...V0 };
 // Autopaare: beliebte E-Autos (KBA Jan.–Okt. 2026) und der Verbrenner, den man stattdessen kaufen würde.
 // Richtwerte der gängigen Ausstattung, Stand 11/2026, ENTWURF: Preise, Verbrauch und Steuer vor Veröffentlichung einzeln prüfen.
 // e/i: [Name, Listenpreis €, Verbrauch kWh/100 km bzw. l/100 km]; k: Kraftstoff; st: Kfz-Steuer Verbrenner €/Jahr; kl: Klasse
+// Quellen der geprüften E-Auto-Listenpreise (q); Paare ohne q: Richtwert, noch ungeprüft
+const QUELLE = { ii: ["insideevs.de, Stand 11/2026", "https://insideevs.de/features/743691/kompakte-elektrosuvs-l%C3%A4nge-markt%C3%BCbersicht/"], il: ["insideevs.de, Stand 10/2026", "https://insideevs.de/features/701324/elektrolimousinen-marktubersicht-daten-preise/"], adac: ["ADAC-Marktübersicht 3/2026", "https://www.adac.de/rund-ums-fahrzeug/elektromobilitaet/elektroauto/elektroautos-uebersicht-2026/"], cw: ["carwow.de, Stand 10/2026", "https://www.carwow.de/elektroauto"] };
 const KL = { klein: ["Kleinwagen", 450, 250], kompakt: ["Kompakt", 550, 300], suv: ["SUV", 650, 350], mittel: ["Mittelklasse", 700, 380], ober: ["Oberklasse", 850, 450] };
 const AUTOS = [
-  { id: "elroq", kl: "suv", e: ["Skoda Elroq 85", 43900, 16.5], i: ["Skoda Karoq 1.5 TSI", 38500, 6.4], k: "benzin", st: 120, zl: 34441 },
+  { id: "elroq", kl: "suv", q: "ii", e: ["Skoda Elroq 60", 37390, 16.0], i: ["Skoda Karoq 1.5 TSI", 38500, 6.4], k: "benzin", st: 120, zl: 34441 },
   { id: "modely", kl: "suv", e: ["Tesla Model Y", 44990, 15.9], i: ["VW Tiguan 1.5 eTSI", 44000, 6.3], k: "benzin", st: 120, zl: 31998 },
   { id: "enyaq", kl: "suv", e: ["Skoda Enyaq 85", 48900, 16.5], i: ["Skoda Kodiaq 2.0 TDI", 46500, 5.6], k: "diesel", st: 260, zl: 27226, firma: true },
   { id: "id3", kl: "kompakt", e: ["VW ID.3 Pro", 36900, 15.5], i: ["VW Golf 1.5 eTSI", 33000, 5.6], k: "benzin", st: 100, zl: 27165 },
-  { id: "id7", kl: "mittel", e: ["VW ID.7 Pro", 53995, 16.0], i: ["VW Passat 2.0 TDI", 46500, 5.0], k: "diesel", st: 240, zl: 26048, firma: true },
-  { id: "id4", kl: "suv", e: ["VW ID.4 Pro", 44000, 17.0], i: ["VW Tiguan 2.0 TDI", 46000, 5.6], k: "diesel", st: 260, zl: 21772 },
-  { id: "ix1", kl: "suv", e: ["BMW iX1 eDrive20", 48900, 16.0], i: ["BMW X1 sDrive18i", 43000, 6.4], k: "benzin", st: 120, zl: 20534, firma: true },
-  { id: "cla", kl: "kompakt", e: ["Mercedes CLA 250+", 55000, 13.0], i: ["Mercedes A 200 Limousine", 39000, 6.0], k: "benzin", st: 110, zl: 20231, firma: true },
+  { id: "id7", kl: "mittel", q: "il", e: ["VW ID.7 Pro", 54505, 16.0], i: ["VW Passat 2.0 TDI", 46500, 5.0], k: "diesel", st: 240, zl: 26048, firma: true },
+  { id: "id4", kl: "suv", q: "ii", e: ["VW ID.4 Pure", 42915, 16.5], i: ["VW Tiguan 2.0 TDI", 46000, 5.6], k: "diesel", st: 260, zl: 21772 },
+  { id: "ix1", kl: "suv", q: "adac", e: ["BMW iX1 eDrive20", 49400, 16.0], i: ["BMW X1 sDrive18i", 43000, 6.4], k: "benzin", st: 120, zl: 20534, firma: true },
+  { id: "cla", kl: "kompakt", q: "il", e: ["Mercedes CLA 200 (elektrisch)", 46950, 13.0], i: ["Mercedes A 200 Limousine", 39000, 6.0], k: "benzin", st: 110, zl: 20231, firma: true },
   { id: "mini", kl: "klein", e: ["Mini Cooper E", 32900, 14.5], i: ["Mini Cooper C", 28000, 5.8], k: "benzin", st: 90, zl: 17209 },
-  { id: "a6", kl: "ober", e: ["Audi A6 e-tron", 62800, 16.0], i: ["Audi A6 Avant 40 TDI", 58000, 5.3], k: "diesel", st: 250, zl: 17167, firma: true },
+  { id: "a6", kl: "ober", q: "adac", e: ["Audi A6 e-tron", 62800, 16.0], i: ["Audi A6 Avant 40 TDI", 58000, 5.3], k: "diesel", st: 250, zl: 17167, firma: true },
   { id: "tavascan", kl: "suv", e: ["Cupra Tavascan", 47000, 17.0], i: ["Cupra Formentor 1.5 TSI", 36000, 6.2], k: "benzin", st: 110, zl: 13214 },
   { id: "ec3", kl: "klein", e: ["Citroën ë-C3", 23300, 17.0], i: ["Citroën C3 PureTech", 17990, 5.6], k: "benzin", st: 80, zl: 12521 },
-  { id: "q4", kl: "suv", e: ["Audi Q4 e-tron 40", 51000, 17.0], i: ["Audi Q3 35 TFSI", 42000, 6.8], k: "benzin", st: 140, zl: 11852 },
+  { id: "q4", kl: "suv", q: "ii", e: ["Audi Q4 e-tron", 47590, 17.0], i: ["Audi Q3 35 TFSI", 42000, 6.8], k: "benzin", st: 140, zl: 11852 },
   { id: "glc", kl: "suv", e: ["Mercedes GLC 400 4MATIC (elektrisch)", 71000, 18.0], i: ["Mercedes GLC 220 d", 60000, 5.6], k: "diesel", st: 270, zl: 11772, firma: true },
+  { id: "idpolo", kl: "klein", q: "cw", e: ["VW ID.Polo", 24995, 14.5], i: ["VW Polo 1.0 TSI", 21000, 5.4], k: "benzin", st: 70, zl: 0 },
+  { id: "epiq", kl: "klein", q: "cw", e: ["Skoda Epiq", 25900, 14.5], i: ["Skoda Kamiq 1.0 TSI", 25000, 5.6], k: "benzin", st: 80, zl: 0 },
   { id: "r5", kl: "klein", e: ["Renault 5 E-Tech 52 kWh", 32900, 15.0], i: ["Renault Clio TCe 90", 20000, 5.4], k: "benzin", st: 70, zl: 0 },
-  { id: "spring", kl: "klein", e: ["Dacia Spring", 16900, 13.5], i: ["Dacia Sandero TCe 90", 15000, 5.4], k: "benzin", st: 70, zl: 0 },
+  { id: "spring", kl: "klein", q: "adac", e: ["Dacia Spring", 16990, 13.5], i: ["Dacia Sandero TCe 90", 15000, 5.4], k: "benzin", st: 70, zl: 0 },
   { id: "smart5", kl: "suv", e: ["Smart #5", 50000, 19.0], i: ["Skoda Kodiaq 2.0 TDI", 46500, 5.6], k: "diesel", st: 260, zl: 0, firma: true, nur: "firma" },
   { id: "polestar4", kl: "suv", e: ["Polestar 4", 62000, 18.0], i: ["BMW X3 20d", 58000, 6.0], k: "diesel", st: 270, zl: 0, firma: true, nur: "firma" },
-  { id: "i4", kl: "mittel", e: ["BMW i4 eDrive40", 60000, 16.0], i: ["BMW 320d Touring", 52000, 5.0], k: "diesel", st: 240, zl: 0, firma: true, nur: "firma" },
+  { id: "i4", kl: "mittel", q: "il", e: ["BMW i4 eDrive35", 58200, 16.0], i: ["BMW 320d Touring", 52000, 5.0], k: "diesel", st: 240, zl: 0, firma: true, nur: "firma" },
   { id: "focus", kl: "kompakt", e: ["VW ID.3 Pro", 36900, 15.5], i: ["Ford Focus 1.0 EcoBoost", 30000, 5.6], k: "benzin", st: 100, zl: 0, firma: true, nur: "firma" },
-  { id: "octavia", kl: "kompakt", e: ["Skoda Elroq 85", 43900, 16.5], i: ["Skoda Octavia Combi 2.0 TDI", 38000, 4.9], k: "diesel", st: 230, zl: 0, firma: true, nur: "firma" },
+  { id: "octavia", kl: "kompakt", q: "ii", e: ["Skoda Elroq 60", 37390, 16.0], i: ["Skoda Octavia Combi 2.0 TDI", 38000, 4.9], k: "diesel", st: 230, zl: 0, firma: true, nur: "firma" },
 ];
 // Ladekarten für unterwegs, Stand 09/2026 laut ladeklar.de (Richtwerte). [Name, AC €/kWh, DC €/kWh, Grundgebühr €/Monat]
 const KARTEN = {
@@ -362,7 +366,7 @@ const KARTEN = {
 const PRESETS = {
   privat: [["Wenigfahrer", { km: 7000, jahre: 12, eAnteil: 90, eFirmaAnteil: 0 }], ["Familie", { km: 13500, jahre: 12, eAnteil: 80, eFirmaAnteil: 0 }],
            ["Pendler", { km: 20000, jahre: 10, eAnteil: 60, eFirmaAnteil: 30 }], ["Ohne eigene Wallbox", { km: 13500, jahre: 12, eAnteil: 0, eFirmaAnteil: 40 }]],
-  dienst: [["Pendler", { km: 25000, jahre: 4, dJahre: 4, eAnteil: 50, eFirmaAnteil: 40 }], ["Außendienst", { km: 40000, jahre: 3, dJahre: 3, eAnteil: 40, eFirmaAnteil: 30 }],
+  dienst: [["Pendler", { km: 25000, jahre: 4, dJahre: 4, eAnteil: 50, eFirmaAnteil: 40 }], ["Außendienst", { km: 60000, jahre: 3, dJahre: 3, eAnteil: 40, eFirmaAnteil: 30 }],
            ["Wenig privat", { km: 15000, jahre: 4, dJahre: 4, eAnteil: 20, eFirmaAnteil: 70 }]],
 };
 const F = (k, lbl, u, step, sub, sel) => ({ k, lbl, u, step, sub, sel });
@@ -537,6 +541,7 @@ function fuellePresets() {
 function markPreset() { const gleich = aktivPreset === JSON.stringify(V); if (!gleich) aktivPreset = null; $("presets").querySelectorAll(".chip").forEach(b => { if (!gleich) b.setAttribute("aria-pressed", "false"); }); }
 // Modus
 function setzeModus(m) {
+  $("s_km").max = m === "dienst" ? 100000 : 50000; $("s_km").step = m === "dienst" ? 1000 : 500;
   V.modus = m; $("m_privat").setAttribute("aria-pressed", m === "privat"); $("m_dienst").setAttribute("aria-pressed", m === "dienst");
   if (m === "dienst") { V.eFirmaPreis = 0.32; if (V.jahre > 6) V.jahre = 4; } else { V.eFirmaPreis = 0; }
   fuellePresets(); fuellePaare(); run();
@@ -574,7 +579,7 @@ function run() {
   $("paar").value = V.paar; $("karte").value = V.karte;
   $("l_eFirma").textContent = dienst ? "Firmen-Wallbox" : "Strom bei der Firma";
   const a = AUTOS.find(x => x.id === V.paar);
-  $("pairInfo").innerHTML = a ? `<span><i style="background:var(--ev)"></i>${eur(V.ePreis)} · ${fmt(V.eVerb, 1)} kWh</span><span><i style="background:var(--ice)"></i>${eur(V.iPreis)} · ${fmt(V.iVerb, 1)} l ${V.iKraft === "diesel" ? "Diesel" : "Benzin"}</span>` : "";
+  $("pairInfo").innerHTML = a ? `<span><i style="background:var(--ev)"></i>${eur(V.ePreis)} · ${fmt(V.eVerb, 1)} kWh</span><span><i style="background:var(--ice)"></i>${eur(V.iPreis)} · ${fmt(V.iVerb, 1)} l ${V.iKraft === "diesel" ? "Diesel" : "Benzin"}</span><span class="q">${a.q ? `E-Auto-Preis: <a href="${QUELLE[a.q][1]}" target="_blank" rel="noopener">${QUELLE[a.q][0]}</a>; sonst Richtwerte` : "Richtwerte, noch nicht einzeln geprüft"}</span>` : "";
   $("d_dw").hidden = !dienst; $("tabDw").hidden = !dienst; $("tabReform").hidden = dienst;
 
   const r = rechne(V);
