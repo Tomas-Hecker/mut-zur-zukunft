@@ -27,7 +27,7 @@ RECHNER = [  # Ordner, Name im Menü, Kurzbeschreibung für die Startseite
 ]
 # Seiten, die nur auf der Buch-Homepage existieren
 NUR_BUCH = ("buch/", "steuerrechner/", "vortraege/", "gesundheitsrechner/", "steuerlast/", "ueber-mich.html")
-KOPIEREN = ["cockpit.css", "profil.js", "satz.js", "info.js", "wetter"]
+KOPIEREN = ["cockpit.css", "profil.js", "satz.js", "info.js", "methode.js", "wetter"]  # fehlende werden übersprungen
 ENTFERNEN = ["tools-buchlinks.js", "energie-link.js"]  # Buchlinks und Übergabe an den Steuerrechner
 
 
@@ -148,6 +148,8 @@ def main() -> None:
     shutil.copytree(WURZEL / "hecoair" / "ci", ZIEL / "ci")
     for name in KOPIEREN:
         q = WURZEL / name
+        if not q.exists():
+            continue
         (shutil.copytree if q.is_dir() else shutil.copy2)(q, ZIEL / name)
     # Erklär-Knöpfe: „Mehr im Buch“ zeigt auf die Buch-Homepage statt auf einen Ordner buch/ neben dem Skript
     info = ZIEL / "info.js"
