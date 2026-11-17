@@ -264,6 +264,7 @@ h1,h2,h3{break-after:avoid}
       <div class="verdict" id="verdict"></div>
       <div class="tiles" id="tiles"></div>
       <div class="hr" id="hr"></div>
+      <div id="zumSteuer"></div>
       <h3 class="cumT" id="cumT"></h3>
       <div class="chart" id="cum"></div>
       <p class="note">Aufsummierte Kosten ab Einbau in Euro, mit Preisen des jeweiligen Jahres.</p>
@@ -555,6 +556,8 @@ function run() {
   const hrRow = (n, k) => { const d = rR.tot[k] - rH.tot[k]; return `<tr><td>${n}</td><td>${eur(rH.tot[k])}</td><td>${eur(rR.tot[k])}</td><td class="${d <= 0 ? "gut" : "schlecht"}">${d <= 0 ? "−" : "+"}${eur(Math.abs(d))}</td></tr>`; };
   $("hr").innerHTML = `<h3>Recht heute gegen die Reform, über ${fmt(V.dauer)} Jahre</h3><div class="tbl"><table><thead><tr><th></th><th>heute</th><th>Reform</th><th>±</th></tr></thead><tbody>${hrRow("Wärmepumpe", "wp")}${hrRow("Gasheizung", "gas")}${hrRow("Ölheizung", "oel")}</tbody></table></div>`;
   $("co2txt").textContent = "CO₂-Preis: " + PFAD[pfadVon(V)].txt;
+  if (window.ZumSteuerrechner) ZumSteuerrechner.zeige($("zumSteuer"), { quelle: "Heizungsrechner", was: "Wärmepumpe statt Gasheizung", heute: (rH.tot.gas - rH.tot.wp) / V.dauer, reform: (rR.tot.gas - rR.tot.wp) / V.dauer,
+    reformText: "Strom 5 % Mehrwertsteuer, Gas 50 %, CO₂-Preispfad des Buchs, Wärmepumpe ohne Mehrwertsteuer mit zinslosem Kredit." });
   const nm = { wp: "Wärmepumpe", gas: "Gasheizung", oel: "Ölheizung" };
   const rang = Object.entries(r.tot).sort((a, b) => a[1] - b[1]);
   const [best, zweit] = rang;
@@ -646,6 +649,8 @@ run();
 </script>
 
 <script src="../tools-buchlinks.js"></script>
+<script src="../energie-link.js"></script>
+<script>try { run(); } catch (e) {}</script>
 <script id="druck-js">(() => {
   let alt = null, zu = [];
   addEventListener("beforeprint", () => {
