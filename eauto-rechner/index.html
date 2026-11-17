@@ -229,14 +229,14 @@ const fmt = (v, d = 0) => (+v).toLocaleString("de-DE", { minimumFractionDigits: 
 const eur = v => fmt(Math.round(v)) + " €";
 const V = {
   km: 13500, jahre: 18, kaufjahr: 2026,
-  iPreis: 44630, iVerb: 7.1, iSprit: 2.10, iSteuer: 150, iVers: 600, iWart: 300,
-  ePreis: 52700, eVerb: 20.6, eVerlust: 10, eHaus: 0.30, eOff: 0.55, eAnteil: 80, eVers: 600, eWart: 180, eSteuerNach: 60, eWallbox: 0,
+  iPreis: 44630, iVerb: 7.1, iSprit: 2.00, iSteuer: 150, iVers: 600, iWart: 300,
+  ePreis: 52700, eVerb: 20.6, eVerlust: 10, eHaus: 0.32, eOff: 0.55, eAnteil: 80, eVers: 600, eWart: 180, eSteuerNach: 60, eWallbox: 0,
   modus: "privat", methode: "pausch", entf: 25, fahrten: 180, satz: 43, agLaden: "nein", erstatt: 0, dJahre: 4, iKraft: "benzin", thg: 300, thgBis: 2030,
 };
 const F = (k, lbl, u, step, sub, sel) => ({ k, lbl, u, step, sub, sel });
 const FELDER = {
   allg: [F("km", "Fahrleistung im Jahr", "km", 500), F("jahre", "Nutzungsdauer", "Jahre", 1, "bis zum Verschrotten oder Verkauf ohne Restwert"), F("kaufjahr", "Kaufjahr", "", 1, "bei Dienstwagen 2025: Grenze 100.000 € erst ab 1.7.2025")],
-  g_ice: [F("iPreis", "Anschaffung", "€", 100), F("iVerb", "Verbrauch", "l/100 km", 0.1), F("iKraft", "Kraftstoff", "", 0, "", [["benzin", "Benzin"], ["diesel", "Diesel"]]), F("iSprit", "Spritpreis heute", "€/l", 0.01, "der CO₂-Preis darin steigt mit dem Emissionshandel"), F("iSteuer", "Kfz-Steuer", "€/Jahr", 10), F("iVers", "Versicherung", "€/Jahr", 10), F("iWart", "Wartung und Reparaturen", "€/Jahr", 10)],
+  g_ice: [F("iPreis", "Anschaffung", "€", 100), F("iVerb", "Verbrauch", "l/100 km", 0.1), F("iKraft", "Kraftstoff", "", 0, "", [["benzin", "Benzin"], ["diesel", "Diesel"]]), F("iSprit", "Spritpreis heute", "€/l", 0.01, "ADAC-Schnitt 8.11.2026: Super E10 2,00 €, Diesel 2,24 €; der CO₂-Preis darin steigt mit dem Emissionshandel"), F("iSteuer", "Kfz-Steuer", "€/Jahr", 10), F("iVers", "Versicherung", "€/Jahr", 10), F("iWart", "Wartung und Reparaturen", "€/Jahr", 10)],
   g_ev: [F("ePreis", "Anschaffung", "€", 100), F("eVerb", "Verbrauch (Herstellerangabe)", "kWh/100 km", 0.1, "im Winter rund 15 bis 25 % mehr"), F("eVerlust", "Ladeverluste", "%", 1, "typisch 10 bis 15 %"),
     F("eHaus", "Strompreis zu Hause", "€/kWh", 0.01), F("eOff", "Strompreis unterwegs", "€/kWh", 0.01), F("eAnteil", "Anteil Laden zu Hause", "%", 5),
     F("eVers", "Versicherung", "€/Jahr", 10), F("eWart", "Wartung und Reparaturen", "€/Jahr", 10), F("eSteuerNach", "Kfz-Steuer nach der Befreiung", "€/Jahr", 5, "nach Gewicht, halbiert; meist 30 bis 100 €"), F("eWallbox", "Wallbox (einmalig)", "€", 100, "0, wenn schon vorhanden"), F("thg", "THG-Prämie", "€/Jahr", 10, "2026 meist 300 bis 380 €; wie lange sie so hoch bleibt, ist offen"), F("thgBis", "THG-Prämie bis einschließlich", "", 1, "Jahr; danach ohne Prämie gerechnet")],
