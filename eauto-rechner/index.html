@@ -401,7 +401,7 @@ function rechne(v) {
     const eSt = kj > befreitBis ? v.eSteuerNach : 0;
     const spritCO2 = v.iVerb / 100 * KG_L[v.iKraft || "benzin"] / 1000 * (v.reform ? co2Reform(kj) - co2Preis(2026) : co2Preis(kj) - co2Preis(v.kaufjahr)) * (v.reform ? 1.5 : 1.19);   // €/km mehr als heute
     const thg = kj <= v.thgBis ? v.thg : 0;
-    const kI = v.reform ? kmAbgabe(v, kj, "i") + (v.iKraft === "diesel" && kj >= KMA.dieselAb ? KMA.dieselMehr * 1.5 * v.iVerb / 100 * v.km : 0) : 0, kE = v.reform ? kmAbgabe(v, kj, "e") : 0;
+    const mitK = v.reform && !v.ohneKma, kI = mitK ? kmAbgabe(v, kj, "i") + (v.iKraft === "diesel" && kj >= KMA.dieselAb ? KMA.dieselMehr * 1.5 * v.iVerb / 100 * v.km : 0) : 0, kE = mitK ? kmAbgabe(v, kj, "e") : 0;
     i += v.iSteuer + v.iVers + v.iWart + v.km * (iEnergie + spritCO2) + kI;
     e += eSt + v.eVers + v.eWart + v.km * eEnergie + (v.eGrund || 0) - thg + kE;
     jahre.push({ j: n, i, e, eSt, sC: v.km * spritCO2, thg, kI, kE });
@@ -416,7 +416,7 @@ function rechne(v) {
     "Steigender CO₂-Preis im Sprit": [sCSum, 0],
     "THG-Prämie": [0, -thgSum],
   };
-  if (v.reform) teile["Kilometerabgabe (Vorschlag)"] = [jahre.slice(1).reduce((a, r) => a + r.kI, 0), jahre.slice(1).reduce((a, r) => a + r.kE, 0)];
+  if (v.reform && !v.ohneKma) teile["Kilometerabgabe (Vorschlag)"] = [jahre.slice(1).reduce((a, r) => a + r.kI, 0), jahre.slice(1).reduce((a, r) => a + r.kE, 0)];
   // Break-even: erster Zeitpunkt, an dem die aufsummierten Kosten des E-Autos unter denen des Verbrenners liegen
   let be = null;
   if (jahre[0].e <= jahre[0].i) be = 0;
@@ -616,11 +616,11 @@ function run() {
         + J.map(j => `<tr><td>${j}</td><td>${fmt(kmaSatz(j) * 100, 1)} ct</td><td>${eur(rr.jahre[j - V.kaufjahr + 1].kE)}</td><td>${eur(rr.jahre[j - V.kaufjahr + 1].kI)}</td></tr>`).join("")
         + `<tr class="sum"><td>${fmt(V.jahre)} Jahre zusammen</td><td></td><td>${eur(sk[1])}</td><td>${eur(sk[0])}</td></tr></tbody></table></div>`
         : `<p class="note">In deinen ${fmt(V.jahre)} Jahren ab ${V.kaufjahr} fällt noch keine Kilometerabgabe an, sie beginnt 2030.</p>`)
-      + `<p class="note">Bei ${fmt(V.km)} km im Jahr${V.kaufjahr < KMA.ueVor ? ", Auto vor 2028 zugelassen, mit Übergang" : ""}. Sie ist in „Mit der Reform“ unten schon eingerechnet.</p>`;
+      + `<p class="note">Bei ${fmt(V.km)} km im Jahr${V.kaufjahr < KMA.ueVor ? ", Auto vor 2028 zugelassen, mit Übergang" : ""}. Der Kasten unten rechnet ohne sie, weil der Steuerrechner sie als eigene Zeile führt.</p>`;
   } else if ($("kmaBox")) $("kmaBox").innerHTML = "";
-  if (window.ZumSteuerrechner && !dienst) { const rr = rechne(reformV(V));
+  if (window.ZumSteuerrechner && !dienst) { const rr = rechne({ ...reformV(V), ohneKma: true });   // ohne Kilometerabgabe: der Steuerrechner führt sie als eigene Zeile
     ZumSteuerrechner.zeige($("zumSteuer"), { quelle: "E-Auto-Rechner", was: "E-Auto statt Verbrenner", heute: diff / V.jahre, reform: (rr.iTCO - rr.eTCO) / V.jahre,
-      reformText: "Auto und Sprit 50 % Mehrwertsteuer, Mehrwertsteuer auf die ersten 10.000 € des E-Autos zurück, Strom 5 % ohne Umlagen, CO₂-Preispfad des Buchs, Kilometerabgabe mit Anrechnung der Energiesteuer (Entwurf), zinsloses Darlehen." }); }
+      reformText: "Auto und Sprit 50 % Mehrwertsteuer, Mehrwertsteuer auf die ersten 10.000 € des E-Autos zurück, Strom 5 % ohne Umlagen, CO₂-Preispfad des Buchs, zinsloses Darlehen. Die Kilometerabgabe steht im Steuerrechner als eigene Zeile." }); }
   else if ($("zumSteuer")) $("zumSteuer").innerHTML = "";
   const tile = (k, v, s, c) => `<div class="tile"><span class="k">${c ? `<i style="background:var(--${c})"></i>` : ""}${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
   $("tiles").innerHTML = tile("Verbrenner gesamt", eur(r.iTCO), `${fmt(r.iTCO / r.lebKm * 100, 1)} € je 100 km`, "ice")
