@@ -484,12 +484,30 @@ h1,h2,h3{break-after:avoid}
             <label class="check field wide"><input id="bs" type="checkbox"> Bezieht beim Start schon Rente (Bestandsschutz: auf die Rente nicht mehr als heute)</label>
           </div>
         </details>
+        <details class="more" id="energieBox">
+          <summary>Energie und Auto: was Wärmepumpe, Solaranlage und E-Auto sparen</summary>
+          <p class="note" style="margin-top:0">Grobe Schätzung für ein Haus wie im Buch, heute und mit der Reform. Die Ersparnis zählt zum Geld im Portemonnaie. Kauf und Zinsen sind abgezogen, gerechnet als Mittel der nächsten 20 Jahre. Genauer rechnen die verknüpften Rechner.</p>
+          <div class="fields">
+            <div class="field"><label for="e_fall">Annahmen</label><select id="e_fall"><option value="ung">ungünstig</option><option value="wahr" selected>wahrscheinlich</option><option value="guen">günstig</option></select><span class="hint">für Preise, Technik und Zinsen</span></div>
+            <div class="field"><label for="e_strom">Haushaltsstrom im Jahr, kWh</label><input id="e_strom" type="number" min="0" step="100" value="3500"><span class="hint">ohne Wärmepumpe und Auto; leer lassen: nach Personen geschätzt</span></div>
+            <div class="field"><label for="e_wp">Heizung</label><select id="e_wp"><option value="0">bleibt wie sie ist</option><option value="1">Wärmepumpe statt Gas</option></select></div>
+            <div class="field"><label for="e_waerme">Wärme im Jahr, kWh</label><input id="e_waerme" type="number" min="0" step="500" value="15000"><span class="hint">ungefähr Gasverbrauch × 0,9</span></div>
+            <div class="field"><label for="e_ev">Auto</label><select id="e_ev"><option value="0">bleibt wie es ist</option><option value="1">E-Auto statt Verbrenner</option></select></div>
+            <div class="field"><label for="e_km">Kilometer im Jahr</label><input id="e_km" type="number" min="0" step="500" value="13500"></div>
+            <div class="field"><label for="e_pv">Solaranlage auf dem Dach, kWp</label><input id="e_pv" type="number" min="0" max="30" step="0.5" value="0"><span class="hint">0 = keine; mit Speicher, wenn er sich lohnt</span></div>
+            <label class="check field"><input id="e_balkon" type="checkbox"> Balkonkraftwerk 800 W</label>
+            <label class="check field wide"><input id="e_hhstrom" type="checkbox" checked> Auch den billigeren Strom für den eigenen Verbrauch einrechnen (Reform: 5 % Mehrwertsteuer, ohne Umlagen)</label>
+          </div>
+          <div id="e_quelle"></div>
+          <p class="note" id="e_links"></p>
+        </details>
         <p class="note">Alle Beträge in Euro, Rechtsstand 2026. Die Ergebnisse stehen pro Jahr und pro Monat.</p>
       </form>
 
       <div class="panel mitte" aria-live="polite">
         <div class="duo" id="duo"></div>
         <div class="verdict" id="verdict"></div>
+        <div class="energie-erg" id="energieErg" hidden></div>
         <div class="teilen" id="teilen" data-nosatz>
           <h3 id="teilenTitel">Ergebnis teilen</h3>
           <canvas id="teilenBild" width="1080" height="1080" role="img" aria-label="Ergebniskarte zum Teilen"></canvas>
@@ -1662,6 +1680,76 @@ function renderPresets() {
   $("presetNote").textContent = aktiv >= 0 ? BEISPIELE[aktiv].text : "Trag deine Zahlen ein. Das Ergebnis rechnet sofort mit.";
 }
 
+
+/* ---------- Energie und Auto (Entwurf) ----------
+   Werte aus der Stundensimulation des Energie-Rechners (Einfamilienhaus, Idstein, 3.500 kWh, 15.000 kWh Wärme, 13.500 km),
+   Mittel 2027 bis 2046 mit Kauf und Zinsen. Var = Energieteil, wächst mit Wärme bzw. Kilometern; Fix = Kauf, Zinsen, Wartung, Steuer. */
+const ENERGIE = {"ung_heute": {"hh": 0.4495, "wpVar": 43, "wpFix": -1034, "evVar": 813, "evFix": -723, "pv": 275, "synWp": 463, "synEv": 325, "synAll": -55, "balkon": 266, "alles": 108}, "ung_reform": {"hh": 0.3329, "wpVar": 1653, "wpFix": -422, "evVar": 2154, "evFix": -424, "pv": 267, "synWp": 329, "synEv": 214, "synAll": -79, "balkon": 194, "alles": 3692}, "wahr_heute": {"hh": 0.3695, "wpVar": 1039, "wpFix": -415, "evVar": 1471, "evFix": -372, "pv": 253, "synWp": 255, "synEv": 147, "synAll": 17, "balkon": 196, "alles": 2395}, "wahr_reform": {"hh": 0.2298, "wpVar": 2685, "wpFix": -115, "evVar": 2827, "evFix": -84, "pv": 134, "synWp": 120, "synEv": 16, "synAll": -5, "balkon": 83, "alles": 5577}, "guen_heute": {"hh": 0.3695, "wpVar": 1505, "wpFix": 163, "evVar": 1890, "evFix": 67, "pv": 582, "synWp": 276, "synEv": 167, "synAll": -5, "balkon": 202, "alles": 4644}, "guen_reform": {"hh": 0.2298, "wpVar": 3019, "wpFix": 123, "evVar": 3107, "evFix": 342, "pv": 436, "synWp": 79, "synEv": 10, "synAll": 2, "balkon": 86, "alles": 7117}};
+const E_BASIS = { waerme: 15000, km: 13500, kwp: 10 };
+// Aus verknüpften Rechnern übernommen: je Rechner { heute, reform }; ersetzt die Schätzung der Maßnahmen, die dieser Rechner abdeckt
+const E_DECKT = { "Heizungsrechner": ["wp"], "E-Auto-Rechner": ["ev"], "Energie-Rechner": ["pv"], "Balkon-Rechner": ["balkon"] };   // der Energie-Rechner gibt nur zurück, was die Solaranlage bringt
+const E_EXTERN = {};
+let E_STROM_EIGEN = false;   // Haushaltsstrom selbst eingetragen? Sonst nach Personen geschätzt
+const eUebernimm = (quelle, h, r) => { quelle = String(quelle || "").slice(0, 40); if (!E_DECKT[quelle]) return; E_EXTERN[quelle] = { heute: +h || 0, reform: +r || 0 }; };
+try { const q = new URLSearchParams(location.search); if (q.has("eHeute") && q.has("eReform")) eUebernimm(q.get("eQuelle"), q.get("eHeute"), q.get("eReform")); } catch (e) {}
+addEventListener("message", ev => { if (ev.origin !== location.origin || !ev.data || ev.data.typ !== "energie-ersparnis") return; eUebernimm(ev.data.quelle, ev.data.heute, ev.data.reform); $("energieBox").open = true; updateHH(); });
+function energieLesen() {
+  const n = id => Math.max(0, parseFloat($(id).value) || 0);
+  const pers = (+$("erw").value || 1) + (Math.round(parseFloat($("kinder").value) || 0)), stromAuto = [0, 1500, 2500, 3500][Math.min(3, pers)] || 4000;
+  if (!E_STROM_EIGEN) $("e_strom").value = stromAuto;
+  return { fall: $("e_fall").value, strom: n("e_strom"), wp: $("e_wp").value === "1", waerme: n("e_waerme"), ev: $("e_ev").value === "1", km: n("e_km"), kwp: Math.min(30, n("e_pv")), balkon: $("e_balkon").checked, hhstrom: $("e_hhstrom").checked };
+}
+function energieRechne(e) {
+  const out = {};
+  for (const r of ["heute", "reform"]) {
+    const k = ENERGIE[e.fall + "_" + r], t = [], ext = new Set(Object.keys(E_EXTERN).flatMap(q => E_DECKT[q]));
+    for (const [q, x] of Object.entries(E_EXTERN)) t.push([`Aus dem ${q}${q === "Energie-Rechner" ? " (Solaranlage)" : ""}`, x[r]]);
+    if (e.wp && !ext.has("wp")) t.push(["Wärmepumpe statt Gasheizung (geschätzt)", k.wpVar * e.waerme / E_BASIS.waerme + k.wpFix]);
+    if (e.ev && !ext.has("ev")) t.push(["E-Auto statt Verbrenner (geschätzt)", k.evVar * e.km / E_BASIS.km + k.evFix]);
+    const pvF = Math.min(e.kwp / E_BASIS.kwp, 1.5);
+    if (e.kwp > 0 && !ext.has("pv")) t.push([`Solaranlage ${fmt(e.kwp, 1)} kWp (geschätzt)`, k.pv * pvF + (e.wp ? k.synWp * pvF : 0) + (e.ev ? k.synEv * pvF : 0) + (e.wp && e.ev ? k.synAll * pvF : 0)]);
+    if (e.balkon && !ext.has("balkon")) t.push(["Balkonkraftwerk 800 W (geschätzt)", k.balkon]);
+    out[r] = { teile: t, summe: t.reduce((s, x) => s + x[1], 0), preis: k.hh };
+  }
+  out.hhstrom = e.hhstrom ? e.strom * (out.heute.preis - out.reform.preis) : 0;
+  return out;
+}
+function energieLinks(e) {
+  const q = o => new URLSearchParams(o).toString();
+  const l = [];
+  if (e.wp) l.push(`<a href="../heizungsrechner/?${q({ waerme: e.waerme })}" target="_blank" rel="opener">Heizungsrechner</a>`);
+  if (e.ev) l.push(`<a href="../eauto-rechner/?${q({ km: e.km })}" target="_blank" rel="opener">E-Auto-Rechner</a>`);
+  if (e.kwp > 0 || (e.wp && e.ev)) l.push(`<a href="../energie-rechner/?${q({ hh: e.strom, pvS: e.kwp, waerme: e.waerme, km: e.km, wpAn: e.wp ? "ja" : "nein", evAn: e.ev ? "ja" : "nein" })}" target="_blank" rel="opener">Energie-Rechner</a>`);
+  if (e.balkon) l.push(`<a href="../balkon-rechner/?${q({ hh: e.strom })}" target="_blank" rel="opener">Balkon-Rechner</a>`);
+  return l.length ? `Genau rechnen, mit deinen Werten: ${l.join(" · ")}. Die Rechner öffnen sich in einem neuen Fenster.` : "Wähl oben, was du ändern willst. Dann erscheinen die Links zu den Rechnern, die es genau rechnen.";
+}
+function energieZeigen(plus) {
+  const e = energieLesen(), E = energieRechne(e), box = $("energieErg");
+  $("e_links").innerHTML = energieLinks(e);
+  const qs = Object.keys(E_EXTERN);
+  $("e_quelle").innerHTML = qs.length ? `<p class="note"><b>Übernommen aus ${qs.map(q => "dem " + esc(q)).join(" und ")}.</b> Für diese Maßnahmen gilt die genaue Rechnung statt der Schätzung. <button type="button" class="leise" id="e_reset">Wieder schätzen</button></p>` : "";
+  if (qs.length) $("e_reset").onclick = () => { qs.forEach(q => delete E_EXTERN[q]); updateHH(); };
+  const H = E.heute.summe, R = E.reform.summe + E.hhstrom;
+  if (Math.abs(H) < 0.5 && Math.abs(R) < 0.5) { box.hidden = true; return { heute: 0, reform: 0 }; }
+  box.hidden = false;
+  const zeile = (n, h, r) => `<tr><td>${n}</td><td>${sign(h)} €</td><td>${sign(r)} €</td></tr>`;
+  const namen = [...new Set([...E.heute.teile, ...E.reform.teile].map(x => x[0]))];
+  const wert = (teile, n) => (teile.find(x => x[0] === n) || [0, 0])[1];
+  const gesamt = plus + R - H;
+  box.innerHTML = `<h3>Mit Energie und Auto: ${eur(Math.abs(gesamt) / 12)} im Monat ${gesamt >= 0 ? "mehr" : "weniger"} als heute</h3>
+    <p class="note">Energie und Auto bringen heute ${eur(H)} im Jahr, mit der Reform ${eur(R)}. Zusammen mit dem Ergebnis oben ${gesamt >= 0 ? "bleiben" : "fehlen"} ${eur(Math.abs(gesamt))} im Jahr gegenüber heute.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Ersparnis im Jahr</th><th>Heute</th><th>Reform</th></tr></thead><tbody>
+    ${namen.map(n => zeile(n, wert(E.heute.teile, n), wert(E.reform.teile, n))).join("")}
+    ${E.hhstrom ? zeile(`Strom mit 5 % Mehrwertsteuer, ohne Umlagen: ${fmt(e.strom)} kWh Haushaltsstrom`, 0, E.hhstrom) : ""}
+    <tr class="sum"><td>Zusammen</td><td>${sign(H)} €</td><td>${sign(R)} €</td></tr></tbody></table></div>
+    <p class="note">Entwurf, grobe Schätzung: ${({ ung: "ungünstige", wahr: "wahrscheinliche", guen: "günstige" })[e.fall]} Annahmen. Gezählt wird, was die Anlagen sparen, und der billigere Strom, wenn eingeschaltet. Die Schätzung lädt und heizt im günstigsten Stromtarif (heute dynamisch, mit der Reform mit den 8 Stunden ohne Netzentgelt); der E-Auto- und der Heizungsrechner rechnen mit dem Strompreis, den du dort einträgst, und liegen deshalb etwas darunter. Die höhere Mehrwertsteuer auf Gas und Benzin steckt schon in der Rechnung oben, das Klimageld ist nicht eingerechnet.</p>`;
+  return { heute: H, reform: R };
+}
+$("e_strom").addEventListener("input", () => { E_STROM_EIGEN = $("e_strom").value !== ""; });
+$("energieBox").addEventListener("input", ev => { ev.stopPropagation(); updateHH(); });
+$("energieBox").addEventListener("change", ev => { ev.stopPropagation(); updateHH(); });
+if (Object.keys(E_EXTERN).length) $("energieBox").open = true;
+
 function updateHH() {
   const h = readForm();
   document.querySelectorAll(".p2").forEach(el => el.hidden = h.erw !== 2);
@@ -1692,6 +1780,7 @@ function updateHH() {
     vd.innerHTML += `<p class="note">Eingerechnet ist das Altvermögenskonto: Ausgaben aus Vermögen, das schon nach altem Recht versteuert ist, bleiben steuerfrei, soweit das Konto reicht, hier ${eur(r.alt)} im Jahr.</p>`;
   }
   if (r.s4 > 0.5) vd.innerHTML += `<p class="note">In den ersten ${fmt(A.Stufe4Jahre)} Jahren kommt die befristete Stufe 4 dazu (${pct(A.Satz4, 0)} Aufschlag auf Ausgaben über ${eur(A.Stufe4Monat)} im Monat je Erwachsenem): ${eur(r.s4)} mehr im Jahr.</p>`;
+  const eErg = energieZeigen(plus);
   teilenUpdate(r.vgl + r.entfall);
   // 30 Jahre
   const jahresPlus = r.vgl + r.entfall, rr = A.RenditeReal;

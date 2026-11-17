@@ -19,10 +19,10 @@
 .ib:hover,.ib:focus-visible,.ib[aria-expanded="true"]{opacity:1;color:var(--accent,#0b7a5c);outline:none}
 .ib:focus-visible{box-shadow:0 0 0 3px rgba(11,122,92,.3)}
 .ib-pop{position:absolute;z-index:1000;max-width:min(360px,calc(100vw - 24px));padding:12px 30px 12px 14px;border-radius:10px;
-  background:var(--card,#fff);color:var(--fg,#1d2321);border:1px solid var(--line,#d9ddd8);box-shadow:0 8px 28px rgba(0,0,0,.18);
+  background:#fff;color:#1d2321;border:1px solid #c9cfcb;color-scheme:light;box-shadow:0 8px 28px rgba(0,0,0,.18);
   font:400 14px/1.45 "Source Sans 3",system-ui,sans-serif;text-align:left;text-transform:none;letter-spacing:0;font-weight:400;white-space:normal}
-.ib-pop p{margin:0}.ib-pop a{display:inline-block;margin-top:8px;font-weight:600;color:var(--accent,#0b7a5c)}
-.ib-pop .x{position:absolute;top:4px;right:6px;border:0;background:none;font-size:18px;line-height:1;color:var(--muted,#667);cursor:pointer;padding:4px}
+.ib-pop p{margin:0;color:#1d2321}.ib-pop a{display:inline-block;margin-top:8px;font-weight:600;color:#0b6b51}
+.ib-pop .x{position:absolute;top:4px;right:6px;border:0;background:none;font-size:18px;line-height:1;color:#4a5550;cursor:pointer;padding:4px}
 @media print{.ib,.ib-pop{display:none!important}}`;
   document.head.insertAdjacentHTML("beforeend", `<style id="ib-stil">${css}</style>`);
 

@@ -6,8 +6,7 @@
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <title>Wärmepumpe, Gas oder Öl</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="../schriften/schriften.css">
 <style>
 /* Layout: Eingaben links (Haus, drei Heizungen, Förderung), Ergebnis rechts; darunter Kostenaufstellung und Regeln */
 :root {
@@ -184,6 +183,9 @@ h1,h2,h3{break-after:avoid}
 }
 @media (max-width:640px){.sitenav .sn-links{gap:2px 14px;font-size:14px}.sitenav .sn-logo span{display:none}}
 </style>
+<link rel="stylesheet" href="../cockpit.css">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'">
+<style>#r_txt { display: none } #c_recht .grp { display: flex; align-items: center; gap: 10px; flex-wrap: wrap } #c_recht h3 { margin: 0; font-size: 13px; color: var(--muted) } #c_recht .seg button { font-size: 13px; padding: 5px 10px } .massn { display: grid; gap: 4px } #c_massn label.check { font-size: 13.5px } #c_dk .row2, #c_co2 { display: grid; gap: 8px }</style>
 </head>
 <body>
 <nav class="sitenav flush" aria-label="Hauptmenü"><div class="sn-in"><a class="sn-logo" href="../" aria-label="Mut zur Zukunft, zur Startseite"><svg viewBox="0 0 100 100" width="34" height="34" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#f2b33d" stroke-width="3"/><path d="M30,64 A20,20 0 0 1 70,64 Z" fill="#f2b33d"/><path d="M50,64 L50,33" stroke="#fbf8f1" stroke-width="4" stroke-linecap="round"/><path d="M50,47 C41,46 33,39 31,28 C41,29 48,36 50,47 Z" fill="#9fd8b0"/><path d="M50,40 C57,37 65,30 68,19 C58,20 51,28 50,40 Z" fill="#9fd8b0"/><line x1="17" y1="64" x2="83" y2="64" stroke="#fbf8f1" stroke-width="3.5" stroke-linecap="round"/></svg><span>Mut zur <b>Zukunft</b></span></a><div class="sn-links"><a class="sn-buch" href="../buch/">Zum Buch</a><a href="../">Start</a><a href="../steuerrechner/">Steuerrechner</a><a href="../eauto-rechner/">E-Auto-Rechner</a><a href="../heizungsrechner/" aria-current="page">Heizung und Dämmung</a><a href="../energie-rechner/">Energie-Rechner</a><a href="../balkon-rechner/">Balkon-Rechner</a><a href="../gesundheitsrechner/">Gesundheitsrechner</a><a href="../ueber-mich.html">Über mich</a><button type="button" class="sn-druck" onclick="print()" title="Eingaben und Ergebnisse drucken oder als PDF speichern">Drucken / PDF</button></div></div></nav>
@@ -191,11 +193,50 @@ h1,h2,h3{break-after:avoid}
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">Heizung und Dämmung über 20 Jahre</div>
-    <h1>Wärmepumpe, Gas oder Öl: Was heizt am günstigsten?</h1>
-    <p class="lead">Der Rechner vergleicht eine neue Heizung über ihre ganze Lebensdauer: Kauf nach Förderung, Gas, Öl oder Strom, steigender CO₂-Preis, Pflicht zur Bio-Beimischung bei neuen Gas- und Ölheizungen, Wartung und Schornsteinfeger. Dazu <a href="#daemmung">Dämmen und neue Fenster</a>: Sie senken die Vorlauftemperatur, die Wärmepumpe arbeitet besser, braucht weniger Strom und verschiebt mehr in billige Stunden. Alle Werte lassen sich ändern.</p>
+        <h1>Wärmepumpe, Gas oder Öl: Was heizt am günstigsten?</h1>
+    <p class="lead">Haus angeben, Schnellstart wählen: Der Rechner vergleicht Wärmepumpe, Gas und Öl über die ganze Laufzeit, mit Förderung, CO₂-Preis und Dämmung.</p>
   </header>
 
+<div class="cockpit" id="cockpit">
+    <section class="panel col-in" aria-label="Deine Angaben">
+      <div class="blk" style="border-top:0;padding-top:0"><div class="blkT">Schnellstart</div><div class="chips" id="presets"></div></div>
+      <div class="blk"><div class="row2 tight" id="c_ort"></div></div>
+      <div class="blk"><div class="blkT">Dein Haus</div><div class="row2 tight" id="c_haus"></div></div>
+      <div class="blk"><div class="blkT" data-info="Förderung der Wärmepumpe (KfW 458): 30 % Grundförderung, 16 % Bonus beim Tausch einer funktionierenden Öl- oder Gasheizung im selbst bewohnten Haus, Einkommensbonus 10 bis 40 %. Genauer: rechts unter „Förderung“.">Förderung</div><div class="row2 tight" id="c_foe"></div></div>
+      <div class="blk"><div class="blkT" data-info="Welche Dämmung du dazu rechnen willst. Der Rechner schätzt Kosten und U-Werte aus Baujahr und Wohnfläche; ändern kannst du sie rechts unter „Dämmung: Kosten und U-Werte“.">Dämmen und Fenster</div><div id="c_massn"></div></div>
+      <button type="button" class="reset" id="reset">Zurück auf Startwerte</button>
+      <div id="profil"></div>
+    </section>
+    <section class="panel col-out" aria-label="Ergebnis">
+      <div id="c_verdict"></div>
+      <div id="c_recht"></div>
+      <div class="seg tabs" role="tablist" aria-label="Ansicht">
+        <button type="button" data-tab="t_verl" aria-pressed="true">Kostenverlauf</button>
+        <button type="button" data-tab="t_tk" aria-pressed="false">Kosten im Einzelnen</button>
+        <button type="button" data-tab="t_daemm" aria-pressed="false">Dämmen und Fenster</button>
+        <button type="button" data-tab="t_hr" aria-pressed="false">Heute oder Reform</button>
+        <button type="button" data-tab="t_ref" aria-pressed="false">Für den Steuerrechner</button>
+      </div>
+      <div class="tab" id="t_verl"></div>
+      <div class="tab" id="t_tk" hidden></div>
+      <div class="tab" id="t_daemm" hidden></div>
+      <div class="tab" id="t_hr" hidden></div>
+      <div class="tab" id="t_ref" hidden></div>
+    </section>
+    <section class="panel col-more" aria-label="Genauer einstellen">
+      <div class="blkT">Genauer einstellen</div>
+      <details data-k="wp"><summary><i style="background:var(--wp)"></i>Wärmepumpe</summary><div class="row2" id="c_wp"></div></details>
+      <details data-k="gas"><summary><i style="background:var(--gas)"></i>Gasheizung</summary><div class="row2" id="c_gas"></div></details>
+      <details data-k="oel"><summary><i style="background:var(--oel)"></i>Ölheizung</summary><div class="row2" id="c_oel"></div></details>
+      <details data-k="foe"><summary>Förderung</summary><div class="row2" id="c_foe2"></div></details>
+      <details data-k="dk"><summary>Dämmung: Kosten und U-Werte</summary><div id="c_dk"></div></details>
+      <details data-k="zeit"><summary>Laufzeit, Preise, Zins</summary><div class="row2" id="c_zeit"></div></details>
+      <details data-k="co2"><summary>CO₂-Preis</summary><div id="c_co2"></div></details>
+      <details data-k="src"><summary>Was gilt (Stand November 2026)</summary><div id="c_src"></div></details>
+    </section>
+  </div>
+
+  <div id="alt" hidden>
   <div class="main">
     <div class="panel">
       <div class="grp">
@@ -264,6 +305,7 @@ h1,h2,h3{break-after:avoid}
       <div class="verdict" id="verdict"></div>
       <div class="tiles" id="tiles"></div>
       <div class="hr" id="hr"></div>
+      <div id="zumSteuer"></div>
       <h3 class="cumT" id="cumT"></h3>
       <div class="chart" id="cum"></div>
       <p class="note">Aufsummierte Kosten ab Einbau in Euro, mit Preisen des jeweiligen Jahres.</p>
@@ -298,12 +340,14 @@ h1,h2,h3{break-after:avoid}
       </ul>
     </div>
   </div>
+  </div>
 </div>
 
 
 <div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Wir können uns die Zukunft leisten“. Die Ergebnisse sind Größenordnungen, können Fehler enthalten und ersetzen keine ärztliche, Steuer-, Rechts-, Finanz- oder Energieberatung. Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>
-<footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Der Rechner läuft im Browser und speichert keine Eingaben. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
+<footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Der Rechner läuft im Browser. Deine Angaben bleiben auf deinem Gerät und werden nur gemerkt, wenn du das links einschaltest. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
 <script src="../wetter/ort.js"></script>
+<script src="../profil.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const fmt = (v, d = 0) => (+v).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -321,7 +365,7 @@ const V = {
 };
 const F = (k, lbl, u, step, sub, sel) => ({ k, lbl, u, step, sub, sel });
 const FELDER = {
-  haus: [F("waerme", "Wärme im Jahr für Heizung und Warmwasser", "kWh", 500, "ungefähr Gasverbrauch × 0,9; Einfamilienhaus meist 12.000 bis 25.000"), F("jahr", "Einbau im Jahr", "", 1), F("dauer", "Laufzeit", "Jahre", 1), F("steig", "Preissteigerung im Jahr", "%", 0.5, "für Gas, Öl und Strom, ohne CO₂-Preis"), F("zinsK", "Zins für einen Bankkredit", "%", 0.1, "Kauf und Dämmung über die Laufzeit finanziert; 0 = bar bezahlt, ohne Zinsen"), F("gasNeu", "Gas oder Öl: Pflicht zur Bio-Beimischung", "", 0, "gilt für Heizungen, die nach dem 29.7.2026 eingebaut werden", [["ja", "Ja, neue Heizung"], ["nein", "Nein, alte Heizung weiter nutzen"]])],
+  haus: [F("waerme", "Wärme im Jahr", "kWh", 500, "Für Heizung und Warmwasser, ungefähr Gasverbrauch × 0,9; Einfamilienhaus meist 12.000 bis 25.000"), F("jahr", "Einbau im Jahr", "", 1), F("dauer", "Laufzeit", "Jahre", 1), F("steig", "Preissteigerung im Jahr", "%", 0.5, "für Gas, Öl und Strom, ohne CO₂-Preis"), F("zinsK", "Zins für einen Bankkredit", "%", 0.1, "Kauf und Dämmung über die Laufzeit finanziert; 0 = bar bezahlt, ohne Zinsen"), F("gasNeu", "Gas oder Öl: Pflicht zur Bio-Beimischung", "", 0, "gilt für Heizungen, die nach dem 29.7.2026 eingebaut werden", [["ja", "Ja, neue Heizung"], ["nein", "Nein, alte Heizung weiter nutzen"]])],
   g_wp: [F("wpPreis", "Kosten mit Einbau", "€", 500), F("wpJaz", "Jahresarbeitszahl", "", 0.1, "kWh Wärme je kWh Strom; Altbau 2,8 bis 3,5"), F("wpTarif", "Stromtarif", "", 0, "dynamisch: Börsenpreise 2024 und Netzentgelt nach § 14a Modul 3, die Wärmepumpe läuft gesteuert in billigen Stunden; stundengenau aus dem Energie-Rechner", [["fest", "Wärmepumpentarif, fester Preis"], ["dyn", "dynamisch, mit Steuerung"]]), F("wpLang", "Reform: Kredit für die Wärmepumpe", "", 0, "länger nur mit Nachweis: Hersteller belegt die Lebensdauer für Verdichter und Lager, ein unabhängiges Institut bestätigt das; der Anlagenbauer stellt die Regelung auf lange Laufzeiten ein und überwacht sie", [["20", "20 Jahre"], ["30", "30 Jahre: Nachweis, 1 Jahr überwacht"], ["40", "40 Jahre: Nachweis, 2 Jahre überwacht"]]), F("wpStrom", "Strompreis (Wärmepumpentarif)", "€/kWh", 0.01, "mit dem Vorschlag aus dem Buch, 8 Stunden ohne Netzentgelt, eher 0,20 €"), F("wpGrund", "Grundpreis Zähler", "€/Jahr", 10), F("wpWart", "Wartung", "€/Jahr", 10)],
   g_gas: [F("gasPreis", "Kosten mit Einbau", "€", 500), F("gasNutz", "Nutzungsgrad", "%", 1), F("gasKwh", "Gaspreis heute (mit CO₂-Preis)", "€/kWh", 0.005), F("gasGrund", "Grundpreis", "€/Jahr", 10), F("gasWart", "Wartung und Schornsteinfeger", "€/Jahr", 10), F("gasBio", "Mehrpreis Biogas", "€/kWh", 0.01, "Biomethan kostet heute rund 5 bis 8 Cent mehr")],
   g_oel: [F("oelPreis", "Kosten mit Einbau", "€", 500), F("oelNutz", "Nutzungsgrad", "%", 1), F("oelLiter", "Heizölpreis heute (mit CO₂-Preis)", "€/Liter", 0.01, "1 Liter ≈ 10 kWh"), F("oelWart", "Wartung, Schornsteinfeger, Tank", "€/Jahr", 10), F("oelBio", "Mehrpreis Bioöl", "€/kWh", 0.01)],
@@ -334,7 +378,7 @@ function feld(f) {
   const d = document.createElement("div"); d.className = "f";
   const ctl = f.sel ? `<select id="i_${f.k}">${f.sel.map(([v, t]) => `<option value="${v}">${t}</option>`).join("")}</select>`
                     : `<input id="i_${f.k}" type="number" inputmode="decimal" step="${f.step}" min="0">`;
-  d.innerHTML = `<label for="i_${f.k}">${f.lbl}</label><div class="in">${ctl}${f.u ? `<span class="u">${f.u}</span>` : ""}</div>${f.sub ? `<small>${f.sub}</small>` : ""}`;
+  d.innerHTML = `<label for="i_${f.k}"${f.sub ? ` data-info="${f.sub.replace(/"/g, "&quot;")}"` : ""}>${f.lbl}</label><div class="in">${ctl}${f.u ? `<span class="u">${f.u}</span>` : ""}</div>`;
   const el = d.querySelector("input,select"); el.value = V[f.k];
   el.addEventListener("input", () => { V[f.k] = f.sel ? el.value : (+el.value || 0); run(); });
   return d;
@@ -353,13 +397,13 @@ function foerderung(v) {
   const satz = Math.min(R[0] + (v.foeEU === "ja" ? R[1] : 0) + (selbst && v.foeBonus === "ja" ? R[2] : 0) + (selbst ? +v.foeEink / 100 : 0), v.foeEink === "40" ? 0.8 : 0.7);
   return { satz, betrag: satz * Math.min(v.wpPreis, R[3]), max: R[3] };
 }
-// Vorschlag aus dem Buch: Strom 5 % und Stromsteuer auf dem europäischen Mindestmaß, Gas und Öl 50 % Mehrwertsteuer, Dienstleistungen 5 %, Sanierung ohne Mehrwertsteuer.
+// Vorschlag aus dem Buch: Strom 5 %, ohne Stromsteuer und Umlagen, Gas und Öl 50 % Mehrwertsteuer, Dienstleistungen 5 %, Sanierung ohne Mehrwertsteuer.
 // Wärmepumpe: zinsloser Kredit über 20 Jahre, die ersten 3 ohne Tilgung; der Einbau (40 %) zählt zu den Bauteilen.
 // Bauteile (Einbau, Dämmung, Fenster): bezahlt der Staat gegen einen Anteil am Hauswert, abgelöst über 40 Jahre mit der Wertsteigerung.
-const RF = { stromSt: 0.0205 - 0.001, strom: 1.05 / 1.19, fossil: 1.5 / 1.19, dienst: 1.05 / 1.19, einb: 0.4, mat: 0.5, tilgFrei: 3, lauf: 20, abl: 40 };
+const RF = { stromSt: 0.0205, umlagen: 0.0295, strom: 1.05 / 1.19, fossil: 1.5 / 1.19, dienst: 1.05 / 1.19, einb: 0.4, mat: 0.5, tilgFrei: 3, lauf: 20, abl: 40 };
 function reformPreise(v) {
   return { ...v, mwstF: 1.5, gasKwh: v.gasKwh * RF.fossil, gasBio: v.gasBio * RF.fossil, gasGrund: v.gasGrund * RF.fossil, oelLiter: v.oelLiter * RF.fossil, oelBio: v.oelBio * RF.fossil,
-    wpStrom: (v.wpStrom / 1.19 - RF.stromSt) * 1.05, wpGrund: v.wpGrund * RF.strom, wpWart: v.wpWart * RF.dienst, gasWart: v.gasWart * RF.dienst, oelWart: v.oelWart * RF.dienst };
+    wpStrom: Math.max(0, (v.wpStrom / 1.19 - RF.stromSt - RF.umlagen) * 1.05), wpGrund: v.wpGrund * RF.strom, wpWart: v.wpWart * RF.dienst, gasWart: v.gasWart * RF.dienst, oelWart: v.oelWart * RF.dienst };
 }
 function bank(P, v) {   // Bankkredit über die Laufzeit, gleiche Raten; ohne Zins: bar beim Kauf
   const N = Math.max(1, Math.round(v.dauer)), z = v.zinsK / 100, a = new Array(N + 1).fill(0);
@@ -555,6 +599,8 @@ function run() {
   const hrRow = (n, k) => { const d = rR.tot[k] - rH.tot[k]; return `<tr><td>${n}</td><td>${eur(rH.tot[k])}</td><td>${eur(rR.tot[k])}</td><td class="${d <= 0 ? "gut" : "schlecht"}">${d <= 0 ? "−" : "+"}${eur(Math.abs(d))}</td></tr>`; };
   $("hr").innerHTML = `<h3>Recht heute gegen die Reform, über ${fmt(V.dauer)} Jahre</h3><div class="tbl"><table><thead><tr><th></th><th>heute</th><th>Reform</th><th>±</th></tr></thead><tbody>${hrRow("Wärmepumpe", "wp")}${hrRow("Gasheizung", "gas")}${hrRow("Ölheizung", "oel")}</tbody></table></div>`;
   $("co2txt").textContent = "CO₂-Preis: " + PFAD[pfadVon(V)].txt;
+  if (window.ZumSteuerrechner) ZumSteuerrechner.zeige($("zumSteuer"), { quelle: "Heizungsrechner", was: "Wärmepumpe statt Gasheizung", heute: (rH.tot.gas - rH.tot.wp) / V.dauer, reform: (rR.tot.gas - rR.tot.wp) / V.dauer,
+    reformText: "Strom 5 % Mehrwertsteuer, Gas 50 %, CO₂-Preispfad des Buchs, Wärmepumpe ohne Mehrwertsteuer mit zinslosem Kredit." });
   const nm = { wp: "Wärmepumpe", gas: "Gasheizung", oel: "Ölheizung" };
   const rang = Object.entries(r.tot).sort((a, b) => a[1] - b[1]);
   const [best, zweit] = rang;
@@ -642,10 +688,79 @@ async function ortLaden(p) {
 }
 Ort.feld($("g_ort"), ortLaden, "Gib deine Postleitzahl ein, dann schätzt der Rechner die Jahresarbeitszahl für deinen Ort. Ohne: Idstein.");
 $("g_ort").insertAdjacentHTML("beforeend", '<small class="note" id="ort_note"></small>');
+/* ---------- Neuer Aufbau: vorhandene Teile in die drei Spalten umziehen (Listener bleiben erhalten) ---------- */
+(() => {
+  const mv = (sel, ziel) => { const el = typeof sel === "string" ? document.querySelector(sel) : sel; if (el && $(ziel)) $(ziel).append(el); return el; };
+  const fOf = id => { const el = $(id); return el ? el.closest(".f") : null; };
+  mv($("r_heute").closest(".grp"), "c_recht");
+  mv("#g_ort", "c_ort");
+  ["i_waerme"].forEach(id => mv(fOf(id), "c_haus")); mv(fOf("d_bj"), "c_haus"); mv(fOf("d_fl"), "c_haus");
+  mv(fOf("i_foeSelbst"), "c_foe"); mv(fOf("i_foeEink"), "c_foe");
+  mv(".massn", "c_massn"); mv($("d_hk").closest("label"), "c_massn");
+  ["verdict", "tiles"].forEach(id => mv("#" + id, "c_verdict"));
+  ["cumT", "cum"].forEach(id => mv("#" + id, "t_verl"));
+  mv("#tk", "t_tk"); mv("#tknote", "t_tk"); $("tk").outerHTML; { const w = document.createElement("div"); w.className = "tbl"; $("t_tk").prepend(w); w.append($("tk")); }
+  [...$("daemmung").children].filter(e => !e.classList.contains("eyebrow") && e.id !== "d_titel").forEach(e => $("t_daemm").append(e));
+  mv("#hr", "t_hr"); mv("#zumSteuer", "t_ref");
+  [...$("g_wp").querySelectorAll(":scope > .f")].forEach(e => mv(e, "c_wp"));
+  [...$("g_gas").querySelectorAll(":scope > .f")].forEach(e => mv(e, "c_gas"));
+  [...$("g_oel").querySelectorAll(":scope > .f")].forEach(e => mv(e, "c_oel"));
+  [...$("foe").querySelectorAll(":scope > .f")].forEach(e => mv(e, "c_foe2"));
+  { const d = $("g_daemm").querySelector("details.more"); [...d.children].filter(e => e.tagName !== "SUMMARY").forEach(e => mv(e, "c_dk")); }
+  mv(fOf("d_g"), "c_zeit"); mv(fOf("d_vl0"), "c_zeit");
+  [...$("haus").querySelectorAll(":scope > .f")].forEach(e => mv(e, "c_zeit"));
+  { const d = $("p_auto").closest("details"); [...d.children].filter(e => e.tagName !== "SUMMARY").forEach(e => mv(e, "c_co2")); }
+  mv(document.querySelector("#alt ul.src"), "c_src");
+  $("alt").remove();
+  // Hinweise unter Feldern in den Info-Knopf
+  document.querySelectorAll("#cockpit .f > small:not([id])").forEach(sm => { const l = sm.parentElement.querySelector("label"); if (l && !l.dataset.info) l.dataset.info = sm.textContent.trim(); sm.remove(); });
+})();
+const V0 = JSON.parse(JSON.stringify(V)), DV0 = JSON.parse(JSON.stringify(DV));
+const PRESETS = [
+  ["Altbau 1970, unsaniert", { waerme: 22000 }, { bj: 1968, fl: 140, m: true }],
+  ["Reihenhaus 1985", { waerme: 15000 }, { bj: 1983, fl: 120, m: true }],
+  ["Teilsaniert", { waerme: 14000 }, { bj: 1977, fl: 130, m: false }],
+  ["Neubau ab 2010", { waerme: 8000 }, { bj: 2015, fl: 140, m: false }],
+];
+$("presets").innerHTML = PRESETS.map(([n], i) => `<button type="button" class="chip" data-i="${i}">${n}</button>`).join("");
+$("presets").querySelectorAll(".chip").forEach(b => b.onclick = () => {
+  const [, v, d] = PRESETS[+b.dataset.i]; Object.assign(V, v);
+  const bj = $("d_bj"); if ([...bj.options].some(o => +o.value === d.bj)) bj.value = d.bj; else bj.value = [...bj.options].map(o => o.value).find(x => +x >= d.bj) || bj.value;
+  ["mWand", "mDach", "mFen", "mKel"].forEach(k => { DV[k] = d.m; $("d_" + k).checked = d.m; });
+  bj.dispatchEvent(new Event("change")); $("d_fl").value = d.fl; $("d_fl").dispatchEvent(new Event("input"));
+  syncF(); run();
+});
+function syncF() { Object.values(FELDER).flat().forEach(f => { const el = $("i_" + f.k); if (el && document.activeElement !== el) el.value = V[f.k]; }); }
+$("reset").onclick = () => { Object.assign(V, JSON.parse(JSON.stringify(V0))); Object.assign(DV, JSON.parse(JSON.stringify(DV0))); $("d_bj").value = DV.bj; $("d_fl").value = DV.fl; ["mWand", "mDach", "mFen", "mKel"].forEach(k => $("d_" + k).checked = DV[k]); $("d_hk").checked = DV.hk; dSchaetze(); syncF(); run(); };
+let TAB = "t_verl";
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { TAB = b.dataset.tab; zeigeTab(); if (TAB === "t_verl") run(); });
+function zeigeTab() { document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-pressed", b.dataset.tab === TAB)); ["t_verl", "t_tk", "t_daemm", "t_hr", "t_ref"].forEach(id => $(id).hidden = id !== TAB); }
+zeigeTab();
+document.querySelectorAll(".col-more details").forEach(d => {
+  try { if (sessionStorage.getItem("hz-open-" + d.dataset.k) === "1") d.open = true; } catch (e) {}
+  d.addEventListener("toggle", () => { try { sessionStorage.setItem("hz-open-" + d.dataset.k, d.open ? "1" : "0"); } catch (e) {} });
+});
+// Angaben merken (nur wenn eingeschaltet)
+try { const pf = window.Profil && Profil.laden("heizung"); if (pf) {
+  if (pf.eigene) { Object.keys(V0).forEach(k => { if (pf.eigene[k] !== undefined) V[k] = pf.eigene[k]; }); if (pf.eigene._dv) { Object.assign(DV, pf.eigene._dv); $("d_bj").value = DV.bj; $("d_fl").value = DV.fl; ["mWand", "mDach", "mFen", "mKel"].forEach(k => $("d_" + k).checked = DV[k]); $("d_hk").checked = DV.hk; dSchaetze(); } syncF(); }
+  const plz = (pf.eigene && pf.eigene.plz) || pf.gemeinsam.plz;
+  if (plz && !new URLSearchParams(location.search).get("plz")) { const el = $("i_plz"); if (el) { el.value = plz; el.dispatchEvent(new Event("input")); } }
+} } catch (e) {}
+{ const el = $("i_plz"); if (el) el.addEventListener("input", () => { const p = el.value.replace(/\D/g, ""); if (p.length === 5) V.plz = p; }); }
+const merk = () => { if (window.Profil) Profil.merken("heizung", { ...V, _dv: { ...DV } }, ["plz"]); };
+if (window.Profil) Profil.leiste($("profil"), { onEin: merk });
+{ const _r = run; run = function () { _r(); merk();
+  const h = $("c_recht").querySelector("h3"), t = $("r_txt").textContent.trim();
+  if (h && h.dataset.info !== t) { h.dataset.info = t; const b = h.querySelector(".ib"); if (b) b.remove(); if (window.Info) Info.attribute(); }
+  const c = $("co2txt"); }; }
+
 run();
 </script>
 
 <script src="../tools-buchlinks.js"></script>
+<script src="../energie-link.js"></script>
+<script src="../info.js"></script>
+<script>try { run(); } catch (e) {}</script>
 <script id="druck-js">(() => {
   let alt = null, zu = [];
   addEventListener("beforeprint", () => {
