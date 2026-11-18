@@ -269,6 +269,22 @@ open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8').write(page('Das Buc
 
 suche = f'''<main class="wrap uebersicht"><h1 class="sh">Im Buch suchen</h1>{SEARCHBOX}<p id="treffer-info" class="small"></p><ol id="treffer" class="treffer"></ol><p><a href="./">Zum Inhaltsverzeichnis</a></p></main>'''
 open(os.path.join(OUT, 'suche.html'), 'w', encoding='utf-8').write(page('Im Buch suchen · Wir können uns die Zukunft leisten', 'Volltextsuche im Buch „Wir können uns die Zukunft leisten“.', suche, extra_head='<script src="suche-index.js" defer></script>\n'))
+# ---------- Alte und feste Anker für Links von außen (werkzeug/buch-anker-v41.json), vor dem Sammeln der Buchstellen ----------
+_AP = os.environ.get('BUCH_ANKER', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'buch-anker-v41.json'))
+if os.path.exists(_AP):
+    _fehlt = []
+    for _nm, _m in json.load(open(_AP, encoding='utf-8')).items():
+        if _nm.startswith('_') or not os.path.exists(os.path.join(OUT, _nm)): continue
+        _p = os.path.join(OUT, _nm); _s = open(_p, encoding='utf-8').read()
+        _s = re.sub(r'<span class="fa" id="[^"]*"></span>', '', _s)
+        for _alt, _ziel in _m.items():
+            if f' id="{_alt}"' in _s: continue
+            _mm = re.search(r'(<h[234] id="%s"[^>]*>)' % re.escape(_ziel), _s)
+            if not _mm: _fehlt.append(f'{_nm}#{_alt} -> {_ziel}'); continue
+            _s = _s[:_mm.end(1)] + f'<span class="fa" id="{_alt}"></span>' + _s[_mm.end(1):]
+        open(_p, 'w', encoding='utf-8').write(_s)
+    if _fehlt: sys.exit('Anker ohne Überschrift: ' + ', '.join(_fehlt))
+
 # ---------- Feste Buchstellen: stelle.html#anh-C2, #kap-7 oder jede id aus der Satzdatei ----------
 import json as _json, glob as _glob
 stellen = {}
