@@ -80,6 +80,10 @@ for ch in chapters:
             tt = ''.join(x.get_text(' ', strip=True) if hasattr(x, 'get_text') else str(x) for x in h.contents if x is not sg).strip() if sg else h.get_text(' ', strip=True)
             ch['heads'].append((hid, tt, anr.get_text(strip=True) if anr else ''))
 
+# Anhänge, die (noch) nicht in der Satzdatei stehen: Hinweisseiten im Zielordner (werkzeug/anhang-platzhalter.py) mit den Kürzeln anh-A1 …
+for _f in sorted(__import__('glob').glob(os.path.join(OUT, 'anhang-*.html'))):
+    for _k in re.findall(r' id="anh-([A-D][0-9]+)"', open(_f, encoding='utf-8').read()):
+        appendix_ids.setdefault(_k, os.path.basename(_f) + '#anh-' + _k)
 slugs = {c['slug'] for c in chapters}
 # Druckseiten (", S. 98") gibt es online nicht
 for ch in chapters:
