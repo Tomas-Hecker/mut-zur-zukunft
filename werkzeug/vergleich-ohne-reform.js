@@ -10,21 +10,27 @@ let vglFall = "mittel", vglDemo = true, vglAlter = 40;
 let vglE = { kwh: 3500, auto: "benzin", km: 13500, verbr: 7, alt: true, heiz: "gas", hmenge: 12000, pv: false, balkon: false };
 // Klimageld, CO₂-Aufschlag, Kilometerabgabe und Produktabgabe je Jahr 2028 bis 2070 (energie-abgaben-je-haushalt-v41.json, Preise von heute)
 VGL.abgaben = Object.assign({"kg":[101.6,94.3,174.0,159.6,145.2,130.9,116.5,127.7,115.8,104.0,92.2,80.3,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8,102.8],"benzin":[9.48,9.48,18.96,18.96,18.96,18.96,18.96,23.7,23.7,23.7,23.7,23.7,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55,35.55],"diesel":[10.6,10.6,21.2,21.2,21.2,21.2,21.2,26.5,26.5,26.5,26.5,26.5,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75],"oel":[10.6,10.6,21.2,21.2,21.2,21.2,21.2,26.5,26.5,26.5,26.5,26.5,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75,39.75],"gas":[0.8,0.8,1.61,1.61,1.61,1.61,1.61,2.01,2.01,2.01,2.01,2.01,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02,3.02],"satz":[0,0,21.62,19.59,18.7,18.19,18.37,18.7,19.16,19.69,20.49,21.59,22.73,23.98,25.25,26.54,27.79,28.85,29.7,30.33,30.81,31.13,31.35,31.35,31.35,31.35,31.35,31.35,31.35,31.35,31.35,31.35,31.35,31.35,31.35,31.35,31.35,31.35,31.35,31.35,31.35,31.35,31.35],"alt":[0.0,0.0,0.25,0.35,0.45,0.55,0.65,0.75,0.85,0.95,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],"prod":[40.95,40.95,87.25,87.25,87.25,87.25,87.25,116.3,116.3,116.3,116.3,116.3,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45,174.45]}, { kwhJeL: { benzin: 8.857, diesel: 9.9 }, estCent: 65.45, dieselMehr: 18.41, mwst: 1.5 });
+VGL.abgaben.elek = [0.126, 0.168, 0.218, 0.272, 0.329, 0.386, 0.445, 0.503, 0.561, 0.617, 0.666, 0.712, 0.756, 0.799, 0.839, 0.876, 0.909, 0.935, 0.954, 0.968, 0.979, 0.985, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99];   // Anteil elektrischer Pkw-km je Jahr (wahrscheinlicher Weg)
+VGL.abgaben.heizFossil = k => { const j = 2028 + k, P = [[2028, 1], [2030, 0.72], [2035, 0.37], [2040, 0.19]];   // fossile Wärmemenge wie in der Mikrosimulation
+  if (j >= 2040) return 0.19; for (let i = 1; i < P.length; i++) if (j <= P[i][0]) return P[i - 1][1] + (P[i][1] - P[i - 1][1]) * (j - P[i - 1][0]) / (P[i][0] - P[i - 1][0]); return 0.19; };
+let vglWeg = "wahr";   // wahr: Umstieg wie im Durchschnitt, bleiben: Benziner und Gas bleiben, umstieg: gleich elektrisch und Wärmepumpe
 // Was Energie und Abgaben dem Haushalt im Jahr k gegenüber ohne Reform bringen (+) oder kosten (−)
 function vglEnergie(k, fall, pers) {
-  const E = VGL.energie, B = VGL.abgaben, e = vglE, t = {};
-  t.strom = e.kwh * E.stromJeKwh;
-  t.anlagen = (e.auto === "elektro" ? E.auto[fall] : 0) + (e.heiz === "wp" ? E.wp[fall] : 0) + (e.pv ? E.pv[fall] : 0) + (e.balkon ? E.balkon[fall] : 0);
-  let auf = 0, liter = 0;
-  if (e.auto === "benzin" || e.auto === "diesel") { liter = e.km * e.verbr / 100; auf += liter * B[e.auto][k] / 100; }
-  if (e.heiz === "gas") auf += e.hmenge * B.gas[k] / 100;
-  if (e.heiz === "oel") auf += e.hmenge * B.oel[k] / 100;
-  t.klima = B.kg[k] * pers - auf * B.mwst;                                                      // Klimageld minus Aufschlag auf den eigenen Verbrauch
-  let kmA = 0;
-  if (e.auto === "elektro") kmA = e.km * e.verbr / 100 * B.satz[k] / 100 * (e.alt ? B.alt[k] : 1);
-  if (liter) { const voll = liter * B.kwhJeL[e.auto] * B.satz[k] / 100, ueber = Math.max(0, voll - liter * B.estCent / 100);
-    kmA = (B.satz[k] > 0 ? ueber * (e.alt ? B.alt[k] : 1) : 0) + (e.auto === "diesel" ? liter * B.dieselMehr / 100 : 0); }
-  t.km = -kmA;
+  const E = VGL.energie, B = VGL.abgaben, e = vglE, t = { strom: e.kwh * E.stromJeKwh, anlagen: 0, klima: B.kg[k] * pers, km: 0 };
+  const auto = (typ, verbr, alt) => { const o = { anlagen: 0, klima: 0, km: 0 }, f = alt ? B.alt[k] : 1;
+    if (typ === "elektro") { o.anlagen = E.auto[fall]; o.km = -e.km * verbr / 100 * B.satz[k] / 100 * f; }
+    if (typ === "benzin" || typ === "diesel") { const l = e.km * verbr / 100, voll = l * B.kwhJeL[typ] * B.satz[k] / 100;
+      o.klima = -l * B[typ][k] / 100 * B.mwst; o.km = -((B.satz[k] > 0 ? Math.max(0, voll - l * B.estCent / 100) * f : 0) + (typ === "diesel" ? l * B.dieselMehr / 100 : 0)); }
+    return o; };
+  const heiz = typ => typ === "wp" ? { anlagen: E.wp[fall], klima: 0 } : typ === "gas" || typ === "oel" ? { anlagen: 0, klima: -e.hmenge * B[typ][k] / 100 * B.mwst } : { anlagen: 0, klima: 0 };
+  const fossilAuto = e.auto === "benzin" || e.auto === "diesel", fossilHeiz = e.heiz === "gas" || e.heiz === "oel";
+  const teile = [];
+  if (vglWeg === "umstieg") teile.push([1, auto(fossilAuto ? "elektro" : e.auto, fossilAuto ? 18 : e.verbr, !fossilAuto && e.alt)], [1, heiz(fossilHeiz ? "wp" : e.heiz)]);
+  else if (vglWeg === "wahr") { const a = fossilAuto ? B.elek[k] : 0, h = fossilHeiz ? B.heizFossil(k) : 1;
+    teile.push([a, auto("elektro", 18, false)], [1 - a, auto(e.auto, e.verbr, e.alt)], [h, heiz(e.heiz)], [1 - h, heiz("wp")]); }
+  else teile.push([1, auto(e.auto, e.verbr, e.alt)], [1, heiz(e.heiz)]);
+  for (const [w, o] of teile) for (const x in o) t[x] += w * o[x];
+  t.anlagen += (e.pv ? E.pv[fall] : 0) + (e.balkon ? E.balkon[fall] : 0);
   t.produkt = -0.25 * B.prod[k] * pers;                                                          // im Durchschnitt das 1,25-Fache des Klimagelds über die Preise
   t.summe = t.strom + t.anlagen + t.klima + t.km + t.produkt;
   return t;
@@ -98,13 +104,16 @@ function vglZeigen() {
       ${[["pv", "Solar auf dem Dach (10 kWp)"], ["balkon", "Balkonkraftwerk"]].map(([k, n]) => `<label><input type="checkbox" data-ve="${k}" ${vglE[k] ? "checked" : ""}> ${n}</label>`).join("")}
     </div>
     <div class="row" style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin:0 0 10px">
-      <label>Auto <select id="vglAuto">${[["kein", "keins"], ["benzin", "Benziner"], ["diesel", "Diesel"], ["elektro", "Elektroauto"]].map(([k, n]) => `<option value="${k}" ${vglE.auto === k ? "selected" : ""}>${n}</option>`).join("")}</select></label>
+      <span class="presets" role="group" aria-label="Umstieg">${[["wahr", "Umstieg wie im Durchschnitt"], ["bleiben", "Ich bleibe bei Verbrenner und Gas"], ["umstieg", "Ich steige gleich um"]].map(([k, n]) => `<button type="button" class="chip" data-weg="${k}" aria-pressed="${vglWeg === k}">${n}</button>`).join("")}</span>
+    </div>
+    <div class="row" style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin:0 0 10px">
+      <label>Auto heute <select id="vglAuto">${[["kein", "keins"], ["benzin", "Benziner"], ["diesel", "Diesel"], ["elektro", "Elektroauto"]].map(([k, n]) => `<option value="${k}" ${vglE.auto === k ? "selected" : ""}>${n}</option>`).join("")}</select></label>
       ${vglE.auto !== "kein" ? `<label><input type="number" id="vglKm" min="0" max="100000" step="500" value="${vglE.km}" style="width:6em"> km im Jahr</label>
       <label><input type="number" id="vglVerbr" min="0" max="40" step="0.5" value="${vglE.verbr}" style="width:4.5em"> ${vglE.auto === "elektro" ? "kWh" : "Liter"} je 100 km</label>
       <label><input type="checkbox" id="vglAlt" ${vglE.alt ? "checked" : ""}> gekauft vor 2028</label>` : ""}
     </div>
     <div class="row" style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin:0 0 10px">
-      <label>Heizung <select id="vglHeiz">${[["gas", "Gas"], ["oel", "Heizöl"], ["wp", "Wärmepumpe"], ["andere", "Fernwärme oder andere"]].map(([k, n]) => `<option value="${k}" ${vglE.heiz === k ? "selected" : ""}>${n}</option>`).join("")}</select></label>
+      <label>Heizung heute <select id="vglHeiz">${[["gas", "Gas"], ["oel", "Heizöl"], ["wp", "Wärmepumpe"], ["andere", "Fernwärme oder andere"]].map(([k, n]) => `<option value="${k}" ${vglE.heiz === k ? "selected" : ""}>${n}</option>`).join("")}</select></label>
       ${vglE.heiz === "gas" || vglE.heiz === "oel" ? `<label><input type="number" id="vglHM" min="0" max="100000" step="100" value="${vglE.hmenge}" style="width:6em"> ${vglE.heiz === "gas" ? "kWh Gas" : "Liter Heizöl"} im Jahr</label>` : ""}
     </div>
     <div class="tbl-wrap"><table><thead><tr><th>Zusammen</th><th>Ohne Reform: Demografieschulden</th><th>Mit Reform: Plus gegenüber heute</th><th>Vorteil der Reform</th></tr></thead><tbody>
@@ -114,10 +123,11 @@ function vglZeigen() {
       <tr><td>Vorteil der Reform im Monat</td>${[2030, 2040, 2050, 2060, 2070].map(j => zelle(vor(at(j)) / 12)).join("")}</tr></tbody></table></div>
     ${s > 0 ? `<h3>Was aus dem Gesparten wird</h3><p class="note">Dieser Haushalt spart ${pct(h.spar, 0)}, ${eur(s)} im Jahr, angelegt mit ${pct(rr, 0)} Rendite nach Inflation. Ohne Reform kostet die Abgeltungsteuer auf den Ertrag, mit Reform bleibt er steuerfrei, solange er angelegt bleibt.</p>
     <div class="tbl-wrap"><table><thead><tr><th>Vermögen nach</th><th>ohne Reform</th><th>mit Reform</th><th>mehr</th></tr></thead><tbody>${[10, 20, 30, 40].map(n => `<tr><td>${n} Jahren</td><td>${eur(verm(rOhne, n))}</td><td>${eur(verm(rr, n))}</td>${zelle(verm(rr, n) - verm(rOhne, n))}</tr>`).join("")}</tbody></table></div>` : ""}
-    <p class="note">Entwurf. Mit ${VGL.rentenAlter} wechselt der Haushalt in die Rente: Rente geschätzt mit ${pct(VGL.renteAnteil, 0)} des Bruttolohns (bis zur Beitragsgrenze), Kinder aus dem Haus, kein Bestandsschutz für neue Rentner. Strom: Preisvorteil nach Verbrauch ohne Ladestrom, dazu je Anlage der Zusatznutzen im Jahr. Klimageld je Person minus CO₂-Aufschlag auf Sprit, Heizöl und Gas (mit 50 % Mehrwertsteuer der Reform), Kilometerabgabe ab 2030 (beim Verbrenner nur der Betrag über der Energiesteuer, für Autos von vor 2028 anteilig bis 2038), Produktabgabe im Durchschnitt das 1,25-Fache ihres Klimagelds; Werte der Version 41 je Jahr. Lebenserwartung nach der Sterbetafel 2021/23 (Mittel aus Frauen und Männern), nach 2070 wie 2070 gerechnet. Erbschaften sind nicht enthalten.</p>`;
+    <p class="note">Entwurf. Mit ${VGL.rentenAlter} wechselt der Haushalt in die Rente: Rente geschätzt mit ${pct(VGL.renteAnteil, 0)} des Bruttolohns (bis zur Beitragsgrenze), Kinder aus dem Haus, kein Bestandsschutz für neue Rentner. Strom: Preisvorteil nach Verbrauch ohne Ladestrom, dazu je Anlage der Zusatznutzen im Jahr. Klimageld je Person minus CO₂-Aufschlag auf Sprit, Heizöl und Gas (mit 50 % Mehrwertsteuer der Reform), Kilometerabgabe ab 2030 (beim Verbrenner nur der Betrag über der Energiesteuer, für Autos von vor 2028 anteilig bis 2038), Produktabgabe im Durchschnitt das 1,25-Fache ihres Klimagelds; Werte der Version 41 je Jahr. „Umstieg wie im Durchschnitt“: Verbrenner und fossile Heizung werden so schnell ersetzt wie im Durchschnitt aller Haushalte (elektrische Autokilometer 2030 rund 22 %, 2040 rund 76 %, 2050 rund 99 %; fossile Wärme 2030 72 %, 2035 37 %, ab 2040 19 %). Lebenserwartung nach der Sterbetafel 2021/23 (Mittel aus Frauen und Männern), nach 2070 wie 2070 gerechnet. Erbschaften sind nicht enthalten.</p>`;
   box.querySelectorAll("[data-vf]").forEach(b => b.onclick = () => { vglFall = b.dataset.vf; vglZeigen(); });
   $("vglDemo").onchange = e => { vglDemo = e.target.checked; vglZeigen(); };
   $("vglKwh").onchange = e => { vglE.kwh = clamp(+e.target.value || 0, 0, 50000); vglZeigen(); };
+  box.querySelectorAll("[data-weg]").forEach(b => b.onclick = () => { vglWeg = b.dataset.weg; vglZeigen(); });
   $("vglAuto").onchange = e => { vglE.auto = e.target.value; vglE.verbr = vglE.auto === "elektro" ? 18 : vglE.auto === "diesel" ? 6 : 7; vglZeigen(); };
   $("vglHeiz").onchange = e => { vglE.heiz = e.target.value; vglE.hmenge = vglE.heiz === "oel" ? 1200 : 12000; vglZeigen(); };
   [["vglKm", "km", 100000], ["vglVerbr", "verbr", 40], ["vglHM", "hmenge", 100000]].forEach(([id, k, mx]) => { if ($(id)) $(id).onchange = e => { vglE[k] = clamp(+e.target.value || 0, 0, mx); vglZeigen(); }; });
