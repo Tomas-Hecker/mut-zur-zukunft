@@ -15,8 +15,9 @@ for j, _ in JAHRE:
     im = Image.open(f'{Q}homepage-feld-ohne-reform-{j}-energie.png').convert('RGB')
     im.save(f'bilder/ohne-reform/mit-gegen-ohne-reform-{j}.webp', quality=88, method=6)
     m = J[f'energie_{j}']['prozent_des_einkommens']
-    alt[j] = (f'Farbfeld nach Einkommen und Vermögen, {j}: Alle Menschen haben mit der Reform im Mittel {k(m[-1][-1])} % ihres Einkommens '
-              f'gegen den Weg ohne Reform. Mehr haben vor allem die unteren und mittleren Einkommen, weniger vor allem Menschen in Haushalten '
+    tm = J['typischer_mensch'][f'energie_{j}']
+    alt[j] = (f'Farbfeld nach Einkommen und Vermögen, {j}: Der typische Mensch hat mit der Reform {str(tm["median_prozent_des_einkommens"]).replace(".", ",")} % seines Haushaltseinkommens mehr '
+              f'als ohne Reform, {tm["median_eur_je_mensch_monat"]} € im Monat. Über alle Einkommen zusammen sind es {k(m[-1][-1])} %, weil das oberste Zehntel schwer zählt. Mehr haben vor allem die unteren und mittleren Einkommen, weniger vor allem Menschen in Haushalten '
               f'mit mehr als 300.000 € Vermögen und im obersten Zehntel der Einkommen.')
 W, H = im.size
 knoepfe = ''.join(f'<button type="button" data-j="{j}" aria-pressed="{"true" if j == STANDARD else "false"}">{t}</button>' for j, t in JAHRE)
