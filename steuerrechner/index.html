@@ -2859,7 +2859,7 @@ function szAlle(s) {
   szBuch = false; for (const r of SZEN) SZ_POS[r.k] = s;
 }
 function szStand() {
-  if (szBuch) return "Wie im Buch bisher";
+  if (szBuch) return "Wie im Buch (Version 41)";
   const v = Object.values(SZ_POS), alle = v.every(x => x === v[0]);
   return alle ? ({ "-2": "Ungünstiger Fall", "0": "Wahrscheinlicher Fall", "2": "Günstiger Fall" }[v[0]] || "Alle " + SZ_STUFE[v[0]]) : `Eigene Einstellung (${v.filter(x => x !== 0).length} Annahmen geändert)`;
 }
@@ -2888,7 +2888,7 @@ function szWirkung() {
 function szRender() {
   const box = $("szenBox"); if (!box) return;
   const knopf = (s, n) => `<button type="button" class="chip" data-alle="${s}" aria-pressed="${!szBuch && Object.values(SZ_POS).every(x => x === s)}">${n}</button>`;
-  let h = `<div class="presets" role="group" aria-label="Alle Annahmen einstellen">${knopf(-2, "Ungünstig")}${knopf(0, "Wahrscheinlich")}${knopf(2, "Günstig")}<button type="button" class="chip" data-buch="1" aria-pressed="${szBuch}">Wie im Buch bisher</button></div>`;
+  let h = `<div class="presets" role="group" aria-label="Alle Annahmen einstellen">${knopf(-2, "Ungünstig")}${knopf(0, "Wahrscheinlich, wie im Buch")}${knopf(2, "Günstig")}</div>`;
   h += `<p class="note" id="szStand"></p>`;
   h += `<details class="more" id="szWirkBox"><summary>Welche Annahmen am meisten bewegen</summary><p class="note" id="szWirk">wird gerechnet …</p></details>`;
   for (const [g, titel] of Object.entries(SZ_GRUPPEN)) {
@@ -2909,7 +2909,6 @@ function szRender() {
     const ef = document.getElementById("e_fall"), fall = { "-2": "ung", "0": "wahr", "2": "guen" }[b.dataset.alle]; if (ef && fall) ef.value = fall;
     szNeu();
   });
-  box.querySelector("[data-buch]").onclick = () => { szBuch = true; szNeu(); };
   for (const r of SZEN) $("sz_" + r.k).oninput = e => { szBuch = false; SZ_POS[r.k] = +e.target.value; szNeu(false); };
   $("szWirkBox").addEventListener("toggle", e => { if (e.target.open) szWirkZeigen(); postHeight(); });
   box.querySelectorAll("details").forEach(d => d.addEventListener("toggle", postHeight));
