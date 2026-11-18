@@ -3,7 +3,10 @@ import re
 R = '/home/user/mut-zur-zukunft/'
 import json
 M = '/mnt/project-files/rechenmodell-mikrosim/v0.3/'
-J = json.load(open(M + 'steuerlast.json'))
+import os
+V41 = os.environ.get('V41') == '1'   # Buch Version 41: Paket 9 (zwei Drittel über 5.000 €), Daten aus dem Buch
+B41 = '/mnt/project-files/broschuere-mut-zur-zukunft/version-41/'
+J = json.load(open(B41 + 'daten/steuerlast-v41.json' if V41 else M + 'steuerlast.json'))
 UB = json.load(open(M + 'uebergabe-v36.json'))   # Paket 6 (uebergabe-v35.json ist der Stand ohne Paket)
 def k(x, n=1):
     t = f"{abs(x):,.{n}f}".replace(",", "X").replace(".", ",").replace("X", ".")
@@ -15,7 +18,8 @@ def diff(name, lang=False, liste='einkommen'):
     return a['reform_lang_mrd' if lang else 'reform_mrd'] - a['heute_mrd']
 E, MS = J['erwachsene'], J['menschen']
 SG = UB['spanne_gewaehlt']
-assert SG['punktwert']['von_100'] == E['von_100']['mehr'], ('Spanne passt nicht zu steuerlast.json', SG['punktwert'], E['von_100'])
+if not V41:
+    assert SG['punktwert']['von_100'] == E['von_100']['mehr'], ('Spanne passt nicht zu steuerlast.json', SG['punktwert'], E['von_100'])
 N = dict(
  emehr=str(E['von_100']['mehr']), eweniger=str(E['weniger_zusammen']), mmehr=str(MS['von_100']['mehr']), erw=k(E['erwachsene_mio'], 1), mensch=k(MS['menschen_mio'], 1),
  sw1=k(SG['gewaehlt']['erwachsene_weniger_mio_von_bis'][0]), sw2=k(SG['gewaehlt']['erwachsene_weniger_mio_von_bis'][1]), swr=k(SG['rand']['erwachsene_weniger_mio_hoechstens']), satzb=SG['satz_buch'],
@@ -33,6 +37,17 @@ N = dict(
  qh=k(J['aufbau'][0]['sparquote_heute']), qr=k(J['aufbau'][0]['sparquote_reform']),
  sq=k(J['aufbau'][0]['sparquote_reform']), vm=k(J['aufbau'][0]['vermoegen_mittel'], 0), vp=k(J['vermoegen'][0]['quote_heute'] - J['vermoegen'][0]['quote_reform']),
 )
+S4 = 'zwei Drittel' if V41 else '60 %'
+if V41:
+    # Zählung wie im Buch (werte-v41.json): Erwachsene und Menschen mit der Entlastung der Bildungsregel, Spanne aus der genaueren Rechnung
+    W = json.load(open(B41 + 'werte-v41.json'))
+    AE, AM = W['aufteilung_100_erwachsene'], W['aufteilung_100_menschen']
+    sp = AE['spanne_mehr_von_100']
+    N.update(emehr=str(AE['von_100']['mehr']), eweniger=str(AE['weniger_zusammen_von_100']), mmehr=str(AM['von_100']['mehr']),
+             weniger=k(AE['weniger']['erwachsene_mio']), wmittel=k(AE['weniger']['mittel_monat'], 0),
+             satzb=f"Rechnet man mit anderen vertretbaren Annahmen, die zu den amtlichen Zahlen über Einkauf und Sparen passen, haben zwischen {sp[0]} und {sp[1]} von 100 Erwachsenen mehr. Selbst wenn man einzelne Annahmen bis an den Rand verschiebt, sind es mindestens {AE['spanne_mindestens_von_100']}.")
+N['s4'] = S4
+N['swsatz'] = '' if V41 else f"; mit anderen vertretbaren Annahmen {N['sw1']} bis {N['sw2']} Mio., am Rand höchstens {N['swr']} Mio."
 print(J['stand'], N)
 u = open(R + 'ueber-mich.html').read()
 header = re.search(r'<header class="top">.*?</header>', u, re.S).group(0)
@@ -49,10 +64,10 @@ G = [
   "Zehn gleich große Gruppen von je 4,1 Mio. Haushalten, geordnet nach dem Einkommen vor Steuern (Löhne, Gewinne, Renten, Kapitalerträge, Grundsicherung). Die Zahl hinter der Gruppe ist ihr mittleres Einkommen im Monat, die Punkte zeigen den Durchschnitt der Gruppe. Das unterste Zehntel zahlt «z1r» statt «z1h» % seines Einkommens, das oberste «z10r» statt «z10h» %. „Mit weniger“ zählt die Erwachsenen der Gruppe, die trotzdem weniger haben als heute (bei gleichem Einkauf, ohne Erbe)."),
  ("steuerlast-anteile", 1688, 722, "Wie viel vom Ganzen jede Gruppe trägt",
   "Balken: Das oberste Zehntel trägt «orr» statt «oh» % aller Steuern und Abgaben der Haushalte, die untere Hälfte «ur» statt «uh» %.",
-  "Alle Haushalte zahlen mit der Reform «gr» Mrd. € im Jahr, heute «gh» Mrd. €. Das oberste Zehntel trägt mehr vom Ganzen als heute, «orr» statt «oh» %. Das oberste Prozent trägt im ersten Jahr «p1r» statt «p1h» %. Es zahlt 60 % auf Ausgaben über 5.000 € im Monat; wenn das Erbe voll wirkt, trägt es «p1l» %."),
+  "Alle Haushalte zahlen mit der Reform «gr» Mrd. € im Jahr, heute «gh» Mrd. €. Das oberste Zehntel trägt mehr vom Ganzen als heute, «orr» statt «oh» %. Das oberste Prozent trägt im ersten Jahr «p1r» statt «p1h» %. Es zahlt «s4» auf Ausgaben über 5.000 € im Monat; wenn das Erbe voll wirkt, trägt es «p1l» %."),
  ("steuerlast-nach-vermoegen", 1688, 702, "Wie viel vom Einkommen nach Vermögen geht",
   "Punktgrafik nach Vermögen: Haushalte unter 100.000 € Vermögen zahlen «vp» Punkte weniger von ihrem Einkommen, Haushalte mit mehr Vermögen mehr, am meisten ab 800.000 €.",
-  "Gruppen nach Nettovermögen. Mit dem Vermögen steigt die Last: Wer Zinsen, Dividenden oder Mieten ausgibt, zahlt darauf wie auf Lohn. Wer im eigenen Haus wohnt, zahlt nur für den Teil, der beim Start noch nicht bezahlt ist, auf den Mietwert wie auf eine Miete; Tilgung und Zinsen für den Kredit bleiben steuerfrei. Der beim Start bezahlte Teil des Hauses bleibt frei, Ausgaben aus versteuertem Ersparten bis 1.715 € je Erwachsenem im Jahr. Auf den Teil der Ausgaben über 5.000 € im Monat je Erwachsenem gehen 60 % an die Steuer."),
+  "Gruppen nach Nettovermögen. Mit dem Vermögen steigt die Last: Wer Zinsen, Dividenden oder Mieten ausgibt, zahlt darauf wie auf Lohn. Wer im eigenen Haus wohnt, zahlt nur für den Teil, der beim Start noch nicht bezahlt ist, auf den Mietwert wie auf eine Miete; Tilgung und Zinsen für den Kredit bleiben steuerfrei. Der beim Start bezahlte Teil des Hauses bleibt frei, Ausgaben aus versteuertem Ersparten bis 1.715 € je Erwachsenem im Jahr. Auf den Teil der Ausgaben über 5.000 € im Monat je Erwachsenem gehen «s4» an die Steuer."),
  ("wer-bezahlt-einkommen-vermoegen", 1688, 1122, "Welche Einkommen und Vermögen die Reform bezahlen",
   "Balken nach Einkommens- und Vermögensart: Auf Löhne fallen «lohn» Mrd. € «lohnw», auf Gewinne eigener Firmen «gew» Mrd. € mehr, auf vererbte Firmen «firm» Mrd. € mehr.",
   "Wie viel mehr oder weniger Steuern und Abgaben im Jahr auf jede Art von Einkommen und Vermögen fallen als heute, in Milliarden Euro. Auf Löhne fallen «lohn» Mrd. € «lohnw», auf Gewinne eigener Firmen «gew» Mrd. € mehr. Beim Erbe zahlen Firmen «firm» Mrd. € mehr, «firml» Mrd. €, wenn der Staatsanteil am Erbe voll wirkt: Heute sind vererbte Firmen zu 85 % verschont, mit der Reform zählt alles voll. Zusammen tragen die Haushalte «summe» Mrd. € «summew» als heute; ohne den Zuschlag für heutige Rentner («ausgl» Mrd. €, ihre Rente kauft 4 % mehr) wären es «summe2» Mrd. €. Steuern von Firmen, die nicht den Haushalten gehören, sind nicht enthalten."),
@@ -117,7 +132,7 @@ html = f'''<!doctype html>
 <div class="methode">
 <h2>Wie gerechnet wurde</h2>
 <p>Rund 46.000 künstliche Haushalte stehen für alle 41 Mio. Haushalte in Deutschland, mit «erw» Mio. Erwachsenen und «mensch» Mio. Menschen. Sie sind auf amtliche Zahlen geeicht: Löhne und Konsum aus der Volkswirtschaftlichen Gesamtrechnung 2025, Lohn- und Einkommensteuer aus den Steuereinnahmen 2025, Vermögen aus der Vermögensbefragung der Bundesbank 2023 mit einer Zuschätzung der Reichsten, Sparen aus der Einkommens- und Verbrauchsstichprobe.</p>
-<p>Heute: Lohn- und Einkommensteuer mit Soli, Sozialbeiträge, Abgeltungsteuer, Körperschaftsteuer auf eigene Firmen, Mehrwertsteuer, Erbschaft- und Schenkungsteuer. Mit der Reform: Ausgabensteuer über dem Freibetrag von 1.200 € im Monat je Erwachsenem, auf den Teil der Ausgaben über 5.000 € im Monat 60 %, höhere Mehrwertsteuer auf denselben Einkauf, die verbleibenden Beiträge und der Staatsanteil am Erbe, abzüglich der Auszahlungen an die Haushalte. Das Erbe zählt als erwartete Steuer im Jahr. Wie jede Schätzung hängt das Ergebnis an Annahmen: Gezählt werden Erwachsene über 18: Jeder zählt mit dem Plus seines Haushalts geteilt durch die Erwachsenen darin, erwachsene Kinder bei den Eltern zählen für sich, Kinder unter 18 mit ihrem Haushalt. Im gezeigten Fall haben «emehr» von 100 Erwachsenen mehr Geld. «satzb» Weniger haben im gezeigten Fall «weniger» Mio. Erwachsene, im Mittel «wmittel» € im Monat; mit anderen vertretbaren Annahmen «sw1» bis «sw2» Mio., am Rand höchstens «swr» Mio. Die Grafiken ordnen nach Einkommen und Vermögen des Haushalts und zählen die erwachsenen Kinder bei den Eltern nicht mit. Jeden einzelnen Haushalt rechnet der <a href="../steuerrechner/">Steuerrechner</a> nach, die ganze Rechnung steht im <a href="../buch/">Buch</a>.</p>
+<p>Heute: Lohn- und Einkommensteuer mit Soli, Sozialbeiträge, Abgeltungsteuer, Körperschaftsteuer auf eigene Firmen, Mehrwertsteuer, Erbschaft- und Schenkungsteuer. Mit der Reform: Ausgabensteuer über dem Freibetrag von 1.200 € im Monat je Erwachsenem, auf den Teil der Ausgaben über 5.000 € im Monat «s4», höhere Mehrwertsteuer auf denselben Einkauf, die verbleibenden Beiträge und der Staatsanteil am Erbe, abzüglich der Auszahlungen an die Haushalte. Das Erbe zählt als erwartete Steuer im Jahr. Wie jede Schätzung hängt das Ergebnis an Annahmen: Gezählt werden Erwachsene über 18: Jeder zählt mit dem Plus seines Haushalts geteilt durch die Erwachsenen darin, erwachsene Kinder bei den Eltern zählen für sich, Kinder unter 18 mit ihrem Haushalt. Im gezeigten Fall haben «emehr» von 100 Erwachsenen mehr Geld. «satzb» Weniger haben im gezeigten Fall «weniger» Mio. Erwachsene, im Mittel «wmittel» € im Monat«swsatz». Die Grafiken ordnen nach Einkommen und Vermögen des Haushalts und zählen die erwachsenen Kinder bei den Eltern nicht mit. Jeden einzelnen Haushalt rechnet der <a href="../steuerrechner/">Steuerrechner</a> nach, die ganze Rechnung steht im <a href="../buch/">Buch</a>.</p>
 </div>
 </div>
 </main>
