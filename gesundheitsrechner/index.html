@@ -7,8 +7,7 @@
 <title>Bauch, Blutzucker und Lebenszeit</title>
 <meta name="description" content="Gesundheitsrechner zum Buch „Wir können uns die Zukunft leisten“: Was Bauchumfang und Langzeitzucker statistisch an Lebenszeit kosten, was das für Krankenkasse und Gesellschaft bedeutet und was eine Zuckerabgabe bis 2070 bringen kann. Mit Quellen.">
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="../schriften/schriften.css">
 <style>
 /* Layout wie die anderen Rechner: Eingaben links, Ergebnis rechts; darunter die Kurven aus den Studien, die Zuckerabgabe bis 2070, Hinweise und Quellen */
 :root {
@@ -113,6 +112,9 @@ details > summary { cursor: pointer; font-weight: 700 }
 .studie .fund { font-size: 13.5px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 6px; margin-top: 2px }
 .ampel { display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px }
 .ampel span { border-radius: 999px; padding: 3px 10px; background: var(--field); border: 1px solid var(--line) }
+.annahmen { border: 1px dashed var(--muted); border-radius: 10px; padding: 12px 14px; display: grid; gap: 10px; background: var(--field) }
+.annahmen h3 { margin: 0 }
+.annahmen .chk { display: flex; gap: 8px; align-items: center; font-size: 14.5px }
 .bonus { border: 2px solid var(--ok); border-radius: 10px; padding: 12px 14px; display: grid; gap: 8px }
 .bonus .kopf { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px }
 .bonus .kopf .v { font: 800 24px/1.15 var(--display); color: var(--ok) }
@@ -122,6 +124,34 @@ details > summary { cursor: pointer; font-weight: 700 }
 .bonus .ja { color: var(--good) } .bonus .nein { color: var(--muted) }
 details.grp > summary { font-size: 14.5px }
 [hidden] { display: none !important }
+/* Druck: alles untereinander, kompakt, nichts abgeschnitten */
+@media print {
+  html { font-size: 12px }
+  body { padding: 0 !important; font-size: 12px }
+  .wrap { gap: 12px !important; max-width: none !important }
+  .main, .sitenav.flush ~ .wrap .main { grid-template-columns: minmax(0, 1fr) !important; gap: 10px !important }
+  .panel, .main > .panel { padding: 10px 12px !important; gap: 8px !important; border-radius: 6px }
+  .row2 { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 6px !important }
+  .f input, .f select { font-size: 12px !important; padding: 2px 6px !important }
+  .f small { white-space: normal !important }
+  .ib, .info-btn, .info-pop { display: none !important }
+  h1 { font-size: 22px !important } h2 { font-size: 16px !important } h3 { font-size: 13.5px !important }
+  .verdict { font-size: 13px !important; padding: 8px 10px !important }
+  .tiles, .tiles.t3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 6px !important }
+  .tile { padding: 6px 8px !important }
+  .tbl { overflow: visible !important }
+  table { font-size: 11.5px !important; table-layout: auto }
+  th, td { padding: 3px 6px !important }
+  th { font-size: 10px !important; white-space: normal !important }
+  #t_herkunft td:first-child, #t_kosten td:first-child { width: 62% }
+  #t_z th:last-child, #t_z td:last-child, #t_a th:last-child, #t_a td:last-child { white-space: normal !important; text-align: left; width: 45% }
+  .chart { max-width: 15cm }
+  .cols, .studien { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important }
+  .studie { padding: 8px 10px !important; break-inside: avoid }
+  .studie dl, .steps, .bonus ul, ul.txt, p { font-size: 11.5px !important }
+  .steps .calc { font-size: 11.5px !important; white-space: normal }
+  .tile, .bonus, .steps > li, tr { break-inside: avoid }
+}
 </style>
 <style id="sitenav-css">
 .sitenav{background:#12372a;color:#fbf8f1;font:600 15px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
@@ -219,7 +249,23 @@ h1,h2,h3{break-after:avoid}
         </div>
         <div class="chk"><input type="checkbox" id="i_dm"> <label for="i_dm">Bei mir ist Diabetes schon festgestellt (dann zählt der Wert unter Behandlung)</label></div>
       </div>
-      <div class="presets"><span>Beispiele:</span><button type="button" data-p="gesund">Gesund</button><button type="button" data-p="bauch">Bauch, Zucker noch normal</button><button type="button" data-p="prae">Vorstufe Diabetes</button><button type="button" data-p="dm">Diabetes, schlecht eingestellt</button></div>
+      <div class="grp" id="lebensstil">
+        <h3 style="margin-top:4px">Lebensstil</h3>
+        <span class="lbl" style="font-size:13.5px;color:var(--muted)">Rauchen</span>
+        <div class="seg" role="group" aria-label="Rauchen">
+          <button type="button" data-r="nie" aria-pressed="true">Nie geraucht</button>
+          <button type="button" data-r="frueher" aria-pressed="false">Früher</button>
+          <button type="button" data-r="ja" aria-pressed="false">Ich rauche</button>
+        </div>
+        <div class="row2">
+          <div class="f" id="f_zig" hidden><label for="i_zig">Zigaretten am Tag</label><div class="in"><input id="i_zig" type="number" inputmode="decimal" step="1" min="0" max="80"><span class="u">Stück</span></div><small>bei früheren Rauchern: wie viele es damals waren</small></div>
+          <div class="f" id="f_aufh" hidden><label for="i_aufh">Aufgehört mit</label><div class="in"><input id="i_aufh" type="number" inputmode="decimal" step="1" min="10" max="95"><span class="u">Jahren</span></div></div>
+          <div class="f"><label for="i_glaeser">Alkohol: Gläser pro Woche</label><div class="in"><input id="i_glaeser" type="number" inputmode="decimal" step="1" min="0" max="150"><span class="u">Gläser</span></div><small id="s_glaeser">1 Glas = 0,3 l Bier, 0,125 l Wein oder 4 cl Schnaps, rund 12 g Alkohol</small></div>
+          <div class="f"><label for="i_bewegung">Bewegung</label><div class="in"><input id="i_bewegung" type="number" inputmode="decimal" step="10" min="0" max="40000"><select id="i_bewEinheit" aria-label="Einheit der Bewegung" style="flex:0 0 auto;width:auto;border-left:1px solid var(--line)"><option value="min">Min./Woche</option><option value="schritte">Schritte/Tag</option></select></div><small id="h_bewegung">zügig gehen, Rad fahren, Sport; anstrengender Sport zählt doppelt</small></div>
+        </div>
+        <div class="chk"><input type="checkbox" id="i_vorsorge"> <label for="i_vorsorge">Ich gehe zu den empfohlenen Vorsorgeuntersuchungen</label></div>
+      </div>
+      <div class="presets"><span>Beispiele:</span><button type="button" data-p="gesund">Gesund</button><button type="button" data-p="bauch">Bauch, Zucker noch normal</button><button type="button" data-p="prae">Vorstufe Diabetes</button><button type="button" data-p="dm">Diabetes, Raucher, kaum Bewegung</button></div>
       <p class="note">So misst du den Bauchumfang: im Stehen, nach dem Ausatmen, mit dem Maßband waagerecht in der Mitte zwischen unterster Rippe und Hüftknochen (meist knapp über dem Bauchnabel). Faustregel: Der Bauchumfang sollte weniger als die Hälfte der Körpergröße sein.</p>
       <details class="grp" id="bonusfelder">
         <summary>Gesundheitsbonus: deine Werte vor einem Jahr (freiwillig)</summary>
@@ -227,8 +273,8 @@ h1,h2,h3{break-after:avoid}
         <div class="row2">
           <div class="f"><label for="i_bauchVor">Bauchumfang vor einem Jahr</label><div class="in"><input id="i_bauchVor" type="number" inputmode="decimal" step="1" min="0" placeholder="leer"><span class="u">cm</span></div></div>
           <div class="f"><label for="i_hbVor">Langzeitzucker vor einem Jahr</label><div class="in"><input id="i_hbVor" type="number" inputmode="decimal" step="0.1" min="0" placeholder="leer"><span class="u" id="u_hbVor">%</span></div></div>
+          <div class="f"><label for="i_glVor">Alkohol vor einem Jahr</label><div class="in"><input id="i_glVor" type="number" inputmode="decimal" step="1" min="0" placeholder="leer"><span class="u">Gläser/Woche</span></div></div>
         </div>
-        <div class="chk"><input type="checkbox" id="i_leben"> <label for="i_leben">Ich gehe zur Vorsorge, rauche nicht und bewege mich regelmäßig</label></div>
       </details>
     </div>
 
@@ -236,6 +282,7 @@ h1,h2,h3{break-after:avoid}
       <h2>Ergebnis</h2>
       <div class="verdict" id="verdict"></div>
       <div class="tiles" id="tiles"></div>
+      <div class="tbl"><table id="t_herkunft"></table></div>
       <div class="tbl"><table id="t_kosten"></table></div>
       <p class="note" id="n_kosten"></p>
       <div class="bonus" id="bonus"></div>
@@ -273,6 +320,45 @@ h1,h2,h3{break-after:avoid}
     <p class="note">📖 Im Buch: <a href="../buch/kapitel-5.html#7-gesundheitsabgabe-und-gesundheitsbonus">Kapitel 5, Gesundheitsabgabe und Gesundheitsbonus</a> · <a href="../buch/anhang-c.html#ann-ZuckSatz">Anhang C, Zuckerabgabe je Kilogramm</a> · <a href="../buch/kapitel-6.html#zukunftsplan">Kapitel 6, niedrigere Gesundheitsausgaben im Zukunftsplan</a></p>
   </div>
 
+  <div class="panel" id="allegesund">
+    <div class="eyebrow">Für alle gerechnet</div>
+    <h2>Wenn alle gesund leben: was das bis 2070 bringen könnte</h2>
+    <p>Was wäre, wenn ab 2027 alle gesund essen, niemand mehr raucht, kaum jemand Alkohol trinkt und sich alle genug bewegen? Für jeden dieser Punkte gibt es Studien, die ausrechnen, was er Deutschland heute jedes Jahr kostet: bei den Krankenkassen und in der Wirtschaft durch Krankheitstage, Frührente und frühen Tod. Der Rechner zeigt, wie viel davon bis 2070 zusammenkäme.</p>
+    <p class="note"><b>Ehrlich gesagt:</b> Das ist eine Hoffnung, keine Vorhersage. Kein Land der Welt hat das geschafft. Die Zahlen zeigen, wie groß der Schatz ist, der hier liegt, nicht wie viel eine einzelne Maßnahme hebt.</p>
+    <div class="annahmen" id="annahmen_a">
+      <h3>Annahmen zum Verstellen</h3>
+      <div class="row2" style="align-items:end">
+        <div class="range"><label for="a_w">Wie stark wirkt die Gesundheitsreform? <b id="o_w"></b> des möglichen Nutzens</label><input id="a_w" type="range" min="5" max="100" step="5" value="100"><small class="note" id="o_w_hint"></small></div>
+        <div class="range"><label for="a_abg">Davon an Staat und Sozialkassen als Steuern und Beiträge: <b id="o_abg"></b></label><input id="a_abg" type="range" min="30" max="50" step="1" value="40"><small class="note">Abgabenquote in Deutschland: rund 40 % der Wirtschaftsleistung.</small></div>
+      </div>
+      <label class="chk"><input type="checkbox" id="a_rente" checked> Rente folgt der Lebenserwartung (Buch, Kapitel 5, Baustein 11)</label>
+      <details><summary>Feste Annahmen ansehen</summary>
+        <ul class="txt">
+          <li><b>Jährliche Kosten heute:</b> Rauchen 97 Mrd. €, ungesundes Essen 75 Mrd. €, Alkohol 57 Mrd. €, Bewegungsmangel 17 Mrd. € (Studien in der Tabelle unten).</li>
+          <li><b>Bis zur vollen Wirkung:</b> Rauchen 25 Jahre, Essen 20 Jahre, Alkohol und Bewegung je 10 Jahre.</li>
+          <li><b>Überschneidung:</b> Der größte Posten zählt voll, jeder weitere zur Hälfte.</li>
+          <li><b>Öffentlich bezahlt:</b> Rund drei Viertel der Gesundheitsausgaben tragen Krankenkassen, Pflegekasse und Staat (Statistisches Bundesamt).</li>
+          <li><b>Folgekosten in gewonnenen Lebensjahren:</b> ein Drittel bis die Hälfte der Ersparnis, wenn die Rente der Lebenserwartung folgt; sonst 60 bis 90 %, weil zusätzlich längere Renten zu zahlen sind. Grobe eigene Schätzung.</li>
+          <li><b>Euro:</b> in Preisen der jeweiligen Studie, ohne Zinsen und ohne Preissteigerung.</li>
+        </ul>
+      </details>
+    </div>
+    <div class="tiles t3" id="tiles_a"></div>
+    <div class="legend" id="lg_a"></div>
+    <div class="chart" id="c_a"></div>
+    <p class="note">Aufsummierte Einsparung für Krankenkassen und Wirtschaft von 2027 bis 2070, in Euro der jeweiligen Studie, ohne Abzinsung und ohne Preissteigerung. Jede Linie wächst langsam an, weil Krankheiten erst nach Jahren verschwinden.</p>
+    <div class="tbl"><table id="t_a"></table></div>
+    <h3>Was davon beim Staat ankommt</h3>
+    <p>Die großen Zahlen oben sind der Nutzen für die ganze Gesellschaft. In die Kassen des Staates und der Sozialversicherung fließt davon nur ein Teil, und davon geht wieder etwas ab, weil Menschen länger leben.</p>
+    <div class="tbl"><table id="t_staat"></table></div>
+    <p class="note" id="n_staat"></p>
+    <ul class="txt">
+      <li><b>Nicht einfach zusammenzählen.</b> Viele Raucher trinken auch mehr und bewegen sich weniger, und ein Herzinfarkt hat oft mehrere Ursachen. Wie beim persönlichen Rechner zählt deshalb der größte Posten voll und jeder weitere nur zur Hälfte.</li>
+      <li><b>Wer länger lebt, braucht später auch Pflege und Rente.</b> Ein Teil der Ersparnis bei den Kassen wird in den gewonnenen Lebensjahren wieder ausgegeben (<a href="#q-vanbaal">van Baal 2008</a>). Der Gewinn an gesunden Jahren und an Arbeitskraft bleibt.</li>
+      <li><b>Die Schätzungen sind unterschiedlich sicher.</b> Die Kosten des Rauchens und des Alkohols sind gut untersucht. Bei der Bewegung stammt die Zahl aus einem Vergleich zwischen aktiven und inaktiven Menschen; dass Kranke sich weniger bewegen, spielt da mit hinein.</li>
+    </ul>
+  </div>
+
   <div class="panel" id="rechenweg">
     <div class="eyebrow">Nachvollziehen</div>
     <h2>So rechnet der Rechner, Schritt für Schritt mit deinen Zahlen</h2>
@@ -286,7 +372,7 @@ h1,h2,h3{break-after:avoid}
       <li><b>Zusammenhang ist nicht gleich Ursache.</b> Die Studien beobachten, dass Menschen mit großem Bauch oder hohem Blutzucker früher sterben. Ein Teil davon geht auf Dinge zurück, die oft zusammen auftreten: Bewegungsmangel, Rauchen, Armut, Veranlagung. Die Studien rechnen das so gut es geht heraus. Dass Abnehmen und ein besserer Blutzucker wirklich helfen, zeigen zusätzlich Versuche mit Programmen und Medikamenten.</li>
       <li><b>Durchschnitt, keine Vorhersage.</b> Wer heute einen großen Bauch hat, kann trotzdem sehr alt werden, und wer schlank ist, kann früh krank werden. Die Zahlen gelten für viele Menschen zusammen, so wie eine Wettervorhersage von 70 % Regen nicht sagt, ob es bei dir regnet.</li>
       <li><b>Die Spanne ist ehrlich gemeint.</b> Verschiedene Studien kommen auf verschiedene Werte. Der Rechner zeigt deshalb immer eine mittlere Schätzung und daneben die niedrigste und höchste, die sich aus den Studien ergibt.</li>
-      <li><b>Bauch und Zucker überschneiden sich.</b> Ein Teil des Risikos durch den Bauch läuft über den Diabetes. Der Rechner zählt das deshalb nicht voll doppelt (Schritt 4 oben).</li>
+      <li><b>Risiken überschneiden sich.</b> Ein Teil des Risikos durch den Bauch läuft über den Diabetes, und wer raucht, bewegt sich oft auch weniger. Der Rechner zählt deshalb das größte Risiko voll und jedes weitere nur zur Hälfte (Schritt 5 oben). So passt das Ergebnis zu einer großen Studie, die alle Gewohnheiten zusammen untersucht hat (<a href="#q-li">Li u. a. 2018</a>).</li>
       <li><b>Wer früher stirbt, kostet die Krankenkasse in den verlorenen Jahren nichts mehr.</b> Eine Studie aus den Niederlanden (<a href="#q-vanbaal">van Baal u. a. 2008</a>) fand deshalb, dass Menschen mit starkem Übergewicht über das ganze Leben sogar etwas weniger Gesundheitskosten verursachen als gesund Lebende. Der Rechner zeigt diesen Betrag offen als Gegenrechnung. Ein früher Tod ist aber kein Gewinn: verlorene Lebensjahre, Krankheit, Pflege und fehlende Arbeitskraft wiegen schwerer. Warum es trotzdem richtig ist, dass die Gemeinschaft für alle zahlt, auch wenn jemand „selbst schuld“ ist, erklärt das Buch in <a href="../buch/anhang-b.html#und-wenn-es-nur-eine-grundrente-aus-der-steuer-gaebe">Anhang B</a>.</li>
       <li><b>Keine ärztliche Beratung.</b> Bei einem HbA1c ab 5,7 % oder einem Bauchumfang über der halben Körpergröße lohnt sich ein Gespräch mit der Hausärztin oder dem Hausarzt. Für Kinder, Jugendliche und Schwangere gilt der Rechner nicht.</li>
     </ul>
@@ -295,7 +381,7 @@ h1,h2,h3{break-after:avoid}
   <div class="panel" id="studien">
     <div class="eyebrow">Die Grundlage</div>
     <h2>Die Studien hinter dem Rechner, einfach erklärt</h2>
-    <p>Der Rechner erfindet keine Zahlen. Jede Annahme kommt aus einer veröffentlichten, von anderen Fachleuten geprüften Studie. Bei jeder Studie steht, was untersucht wurde, was herauskam, wofür der Rechner das nutzt und wo genau in der Studie du die Zahl findest.</p>
+    <p>Der Rechner erfindet keine Zahlen. Jede Annahme kommt aus einer veröffentlichten, von anderen Fachleuten geprüften Studie oder aus amtlichen Zahlen. Eingebaut ist nur, wofür es große Studien mit Hunderttausenden Menschen gibt; wo der Rechner selbst etwas annimmt, steht das dabei. Bei jeder Studie steht, was untersucht wurde, was herauskam, wofür der Rechner das nutzt und wo genau in der Studie du die Zahl findest.</p>
     <div class="studien">
       <article class="studie" id="q-jayedi">
         <h3>Bauch und Sterberisiko: 72 Studien in einer</h3>
@@ -338,6 +424,83 @@ h1,h2,h3{break-after:avoid}
         <div class="wer">Selvin E. u. a. (2010), <i>New England Journal of Medicine</i> 362:800</div>
         <dl><dt>Was wurde untersucht?</dt><dd>Die US-Studie ARIC hat über 11.000 Erwachsene ohne Diabetes rund 15 Jahre lang beobachtet.</dd><dt>Was kam heraus?</dt><dd>Mit einem HbA1c von 6,0 bis 6,4 % bekamen Menschen 4,5-mal so oft Diabetes wie mit 5,0 bis 5,4 %; bei 5,5 bis 5,9 % fast doppelt so oft.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Daraus schätzt der Rechner, wie viele Menschen in der Vorstufe jedes Jahr an Diabetes erkranken: 1,5 % bei 5,7 % bis 6 % bei 6,4 %. Ab dann zählen die Kosten eines Diabetes (Schritt 6).</dd></dl>
         <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract): Hazard Ratios für diagnostizierten Diabetes je HbA1c-Gruppe. <a href="https://pubmed.ncbi.nlm.nih.gov/20200384/" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-jha">
+        <h3>Rauchen kostet rund 10 Lebensjahre</h3>
+        <div class="wer">Jha P. u. a. (2013), <i>New England Journal of Medicine</i> 368:341</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Die US-Gesundheitsbefragung NHIS mit über 200.000 Erwachsenen, verknüpft mit dem Sterberegister.</dd><dt>Was kam heraus?</dt><dd>Raucher haben ein rund dreimal so hohes Sterberisiko wie Nie-Raucher und verlieren mindestens 10 Lebensjahre. Wer mit 25 bis 34 aufhört, gewinnt fast alle 10 Jahre zurück, mit 35 bis 44 rund 9, mit 45 bis 54 rund 6, mit 55 bis 64 rund 4.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Faktor 3 für 20 Zigaretten am Tag (Spanne 2,5 bis 3,5). Bei früheren Rauchern bleibt je nach Alter beim Aufhören nur ein Teil des Risikos.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract); Pressemitteilung der Campaign for Tobacco-Free Kids. <a href="https://www.tobaccofreekids.org/press-releases/2013_01_23_nejm" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-inoue">
+        <h3>Auch wenige Zigaretten schaden</h3>
+        <div class="wer">Inoue-Choi M. u. a. (2017), <i>JAMA Internal Medicine</i> 177:87</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Die US-Studie NIH-AARP mit rund 290.000 Erwachsenen von 59 bis 82 Jahren.</dd><dt>Was kam heraus?</dt><dd>Wer sein Leben lang weniger als 1 Zigarette am Tag rauchte, hatte ein um 64 % höheres Sterberisiko, bei 1 bis 10 am Tag ein um 87 % höheres.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Bestimmt, wie stark das Risiko bei wenigen Zigaretten schon steigt: Der Faktor wächst mit der Menge, aber zu Beginn am stärksten.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung; Bericht des US-Gesundheitsinstituts NIH. <a href="https://irp.nih.gov/index.php/accomplishments/low-intensity-smokers-are-at-increased-risk-of-earlier-death" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-wood">
+        <h3>Ab etwa 8 Gläsern pro Woche sinkt die Lebenserwartung</h3>
+        <div class="wer">Wood A. M. u. a. (2018), <i>The Lancet</i> 391:1513</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Gemeinsame Auswertung von 83 Langzeitstudien mit rund 600.000 Menschen, die Alkohol trinken, aus 19 reichen Ländern.</dd><dt>Was kam heraus?</dt><dd>Über 100 g Alkohol in der Woche steigt das Sterberisiko. Mit 40 Jahren leben Menschen mit 100 bis 200 g in der Woche rund ein halbes Jahr kürzer, mit 200 bis 350 g 1 bis 2 Jahre, mit mehr als 350 g 4 bis 5 Jahre.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Grundlage für den Alkohol: Der Rechner rechnet die Jahre in einen Faktor auf das Sterberisiko um (Spanne ±40 %).</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract); Pressemitteilung der Universität Glasgow. <a href="https://www.gla.ac.uk/news/archiveofnews/2018/april/headline_578314_en.html" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-paluch">
+        <h3>Schritte am Tag: schon 6.000 bis 8.000 bringen viel</h3>
+        <div class="wer">Paluch A. E. u. a. (2022), <i>The Lancet Public Health</i> 7:e219</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>15 Studien aus vier Erdteilen mit 47.471 Erwachsenen, deren Schritte mit einem Schrittzähler gemessen wurden. Danach wurde rund 7 Jahre beobachtet, wer stirbt.</dd><dt>Was kam heraus?</dt><dd>Im Vergleich zum Viertel mit den wenigsten Schritten (im Mittel 3.553 am Tag) war das Sterberisiko bei rund 5.800 Schritten um 40 % niedriger, bei rund 7.800 um 45 % und bei rund 10.900 um 53 %. Ab 60 Jahren flacht der Nutzen bei 6.000 bis 8.000 Schritten ab, unter 60 bei 8.000 bis 10.000.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Wenn du Schritte eingibst, rechnet der Rechner mit diesen Werten statt mit den Minuten aus Arem 2015. Bezugswert sind rund 7.800 Schritte, für den Bonus zählen 7.500. Vorsicht: Wer krank ist, geht weniger; ein Teil des Unterschieds ist Folge, nicht Ursache. Deshalb wirken die Schritte im Rechner etwas stärker als die Minuten.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract), Hazard Ratios je Viertel und Altersgruppen. <a href="https://pubmed.ncbi.nlm.nih.gov/35247352/" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-arem">
+        <h3>Bewegung: 150 Minuten in der Woche bringen viel</h3>
+        <div class="wer">Arem H. u. a. (2015), <i>JAMA Internal Medicine</i> 175:959</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Gemeinsame Auswertung von 6 Langzeitstudien mit rund 661.000 Menschen und 116.000 Todesfällen.</dd><dt>Was kam heraus?</dt><dd>Wer sich wenigstens etwas bewegt, hat ein um 20 % niedrigeres Sterberisiko als wer sich gar nicht bewegt; mit 150 bis 300 Minuten in der Woche ein um 31 % niedrigeres, mit dem Doppelten bis Dreifachen ein um 37 bis 39 % niedrigeres. Mehr schadet nicht.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Bezugswert sind 150 Minuten. Gar keine Bewegung heißt Faktor 1,45, mehr Bewegung senkt das Risiko etwas unter den Durchschnitt.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract): Hazard Ratios je Bewegungsgruppe. <a href="https://www.2minutemedicine.com/recommended-physical-activity-may-provide-near-maximal-longevity-benefit" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-cochrane">
+        <h3>Allgemeine Check-ups verlängern das Leben nicht messbar</h3>
+        <div class="wer">Krogsbøll L. T. u. a. (2019), <i>Cochrane Database of Systematic Reviews</i> CD009009</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung von 17 Studien, in denen Menschen zufällig zu regelmäßigen allgemeinen Gesundheits-Check-ups eingeladen wurden oder nicht; für die Sterblichkeit 11 Studien mit über 230.000 Menschen.</dd><dt>Was kam heraus?</dt><dd>Kein messbarer Unterschied bei der Gesamtsterblichkeit (Verhältnis 1,00), bei Krebs (1,01) und Herz-Kreislauf (1,05).</dd><dt>Wofür der Rechner das nutzt</dt><dd>Die Vorsorge verändert die Lebenserwartung im Rechner deshalb nicht. Sie zählt aber für den Gesundheitsbonus, und gezielte Früherkennung kann Einzelnen sehr helfen, etwa wenn ein Diabetes oder Bluthochdruck früh entdeckt und behandelt wird.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract), „Main results“. <a href="https://www.aafp.org/pubs/afp/issues/2019/1201/p676.html" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-effertz-tabak">
+        <h3>Was Rauchen in Deutschland kostet</h3>
+        <div class="wer">Effertz T., Stellungnahme für den Bundestag; Deutsches Krebsforschungszentrum, Tabakatlas 2020</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Berechnung der Krankheitskosten und Produktionsausfälle durch Rauchen in Deutschland.</dd><dt>Was kam heraus?</dt><dd>Rauchen kostet jedes Jahr rund 97 Mrd. €, davon rund 30 Mrd. € direkt im Gesundheitswesen; das sind 34,2 Cent je gerauchter Zigarette (2018). Rund 127.000 Menschen sterben jedes Jahr an den Folgen.</dd><dt>Wofür der Rechner das nutzt</dt><dd>40 Cent je Zigarette (auf heute hochgerechnet) für die Krankenkasse; 70 % davon zusätzlich für Krankheitstage und Frührente (Annahme).</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Stellungnahme, Abschnitt Kosten je Zigarette; Tabakatlas „Auf einen Blick“. <a href="https://www.bundestag.de/resource/blob/1222330/05-Effertz-Dr-Tobias.pdf" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-dhs">
+        <h3>Was Alkohol in Deutschland kostet</h3>
+        <div class="wer">Deutsche Hauptstelle für Suchtfragen, Jahrbuch Sucht; Bundesgesundheitsministerium</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Volkswirtschaftliche Kosten des Alkoholkonsums in Deutschland.</dd><dt>Was kam heraus?</dt><dd>Rund 57 Mrd. € im Jahr, davon 16,6 Mrd. € direkt (Krankenhaus, Reha, Medikamente) und 40,4 Mrd. € indirekt. 8,6 Millionen Erwachsene trinken riskant viel.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Je Gramm über 100 g in der Woche rund 13 € im Jahr für die Krankenkasse und 13 € für die Wirtschaft (direkte Kosten geteilt durch riskant Trinkende mit rund 150 g zu viel in der Woche; Annahme).</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Bundesgesundheitsministerium, Stichwort Alkohol; Universität Bremen. <a href="https://www.bundesgesundheitsministerium.de/service/begriffe-von-a-z/a/alkohol.html" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-gottschalk">
+        <h3>Was Bewegungsmangel in Deutschland kostet</h3>
+        <div class="wer">Gottschalk S., König H.-H. u. a. (2025), <i>European Journal of Health Economics</i> 26:117; Bundesgesundheitsministerium 2024 (GEDA 2019/2020)</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Daten von 157.648 Teilnehmenden der NAKO Gesundheitsstudie, der größten Bevölkerungsstudie in Deutschland. Verglichen wurden die Kosten von Menschen, die sich genug bewegen, mit denen, die es nicht tun.</dd><dt>Was kam heraus?</dt><dd>Wer sich zu wenig bewegt, kostet im Jahr rund 188 € mehr im Gesundheitswesen und zusammen mit Krankheitstagen und Frührente rund 482 € mehr. Nur rund die Hälfte der Erwachsenen erreicht die 150 Minuten Bewegung in der Woche (52 % der 18- bis 64-Jährigen, Ältere seltener).</dd><dt>Wofür der Rechner das nutzt</dt><dd>Rund 35 Mio. Erwachsene × 482 € ≈ 17 Mrd. € im Jahr, davon × 188 € ≈ 6,6 Mrd. € bei den Kassen. Vorsicht: Die Studie ist ein Vergleich zu einem Zeitpunkt. Wer krank ist, bewegt sich oft weniger; ein Teil der Mehrkosten ist also Folge und nicht Ursache.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract), DOI 10.1007/s10198-024-01697-9; BMG, Bewegungsförderung bei Erwachsenen, Kurzversion. <a href="https://idw-online.de/de/news833514" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-notley">
+        <h3>Geld als Anreiz hilft beim Aufhören</h3>
+        <div class="wer">Notley C. u. a. (2019), <i>Cochrane Database of Systematic Reviews</i> CD004307</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>33 Studien mit über 21.600 Raucherinnen und Rauchern, die für nachgewiesenes Nichtrauchen Geld oder Gutscheine bekamen.</dd><dt>Was kam heraus?</dt><dd>Mit Anreiz waren nach mindestens sechs Monaten rund die Hälfte mehr Menschen rauchfrei als ohne (Faktor 1,5), auch noch nach Ende der Zahlungen.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Begründung für den Bonus-Teil „Rauchfrei“: Wer aufhört, bekommt ihn genauso wie Nieraucher.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract), Hauptergebnis. <a href="https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD004307.pub6/full" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-nachweis">
+        <h3>Wie man Nichtrauchen und Alkohol nachweist</h3>
+        <div class="wer">Labormedizinische Standardtests: Cotinin im Urin; Phosphatidylethanol (PEth) im Blut</div>
+        <dl><dt>Rauchen</dt><dd>Cotinin ist ein Abbaustoff des Nikotins und im Urin 3 bis 4 Tage nachweisbar. Ein Zusatztest auf Anabasin, das nur im Tabak steckt, unterscheidet Rauchen von Nikotinpflaster oder Kaugummi beim Aufhören.</dd><dt>Alkohol</dt><dd>PEth entsteht nur, wenn Alkohol im Blut ist, und zeigt den Konsum der letzten 2 bis 4 Wochen. Es ist viel genauer als die Leberwerte GGT oder CDT, die erst bei viel Alkohol ausschlagen. Welcher PEth-Wert genau 8 Gläsern in der Woche entspricht, müssten Fachleute festlegen.</dd><dt>Datenschutz</dt><dd>Die Teilnahme ist freiwillig. Der Messwert bleibt beim Arzt; gemeldet wird nur „Ziel erreicht“ oder nicht.</dd></dl>
+      </article>
+      <article class="studie" id="q-dgsmp">
+        <h3>Höhere Alkoholsteuer: Vorschlag der Fachleute</h3>
+        <div class="wer">Deutsche Gesellschaft für Sozialmedizin und Prävention (DGSMP), Policy Brief Alkoholbesteuerung, Juli 2026; Bundestag-Drucksache 21/6150 (Tabak)</div>
+        <dl><dt>Was wird vorgeschlagen?</dt><dd>Branntwein, Bier und erstmals Wein stufenweise höher besteuern; die Steuersätze für Bier und Branntwein sind seit 1993 bzw. 1982 unverändert. Heute bringt die Alkoholsteuer nur rund 3 Mrd. € im Jahr.</dd><dt>Was kam heraus?</dt><dd>Mehreinnahmen von grob 1 bis 3 Mrd. € im Jahr und in den ersten drei Jahren rund 4.000 vermiedene Todesfälle. Bei Tabak: 66 Mrd. versteuerte Zigaretten im Jahr; 5 Cent mehr je Stück bringen rund 3 Mrd. €.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Finanzierung der Bonus-Teile „Rauchfrei“ und „Wenig Alkohol“ (zusammen grob 6 bis 7 Mrd. € im Jahr). Die Tabaksteuer kommt zusätzlich zur Erhöhung, die die Bundesregierung 2026 plant. Steuern sind rechtlich nicht zweckgebunden; die Kopplung ist eine politische Zusage.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Policy Brief, Abschnitte Einnahmen und Gesundheitseffekte. <a href="https://www.dgsmp.de/wp-content/uploads/2026/07/Policy-Brief_Alkoholbesteuerung_Juli2026.pdf" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-li">
+        <h3>Alle Gewohnheiten zusammen: bis zu 14 Jahre</h3>
+        <div class="wer">Li Y. u. a. (2018), <i>Circulation</i> 138:345</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zwei große US-Studien mit rund 123.000 Krankenschwestern und Ärzten, über bis zu 34 Jahre beobachtet. Gezählt wurden fünf gesunde Gewohnheiten: nicht rauchen, normales Gewicht, Bewegung, gesunde Ernährung und wenig Alkohol.</dd><dt>Was kam heraus?</dt><dd>Wer mit 50 alle fünf Gewohnheiten hat, lebt im Schnitt 14 Jahre (Frauen) bzw. 12 Jahre (Männer) länger als wer keine hat.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Prüfstein für Schritt 5: Damit mehrere Risiken zusammen nicht mehr Jahre kosten, als diese Studie fand, zählt jedes weitere Risiko nur zur Hälfte.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract), Lebenserwartung mit 50 nach Zahl der gesunden Gewohnheiten. <a href="https://www.hsph.harvard.edu/news/press-releases/healthy-lifestyle-may-add-years-to-life/" target="_blank" rel="noopener">Zur Studie ›</a></div>
       </article>
       <article class="studie" id="q-kora">
         <h3>Was Diabetes in Deutschland kostet</h3>
@@ -420,9 +583,21 @@ const ZUCKER = { // Emmert-Fees 2023: gestaffelte Limonaden-Abgabe, 2023 bis 204
   g: 2.3, gesellschaft20: 16, kasse20: 4, tote20: 29300 };
 const ALLE = { kasse: 35, gesellschaft: 75 }; // Mrd. € im Jahr bei voller Wirkung (Meier 2015 auf 2024 hochgerechnet, Effertz-Verhältnis)
 const EINW = 83.5e6, LEBEN = 81;
+// Lebensstil
+const RAUCH = { hr20: { lo: 2.5, mid: 3.0, hi: 3.5 }, expo: 0.35,            // Jha 2013: Sterberisiko etwa ×3; Inoue-Choi 2017: 1 bis 10 am Tag ×1,87
+  rest: [[30, 0], [40, 0.1], [50, 0.4], [60, 0.6], [70, 0.8], [95, 0.9]],    // Anteil des Risikos, der nach dem Aufhören bleibt (Jha 2013)
+  ctJeZig: 0.40, indirektAnteil: 0.7 };                                      // Effertz: 34,2 ct direkte Krankheitskosten je Zigarette (2018), heute rund 40 ct
+const ALK = { gGlas: 12, schwelle: 100, ylls40: [[100, 0], [150, 0.5], [275, 1.5], [450, 4.5]], spanne: { lo: 0.6, mid: 1, hi: 1.4 }, // Wood 2018
+  dirJeG: 13, indJeG: 13 };                                                  // 16,6 Mrd. € direkt, 40,4 Mrd. € indirekt (DHS), 8,6 Mio. riskant Trinkende
+const BEW = { pts: [[0, 1 / 0.69], [75, 0.80 / 0.69], [150, 1], [300, 0.63 / 0.69], [450, 0.61 / 0.69], [2000, 0.61 / 0.69]], spanne: { lo: 0.75, mid: 1, hi: 1.2 } }; // Arem 2015
+// Schritte am Tag (Paluch 2022): Sterberisiko je Viertel, bezogen auf das dritte Viertel (Median 7.842 Schritte)
+const SCHRITTE = { pts: [[0, 1 / 0.55], [3553, 1 / 0.55], [5801, 0.60 / 0.55], [7842, 1], [10901, 0.47 / 0.55], [40000, 0.47 / 0.55]], plateau60: 8000, ziel: 7500,
+  ausMin: m => Math.round((4000 + 25 * m) / 100) * 100, zuMin: x => Math.max(0, Math.round((x - 4000) / 25 / 10) * 10) };
+const NEUTRAL = { rauch: "nie", zig: 0, glaeser: 0, bewEinheit: "min", bewegung: 150 };
+const bewOk = p => p.bewEinheit === "schritte" ? p.schritte >= SCHRITTE.ziel : p.bewegung >= 150;
 
 // ---------- Eingaben ----------
-const V = { sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, einheit: "pct", dm: false, bauchVor: 0, hbVor: 0, leben: false };
+const V = { sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, einheit: "pct", dm: false, bauchVor: 0, hbVor: 0, glVor: 0, rauch: "nie", zig: 15, aufh: 40, glaeser: 3, bewegung: 150, bewEinheit: "min", schritte: 7800, vorsorge: false };
 const FELD = [["alter", "Alter", "Jahre", 1, 18, 95], ["groesse", "Körpergröße", "cm", 1, 120, 220], ["bauch", "Bauchumfang", "cm", 1, 50, 200]];
 FELD.forEach(([k, l, u, st, mi, ma]) => {
   const d = document.createElement("div"); d.className = "f";
@@ -438,17 +613,28 @@ $("i_einheit").addEventListener("change", e => { V.einheit = e.target.value; zei
 function zeigeHbVor() { $("u_hbVor").textContent = V.einheit === "pct" ? "%" : "mmol/mol"; $("i_hbVor").step = V.einheit === "pct" ? 0.1 : 1;
   $("i_hbVor").value = V.hbVor ? (V.einheit === "pct" ? fmt(V.hbVor, 1).replace(",", ".") : Math.round(mmol(V.hbVor))) : ""; }
 $("i_bauchVor").addEventListener("input", e => { V.bauchVor = +e.target.value || 0; run(); });
+$("i_glVor").addEventListener("input", e => { V.glVor = +e.target.value || 0; run(); });
 $("i_hbVor").addEventListener("input", e => { const x = +e.target.value; V.hbVor = x ? (V.einheit === "pct" ? x : pct(x)) : 0; run(); });
-$("i_leben").addEventListener("change", e => { V.leben = e.target.checked; run(); });
+["zig", "aufh", "glaeser"].forEach(k => { const el = $("i_" + k); el.value = V[k]; el.addEventListener("input", () => { V[k] = Math.max(0, +el.value || 0); run(); }); });
+function zeigeBew() { const st = V.bewEinheit === "schritte"; $("i_bewegung").value = st ? V.schritte : V.bewegung; $("i_bewegung").step = st ? 500 : 10;
+  $("h_bewegung").textContent = st ? "zeigen Handy oder Uhr an; Durchschnitt der letzten Wochen" : "zügig gehen, Rad fahren, Sport; anstrengender Sport zählt doppelt"; }
+$("i_bewegung").addEventListener("input", e => { const x = Math.max(0, +e.target.value || 0); if (V.bewEinheit === "schritte") { V.schritte = x; V.bewegung = SCHRITTE.zuMin(x); } else { V.bewegung = x; V.schritte = SCHRITTE.ausMin(x); } run(); });
+$("i_bewEinheit").addEventListener("change", e => { V.bewEinheit = e.target.value; zeigeBew(); run(); });
+$("i_vorsorge").addEventListener("change", e => { V.vorsorge = e.target.checked; run(); });
+function setRauch(r) { V.rauch = r; document.querySelectorAll("[data-r]").forEach(b => b.setAttribute("aria-pressed", b.dataset.r === r)); $("f_zig").hidden = r === "nie"; $("f_aufh").hidden = r !== "frueher"; run(); }
+document.querySelectorAll("[data-r]").forEach(b => b.onclick = () => setRauch(b.dataset.r));
 $("i_dm").addEventListener("change", e => { V.dm = e.target.checked; run(); });
 function setSex(s) { V.sex = s; $("s_m").setAttribute("aria-pressed", s === "m"); $("s_f").setAttribute("aria-pressed", s === "f"); run(); }
 $("s_m").onclick = () => setSex("m"); $("s_f").onclick = () => setSex("f");
-const PRESET = { gesund: { bauch: 0.45, hba1c: 5.2, dm: false }, bauch: { bauch: 0.62, hba1c: 5.5, dm: false }, prae: { bauch: 0.6, hba1c: 6.1, dm: false }, dm: { bauch: 0.66, hba1c: 8.5, dm: true } };
+const PRESET = { gesund: { bauch: 0.45, hba1c: 5.2, dm: false, rauch: "nie", glaeser: 2, bewegung: 200 }, bauch: { bauch: 0.62, hba1c: 5.5, dm: false, rauch: "nie", glaeser: 5, bewegung: 60 },
+  prae: { bauch: 0.6, hba1c: 6.1, dm: false, rauch: "frueher", zig: 15, aufh: 40, glaeser: 7, bewegung: 90 }, dm: { bauch: 0.66, hba1c: 8.5, dm: true, rauch: "ja", zig: 20, glaeser: 14, bewegung: 0 } };
 document.querySelectorAll("[data-p]").forEach(b => b.onclick = () => {
   const p = PRESET[b.dataset.p]; V.bauch = Math.round(p.bauch * V.groesse); V.hba1c = p.hba1c; V.dm = p.dm;
-  $("i_bauch").value = V.bauch; $("i_dm").checked = V.dm; zeigeHb(); run();
+  ["zig", "aufh", "glaeser"].forEach(k => { if (k in p) { V[k] = p[k]; $("i_" + k).value = p[k]; } });
+  V.bewegung = p.bewegung; V.schritte = SCHRITTE.ausMin(p.bewegung); zeigeBew();
+  $("i_bauch").value = V.bauch; $("i_dm").checked = V.dm; zeigeHb(); setRauch(p.rauch);
 });
-zeigeHb();
+zeigeHb(); zeigeBew();
 
 // ---------- Rechenkern ----------
 const ip = (tab, x) => { if (x <= tab[0][0]) return tab[0][1]; for (let i = 1; i < tab.length; i++) if (x <= tab[i][0]) { const [x0, y0] = tab[i - 1], [x1, y1] = tab[i]; return y0 + (y1 - y0) * (x - x0) / (x1 - x0); } return tab[tab.length - 1][1]; };
@@ -483,6 +669,31 @@ function lnHrZucker(x, sex, h, dm, v) {
   return prae(6) + (dmWert(7) - prae(6)) * (h - 6);
 }
 const kombi = (a, b) => a + b - KOST.ueberlapp * Math.min(a, b);
+// Mehrere Risiken zusammen: das größte zählt voll, jedes weitere nur zur Hälfte, weil sie sich überschneiden
+// (geeicht an Li u. a. 2018: fünf ungesunde Gewohnheiten zusammen kosten mit 50 rund 12 bis 14 Jahre, nicht die Summe)
+const GEMEINSAM = 0.5;
+function gesamt(ls) {
+  const pos = ls.filter(x => x > 0).sort((a, b) => b - a), neg = ls.filter(x => x < 0).reduce((a, b) => a + b, 0);
+  return (pos.length ? pos[0] + GEMEINSAM * pos.slice(1).reduce((a, b) => a + b, 0) : 0) + neg;
+}
+// Lebensstil: Faktoren auf das Sterberisiko (als Logarithmus)
+function lnHrRauch(p, v) {
+  if (p.rauch === "nie" || !(p.zig > 0)) return 0;
+  const voll = Math.log(RAUCH.hr20[v]) * Math.pow(Math.min(p.zig, 60) / 20, RAUCH.expo);
+  return p.rauch === "ja" ? voll : voll * ip(RAUCH.rest, Math.min(p.aufh, p.alter));
+}
+const alkG = p => p.glaeser * ALK.gGlas;
+function lnHrAlk(p, v) {
+  const g = alkG(p); if (g <= ALK.schwelle) return 0;
+  const t = ALK.ylls40, gl = Math.min(g, 1500);
+  const y = gl <= 450 ? ip(t, gl) : 4.5 + (gl - 450) * (3 / 175);  // über 350 g weiter steigend
+  const sex = p.sex, hr = hrFuerYll(40, sex, y * ALK.spanne[v]);
+  return Math.log(hr);
+}
+function lnHrBew(p, v) {
+  const h = p.bewEinheit === "schritte" ? ip(SCHRITTE.pts, p.alter >= 60 ? Math.min(p.schritte, SCHRITTE.plateau60) : p.schritte) : ip(BEW.pts, p.bewegung);
+  return Math.log(h) * BEW.spanne[v]; }
+const lnHrLeben = (p, v) => lnHrRauch(p, v) + lnHrAlk(p, v) + lnHrBew(p, v);
 // jährliche Neuerkrankung an Diabetes in der Vorstufe (über dem Grundrisiko)
 const inzidenz = h => h < 5.7 ? 0 : Math.min(0.06, 0.015 + (h - 5.7) / 0.7 * 0.045);
 const gesundAusgabe = a => Math.min(20000, 2500 * Math.exp(0.035 * (a - 20))); // Gesundheitsausgaben je Kopf nach Alter, Mittel ≈ 6.400 €
@@ -491,31 +702,36 @@ function rechne(p, v = "mid") {
   const x = Math.max(18, Math.min(95, p.alter)), w = p.bauch / p.groesse, h = p.hba1c;
   const dmJetzt = p.dm || h >= 6.5;
   const lw = lnHrBauch(x, p.sex, w, v), lg = lnHrZucker(x, p.sex, h, p.dm, v);
-  const hr = Math.exp(kombi(lw, lg));
+  const lr = lnHrRauch(p, v), la = lnHrAlk(p, v), lb = lnHrBew(p, v);
+  const hr = Math.exp(gesamt([lw, lg, lr, la, lb]));
   const S0 = surv(x, p.sex, 1), S1 = surv(x, p.sex, hr);
   const e0 = leS(S0), e1 = leS(S1);
   const k = v === "lo" ? 0.6 : v === "hi" ? 1.5 : 1;
   let pdm = dmJetzt ? 1 : 0; const inz = dmJetzt ? 0 : inzidenz(h);
   let kasse = 0, wirt = 0, tod = 0, gespart = 0;
   const wUeber = Math.max(0, w - 0.5) / 0.1, hAuf = 1 + KOST.dmJeProzent * Math.max(0, h - 7);
+  // Rauchen und Alkohol: Kosten je Jahr (frühere Raucher: der verbleibende Anteil des Risikos)
+  const zigAnteil = p.rauch === "ja" ? 1 : p.rauch === "frueher" ? ip(RAUCH.rest, Math.min(p.aufh, p.alter)) : 0;
+  const rDir = zigAnteil * p.zig * 365 * RAUCH.ctJeZig * k, rInd = rDir * RAUCH.indirektAnteil;
+  const aUeber = Math.min(350, Math.max(0, alkG(p) - ALK.schwelle)), aDir = aUeber * ALK.dirJeG * k, aInd = aUeber * ALK.indJeG * k;
   for (let i = 0; i < S1.length - 1; i++) {
     const a = x + i, s = (S1[i] + S1[i + 1]) / 2, s0 = (S0[i] + S0[i + 1]) / 2;
     const dDir = pdm * KOST.dmDir * hAuf, wDir = wUeber * KOST.wDir;
-    kasse += s * (dDir + wDir - 0.5 * Math.min(dDir, wDir)) * k;
+    kasse += s * ((dDir + wDir - 0.5 * Math.min(dDir, wDir)) * k + rDir + aDir);
     if (a < KOST.rente) {
       const dInd = pdm * KOST.dmInd * hAuf, wInd = wUeber * KOST.wInd;
-      wirt += s * (dInd + wInd - 0.5 * Math.min(dInd, wInd)) * k;
+      wirt += s * ((dInd + wInd - 0.5 * Math.min(dInd, wInd)) * k + rInd + aInd);
       tod += Math.max(0, s0 - s) * KOST.lohn;
     }
     gespart += Math.max(0, s0 - s) * gesundAusgabe(a);
     pdm = pdm + (1 - pdm) * inz;
   }
-  return { w, h, dmJetzt, hr, lw, lg, e0, e1, yll: e0 - e1, kasse, wirt, tod, ges: kasse + wirt + tod, gespart, x };
+  return { w, h, dmJetzt, hr, lw, lg, lr, la, lb, rDir, aDir, e0, e1, yll: e0 - e1, kasse, wirt, tod, ges: kasse + wirt + tod, gespart, x };
 }
 
 // ---------- Diagramm ----------
 function chart(el, o) {
-  const W = o.W || 560, H = o.H || 300, L = 46, R = 14, T = 14, B = 40;
+  const W = o.W || 560, H = o.H || 300, L = o.L || 46, R = 14, T = 14, B = 40;
   const X = v => L + (v - o.x0) / (o.x1 - o.x0) * (W - L - R), Y = v => H - B - v / o.y1 * (H - T - B);
   let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria}">`;
   (o.zones || []).forEach(([a, b, c]) => s += `<rect x="${X(a)}" y="${T}" width="${X(b) - X(a)}" height="${H - T - B}" fill="var(${c})"/>`);
@@ -535,63 +751,82 @@ const lg = (el, items) => el.innerHTML = items.map(([c, t, k]) => `<span><i clas
 // ---------- Ausgabe ----------
 const katW = w => w < 0.4 ? ["sehr schlank", "m"] : w < 0.5 ? ["gesund", "g"] : w < 0.6 ? ["erhöht", "m"] : ["stark erhöht", "r"];
 const katH = (h, dm) => dm || h >= 6.5 ? ["Diabetes", "r"] : h >= 5.7 ? ["Vorstufe", "m"] : ["normal", "g"];
-const jahre = y => y < 0.05 ? "keine" : fmt(y, 1) + (Math.abs(y - 1) < 0.05 ? " Jahr" : " Jahre");
+const jahre = y => Math.abs(y) < 0.05 ? "keine" : fmt(Math.abs(y), 1) + (Math.abs(Math.abs(y) - 1) < 0.05 ? " Jahr" : " Jahre");
 
 function run() {
   const r = rechne(V), lo = rechne(V, "lo"), hi = rechne(V, "hi");
   const [kw, cw] = katW(r.w), [kh, ch] = katH(r.h, V.dm);
   // Ziel: Taille 0,5 und HbA1c unter 5,7 (bei Diabetes 7 %)
-  const ziel = { ...V, bauch: Math.min(V.bauch, 0.5 * V.groesse), hba1c: (V.dm || r.h >= 6.5) ? Math.min(r.h, 7) : Math.min(r.h, 5.6) };
+  const ziel = { ...V, bauch: Math.min(V.bauch, 0.5 * V.groesse), hba1c: (V.dm || r.h >= 6.5) ? Math.min(r.h, 7) : Math.min(r.h, 5.6),
+    rauch: V.rauch === "ja" ? "frueher" : V.rauch, aufh: V.rauch === "ja" ? V.alter : V.aufh, glaeser: Math.min(V.glaeser, 8), bewegung: Math.max(V.bewegung, 150), schritte: Math.max(V.schritte, SCHRITTE.ziel) };
   const rz = rechne(ziel);
   const gewinn = r.yll - rz.yll;
   let txt;
-  if (r.yll < 0.1) txt = `Mit diesen Werten liegst du im <b>gesunden Bereich</b>. Statistisch verlierst du durch Bauch und Blutzucker keine Lebenszeit. Deine Lebenserwartung liegt bei rund <b>${fmt(r.x + r.e1)} Jahren</b>, wie im Durchschnitt aller Menschen ohne diese Risiken.`;
+  if (r.yll <= -0.1) txt = `Menschen mit deinen Werten leben im Durchschnitt sogar <b>${jahre(r.yll)} länger</b> als der Durchschnitt ohne Risiken, vor allem dank viel Bewegung. Lebenserwartung rund <b>${fmt(r.x + r.e1)} Jahre</b>.`;
+  else if (r.yll < 0.1) txt = `Mit diesen Werten liegst du im <b>gesunden Bereich</b>. Statistisch verlierst du keine Lebenszeit. Deine Lebenserwartung liegt bei rund <b>${fmt(r.x + r.e1)} Jahren</b>, wie im Durchschnitt aller Menschen ohne diese Risiken.`;
   else {
     txt = `Menschen mit deinen Werten leben im Durchschnitt <b>${jahre(r.yll)} kürzer</b> (Spanne ${fmt(lo.yll, 1)} bis ${fmt(hi.yll, 1)}). Statt rund ${fmt(r.x + r.e0)} Jahren werden sie im Schnitt rund ${fmt(r.x + r.e1)} Jahre alt.`;
-    if (gewinn >= 0.1) txt += ` Wer den Bauchumfang auf die halbe Körpergröße (${fmt(ziel.bauch)} cm) bringt${ziel.hba1c < r.h ? ` und den Langzeitzucker auf ${fmt(ziel.hba1c, 1)} %` : ""}, gewinnt statistisch rund <b>${jahre(gewinn)}</b> zurück.`;
+    const schritte = [];
+    if (ziel.bauch < V.bauch) schritte.push(`den Bauchumfang auf ${fmt(ziel.bauch)} cm bringt`);
+    if (ziel.hba1c < r.h) schritte.push(`den Langzeitzucker auf ${fmt(ziel.hba1c, 1)} % senkt`);
+    if (V.rauch === "ja" && V.zig > 0) schritte.push("heute mit dem Rauchen aufhört");
+    if (ziel.glaeser < V.glaeser) schritte.push("höchstens 8 Gläser Alkohol in der Woche trinkt");
+    if (!bewOk(V)) schritte.push(V.bewEinheit === "schritte" ? "jeden Tag 7.500 Schritte geht" : "sich 150 Minuten in der Woche bewegt");
+    if (gewinn >= 0.1 && schritte.length) txt += ` Wer ${schritte.length > 1 ? schritte.slice(0, -1).join(", ") + " und " + schritte[schritte.length - 1] : schritte[0]}, gewinnt statistisch rund <b>${jahre(gewinn)}</b> zurück.`;
   }
   $("verdict").innerHTML = txt;
   $("tiles").innerHTML = [
     ["Taille geteilt durch Größe", `${fmt(r.w, 2)} <span class="tag ${cw}">${kw}</span>`, `gesund: unter 0,5, also Bauch unter ${fmt(V.groesse / 2)} cm`],
     ["Langzeitzucker", `${fmt(r.h, 1)} % <span class="tag ${ch}">${kh}</span>`, `= ${fmt(mmol(r.h))} mmol/mol; normal unter 5,7 %, Diabetes ab 6,5 %`],
-    ["Statistisch weniger Lebenszeit", jahre(r.yll), `Spanne ${fmt(lo.yll, 1)} bis ${fmt(hi.yll, 1)} Jahre; Sterberisiko ×${fmt(r.hr, 2)}`],
+    [r.yll < -0.05 ? "Statistisch mehr Lebenszeit" : "Statistisch weniger Lebenszeit", jahre(r.yll), `Spanne ${fmt(lo.yll, 1)} bis ${fmt(hi.yll, 1)} Jahre; Sterberisiko ×${fmt(r.hr, 2)}`],
     ["Mehrkosten über das restliche Leben", tsd(r.ges), `davon Krankenkasse ${tsd(r.kasse)}; Spanne ${tsd(lo.ges)} bis ${tsd(hi.ges)}`],
   ].map(([k, v, s]) => `<div class="tile"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`).join("");
+  const allein = q => rechne({ ...V, bauch: 0.48 * V.groesse, hba1c: 5.2, dm: false, ...NEUTRAL, ...q }).yll;
+  const teile = [
+    ["Bauch", allein({ bauch: V.bauch })], ["Blutzucker", allein({ hba1c: V.hba1c, dm: V.dm })],
+    ["Rauchen", allein({ rauch: V.rauch, zig: V.zig, aufh: V.aufh })], ["Alkohol", allein({ glaeser: V.glaeser })], ["Bewegung", allein({ bewEinheit: V.bewEinheit, bewegung: V.bewegung, schritte: V.schritte })],
+  ];
+  $("t_herkunft").innerHTML = `<tr><th>Woher die Jahre kommen</th><th>jeder Punkt für sich allein</th></tr>` + teile.map(([n, y]) =>
+    `<tr><td>${n}</td><td class="${y > 0.05 ? "bad" : y < -0.05 ? "good" : ""}">${Math.abs(y) < 0.05 ? "kein Einfluss" : (y > 0 ? "−" : "+") + jahre(y)}</td></tr>`).join("") +
+    `<tr class="sum"><td>Alles zusammen</td><td class="${r.yll > 0.05 ? "bad" : r.yll < -0.05 ? "good" : ""}">${Math.abs(r.yll) < 0.05 ? "kein Einfluss" : (r.yll > 0 ? "−" : "+") + jahre(r.yll)}</td></tr>`;
   $("t_kosten").innerHTML = `<tr><th>Wer trägt die Kosten</th><th>Mehrkosten bis Lebensende</th></tr>
     <tr><td>Krankenkasse: Behandlung, Medikamente, Krankenhaus</td><td>${eur(r.kasse)}</td></tr>
     <tr><td>Wirtschaft: Krankheitstage und Frührente bis 67</td><td>${eur(r.wirt)}</td></tr>
     <tr><td>Wirtschaft: Arbeitsjahre, die durch frühen Tod vor 67 fehlen</td><td>${eur(r.tod)}</td></tr>
     <tr class="sum"><td>Gesellschaft zusammen</td><td>${eur(r.ges)}</td></tr>
     <tr><td style="color:var(--muted)">Gegenrechnung: Gesundheitskosten, die in den verlorenen Lebensjahren nicht mehr anfallen</td><td style="color:var(--muted)">${r.gespart >= 50 ? "−" : ""}${eur(r.gespart)}</td></tr>`;
-  $("n_kosten").textContent = `Durchschnittswerte in heutigen Euro, gewichtet mit der Wahrscheinlichkeit, jedes Alter zu erleben. Die Gegenrechnung zeigt: Wer früher stirbt, verursacht in diesen Jahren keine Kosten mehr. Für die Krankenkasse gleicht sich das teilweise aus, für die Menschen nicht.`;
+  $("n_kosten").textContent = `Durchschnittswerte in heutigen Euro, gewichtet mit der Wahrscheinlichkeit, jedes Alter zu erleben. Die Kosten von Bewegungsmangel sind nicht eingerechnet, weil es dafür keine belastbaren deutschen Zahlen je Person gibt; seine verlorenen Lebensjahre schon. Die Gegenrechnung zeigt: Wer früher stirbt, verursacht in diesen Jahren keine Kosten mehr. Für die Krankenkasse gleicht sich das teilweise aus, für die Menschen nicht.`;
 
   // Kurven für Alter und Geschlecht
   const ws = [], band = [];
-  for (let w = 0.4; w <= 0.851; w += 0.01) { const p = { ...V, hba1c: 5.2, dm: false, bauch: w * V.groesse };
+  for (let w = 0.4; w <= 0.851; w += 0.01) { const p = { ...V, ...NEUTRAL, hba1c: 5.2, dm: false, bauch: w * V.groesse };
     ws.push([w, rechne(p).yll]); band.push([w, rechne(p, "lo").yll, rechne(p, "hi").yll]); }
   const yw = Math.max(4, Math.ceil(Math.min(Math.max(...band.map(b => b[2])), 24) / 2) * 2);
-  const meW = rechne({ ...V, hba1c: 5.2, dm: false });
+  const meW = rechne({ ...V, ...NEUTRAL, hba1c: 5.2, dm: false });
   chart($("c_w"), { aria: "Verlorene Lebensjahre nach Taille geteilt durch Größe", x0: 0.4, x1: 0.85, y1: yw, xt: [0.4, 0.5, 0.6, 0.7, 0.8], xf: t => fmt(t, 1), yt: [...Array(yw / 2 + 1).keys()].map(i => i * 2).filter(t => t <= yw), yf: t => t,
     xl: "Bauchumfang geteilt durch Körpergröße", zones: [[0.4, 0.5, "--z1"], [0.5, 0.6, "--z2"], [0.6, 0.85, "--z3"]], band, lines: [{ p: ws, c: "--risk" }],
     dot: [r.w, meW.yll, `Du: ${jahre(meW.yll)}`] });
   lg($("lg_w"), [["--risk", "Jahre weniger (mittlere Schätzung)"], ["--band", "Spanne der Studien", "sq"], ["--z1", "gesund", "sq"], ["--z2", "erhöht", "sq"], ["--z3", "stark erhöht", "sq"]]);
   const hs = [], hb = [];
-  for (let h = 4.5; h <= 11.001; h += 0.1) { const p = { ...V, bauch: 0.48 * V.groesse, hba1c: h, dm: false };
+  for (let h = 4.5; h <= 11.001; h += 0.1) { const p = { ...V, ...NEUTRAL, bauch: 0.48 * V.groesse, hba1c: h, dm: false };
     hs.push([h, rechne(p).yll]); hb.push([h, rechne(p, "lo").yll, rechne(p, "hi").yll]); }
   const yg = Math.max(4, Math.ceil(Math.min(Math.max(...hb.map(b => b[2])), 24) / 2) * 2);
-  const meG = rechne({ ...V, bauch: 0.48 * V.groesse });
+  const meG = rechne({ ...V, ...NEUTRAL, bauch: 0.48 * V.groesse });
   chart($("c_g"), { aria: "Verlorene Lebensjahre nach Langzeitzucker", x0: 4.5, x1: 11, y1: yg, xt: [5, 6, 7, 8, 9, 10, 11], xf: t => t + " %", yt: [...Array(yg / 2 + 1).keys()].map(i => i * 2), yf: t => t,
     xl: "Langzeitzucker HbA1c in %", zones: [[4.5, 5.7, "--z1"], [5.7, 6.5, "--z2"], [6.5, 11, "--z3"]], band: hb, lines: [{ p: hs, c: "--risk" }],
     dot: [r.h, meG.yll, `Du: ${jahre(meG.yll)}`] });
+  $("s_glaeser").textContent = `${fmt(alkG(V))} g Alkohol in der Woche. 1 Glas = 0,3 l Bier, 0,125 l Wein oder 4 cl Schnaps, rund 12 g`;
   rechenweg(r, lo, hi);
   zeigeBonus();
   lg($("lg_g"), [["--risk", "Jahre weniger (mittlere Schätzung)"], ["--band", "Spanne der Studien", "sq"], ["--z1", "normal", "sq"], ["--z2", "Vorstufe", "sq"], ["--z3", "Diabetes", "sq"]]);
   zucker();
 }
 
-// ---------- Gesundheitsbonus (Vorschlag, Kapitel 5): bis 480 € im Jahr (= Prämie 40 € im Monat), je 160 € für drei Ziele ----------
+// ---------- Gesundheitsbonus (Vorschlag, Kapitel 5): bis 640 € im Jahr ----------
+// 3 × 160 € (= Prämie 40 € im Monat) aus der Gesundheitsabgabe, dazu 2 × 80 € für rauchfrei und wenig Alkohol aus höherer Tabak- und Alkoholsteuer.
 // Ziel erreicht, wenn der Wert gesund ist ODER sich im letzten Jahr deutlich verbessert hat.
-const BONUS = { teil: 160, hbGesund: 5.7, hbBesser: 0.5, wGesund: 0.5, bauchBesser: 3 };
+const BONUS = { teil: 160, klein: 80, hbGesund: 5.7, hbBesser: 0.5, wGesund: 0.5, bauchBesser: 3, glWenig: 8 };
+const BONUS_MAX = 3 * BONUS.teil + 2 * BONUS.klein;
 function bonus(p) {
   const w = p.bauch / p.groesse, z = [];
   const hbG = !p.dm && p.hba1c < BONUS.hbGesund, hbB = p.hbVor > 0 && p.hbVor - p.hba1c >= BONUS.hbBesser - 1e-9;
@@ -602,14 +837,22 @@ function bonus(p) {
   z.push({ n: "Bauchumfang", ok: wG || wB,
     warum: wG ? `gesund (unter der halben Körpergröße, ${fmt(p.groesse / 2)} cm)` : wB ? `Fortschritt: ${fmt(p.bauchVor - p.bauch)} cm weniger als vor einem Jahr` :
       `noch nicht: unter ${fmt(p.groesse / 2)} cm oder mindestens 3 cm weniger als vor einem Jahr${p.bauchVor ? "" : " (Wert vor einem Jahr eintragen)"}` });
-  z.push({ n: "Vorsorge, Nichtrauchen, Bewegung", ok: p.leben, warum: p.leben ? "Ziel erreicht" : "noch nicht: Haken setzen, wenn du das machst" });
-  return { z, summe: z.filter(x => x.ok).length * BONUS.teil };
+  const bw = bewOk(p), fehlt3 = [!p.vorsorge && "Vorsorge", !bw && (p.bewEinheit === "schritte" ? "7.500 Schritte am Tag" : "150 Minuten Bewegung")].filter(Boolean);
+  z.push({ n: "Vorsorge und Bewegung", ok: !fehlt3.length, wert: BONUS.teil, warum: !fehlt3.length ? "Ziel erreicht" : `noch nicht: es fehlt ${fehlt3.join(" und ")}` });
+  const nr = p.rauch !== "ja" || !(p.zig > 0);
+  z.push({ n: "Rauchfrei", ok: nr, wert: BONUS.klein, warum: nr ? (p.rauch === "frueher" ? "Ziel erreicht: Du hast aufgehört. Nachweis per Urintest beim Check-up" : "Ziel erreicht. Nachweis per Urintest beim Check-up") : "noch nicht: Wer aufhört, bekommt ihn im nächsten Jahr genauso" });
+  const glG = p.glaeser <= BONUS.glWenig, glB = p.glVor > 0 && p.glaeser <= p.glVor / 2;
+  z.push({ n: "Wenig Alkohol", ok: glG || glB, wert: BONUS.klein,
+    warum: glG ? "Ziel erreicht: höchstens 8 Gläser in der Woche. Nachweis per Bluttest (PEth)" : glB ? `Fortschritt: nur noch halb so viel wie vor einem Jahr (${fmt(p.glVor)} Gläser)` :
+      `noch nicht: höchstens 8 Gläser in der Woche oder halb so viel wie vor einem Jahr${p.glVor ? "" : " (Wert vor einem Jahr eintragen)"}` });
+  z.forEach(x => x.wert = x.wert || BONUS.teil);
+  return { z, summe: z.filter(x => x.ok).reduce((a, x) => a + x.wert, 0) };
 }
 function zeigeBonus() {
-  const b = bonus(V), fehlt = 3 * BONUS.teil - b.summe;
-  $("bonus").innerHTML = `<div class="kopf"><span class="k" style="font-weight:700">Dein Gesundheitsbonus im Jahr</span><span class="v">${fmt(b.summe)} € von ${fmt(3 * BONUS.teil)} €</span></div>
-    <ul>${b.z.map(x => `<li><span class="${x.ok ? "ja" : "nein"}">${x.ok ? "✓" : "○"}</span><span><b>${x.n}:</b> ${x.warum}</span><b class="e ${x.ok ? "ja" : "nein"}">${x.ok ? fmt(BONUS.teil) + " €" : "0 €"}</b></li>`).join("")}</ul>
-    <p class="note">${fehlt ? `Noch ${fmt(fehlt)} € im Jahr möglich. Wer gesund ist, bekommt den Bonus, und wer krank ist und Fortschritte macht, bekommt ihn genauso.` : "Du bekommst den vollen Bonus. 480 € im Jahr sind genau die Prämie der Krankenkasse im Vorschlag des Buchs, 40 € im Monat: Wer gesund lebt, zahlt im Ergebnis keine Prämie. Ausgezahlt wird der Bonus vom Bund, bezahlt aus der Gesundheitsabgabe."} Der Messwert bleibt beim Arzt, die Kasse erfährt nur, ob das Ziel erreicht ist. Wer wegen Typ-1-Diabetes oder Veranlagung ein Ziel nicht schaffen kann, bekommt den Teil für die Teilnahme an einem Programm.</p>`;
+  const b = bonus(V), fehlt = BONUS_MAX - b.summe;
+  $("bonus").innerHTML = `<div class="kopf"><span class="k" style="font-weight:700">Dein Gesundheitsbonus im Jahr</span><span class="v">${fmt(b.summe)} € von ${fmt(BONUS_MAX)} €</span></div>
+    <ul>${b.z.map(x => `<li><span class="${x.ok ? "ja" : "nein"}">${x.ok ? "✓" : "○"}</span><span><b>${x.n}:</b> ${x.warum}</span><b class="e ${x.ok ? "ja" : "nein"}">${x.ok ? fmt(x.wert) + " €" : "0 €"}</b></li>`).join("")}</ul>
+    <p class="note">${fehlt ? `Noch ${fmt(fehlt)} € im Jahr möglich. Wer gesund ist, bekommt den Bonus, und wer krank ist und Fortschritte macht, bekommt ihn genauso.` : "Du bekommst den vollen Bonus."} Die ersten drei Teile, zusammen 480 €, sind genau die Prämie der Krankenkasse im Vorschlag des Buchs (40 € im Monat), bezahlt aus der Gesundheitsabgabe. Die Teile für rauchfrei und wenig Alkohol, zusammen 160 €, zahlt der Bund aus einer höheren Tabak- und Alkoholsteuer (<a href="#q-dgsmp">Vorschlag</a>; <a href="#q-notley">Studie zu Anreizen</a>; <a href="#q-nachweis">Nachweis</a>). Ausgezahlt wird alles vom Bund. Der Messwert bleibt beim Arzt, die Kasse erfährt nur, ob das Ziel erreicht ist. Wer wegen Typ-1-Diabetes oder Veranlagung ein Ziel nicht schaffen kann, bekommt den Teil für die Teilnahme an einem Programm.</p>`;
 }
 
 // ---------- Rechenweg mit den eigenen Zahlen ----------
@@ -635,15 +878,25 @@ function rechenweg(r, lo, hi) {
     zc = `1,13 hoch (${f1(r.h)} − 5,7) ÷ 0,7 = <b>${f2(hg)}</b>`;
   } else { zt = `Unter 5,7 % ist der Langzeitzucker normal, das Risiko steigt nicht (${q("q-zhong", "Zhong 2016")}).`; zc = `${f1(r.h)} % liegt unter 5,7 %, also Faktor <b>1,00</b>`; }
   st.push(["Faktor für den Blutzucker", zt, zc]);
-  st.push(["Beides zusammen", `Die Faktoren werden malgenommen. Weil ein Teil des Bauch-Risikos über den Diabetes läuft, zieht der Rechner 30 % des kleineren Teils wieder ab, damit nichts doppelt zählt.`,
-    r.lw > 0 && r.lg > 0 ? `${f2(hw)} × ${f2(hg)} = ${f2(hw * hg)}, abzüglich Überschneidung = <b>${f2(r.hr)}</b>` : `${f2(hw)} × ${f2(hg)} = <b>${f2(r.hr)}</b>`]);
-  st.push(["Lebenserwartung mit und ohne Risiko", `Nach der amtlichen Sterbetafel (${q("q-destatis", "Statistisches Bundesamt")}) haben ${sexT} mit ${fmt(x)} Jahren im Schnitt noch ${f1(r.e0)} Jahre vor sich. Der Rechner geht Jahr für Jahr durch und erhöht das Sterberisiko in jedem Jahr um den Faktor aus Schritt 4.`,
-    `${f1(r.e0)} Jahre − ${f1(r.e1)} Jahre = <b>${jahre(r.yll)}</b> weniger (Spanne ${f1(lo.yll)} bis ${f1(hi.yll)})`]);
+  const hbz = Math.exp(r.lw + r.lg), hr_ = Math.exp(r.lr), ha = Math.exp(r.la), hbw = Math.exp(r.lb);
+  const rT = V.rauch === "ja" && V.zig > 0 ? `Rauchen: ${fmt(V.zig)} Zigaretten am Tag ergeben Faktor ${f2(hr_)}. Wer 20 am Tag raucht, hat etwa das dreifache Sterberisiko (${q("q-jha", "Jha 2013")}), schon 1 bis 10 am Tag fast das doppelte (${q("q-inoue", "Inoue-Choi 2017")}).`
+    : V.rauch === "frueher" && V.zig > 0 ? `Rauchen: Wer mit ${fmt(V.aufh)} aufgehört hat, behält nur noch einen Teil des Risikos (${q("q-jha", "Jha 2013")}): Faktor ${f2(hr_)}.` : "Rauchen: kein Aufschlag.";
+  const aT = alkG(V) > ALK.schwelle ? `Alkohol: ${fmt(alkG(V))} g in der Woche liegen über 100 g, ab da sinkt die Lebenserwartung (${q("q-wood", "Wood 2018")}): Faktor ${f2(ha)}.` : `Alkohol: bis 100 g in der Woche (rund 8 Gläser) kein Aufschlag (${q("q-wood", "Wood 2018")}).`;
+  const bT = V.bewEinheit === "schritte"
+    ? `Bewegung: ${fmt(V.schritte)} Schritte am Tag ergeben Faktor ${f2(hbw)}. Bezugswert sind rund 7.800 Schritte; wer nur rund 3.500 geht, hat ein um 80 % höheres Sterberisiko, rund 11.000 senken es noch etwas${V.alter >= 60 ? "; ab 60 bringen mehr als 8.000 Schritte keinen weiteren Vorteil" : ""} (${q("q-paluch", "Paluch 2022")}).`
+    : `Bewegung: ${fmt(V.bewegung)} Minuten in der Woche ergeben Faktor ${f2(hbw)}. Gar keine Bewegung erhöht das Risiko um 45 %, 150 Minuten sind der Bezugswert, mehr senkt es noch etwas (${q("q-arem", "Arem 2015")}).`;
+  st.push(["Rauchen, Alkohol und Bewegung", `${rT} ${aT} ${bT} Die Vorsorge verändert die Rechnung nicht, weil große Studien keinen Einfluss allgemeiner Check-ups auf die Sterblichkeit finden (${q("q-cochrane", "Cochrane 2019")}).`,
+    `Rauchen ${f2(hr_)} × Alkohol ${f2(ha)} × Bewegung ${f2(hbw)} = <b>${f2(hr_ * ha * hbw)}</b>`]);
+  const alle = [["Bauch", r.lw], ["Zucker", r.lg], ["Rauchen", r.lr], ["Alkohol", r.la], ["Bewegung", r.lb]].filter(([, l]) => l > 1e-6).sort((a, b) => b[1] - a[1]);
+  st.push(["Alles zusammen", `Die Risiken überschneiden sich: Ein Teil des Bauch-Risikos läuft über den Diabetes, und wer raucht, bewegt sich oft auch weniger. Deshalb zählt das größte Risiko voll, jedes weitere nur zur Hälfte. So passt das Ergebnis zu der großen Studie ${q("q-li", "Li 2018")}, in der fünf ungesunde Gewohnheiten zusammen mit 50 Jahren rund 12 bis 14 Lebensjahre kosteten.${r.lb < -1e-6 ? " Viel Bewegung senkt das Risiko zusätzlich." : ""}`,
+    alle.length < 2 ? `Faktor zusammen: <b>${f2(r.hr)}</b>` : `${alle.map(([n, l], i) => `${n} ${f2(Math.exp(l))}${i ? " (halb: " + f2(Math.exp(l / 2)) + ")" : ""}`).join(" × ")}${r.lb < -1e-6 ? ` × Bewegung ${f2(Math.exp(r.lb))}` : ""} = <b>${f2(r.hr)}</b>`]);
+  st.push(["Lebenserwartung mit und ohne Risiko", `Nach der amtlichen Sterbetafel (${q("q-destatis", "Statistisches Bundesamt")}) haben ${sexT} mit ${fmt(x)} Jahren im Schnitt noch ${f1(r.e0)} Jahre vor sich. Der Rechner geht Jahr für Jahr durch und verändert das Sterberisiko in jedem Jahr um den Faktor aus Schritt 5.`,
+    `${f1(r.e0)} Jahre − ${f1(r.e1)} Jahre = <b>${jahre(r.yll)}</b> ${r.yll < 0 ? "mehr" : "weniger"} (Spanne ${f1(lo.yll)} bis ${f1(hi.yll)})`]);
   const wU = Math.max(0, r.w - 0.5) / 0.1, hA = 1 + KOST.dmJeProzent * Math.max(0, r.h - 7);
   const kk = (dmJ ? KOST.dmDir * hA : 0) + wU * KOST.wDir - 0.5 * Math.min(dmJ ? KOST.dmDir * hA : 0, wU * KOST.wDir);
   const ww = (dmJ ? KOST.dmInd * hA : 0) + wU * KOST.wInd - 0.5 * Math.min(dmJ ? KOST.dmInd * hA : 0, wU * KOST.wInd);
-  st.push(["Kosten in jedem Jahr", `Diabetes kostet die Krankenkasse 2.500 € im Jahr mehr und die Wirtschaft 3.000 € durch Krankheitstage und Frührente (${q("q-kora", "KORA-Studie")}); ein dicker Bauch je 0,1 über 0,5 rund 1.200 € und 1.000 € (${q("q-effertz", "Effertz 2016")}). Was sich überschneidet, zählt nur halb.${!dmJ && r.h >= 5.7 ? ` In der Vorstufe erkranken jedes Jahr ${fmt(inzidenz(r.h) * 100, 1)} % neu an Diabetes (${q("q-selvin", "Selvin 2010")}); ab dann zählen die Diabetes-Kosten mit.` : ""}`,
-    `heute im Jahr: Krankenkasse <b>${eur(kk)}</b>, Wirtschaft (bis 67) <b>${eur(ww)}</b>`]);
+  st.push(["Kosten in jedem Jahr", `Diabetes kostet die Krankenkasse 2.500 € im Jahr mehr und die Wirtschaft 3.000 € durch Krankheitstage und Frührente (${q("q-kora", "KORA-Studie")}); ein dicker Bauch je 0,1 über 0,5 rund 1.200 € und 1.000 € (${q("q-effertz", "Effertz 2016")}). Was sich überschneidet, zählt nur halb. Rauchen kostet die Krankenkasse rund 40 Cent je Zigarette (${q("q-effertz-tabak", "Effertz")}), Alkohol über 100 g in der Woche rund 13 € je Gramm im Jahr (${q("q-dhs", "DHS")}); dazu kommen Krankheitstage.${!dmJ && r.h >= 5.7 ? ` In der Vorstufe erkranken jedes Jahr ${fmt(inzidenz(r.h) * 100, 1)} % neu an Diabetes (${q("q-selvin", "Selvin 2010")}); ab dann zählen die Diabetes-Kosten mit.` : ""}`,
+    `heute im Jahr: Krankenkasse <b>${eur(kk + r.rDir + r.aDir)}</b>, Wirtschaft (bis 67) <b>${eur(ww + r.rDir * RAUCH.indirektAnteil + r.aDir)}</b>`]);
   st.push(["Über das restliche Leben", `Die Jahreskosten werden für jedes künftige Jahr aufsummiert, gewichtet mit der Wahrscheinlichkeit, dieses Jahr zu erleben. Dazu kommen die Arbeitsjahre bis 67, die durch einen frühen Tod fehlen (45.000 € je Jahr). Alles in heutigen Euro.`,
     `Krankenkasse ${eur(r.kasse)} + Wirtschaft ${eur(r.wirt + r.tod)} = <b>${eur(r.ges)}</b>`]);
   $("rw").innerHTML = st.map(([t, e, c]) => `<li><b class="t">${t}</b><span>${e}</span><span class="calc">${c}</span></li>`).join("");
@@ -676,13 +929,66 @@ function zucker() {
     ["Abgabe auf allen Zucker bis 2070", mrd(S[1].sum), `davon Krankenkassen ${mrd(S[1].sumK)}; ≈ ${eur(S[1].leben)} je Mensch über ein Leben`],
     ["Alle essen gesund, bis 2070", mrd(S[2].sum), `davon Krankenkassen ${mrd(S[2].sumK)}; ≈ ${eur(S[2].leben)} je Mensch über ein Leben`],
   ].map(([k, v, s]) => `<div class="tile"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`).join("");
-  $("t_z").innerHTML = `<tr><th>Fall</th><th>Ersparnis im Jahr bei voller Wirkung</th><th>davon Krankenkassen</th><th>Woher die Zahl kommt</th></tr>
-    <tr><td>Limonaden-Abgabe in Stufen</td><td>${mrd(S[0].ges)}</td><td>${mrd(S[0].kasse)}</td><td style="white-space:normal">Emmert-Fees u. a. 2023: 16 Mrd. € für die Gesellschaft und 4 Mrd. € für die Kassen in 20 Jahren, rund 29.300 Todesfälle vermieden oder aufgeschoben, 1,9 Mio. Jahre mit Diabetes weniger</td></tr>
-    <tr><td>Abgabe auf allen Zucker</td><td>${mrd(S[1].ges)}</td><td>${mrd(S[1].kasse)}</td><td style="white-space:normal">Limonaden-Ergebnis im Verhältnis der eingesparten Zuckermenge hochgerechnet (${g} statt 2,3 g am Tag). Grobe Schätzung: Ob die Wirkung genau mitwächst, ist nicht erforscht.</td></tr>
-    <tr><td>Alle essen gesund</td><td>${mrd(S[2].ges)}</td><td>${mrd(S[2].kasse)}</td><td style="white-space:normal">Zu viel Zucker, Salz und gesättigte Fette verursachten 2008 rund 7 % aller Krankheitskosten (Meier u. a. 2015), heute rund 35 Mrd. €. Dazu Arbeitsausfall im Verhältnis von Effertz u. a. 2016. Theoretische Obergrenze; zu wenig Obst, Gemüse und Vollkorn ist nicht einmal eingerechnet.</td></tr>`;
+  $("t_z").innerHTML = `<tr><th>Fall</th><th>Ersparnis im Jahr bei voller Wirkung</th><th>davon Krankenkassen</th><th style="text-align:left">Woher die Zahl kommt</th></tr>
+    <tr><td>Limonaden-Abgabe in Stufen</td><td>${mrd(S[0].ges)}</td><td>${mrd(S[0].kasse)}</td><td style="white-space:normal;text-align:left">Emmert-Fees u. a. 2023: 16 Mrd. € für die Gesellschaft und 4 Mrd. € für die Kassen in 20 Jahren, rund 29.300 Todesfälle vermieden oder aufgeschoben, 1,9 Mio. Jahre mit Diabetes weniger</td></tr>
+    <tr><td>Abgabe auf allen Zucker</td><td>${mrd(S[1].ges)}</td><td>${mrd(S[1].kasse)}</td><td style="white-space:normal;text-align:left">Limonaden-Ergebnis im Verhältnis der eingesparten Zuckermenge hochgerechnet (${g} statt 2,3 g am Tag). Grobe Schätzung: Ob die Wirkung genau mitwächst, ist nicht erforscht.</td></tr>
+    <tr><td>Alle essen gesund</td><td>${mrd(S[2].ges)}</td><td>${mrd(S[2].kasse)}</td><td style="white-space:normal;text-align:left">Zu viel Zucker, Salz und gesättigte Fette verursachten 2008 rund 7 % aller Krankheitskosten (Meier u. a. 2015), heute rund 35 Mrd. €. Dazu Arbeitsausfall im Verhältnis von Effertz u. a. 2016. Theoretische Obergrenze; zu wenig Obst, Gemüse und Vollkorn ist nicht einmal eingerechnet.</td></tr>`;
 }
+// ---------- Alle leben gesund: Potenzial bis 2070 ----------
+// Mrd. € im Jahr bei voller Wirkung; aufbau = Jahre bis zur vollen Wirkung
+const GESUND = [
+  { n: "Niemand raucht", k: "rauch", c: "--risk", ges: 97, kasse: 30, aufbau: 25, q: "q-effertz-tabak", qn: "Effertz, DKFZ Tabakatlas 2020",
+    t: "Rauchen kostet jedes Jahr rund 97 Mrd. €, davon 30 Mrd. € bei den Kassen. Volle Wirkung erst nach 25 Jahren, weil das Risiko nach dem Aufhören nur langsam sinkt. Die Zahl ist die höchste unter den Schätzungen." },
+  { n: "Alle essen gesund", k: "essen", c: "--s3", ges: ALLE.gesellschaft, kasse: ALLE.kasse, aufbau: 20, q: "q-meier", qn: "Meier u. a. 2015",
+    t: "Zu viel Zucker, Salz und gesättigte Fette, hochgerechnet auf heute. Volle Wirkung nach 20 Jahren, weil Diabetes und Herzleiden über Jahre entstehen." },
+  { n: "Kaum noch Alkohol", k: "alk", c: "--s2", ges: 57, kasse: 16.6, aufbau: 10, q: "q-dhs", qn: "DHS, Jahrbuch Sucht",
+    t: "Alkohol kostet rund 57 Mrd. € im Jahr, davon 16,6 Mrd. € direkt im Gesundheitswesen. Unfälle und Vergiftungen fallen sofort weg, Leber- und Krebsleiden nach etwa 10 Jahren." },
+  { n: "Alle bewegen sich genug", k: "bew", c: "--s1", ges: 17, kasse: 6.6, aufbau: 10, q: "q-gottschalk", qn: "Gottschalk u. a. 2025",
+    t: "Rund 35 Mio. Erwachsene bewegen sich weniger als 150 Minuten in der Woche. Sie kosten je Kopf 188 € mehr bei den Kassen und 482 € mehr insgesamt, zusammen rund 17 Mrd. €. Volle Wirkung nach etwa 10 Jahren." },
+];
+const STAAT = { oeffAnteil: 0.75, abgaben: 0.40, abzugLo: 1 / 3, abzugHi: 0.5 }; // grobe eigene Schätzung, siehe Text
+function gesamtKosten(xs) { const v = [...xs].sort((a, b) => b - a); return v[0] + GEMEINSAM * v.slice(1).reduce((a, b) => a + b, 0); }
+function allegesund() {
+  const w = +$("a_w").value / 100, abgQ = +$("a_abg").value / 100, rente = $("a_rente").checked;
+  $("o_w").textContent = Math.round(w * 100) + " %"; $("o_abg").textContent = Math.round(abgQ * 100) + " %";
+  $("o_w_hint").textContent = w >= 1 ? "100 % heißt: wirklich alle leben ab 2027 gesund. Das ist die theoretische Obergrenze." : `${Math.round(w * 100)} % heißt: Die Reform schafft so viel, als ob ${fmt(Math.round(w * 100))} von 100 Menschen gesund leben würden. Zum Vergleich: Die Zuckerabgabe aus dem Buch allein bringt rund 5 %.`;
+  const abzLo = rente ? STAAT.abzugLo : 0.6, abzHi = rente ? STAAT.abzugHi : 0.9;
+  const G = GESUND.map(s => ({ ...s, ges: s.ges * w, kasse: s.kasse * w }));
+  const jahreA = []; for (let j = 2027; j <= 2070; j++) jahreA.push(j);
+  G.forEach(s => { let c = 0, ck = 0; s.cum = []; s.cumK = [];
+    jahreA.forEach((j, i) => { const f = Math.min(1, (i + 1) / s.aufbau); c += s.ges * f; ck += s.kasse * f; s.cum.push([j, c]); s.cumK.push([j, ck]); });
+    s.sum = c; s.sumK = ck; s.leben = s.ges * 1e9 / EINW * LEBEN; });
+  const T = { n: "Alles zusammen", c: "--fg", cum: [], cumK: [] };
+  jahreA.forEach((j, i) => { T.cum.push([j, gesamtKosten(G.map(s => s.cum[i][1]))]); T.cumK.push([j, gesamtKosten(G.map(s => s.cumK[i][1]))]); });
+  T.sum = T.cum.at(-1)[1]; T.sumK = T.cumK.at(-1)[1];
+  T.ges = gesamtKosten(G.map(s => s.ges)); T.kasse = gesamtKosten(G.map(s => s.kasse)); T.leben = T.ges * 1e9 / EINW * LEBEN;
+  const st = T.sum > 2000 ? 1000 : T.sum > 800 ? 250 : 100, y1 = Math.max(st, Math.ceil(T.sum / st) * st);
+  chart($("c_a"), { W: 1000, H: 380, L: 74, aria: "Aufsummierte Einsparung bis 2070, wenn alle gesund leben", x0: 2027, x1: 2070, y1, xt: [2030, 2040, 2050, 2060, 2070], xf: t => t,
+    yt: Array.from({ length: Math.round(y1 / st) + 1 }, (_, i) => i * st), yf: t => t ? (t >= 1000 ? fmt(t / 1000, t % 1000 ? 2 : 0) + " Bio." : fmt(t) + " Mrd.") : "0", xl: "Jahr",
+    lines: G.map(s => ({ p: s.cum, c: s.c })).concat([{ p: T.cum, c: T.c, w: 3.2 }, { p: T.cumK, c: T.c, d: 1, w: 1.8 }]),
+    endLabels: [[T.sum, mrd(T.sum), T.c], [G[0].sum, mrd(G[0].sum), G[0].c]] });
+  lg($("lg_a"), G.map(s => [s.c, s.n]).concat([["--fg", "Alles zusammen"], ["--fg", "davon Krankenkassen (alles zusammen)", "dash"]]));
+  $("tiles_a").innerHTML = G.concat([T]).map(s => `<div class="tile"><span class="k">${s.n} bis 2070${w < 1 ? ", zu " + Math.round(w * 100) + " %" : ""}</span><span class="v">${mrd(s.sum)}</span><span class="s">davon Krankenkassen ${mrd(s.sumK)}; ≈ ${eur(s.leben)} je Mensch über ein Leben</span></div>`).join("");
+  $("t_a").innerHTML = `<tr><th>Was sich ändert</th><th>Ersparnis im Jahr bei voller Wirkung</th><th>davon Krankenkassen</th><th style="text-align:left">Woher die Zahl kommt</th></tr>` +
+    G.map(s => `<tr><td>${s.n}</td><td>${mrd(s.ges)}</td><td>${mrd(s.kasse)}</td><td style="white-space:normal;text-align:left"><a href="#${s.q}">${s.qn}</a>: ${s.t}</td></tr>`).join("") +
+    `<tr class="sum"><td>Alles zusammen</td><td>${mrd(T.ges)}</td><td>${mrd(T.kasse)}</td><td style="white-space:normal;text-align:left;font-weight:400">Größter Posten voll, jeder weitere zur Hälfte, weil sich die Ursachen überschneiden. Zum Vergleich: Deutschland gibt heute rund 500 Mrd. € im Jahr für Gesundheit aus.</td></tr>`;
+  // Was beim Staat ankommt (grobe Schätzung)
+  const oeff = T.kasse * STAAT.oeffAnteil, abg = (T.ges - T.kasse) * abgQ, brutto = oeff + abg;
+  const nLo = brutto * (1 - abzHi), nHi = brutto * (1 - abzLo), volleJahre = T.sum / T.ges;
+  const ohne = t => t.replace(/ (Bio|Mrd)\. €/, "");
+  $("t_staat").innerHTML = `<tr><th>Posten</th><th>im Jahr bei voller Wirkung</th></tr>
+    <tr><td>Nutzen für die ganze Gesellschaft</td><td>${mrd(T.ges)}</td></tr>
+    <tr><td>Weniger Gesundheitsausgaben: davon zahlen Krankenkassen, Pflegekasse und Staat rund drei Viertel</td><td>${mrd(oeff)}</td></tr>
+    <tr><td>Mehr Arbeit statt Krankheit und frühem Tod: davon gehen rund ${Math.round(abgQ * 100)} % als Steuern und Beiträge an Staat und Sozialkassen</td><td>${mrd(abg)}</td></tr>
+    <tr class="sum"><td>Für Staat und Sozialkassen, brutto</td><td>${mrd(brutto)}</td></tr>
+    <tr><td>Abzug: In den gewonnenen Lebensjahren fallen später ${rente ? "Arzt- und Pflegekosten" : "Arzt-, Pflege- und längere Rentenkosten"} an (${rente ? "ein Drittel bis die Hälfte" : "60 bis 90 %"})</td><td>−${ohne(mrd(brutto * abzLo))} bis −${mrd(brutto * abzHi)}</td></tr>
+    <tr class="sum"><td>Für Staat und Sozialkassen, netto</td><td>${ohne(mrd(nLo))} bis ${mrd(nHi)}</td></tr>`;
+  $("n_staat").innerHTML = `Bis 2070 wären das zusammen grob <b>${ohne(mrd(nLo * volleJahre))} bis ${mrd(nHi * volleJahre)}</b> für Staat und Sozialkassen, ${w >= 1 ? "wenn wirklich alle ab 2027 gesund leben" : "wenn die Reform " + Math.round(w * 100) + " % des möglichen Nutzens schafft"}. Zum Vergleich: Bund, Länder und Gemeinden haben heute rund 2,7 Bio. € Schulden. Das ist eine grobe eigene Schätzung: Die drei Viertel stammen aus der Gesundheitsausgabenrechnung des Statistischen Bundesamts, die 40 % entsprechen der Abgabenquote. ${rente ? `Der kleinere Abzug gilt, weil die Rente der Lebenserwartung folgt (<a href="../buch/kapitel-5.html#11-rente-folgt-der-lebenserwartung">Kapitel 5, Baustein 11</a>): Dann arbeiten wir in gewonnenen Jahren länger, statt länger Rente zu beziehen. Nimm oben den Haken weg, um zu sehen, was ohne diese Regel bliebe.` : `Ohne die Regel „Rente folgt der Lebenserwartung“ (<a href="../buch/kapitel-5.html#11-rente-folgt-der-lebenserwartung">Kapitel 5, Baustein 11</a>) fressen längere Renten einen großen Teil der Ersparnis wieder auf.`}`;
+}
+["a_w", "a_abg", "a_rente"].forEach(id => $(id).addEventListener("input", allegesund));
 $("r_g").addEventListener("input", zucker); $("r_r").addEventListener("input", zucker);
 run();
+allegesund();
 </script>
 <script src="../tools-buchlinks.js"></script>
 <script src="../info.js"></script>
@@ -696,8 +1002,13 @@ Info.felder({
   i_dm: ["Wer Medikamente nimmt, hat oft einen guten Wert, obwohl der Diabetes da ist. Setze dann den Haken: Der Rechner rechnet mit dem Risiko eines Diabetes und deinem Wert unter Behandlung."],
   r_g: ["Wie viel weniger Zucker die Menschen im Schnitt essen, wenn auf jeden zugesetzten Zucker eine Abgabe kommt. Heute sind es rund 90 g am Tag. Die Limonaden-Abgabe allein spart 2,3 g. Mit 12 g ist etwa ein Achtel weniger gemeint. Der Rechner rechnet das Limonaden-Ergebnis im gleichen Verhältnis hoch.", ...K5],
   bauchVor: ["Für den Gesundheitsbonus: Wer seinen Bauchumfang in einem Jahr um mindestens 3 cm verringert, bekommt den Bauch-Teil des Bonus, auch wenn er noch nicht im gesunden Bereich ist.", ...K5],
+  glVor: ["Für den Gesundheitsbonus: Wer seinen Alkohol in einem Jahr mindestens halbiert, bekommt den Alkohol-Teil des Bonus, auch wenn es noch mehr als 8 Gläser in der Woche sind. Nachgewiesen wird das mit dem Bluttest PEth, der den Alkohol der letzten 2 bis 4 Wochen zeigt. Er ist viel genauer als die Leberwerte.", ...K5],
   hbVor: ["Für den Gesundheitsbonus: Wer seinen Langzeitzucker in einem Jahr um mindestens 0,5 Prozentpunkte senkt (z. B. von 7,5 auf 7,0 %), bekommt den Zucker-Teil des Bonus, auch mit Diabetes.", ...K5],
-  i_leben: ["Der dritte Teil des Bonus: regelmäßig zur Vorsorge gehen, nicht rauchen und sich bewegen. Nachgewiesen wird das wie bei den Bonusprogrammen, die es heute schon gibt.", ...K5],
+  zig: ["Schon wenige Zigaretten schaden: 1 bis 10 am Tag fast verdoppeln das Sterberisiko, 20 am Tag verdreifachen es. Raucher verlieren im Schnitt rund 10 Lebensjahre. Bei früheren Rauchern: wie viele es damals am Tag waren."],
+  aufh: ["Aufhören lohnt sich in jedem Alter: Wer vor 35 aufhört, hat fast kein erhöhtes Risiko mehr; mit 45 bis 54 gewinnt man noch rund 6 Jahre, mit 55 bis 64 rund 4."],
+  glaeser: ["Zähl alle Getränke einer normalen Woche zusammen. 1 Glas = 0,3 l Bier, 0,125 l Wein oder 4 cl Schnaps, jeweils rund 12 g reiner Alkohol. Bis 100 g in der Woche (gut 8 Gläser) fand die große Studie keine kürzere Lebenserwartung, darüber schon: bei mehr als 350 g rund 4 bis 5 Jahre."],
+  bewegung: ["Du kannst Minuten oder Schritte eingeben, rechts umschalten.<br><b>Minuten pro Woche:</b> alles, was dich etwas außer Atem bringt: zügiges Gehen, Rad fahren, Gartenarbeit, Sport. Anstrengender Sport wie Joggen zählt doppelt. 150 Minuten in der Woche, also gut 20 Minuten am Tag, senken das Sterberisiko um fast ein Drittel gegenüber gar keiner Bewegung (Arem 2015).<br><b>Schritte am Tag:</b> zeigen die meisten Handys und Uhren von selbst an. Nimm den Durchschnitt der letzten Wochen. Wer rund 7.800 Schritte geht, hat ein fast halb so hohes Sterberisiko wie wer nur rund 3.500 geht (Paluch 2022). Ab 60 bringen mehr als 6.000 bis 8.000 Schritte kaum noch etwas, unter 60 lohnen sich 8.000 bis 10.000.<br><b>Umrechnung, grob:</b> Im Alltag kommt man ohne Bewegung auf rund 4.000 Schritte. Zügiges Gehen sind rund 100 Schritte in der Minute, und 150 Minuten in der Woche sind gut 20 Minuten am Tag. Zusammen mit etwas mehr Alltag entspricht das etwa 7.500 bis 8.000 Schritten am Tag. Beim Umschalten rechnet der Rechner: Schritte ≈ 4.000 + 25 × Minuten pro Woche."],
+  i_vorsorge: ["Zum Beispiel Gesundheits-Check-up beim Hausarzt, Darmkrebs- und Hautkrebs-Früherkennung. Ehrlich gesagt: Große Studien finden keinen messbaren Einfluss allgemeiner Check-ups auf die Lebenserwartung, deshalb ändert der Haken die Jahre nicht. Er zählt aber für den Gesundheitsbonus, und wer früh von Diabetes oder Bluthochdruck erfährt, kann rechtzeitig handeln.", ...K5],
   r_r: ["Diabetes, Herzinfarkt und Schlaganfall entstehen über viele Jahre. Wer heute weniger Zucker isst, wird vor allem in 10 bis 30 Jahren gesünder sein. Der Rechner lässt die Wirkung deshalb langsam anwachsen."],
 });
 Info.texte(".main", {
@@ -706,11 +1017,15 @@ Info.texte(".main", {
   "Langzeitzucker": ["Dein HbA1c-Wert und was er bedeutet: unter 5,7 % normal, 5,7 bis 6,4 % Vorstufe (Prädiabetes), ab 6,5 % Diabetes. mmol/mol ist dieselbe Zahl in der Einheit, die viele Labore heute angeben."],
   "Statistisch weniger Lebenszeit": ["So viele Jahre sterben Menschen mit deinen Werten im Durchschnitt früher als Menschen gleichen Alters und Geschlechts mit gesundem Bauch und normalem Zucker. Die Spanne zeigt die Unsicherheit zwischen den Studien.<br>„Sterberisiko ×1,5“ heißt: In jedem Jahr ist die Wahrscheinlichkeit zu sterben anderthalbmal so hoch."],
   "Mehrkosten über das restliche Leben": ["Was Krankenkasse und Wirtschaft im Durchschnitt zusätzlich tragen, von heute bis zum Lebensende, in heutigen Euro. Die Tabelle darunter zeigt, wer was trägt."],
-  "Krankenkasse": ["Mehr Arztbesuche, Medikamente, Insulin, Krankenhaus, Behandlung von Folgeschäden an Herz, Nieren, Augen und Füßen. Bezahlt von allen Versicherten über die Beiträge."],
+  "Krankenkasse": ["Mehr Arztbesuche, Medikamente, Insulin, Krankenhaus, Behandlung von Folgeschäden an Herz, Lunge, Leber, Nieren, Augen und Füßen. Bezahlt von allen Versicherten über die Beiträge."],
   "Wirtschaft: Krankheitstage": ["Wer krank ist, fehlt bei der Arbeit oder geht früher in Rente. Dann fehlt seine Arbeit, und es fehlen Steuern und Beiträge. Gerechnet bis zum Alter 67."],
   "Wirtschaft: Arbeitsjahre": ["Wer vor 67 stirbt, kann in den fehlenden Jahren nicht mehr arbeiten. Der Rechner setzt dafür 45.000 € Wirtschaftsleistung je Jahr an, gewichtet mit der Wahrscheinlichkeit, dass es dazu kommt."],
   "Gesellschaft zusammen": ["Krankenkasse und Wirtschaft zusammen: das, was uns allen fehlt."],
-  "Dein Gesundheitsbonus": ["Vorschlag aus dem Buch: Die Abgabe auf Zucker fließt als Bonus an die Versicherten zurück, bis zu 480 € im Jahr, so viel wie die ganze Prämie der Krankenkasse (40 € im Monat). Der Bund zahlt ihn aus, bezahlt aus der Gesundheitsabgabe, nicht aus dem allgemeinen Haushalt. Er ersetzt die Prämie in der Höhe. Der Rechner teilt ihn in drei gleiche Teile zu je 160 €: Langzeitzucker, Bauchumfang sowie Vorsorge, Nichtrauchen und Bewegung. Jeden Teil bekommt, wer gesund ist oder sich im letzten Jahr deutlich verbessert hat. Die genaue Aufteilung ist ein Vorschlag.", ...K5],
+  "Dein Gesundheitsbonus": ["Vorschlag aus dem Buch: Die Abgabe auf Zucker fließt als Bonus an die Versicherten zurück, bis zu 640 € im Jahr. Drei Teile zu je 160 € (Langzeitzucker, Bauchumfang, Vorsorge und Bewegung) ergeben 480 €, so viel wie die ganze Prämie der Krankenkasse (40 € im Monat); sie kommen aus der Gesundheitsabgabe. Dazu kommen zwei Teile zu je 80 € für rauchfrei und wenig Alkohol, bezahlt aus einer höheren Tabak- und Alkoholsteuer. Der Bund zahlt alles aus, nicht aus dem allgemeinen Haushalt. Jeden Teil bekommt, wer gesund ist oder sich im letzten Jahr deutlich verbessert hat. Die genaue Aufteilung ist ein Vorschlag.", ...K5],
+  "Rauchen": ["Ob du rauchst, früher geraucht hast oder nie. Bei „Früher“ zählt, wie viel du damals geraucht hast und mit welchem Alter du aufgehört hast."],
+  "Lebensstil": ["Neben Bauch und Zucker haben drei Dinge großen Einfluss auf die Lebenserwartung, für die es sehr große Studien gibt: Rauchen, Alkohol und Bewegung. Die Vorsorge zählt für den Bonus."],
+  "Woher die Jahre kommen": ["Wie viele Jahre jeder Punkt für sich allein kostet (−) oder bringt (+). Zusammen ist es weniger als die Summe, weil man nur einmal sterben kann und sich die Risiken überschneiden."],
+  "Alles zusammen": ["Alle Punkte gemeinsam gerechnet: das Ergebnis oben."],
   "Gegenrechnung": ["Ehrlich gerechnet: Wer früher stirbt, verursacht in den verlorenen Jahren keine Gesundheitskosten mehr. Für die Kasse gleicht sich das teilweise aus. Für die Menschen nicht: Ihnen fehlen Lebensjahre."],
 });
 Info.texte("#zucker", {
@@ -718,6 +1033,18 @@ Info.texte("#zucker", {
   "Abgabe auf allen Zucker": ["Der Vorschlag aus dem Buch: eine Abgabe je Kilogramm zugesetzten Zucker, 4 € ab 2030 und 9 € ab 2035. Hersteller ändern dann ihre Rezepte, und alle essen weniger Zucker.", ...K5],
   "Alle essen gesund": ["Was möglich wäre, wenn sich alle so ernähren, wie es Fachleute empfehlen: weniger Zucker, Salz und gesättigte Fette. Das ist eine theoretische Obergrenze, die keine Steuer allein erreicht."],
   "Fall": ["Die drei Fälle im Vergleich: was sie im Jahr sparen, wenn sie voll wirken, und woher die Zahlen kommen."],
+});
+Info.texte("#allegesund", {
+  "Niemand raucht": ["Was es bringt, wenn ab 2027 niemand mehr raucht. Ehemalige Raucher haben noch viele Jahre ein erhöhtes Risiko, deshalb wächst die Ersparnis langsam über 25 Jahre an."],
+  "Alle essen gesund": ["Weniger Zucker, Salz und gesättigte Fette, so wie Fachleute es empfehlen. Dieselbe Zahl wie im Abschnitt zur Zuckerabgabe darüber.", ...K5],
+  "Kaum noch Alkohol": ["Was es bringt, wenn fast niemand mehr Alkohol trinkt. Unfälle, Gewalt und Vergiftungen fallen sofort weg, Leberschäden und Krebs erst nach Jahren."],
+  "Alle bewegen sich genug": ["Was es bringt, wenn sich alle mindestens 150 Minuten in der Woche bewegen, also gut 20 Minuten am Tag, zum Beispiel zügig gehen oder Rad fahren."],
+  "Alles zusammen": ["Alle vier Punkte gleichzeitig. Weil sich die Ursachen überschneiden, zählt der größte Posten voll und jeder weitere nur zur Hälfte. „Je Mensch über ein Leben“ heißt: die Ersparnis im Jahr auf jeden Einwohner verteilt und mal 81 Lebensjahre genommen."],
+  "Wie stark wirkt die Gesundheitsreform": ["Niemand weiß, wie viele Menschen durch Gesundheitsabgabe und Gesundheitsbonus wirklich gesünder leben. Mit diesem Hebel stellst du es selbst ein: 100 % heißt, alle leben gesund; 20 % heißt, die Reform holt ein Fünftel des möglichen Nutzens.", ...K5],
+  "Davon an Staat und Sozialkassen": ["Wenn Menschen länger gesund arbeiten, entsteht mehr Einkommen. Davon gehen Steuern und Sozialbeiträge an Staat und Sozialkassen, im Schnitt rund 40 %."],
+  "Rente folgt der Lebenserwartung": ["Wer gesünder lebt, lebt länger und bekommt sonst auch länger Rente. Folgt das Rentenalter der Lebenserwartung, arbeiten wir in den gewonnenen Jahren länger, und die Ersparnis bleibt zum größten Teil erhalten. Nimm den Haken weg, um zu sehen, was ohne diese Regel bliebe.", "kapitel-5.html#11-rente-folgt-der-lebenserwartung", "Kapitel 5"],
+  "Posten": ["Wie viel vom Nutzen für alle wirklich bei Staat und Sozialversicherung ankommt. Das ist eine grobe eigene Schätzung; die Annahmen stehen unter der Tabelle."],
+  "Was sich ändert": ["Jeder Punkt für sich: was er im Jahr spart, wenn er voll wirkt, wie viel davon bei den Krankenkassen ankommt und aus welcher Studie die Zahl stammt."],
 });
 Info.texte(".cols", {
   "Bauch: Taille": ["Die Kurve zeigt für dein Alter und Geschlecht, wie viele Lebensjahre bei jedem Verhältnis von Bauch zu Größe statistisch fehlen. Der schwarze Punkt bist du. Grün ist gesund, gelb erhöht, rot stark erhöht."],

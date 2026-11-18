@@ -1,0 +1,66 @@
+/* Gemeinsamer Aufbau der Rechner (Cockpit): Eingaben | Ergebnis | Genauer einstellen.
+   Ab 1100 px drei Spalten auf einer Bildschirmseite; schmaler untereinander. Farbe der Knöpfe: --acc. */
+:root { --acc: #0b7a5c }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --acc: #1aa896 } }
+:root[data-theme="dark"] { --acc: #1aa896 }
+.tip, .ttip { background: #fff !important; color: #1d2321 !important; border-color: #c9cfcb !important }
+.tab[hidden] { display: none !important }
+/* Neuer Aufbau: Eingaben | Ergebnis | Genauer einstellen. Ab 1100 px drei Spalten auf einer Bildschirmseite. */
+.cockpit { display: grid; gap: 16px; align-items: start }
+.col-in, .col-more { gap: 12px; padding: 14px }
+.blk { display: grid; gap: 6px; padding-top: 9px; border-top: 1px solid var(--line) }
+.blkT { font: 700 12px/1.2 var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center }
+.seg-full { display: flex } .seg-full button { flex: 1 }
+.chips { display: flex; flex-wrap: wrap; gap: 6px }
+.chip { font: 600 13.5px var(--body); border: 1px solid var(--line); background: var(--field); color: var(--fg); border-radius: 999px; padding: 5px 12px; cursor: pointer }
+.chip:hover { border-color: var(--acc) } .chip[aria-pressed="true"] { background: var(--acc); border-color: var(--acc); color: #fff }
+.col-in select, select#paar, select#karte { width: 100%; font: 600 14.5px var(--body); color: var(--fg); background: var(--field); border: 1px solid var(--line); border-radius: 7px; padding: 7px 8px }
+.pair { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted) }
+.pair .q { flex-basis: 100%; font-size: 11.5px } .pair span { display: inline-flex; align-items: center; gap: 5px } .pair i { width: 9px; height: 9px; border-radius: 2px; display: inline-block }
+.sl { display: grid; grid-template-columns: 92px minmax(0,1fr) 74px; gap: 8px; align-items: center; font-size: 13.5px; color: var(--muted) }
+.sl > :first-child { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap }
+.sl output { text-align: right }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block } .dot.h { background: var(--acc) } .dot.f { background: #6aa9d8 } .dot.w { background: #b9a24a }
+.sl output { font: 700 14.5px var(--body); color: var(--fg); font-variant-numeric: tabular-nums }
+.sl label { display: inline-flex; align-items: center }
+input[type=range] { width: 100%; accent-color: var(--acc); margin: 0 }
+.bar3 { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--grid) }
+
+.row2.tight { grid-template-columns: 1fr 1fr; gap: 8px }
+.reset { justify-self: start; font: 600 13px var(--body); background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 0 }
+.col-out { gap: 12px; grid-template-columns: minmax(0, 1fr) }
+.col-in, .col-more { grid-template-columns: minmax(0, 1fr) }
+.tbl { overflow-x: auto }
+.col-out .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)) }
+@media (max-width: 640px) { .col-out .tiles { grid-template-columns: 1fr 1fr } }
+.verdict .vk { font-size: 13px; color: var(--muted); font-weight: 700 }
+.tabs { justify-self: start } .tabs button { font-size: 13px; padding: 5px 12px }
+tr.pk { cursor: pointer } tr.pk:hover td { background: var(--hl) } tr.pk.sel td { font-weight: 700; background: var(--hl) }
+#t_paar td, #t_paar th { font-size: 13px; padding: 6px 7px } #t_paar td:nth-child(-n+2) { white-space: normal } #t_paar td:nth-child(2) { color: var(--muted) }
+.col-more details { border: 1px solid var(--line); border-radius: 8px; padding: 0 10px }
+.col-more details[open] { padding-bottom: 10px }
+.col-more summary { cursor: pointer; font: 700 14px var(--body); padding: 9px 0; display: flex; align-items: center; gap: 8px; list-style: none }
+.col-more summary::before { content: "▸"; color: var(--muted); transition: transform .15s } .col-more details[open] summary::before { transform: rotate(90deg) }
+.col-more summary::-webkit-details-marker { display: none }
+.col-more summary i { width: 10px; height: 10px; border-radius: 2px; display: inline-block }
+.col-more .row2 { grid-template-columns: 1fr 1fr; gap: 8px }
+.col-more .f label { font-size: 12.5px; display: flex; align-items: center }
+.col-more .src { font-size: 12.5px }
+.f label { display: flex; align-items: center }
+.ib-demo { display: inline-flex; width: 16px; height: 16px; border: 1.5px solid currentColor; border-radius: 50%; align-items: center; justify-content: center; font: italic 700 10px Georgia, serif; vertical-align: middle }
+#zumSteuer:empty { display: none } #zumSteuer .zumsteuer { margin: 0 }
+@media (min-width: 1100px) {
+  .sitenav.flush ~ .wrap > header { grid-template-columns: auto minmax(0,1fr) !important; gap: 2px 28px !important }
+  .sitenav.flush ~ .wrap > header h1 { font-size: 22px !important; max-width: none !important }
+  .col-in { gap: 9px } .col-in .blk { padding-top: 7px; gap: 5px }
+  .cockpit .chart svg { max-height: calc(100vh - 470px); min-height: 200px }
+  .cockpit { grid-template-columns: minmax(280px, 320px) minmax(0, 1fr) minmax(280px, 330px) }
+  .cockpit > .panel { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; scrollbar-width: thin }
+}
+@media (min-width: 900px) and (max-width: 1099px) { .cockpit { grid-template-columns: minmax(280px, 340px) minmax(0, 1fr) } .col-more { grid-column: 1 / -1 } }
+@media (max-width: 899px) { .col-out { order: -1 } .col-in { order: -2 } }
+@media (min-width: 1100px) {
+  .col-out .tile { padding: 8px 10px } .col-out .tile .v { font-size: 20px }
+  .col-out .verdict { font-size: 15.5px; padding: 10px 14px }
+  .col-out table th, .col-out table td { padding: 5px 7px; font-size: 13.5px }
+}
