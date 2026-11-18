@@ -34,8 +34,8 @@ css = ('<style id="or-stil">.or-wahl{display:flex;flex-wrap:wrap;gap:6px;margin:
        'border:1px solid var(--line);border-radius:999px;background:var(--surface,#fff);color:inherit;cursor:pointer}'
        '.or-wahl button[aria-pressed="true"]{background:var(--brand,#12372A);color:#fff;border-color:transparent}</style>')
 p = 'index.html'; s = open(p, encoding='utf-8').read()
-s = re.sub(r'<style id="or-stil">.*?</style>', '', s, flags=re.S)
-s = re.sub(r'<script>\(\(\)=>\{const A=.*?</script>', '', s, flags=re.S)
+s = re.sub(r'\n*<style id="or-stil">.*?</style>', '', s, flags=re.S)
+s = re.sub(r'\n*<script>\(\(\)=>\{const A=.*?</script>', '', s, flags=re.S)
 s, n = re.subn(r'<figure class="steuerlast"[^>]*>.*?</figure>', lambda m: fig, s, count=1, flags=re.S); assert n == 1
 s = s.replace('</head>', css + '\n</head>', 1)
 s = s.replace('</body>', js + '\n</body>', 1)
