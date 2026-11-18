@@ -29,7 +29,7 @@ fig = (f'<figure class="steuerlast" id="ohne-reform"><div class="or-wahl" role="
 js = ('<script>(()=>{const A=' + json.dumps({str(j): alt[j] for j, _ in JAHRE}, ensure_ascii=False) + ',b=document.getElementById("or-bild");'
       'document.querySelectorAll("#ohne-reform .or-wahl button").forEach(k=>k.addEventListener("click",()=>{'
       'document.querySelectorAll("#ohne-reform .or-wahl button").forEach(x=>x.setAttribute("aria-pressed",x===k));'
-      'b.src="bilder/ohne-reform/mit-gegen-ohne-reform-"+k.dataset.j+".webp";b.alt=A[k.dataset.j];}))})();</script>')
+      'b.src=`bilder/ohne-reform/mit-gegen-ohne-reform-${k.dataset.j}.webp`;b.alt=A[k.dataset.j];}))})();</script>')
 css = ('<style id="or-stil">.or-wahl{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}.or-wahl button{font:inherit;font-size:.92rem;padding:6px 12px;'
        'border:1px solid var(--line);border-radius:999px;background:var(--surface,#fff);color:inherit;cursor:pointer}'
        '.or-wahl button[aria-pressed="true"]{background:var(--brand,#12372A);color:#fff;border-color:transparent}</style>')
