@@ -1119,6 +1119,14 @@ ANNAHMEN.Prognose.KIFO = { kita: 5, kitaJahre: 5, forsch: 10, forschJahre: 10, p
 // Rechenkern Version 41 (Buch Version 41, 17.11.2026): Stufe 4 mit zwei Dritteln, Ausweichen, Ergänzungssteuer, Chancen für alle,
 // Bildung zählt wie Sparen, Schonfrist, Energie und Straßenfonds, Wertzuwachs der Häuser 2,5 %, Verhalten aus der Mikrosimulation mit Paket 9
 Object.assign(ANNAHMEN, {"Satz4": 2.0, "VhPlus0": 103.30928402597401, "VhMinus0": 205.0345941558441, "VhGewGS": 7.432532987012987, "VhGew30": 11.783175844155844, "VhGew60": 25.429433246753252, "VhGew100": 18.566720389610396, "VhGewUeber": 24.75398961038961, "VhGewRent": 5.337791948051948, "AntWert": 0.025, "AuswAn": 1, "AuswStart": 61.44, "ErgAn": 1, "ErgStart": 15.9, "ErgLang": 21.2, "ErgJahre": 5, "BSpAn": 1, "BSpGeb": 3.4, "BSpMehr": 0.224, "BSpSatz": 1.08, "SfAn": 1, "SFAn": 1, "VhEntlPlus": 0.5674933371309994, "ChAn": 1, "ChSchule": 4.98, "ChMentor": 0.43, "ChAbschluss": 0.44, "ChAbschlussSpar": 0.64, "ChLesen": 0.155, "ChWerkstatt": 0.22, "ChHaft": 0.45, "ChHaftSpar": 0.31, "ChGrESt": 2.55, "ChStaat": 0.4});
+// Prognose Version 41 (wie schulden/kern19.py und zp19.py mit V41=J): Wachstum der Reform ohne Kitas und Forschung, KI-Sockel und autonomes
+// Fahren mit und ohne Reform (je Grundszenario), Chancen für alle im Zukunftsplan, Hälfte des Überschusses für alle ab dem Jahr ab
+Object.assign(ANNAHMEN.Prognose.vorsichtig, { wachs: 0.014706719558586974, ki: 0, chancen: 0.48148148148148145, sockel: 0.0005, auto: 0 });
+Object.assign(ANNAHMEN.Prognose.mittel, { wachs: 0.0685, ki: 0, chancen: 1, sockel: 0.0035, auto: 0.005 });
+Object.assign(ANNAHMEN.Prognose.zuversichtlich, { wachs: 0.191075, ki: 0, chancen: 1.8518518518518519, sockel: 0.01, auto: 0.01 });
+Object.assign(ANNAHMEN.Prognose, { Bis: 2100, Real: 0.03, AbVon: 2030, AbBis: 2070, SockelJahre: [2027, 2041], AutoJahre: [2030, 2049],
+  CHANCEN: { staat: 0.4, schul: 0.0068, schulAb: 5, schulJahre: 45, schulExp: 1.85, ment: 0.00072, mentAb: 4, mentJahrgaenge: 16, mentMax: 45,
+    absch: 0.00073, abschJahre: 10, lesen: 0.00022, lesenJahre: 10, werk: 0.00012, werkJahre: 20 } });
 const A = structuredClone(ANNAHMEN);
 const A0 = structuredClone(ANNAHMEN);
 const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
@@ -1723,9 +1731,9 @@ const ramp = (y, a, b) => clamp((y - a) / (b - a), 0, 1);
 // Staatsschulden in % des BIP, 2023 bis 2070 (wie schulden_2070_kern.py): fall = "ohne" | "reform" | "plan" | "regel"
 // plan: Rente für 20 Jahre (1,5 % des BIP bis 2070), Ausgabenregel, solange der Staat Schulden hat (wie zukunftsplan-20-uhr/zp19.py)
 // regel: ab 2030 nie über 63 %; liegen die Schulden 2029 höher, bis 2035 gleichmäßig auf 63 %; reicht der Plan nicht, steigt der Normalsatz (mw = Punkte)
-let fixAuf = 0;
+let fixAuf = 0, regelAkt = null;
 // Mehreinnahmen in Mrd. € aus einem festen Aufschlag von x Punkten auf den Normalsatz
-function fixMrd(x) { return x * (A.Prognose.Plan.NJP - A.FBKoppMrd * A.FBKopp / 32); }   // Version 28: je Punkt rund 10,9 Mrd. € nach dem Ausgleich, der Freibetrag steigt mit (2 Mrd. €)   // Version 6: der Freibetrag steigt mit, das kostet je Punkt 2,09 Mrd. €   // je Punkt wie im Buch: Ertrag am heutigen Satz, abzüglich des höheren Ausgleichs in Grundsicherung, Bürgerjob und Rentenboden
+function fixMrd(x) { return x * (A.Prognose.Plan.NJP - A.FBKoppMrd * A.FBKopp / 32); }   // Version 41: 16,8 − 2,0 = 14,8 Mrd. € je Punkt   // Version 28: je Punkt rund 10,9 Mrd. € nach dem Ausgleich, der Freibetrag steigt mit (2 Mrd. €)   // Version 6: der Freibetrag steigt mit, das kostet je Punkt 2,09 Mrd. €   // je Punkt wie im Buch: Ertrag am heutigen Satz, abzüglich des höheren Ausgleichs in Grundsicherung, Bürgerjob und Rentenboden
 // Kitas und Forschung des Staates im Zukunftsplan (kern19.py: kifo_kosten, kifo_gr, kifo_pb)
 function kifoKosten(y) {
   const F = A.Prognose.KIFO, s = A.Prognose.ReformStart;
@@ -1741,24 +1749,39 @@ function kifoPb(c, y) {
   const F = A.Prognose.KIFO;
   return F.staat * ((c.kita || 0) * ramp(y, F.kitaVon, F.kitaBis) + (c.forsch || 0) * ramp(y, F.forschVon, F.forschBis)) - kifoKosten(y) / A.BIP;
 }
-function prognose(sz, fall, saldoPfad, fixPkt = 0) {
-  const P = A.Prognose, Q = P.Plan;
+// Version 37: Chancen für alle, mehr Wirtschaftsleistung im mittleren Fall (kern19.py: chancen_w, chancen_niveau, chancen_gr, chancen_pb)
+function chancenW(y) {
+  const C = A.Prognose.CHANCEN, t = y - A.Prognose.ReformStart;
+  if (!A.ChAn || t <= 0) return 0;
+  return C.schul * Math.max(0, Math.min(1, (t - C.schulAb) / C.schulJahre)) ** C.schulExp + C.ment / C.mentJahrgaenge * Math.max(0, Math.min(t - C.mentAb, C.mentMax))
+    + C.absch * Math.min(1, t / C.abschJahre) + C.lesen * Math.min(1, t / C.lesenJahre) + C.werk * Math.min(1, t / C.werkJahre);
+}
+const chancenNiveau = (c, y) => (c.chancen ?? 1) * chancenW(y);
+const chancenGr = (c, y) => chancenNiveau(c, y) - chancenNiveau(c, y - 1);
+const chancenPb = (c, y) => A.Prognose.CHANCEN.staat * chancenNiveau(c, y);
+// Staatsschulden in % des BIP, 2023 bis 2100 (wie zp19.pfad39): fall = "ohne" | "reform" | "plan" | "regel"; ab: Jahr, ab dem die Hälfte des
+// Überschusses an alle geht (null: erst nach der Schuldenfreiheit); fixPkt: fester Aufschlag auf den Normalsatz ab 2030 (nur regel)
+function prognose(sz, fall, saldoPfad, fixPkt = 0, ab = null) {
+  const P = A.Prognose, Q = P.Plan, c = P[sz];
   const reform = fall !== "ohne", plan = fall === "plan" || fall === "regel", regel = fall === "regel";
-  const c = A.Sicherheit && !plan && sz === "zuversichtlich" ? { ...P[sz], ...P.zuversichtlichC7 } : P[sz];
   const PB = [P.PBG, P.PBU, (P.PBG + P.PBU) / 2][c.grund - 1];
   const Demo = [P.DemoG, P.DemoU, (P.DemoG + P.DemoU) / 2][c.grund - 1];
-  let d = A.Schuld, dprev = d, nprev = 0, g = P.TBZins0, b = Q.AusgBasis, dab = d; const out = [{ jahr: P.Start, v: d, mw: 0 }];
-  for (let y = P.Start + 1; y <= P.Ende; y++) {
-    // Version 35: mit Zukunftsplan Zins auf neue Schulden ab 2028 von 3,24 % in 7 Jahren auf 3 %
+  const alpha = A.VhEntlPlus, ps = A.VhPlusSofort, njp = Q.NJP - A.FBKoppMrd * A.FBKopp / 32;
+  const cim = alpha * A.VhSteuerM * ps + (1 - alpha) * A.VhSteuerW * A.VhMinusSofort;
+  let d = A.Schuld, dprev = d, nprev = 0, g = P.TBZins0, b = Q.AusgBasis, ang = 0, ruhe = 0, fehl = 0;
+  const out = [{ jahr: P.Start, v: d, mw: 0, pb: 0, aus: 0, netto: 0, brutto: 0 }];
+  for (let y = P.Start + 1; y <= P.Bis; y++) {
     const zNeu = plan && Q.ZinsR != null && y >= P.ReformStart ? Q.ZinsStart + (Q.ZinsR - Q.ZinsStart) * Math.min(1, (y - P.ReformStart) / Q.ZinsJahre) : interp(y, P.ZinsNeu);
     g = g + (zNeu - g) / P.TBLaufzeit;
     const wG = interp(y, P.WachsG), wU = interp(y, P.WachsU);
     let gr = [wG, wU, (wG + wU) / 2][c.grund - 1];
+    if (y >= P.SockelJahre[0] && y <= P.SockelJahre[1]) gr += c.sockel || 0;   // Version 41: KI-Schub, mit und ohne Reform
+    if (y >= P.AutoJahre[0] && y <= P.AutoJahre[1]) gr += (c.auto || 0) / (P.AutoJahre[1] - P.AutoJahre[0] + 1);   // autonomes Fahren
     if (reform && y >= P.ReformStart && y < P.ReformStart + P.WachsJahre) gr += c.wachs / P.WachsJahre;
     if (c.ki && y >= P.KI.von && y < P.KI.von + P.KI.jahre) gr += P.KI.dg;
     if (plan && y >= 2030 && y < 2045) gr += c.bild / 15;
     if (plan && y >= 2028 && y < 2048) gr += c.binnen / 20;
-    if (plan) gr += kifoGr(c, y);   // Kitas und Forschung
+    if (plan) gr += kifoGr(c, y) + chancenGr(c, y);   // Kitas und Forschung, Chancen für alle
     const nom = (1 + gr) * (1 + P.Infl) - 1;
     let pb = PB - Demo * (interp(y, P.Altern) - interp(P.Start, P.Altern));
     const k = y - P.ReformStart + 1;
@@ -1767,22 +1790,62 @@ function prognose(sz, fall, saldoPfad, fixPkt = 0) {
       pb += Q.Rente * ramp(y, 2031, 2070) + Q.Ges * ramp(y, 2027, 2035) + 0.005 * ramp(y, 2030, 2045) + (Q.Verw ?? 10.7) / A.BIP * ramp(y, 2028, 2043) + (y >= 2032 ? 1.0 / A.BIP : 0) + 0.4 * c.bild * ramp(y, 2030, 2045);
       if (y >= 2030 && (d > Q.AusgBis || d > dprev + 1e-9 || nprev > 1e-9)) b = Math.max(Q.AusgBasis - Q.AusgMax, b * (1 + P.Infl) / (1 + nom));
       pb += Q.AusgBasis - b + Q.Subv * ramp(y, 2028, 2031) + c.ern * ramp(y, 2030, 2050);
-      pb += kifoPb(c, y);   // Kitas und Forschung: Erträge minus Kosten
+      pb += kifoPb(c, y) + chancenPb(c, y);
     }
-    if (regel && fixPkt > 0 && y >= (Q.FixAb || Q.RegelAb)) pb += fixMrd(fixPkt) / A.BIP;   // fester Aufschlag auf den Normalsatz
-    // Version 28: Verteidigung (1,5 % des BIP) zahlt der Staat aus Kürzungen und dem Überschuss der Reform (Blatt Sicherheit)
+    // Verteidigung (1,5 % des BIP) aus Kürzungen und dem Überschuss der Reform (Blatt Sicherheit)
     if (reform && y >= P.ReformStart) pb -= Math.max(0, P.DefMehr * clamp((y - P.DefStart + 1) / P.DefJahre, 0, 1) - (A.SicherheitWerte.SubvAbbau + A.SecAuto * A.AutoKost + A.SecGruend * A.Gruend + A.SecFH * A.FinHilfen * ramp(y, 2028, 2031)) / A.BIP);
+    if (regel && fixPkt > 0 && y >= Q.FixAb) pb += fixPkt * njp / A.BIP;   // fester Aufschlag auf den Normalsatz
+    if (plan) pb += ((A.VhSteuerR * A.VhAusRuhe + A.VhStaatM * A.VhErbM) * ruhe + (A.VhSteuerW * A.VhMinusSpaeter + A.VhStaatW * A.VhErbW) * fehl) / A.BIP;   // Rückwirkung früherer Entlastung
     const r = (d > 0 || !plan) ? g : Q.Rendite;
-    // Variante B: Nach der Tilgung senken die Hälfte des Überschusses und der Ertrag des Fonds nach Inflation die Steuern
-    const ent = plan && Q.VarB && d <= 0 ? -d * ((1 + Q.Rendite) / (1 + P.Infl) - 1) / (1 + nom) + Q.Ueb * Math.max(0, pb) : 0;
-    let dn = d * (1 + r) / (1 + nom) - pb + ent, need = 0;
-    if (y === Q.RegelAb) dab = d;
-    if (regel && y >= Q.RegelAb) { const tgt = Q.KeinAnstieg ? (y < Q.RegelBis ? Math.max(Q.RegelZiel, d) : Q.RegelZiel) : dab > Q.RegelZiel && y < Q.RegelBis ? dab - (dab - Q.RegelZiel) * (y - Q.RegelAb + 1) / (Q.RegelBis - Q.RegelAb + 1) : Q.RegelZiel; if (dn > tgt) { need = dn - tgt; dn = tgt; } }
+    let aus = 0;
+    if (plan && d <= 0) aus = -d * P.Real * (1 + P.Infl) / (1 + nom);   // Ertrag des Fonds nach Inflation
+    if (plan && (d <= 0 || (ab !== null && y >= ab)) && Q.Ueb > 0 && pb > 0) aus += Q.Ueb * pb;   // Hälfte des Überschusses für alle
+    let dn = d * (1 + r) / (1 + nom) - pb + aus, need = 0;
+    if (regel && y >= Q.RegelAb) { const tgt = y < Q.RegelBis ? Math.max(Q.RegelZiel, d) : Q.RegelZiel; if (dn > tgt) { need = dn - tgt; dn = tgt; } }
+    const netto = aus * A.BIP, brutto = netto / (1 - cim);
+    if (plan) { const u = ang / A.VhJahreRuhe; [ang, ruhe, fehl] = [ang + (1 - ps) * alpha * brutto - u, ruhe + u - (A.VhAusRuhe + A.VhStaatM * A.VhErbM) * ruhe, fehl + (1 - A.VhMinusSofort) * (1 - alpha) * brutto - (A.VhMinusSpaeter + A.VhErbW) * fehl]; }
     dprev = d; nprev = need; d = dn;
-    out.push({ jahr: y, v: d, mw: need * A.BIP / (Q.NJP - A.FBKoppMrd), ent });
+    out.push({ jahr: y, v: d, mw: need * A.BIP / njp + (regel && y >= Q.FixAb ? fixPkt : 0), pb, aus, netto, brutto });
   }
   return out;
 }
+// Kredit für den Übergang (wie zp19.kredit39): bis zum ersten Jahr ab ab mit Primärüberschuss wächst er mit dem Saldo der Reform,
+// danach tilgt ihn der Überschuss des Staates nach der Entlastung (ohne die Erträge der Chancen)
+function kreditPlan(rows, saldoPfad, ab, sz) {
+  const c = A.Prognose[sz]; let kr = 0, kmax = 0, jmax = 0, getilgt = null, an = false;
+  for (let k = 1; k <= 45; k++) {
+    const y = 2027 + k, r = rows.find(q => q.jahr === y);
+    if (ab !== null && y >= ab && !an) an = r.pb > 0;
+    const s = an ? Math.max(0, (r.pb - r.aus) * A.BIP - chancenPb(c, y) * A.BIP) : saldoPfad[k - 1] ?? saldoPfad[saldoPfad.length - 1];
+    kr = Math.max(0, kr - s + (k === 1 ? 0 : kr * zinsJ(k)));
+    if (kr > kmax) { kmax = kr; jmax = k; }
+    if (kmax > 0 && kr === 0 && k > jmax) { getilgt = y; break; }
+  }
+  return { spitze: kmax, jahr: 2027 + jmax, getilgt };
+}
+const punkte = (rows, fix = 0) => rows.reduce((m, r) => Math.max(m, r.mw - (r.jahr >= 2030 ? fix : 0)), 0);
+// Beginn der Entlastung, fester Aufschlag und Kredit je Szenario (wie zp19.regel39)
+function regelPlan(sz, pf) {
+  const P = A.Prognose, k0 = kreditPlan([], pf, null, sz);
+  for (let a = P.AbVon; a <= P.AbBis; a++) {
+    const rows = prognose(sz, "regel", pf, 0, a);
+    if (punkte(rows) > 0.005) continue;
+    const kb = kreditPlan(rows, pf, a, sz);
+    if (kb.spitze <= k0.spitze + 0.05) return { ab: a, fix: 0, rows, kredit: kb };
+  }
+  let fix = 0;
+  if (punkte(prognose(sz, "regel", pf)) > 0.005) {
+    let lo = 0, hi = 40;
+    for (let i = 0; i < 50; i++) { const m = (lo + hi) / 2; if (punkte(prognose(sz, "regel", pf, m), m) <= 0.005) hi = m; else lo = m; }
+    fix = Math.round(hi * 1000) / 1000;   // wie zp19.json und die Linie des Buchs (variante_b28.py)
+  }
+  const rows = prognose(sz, "regel", pf, fix);
+  return { ab: null, fix, rows, kredit: kreditPlan(rows, pf, null, sz) };
+}
+// Freibetrag im Monat aus der Entlastung bei gleichem Einkauf (brutto), wie variante_b28.entlastung: bis 1.500 €, darüber sinkt der Satz
+const fbStart = () => (A.Grenze1 + A.GFB) / 12;
+const freibetragMonat = brutto => Math.round(Math.min(1500, fbStart() + Math.max(0, brutto) / A.FBJeEuro));
+const schuldenfreiJahr = rows => (rows.find(r => r.jahr >= 2030 && Math.round(r.v * 1000) / 10 <= 0.05) || {}).jahr ?? null;
 
 /* ===================== Darstellung ===================== */
 const fmt = (x, d = 0) => (Math.round(x * 10 ** d) / 10 ** d).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -2291,6 +2354,7 @@ function updateGesamt() {
   else if (kr.peakJ === 1 && kr.peak / A.BIP <= A.SBRaum) tilg = tile("Kredit am Start", `${mrd(kr.peak, 0)} Mrd. €`, `nur im ersten Jahr, in der Schuldenbremse; getilgt ${A.Prognose.ReformStart - 1 + kr.getilgt}`, "good");
   else tilg = tile("Kredit am Start", `${mrd(kr.peak, 0)} Mrd. €`, `höchstens, im Jahr ${A.Prognose.ReformStart - 1 + kr.peakJ}; getilgt ${A.Prognose.ReformStart - 1 + kr.getilgt}`, kr.getilgt <= 30 ? "good" : "bad");
   t += tilg;
+  const tilgIdx = t.length - tilg.length;
   // Mit Sicherheitsbeitrag gilt wie im Buch (Anhang C7): Der Beitrag deckt die Verteidigung ab 2028 jedes Jahr netto voll,
   // der Saldo bleibt also auf dem Pfad ohne Verteidigung und ohne Beitrag.
   let pf = kr.rows.map(r => r.saldo);
@@ -2304,13 +2368,10 @@ function updateGesamt() {
   if (szenario === "basis") reihen = kr.rows.filter(r => r.jahr <= 2070).map(r => ({ jahr: r.jahr, quote: r.quote, ohne: r.ohne }));
   else {
     const mit = prognose(szenario, "reform", pf), ohne = prognose(szenario, "ohne", pf);
-    let pl = prognose(szenario, "regel", pf); fixAuf = 0;
-    if (pl[pl.length - 1].v > 0.0005) { // Schuldenregel: fester Aufschlag ab 2030, so dass die Schulden 2070 bei null liegen
-      // wie im Rechenmodell (zp19.py, fix2070): Bisektion zwischen 0 und 40 Punkten, fertig, sobald die Schulden 2070 zwischen 0 und 0,05 % des BIP liegen
-      let lo = 0, hi = 40, x = hi; for (let i = 0; i < 60; i++) { x = (lo + hi) / 2; const v = prognose(szenario, "regel", pf, x).at(-1).v; if (v >= 0 && v <= 0.0005) break; if (v > 0) lo = x; else hi = x; }
-      fixAuf = Math.round(x * 1000) / 1000; pl = prognose(szenario, "regel", pf, fixAuf);
-    }
-    reihen = mit.map((r, i) => ({ jahr: r.jahr, quote: r.v, ohne: ohne[i].v, plan: pl[i].v, mw: pl[i].mw }));
+    regelAkt = regelPlan(szenario, pf); fixAuf = Math.round(regelAkt.fix * 1000) / 1000;
+    const pl = regelAkt.rows;
+    reihen = mit.map((r, i) => ({ jahr: r.jahr, quote: r.v, ohne: ohne[i].v, plan: pl[i].v, mw: pl[i].mw, brutto: pl[i].brutto })).filter(r => r.jahr <= 2070);
+    reihen.frei = schuldenfreiJahr(pl);
     if (szenario === "mittel") { const pz = planFall("zuversichtlich", pf), pv = planFall("vorsichtig", pf); const oz = prognose("zuversichtlich", "ohne", pf), ov = prognose("vorsichtig", "ohne", pf); reihen.forEach((r, i) => { r.pz = pz[i] ? pz[i].v : r.plan; r.pv = pv[i] ? pv[i].v : r.plan; r.oz = oz[i] ? oz[i].v : r.ohne; r.ov = ov[i] ? ov[i].v : r.ohne; }); }
     if (demoAus) { // gleiche Rechnung ohne Reform, aber die Kosten für Rente, Pflege und Gesundheit bleiben auf dem Anteil am BIP von 2023
       const P = A.Prognose, dg = P.DemoG, du = P.DemoU; P.DemoG = 0; P.DemoU = 0;
@@ -2330,9 +2391,18 @@ function updateGesamt() {
   else {
     const mwMax = reihen.reduce((m, r) => r.mw > m.mw ? r : m, reihen[0]), mw30 = reihen.find(r => r.jahr === 2030).mw;
     const sq = x => x < -0.005 ? pct(-x, 0) + " Vermögen" : pct(Math.max(0, x), 0);
-    const frei = reihen.find(r => r.jahr >= A.Prognose.ReformStart && r.plan <= 1e-9);
-    t += tile("Staatsschulden 2070", sq(e.plan), `${frei ? "schuldenfrei " + frei.jahr + ", " : ""}mit Zukunftsplan; ohne Reform ${sq(e.ohne)}`, e.plan < e.ohne ? "good" : "bad");
-    t += fixAuf > 0 ? tile("Mehrwertsteuer-Aufschlag", "fest " + fmt(fixAuf, 2) + " Punkte" + (fixAuf > 2.2 && fixAuf < 2.3 ? " (knapp 2,3)" : fixAuf > 4.5 && fixAuf < 5 ? " (knapp 5)" : fixAuf > 8.25 && fixAuf < 8.5 ? " (knapp 8,5)" : fixAuf > 7.5 && fixAuf < 8.5 ? " (rund 8)" : ""), `ab 2030 auf den Normalsatz (${fmt(19 + A.NormPkt + A.SichPkt, A.SichPkt ? 1 : 0)} auf ${fmt(19 + A.NormPkt + A.SichPkt + fixAuf, 1)} %), rund ${fmt(fixMrd(fixAuf), 1)} Mrd. € im Jahr; so sind die Schulden 2070 bei null`) : tile("Mehrwertsteuer-Aufschlag", mwMax.mw > 0.05 ? "bis " + fmt(mwMax.mw, 1) + " Punkte" : "keiner", mwMax.mw > 0.05 ? `über ${fmt(19 + A.NormPkt + A.SichPkt, A.SichPkt ? 1 : 0)} %, höchstens ${mwMax.jahr}; 2030: ${fmt(mw30, 1)} Punkte; in ${reihen.filter(r => r.mw > 0.05).length} Jahren` : "Die Schuldenregel braucht keinen Aufschlag.", mwMax.mw > 5 ? "bad" : "good");
+    const frei = reihen.frei;
+    t += tile("Staatsschulden 2070", sq(e.plan), `${frei ? "schuldenfrei " + frei + ", " : ""}mit Zukunftsplan; ohne Reform ${sq(e.ohne)}`, e.plan < e.ohne ? "good" : "bad");
+    const fbAt = j => freibetragMonat((reihen.find(r => r.jahr === j) || {}).brutto || 0), erst = reihen.find(r => r.brutto > 0.005);
+    t += tile("Freibetrag", erst ? `${eur(fbAt(2045))} im Monat 2045` : eur(fbStart()) + " im Monat",
+      erst ? `Ab ${erst.jahr} geht die Hälfte des Überschusses an alle zurück: der Freibetrag steigt von ${eur(fbStart())}, 2070 auf ${eur(fbAt(2070))} (heutige Preise)` : `Bis 2070 bleibt kein Überschuss, der an alle zurückgehen kann.`, erst ? "good" : "");
+    t += fixAuf > 0 ? tile("Mehrwertsteuer-Aufschlag", "fest " + fmt(fixAuf, 2) + " Punkte" + (fixAuf > 2.2 && fixAuf < 2.3 ? " (knapp 2,3)" : fixAuf > 4.5 && fixAuf < 5 ? " (knapp 5)" : fixAuf > 8.25 && fixAuf < 8.5 ? " (knapp 8,5)" : fixAuf > 7.5 && fixAuf < 8.5 ? " (rund 8)" : ""), `ab 2030 auf den Normalsatz (${fmt(19 + A.NormPkt + A.SichPkt, A.SichPkt ? 1 : 0)} auf ${fmt(19 + A.NormPkt + A.SichPkt + fixAuf, 1)} %), rund ${fmt(fixMrd(fixAuf), 1)} Mrd. € im Jahr; so hält der Staat die Schuldenregel ein`) : tile("Mehrwertsteuer-Aufschlag", mwMax.mw > 0.05 ? "bis " + fmt(mwMax.mw, 1) + " Punkte" : "keiner", mwMax.mw > 0.05 ? `über ${fmt(19 + A.NormPkt + A.SichPkt, A.SichPkt ? 1 : 0)} %, höchstens ${mwMax.jahr}; 2030: ${fmt(mw30, 1)} Punkte; in ${reihen.filter(r => r.mw > 0.05).length} Jahren` : "Die Schuldenregel braucht keinen Aufschlag.", mwMax.mw > 5 ? "bad" : "good");
+  }
+  if (regelAkt && szenario !== "basis" && !kr.unendlich) {
+    const kp = regelAkt.kredit;
+    const neu = kp.spitze <= 0.05 ? tile("Kredit für den Übergang", "keiner", "Das System trägt sich von Anfang an.", "good")
+      : tile("Kredit für den Übergang", `${mrd(kp.spitze, 0)} Mrd. €`, `höchstens, Ende ${kp.jahr}; ${kp.getilgt ? "getilgt " + kp.getilgt : "bis 2072 nicht getilgt"}; danach tilgt der Überschuss nach der Hälfte für alle`, kp.getilgt && kp.getilgt - 2027 <= 30 ? "good" : "bad");
+    t = t.slice(0, tilgIdx) + neu + t.slice(tilgIdx + tilg.length);
   }
   $("tiles").innerHTML = t;
   const SZ = { vorsichtig: "Vorsichtig", mittel: "Mittel", zuversichtlich: "Zuversichtlich", basis: "Einfache Rechnung (Kapitel 6)" };
@@ -2368,14 +2438,7 @@ function updateGesamt() {
 }
 
 // Linie mit Zukunftsplan und Schuldenregel für einen anderen Fall (für das Band der Spanne)
-function planFall(sz, pf) {
-  let pl = prognose(sz, "regel", pf);
-  if (pl[pl.length - 1].v > 0.0005) {
-    let lo = 0, hi = 40, x = hi; for (let i = 0; i < 60; i++) { x = (lo + hi) / 2; const v = prognose(sz, "regel", pf, x).at(-1).v; if (v >= 0 && v <= 0.0005) break; if (v > 0) lo = x; else hi = x; }
-    pl = prognose(sz, "regel", pf, Math.round(x * 1000) / 1000);
-  }
-  return pl;
-}
+function planFall(sz, pf) { return regelPlan(sz, pf).rows; }
 let chartRows = null;
 addEventListener("resize", () => { if (chartRows) drawChart(chartRows); });
 function drawChart(rows) {
@@ -2434,8 +2497,8 @@ function drawChart(rows) {
   g += `<line class="hair" id="hair" x1="0" x2="0" y1="${T}" y2="${H - B}" visibility="hidden"/><rect id="hit" x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent"/>`;
   $("chartBox").innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Staatsschuldenquote bis 2070, mit und ohne Reform">${g}</svg>`;
   $("chartLegend").innerHTML = "";
-  const frei = hatPlan ? rows.find(r => r.jahr >= A.Prognose.ReformStart && r.plan <= 1e-9) : rows.find(r => r.jahr >= A.Prognose.ReformStart && r.quote <= 1e-9);
-  $("chartT").textContent = frei ? `Mit der Reform ist der Staat ${frei.jahr} schuldenfrei, ohne Reform steigen die Schulden auf ${pct(last.ohne, 0)}` : last.quote < last.ohne ? `Mit der Reform sinken die Schulden bis 2070 auf ${pct(Math.max(0, hatPlan ? last.plan : last.quote), 0)}, ohne Reform steigen sie auf ${pct(last.ohne, 0)}` : `Prognose: Staatsschulden bis 2070`;
+  const frei = hatPlan ? (rows.frei ? { jahr: rows.frei } : null) : rows.find(r => r.jahr >= A.Prognose.ReformStart && r.quote <= 1e-9);
+  $("chartT").textContent = frei ? `Mit der Reform ist der Staat ${frei.jahr} schuldenfrei, ohne Reform steigen die Schulden bis 2070 auf ${pct(last.ohne, 0)}` : last.quote < last.ohne ? `Mit der Reform sinken die Schulden bis 2070 auf ${pct(Math.max(0, hatPlan ? last.plan : last.quote), 0)}, ohne Reform steigen sie auf ${pct(last.ohne, 0)}` : `Prognose: Staatsschulden bis 2070`;
   const svg = $("chartBox").firstChild, hair = $("hair");
   $("hit").onpointermove = e => {
     const pt = svg.getBoundingClientRect(); const sx = (e.clientX - pt.left) / pt.width * W;
