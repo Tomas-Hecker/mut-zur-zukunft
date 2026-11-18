@@ -2986,7 +2986,7 @@ function vglPhase(h) {
     const g1 = A.Grenze1, g2 = A.Grenze2; let v = 0;
     try { A.Grenze1 = g1 + d * 12; A.Grenze2 = g2 + d * 12; const r2 = haushalt(h); v = r2.vgl + r2.entfall - plus0; } finally { A.Grenze1 = g1; A.Grenze2 = g2; }
     return memo[d] = v; };
-  return { h, r, plus0, fbV, schmelz: (r.ausgR || 0) + (r.rpz || 0), verf: Math.max(0, r.verf), konsum: r.konsum,
+  return { h, r, plus0, fbV, schmelz: (r.ausgR || 0) + (r.rpz || 0), verf: Math.max(0, r.verf), ek: Math.max(0, r.einkommen), ausg: r.ausg || 0, konsum: r.konsum,
     svH: Math.max(0, r.heute.sv - h.pkv) + r.sv, stH: r.heute.est + r.heute.kap + r.heute.mwst };   // Beiträge samt Arbeitgeberanteil
 }
 function vglRente(h) {   // derselbe Haushalt ab der Regelaltersgrenze: Rente statt Lohn, Kinder aus dem Haus
@@ -3006,7 +3006,7 @@ function vglRechne(h, r0, fall, alter) {
     const jahr = VGL.jahre + k, rente = !schonRente && jahr >= jahrRente, P = rente ? PR : P0;
     const last = D.beitr[k] * P.svH / VGL.svSumme + D.st[k] * P.stH / VGL.stSumme;   // Mrd. × Anteil = €
     const ueb = rente ? -P.schmelz : -P.schmelz * (1 - Math.max(0, 1 - k / 27) ** 2);   // Bestandsschutz und Zuschlag schmelzen wie im Buch; neue Rentner haben keinen
-    const wachs = D.eink[k] / 100 * P.verf;                                             // mehr Einkommen nur mit Reform, einmal gezählt
+    const Lw = D.eink[k] / 100, wachs = Lw * P.ek - (P.ausg > 0 ? 0.5 * Lw * P.konsum : 0);   // mehr Einkommen nur mit Reform, wie in der Mikrosimulation: auf das ganze Einkommen, abzüglich Ausgabensteuer auf den ausgegebenen Teil
     const fb = P.fbV(Math.round(D.fb[k] - D.fb[0]));                                     // höherer Freibetrag, Vorteil zum Satz der Stufe, in die die Ausgaben fallen
     const mw = jahr >= 2030 ? -fix / 100 * 0.7 * P.konsum : 0;                           // vorsichtig: fester Aufschlag auf den Normalsatz
     const en = vglEnergie(k, fall, P.h.erw + (P.h.kinder || 0)), energie = en.summe;
