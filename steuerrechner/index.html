@@ -2389,7 +2389,7 @@ function updateGesamt() {
     const pl = regelAkt.rows;
     reihen = mit.map((r, i) => ({ jahr: r.jahr, quote: r.v, ohne: ohne[i].v, plan: pl[i].v, mw: pl[i].mw, brutto: pl[i].brutto })).filter(r => r.jahr <= 2070);
     reihen.frei = schuldenfreiJahr(pl);
-    if (szenario === "regler") { const B = szBand(), pz = B[2].plan, pv = B[-2].plan, oz = B[2].ohne, ov = B[-2].ohne; reihen.forEach((r, i) => { r.pz = pz[i] ? pz[i].v : r.plan; r.pv = pv[i] ? pv[i].v : r.plan; r.oz = oz[i] ? oz[i].v : r.ohne; r.ov = ov[i] ? ov[i].v : r.ohne; }); }
+    if (szenario === "regler") { const B = szGrund() ? { 2: { plan: planFall("zuversichtlich", pf), ohne: prognose("zuversichtlich", "ohne", pf) }, [-2]: { plan: planFall("vorsichtig", pf), ohne: prognose("vorsichtig", "ohne", pf) } } : szBand(), pz = B[2].plan, pv = B[-2].plan, oz = B[2].ohne, ov = B[-2].ohne; reihen.forEach((r, i) => { r.pz = pz[i] ? pz[i].v : r.plan; r.pv = pv[i] ? pv[i].v : r.plan; r.oz = oz[i] ? oz[i].v : r.ohne; r.ov = ov[i] ? ov[i].v : r.ohne; }); }
     if (demoAus) { // gleiche Rechnung ohne Reform, aber die Kosten für Rente, Pflege und Gesundheit bleiben auf dem Anteil am BIP von 2023
       const P = A.Prognose, dg = P.DemoG, du = P.DemoU; P.DemoG = 0; P.DemoU = 0;
       const od = prognose(szenario, "ohne", pf); P.DemoG = dg; P.DemoU = du;
@@ -2428,7 +2428,7 @@ function updateGesamt() {
   $("chartNote").textContent = szenario === "basis"
     ? `Die einfache Rechnung aus Kapitel 6: Der Überschuss tilgt die heutigen Schulden. ${kr.bilFrei ? "In der Bilanz ist der Staat " + (A.Prognose.ReformStart - 1 + kr.bilFrei) + " schuldenfrei: Dann sind die Anteile der Gemeinschaft an Erbschaften und Häusern mehr wert als die heutigen Schulden. " : ""}${kr.altFrei ? "In Geld getilgt sind die Schulden " + (A.Prognose.ReformStart - 1 + kr.altFrei) + "." : ""} Nicht eingerechnet sind die steigenden Kosten durch die Alterung und mehr Wachstum durch die Reform.`
     : `Mit den steigenden Kosten für Rente, Pflege und Gesundheit nach dem Tragfähigkeitsbericht des Finanzministeriums (2024). Gerechnet mit den Annahmen oben: ${szStand()}. Die Reform beginnt 2028. Der Zukunftsplan aus Kapitel 6 setzt dazu: Rente für 20 Jahre, Gesundheit, eine schlankere Verwaltung, Bildung, Kitas und Forschung, weniger Finanzhilfen, gesunde Ernährung, EU-Binnenmarkt und eine Ausgabenregel, solange der Staat Schulden hat. Die Schuldenregel: ab 2035 steigen die Schulden nicht mehr gegenüber dem Vorjahr, ab 2040 liegen sie nie über 63 % der Wirtschaftsleistung. Für den Kredit der ersten Jahre braucht es eine eigene Übergangsregel im Grundgesetz. Reicht der Plan nicht, steigt der Normalsatz der Mehrwertsteuer um die nötigen Punkte. Die höheren Ausgaben für Verteidigung (1,5 % der Wirtschaftsleistung) sind eingerechnet, bezahlt aus Kürzungen und dem Überschuss der Reform. Nach der Tilgung senkt die Hälfte des Überschusses die Steuern, die andere Hälfte wächst im Zukunftsfonds; unter null hat der Staat Vermögen.${A.Sicherheit ? " Mit Sicherheitszuschlag: die Verteidigung bis 2027 auf Kredit, danach aus Einsparungen und dem Sicherheitszuschlag." : ""}`;
-  if (szenario === "regler") $("chartNote").textContent += " Die Linien zeigen den Verlauf mit den eingestellten Annahmen. Das helle Band dahinter zeigt die Spanne vom ungünstigen bis zum günstigen Fall, wenn alle Annahmen auf einmal so kommen, hellrot ohne Reform, hellgrün mit Zukunftsplan.";
+  if (szenario === "regler") $("chartNote").textContent += szGrund() ? " Die Linien zeigen den wahrscheinlichsten Verlauf. Das helle Band dahinter zeigt die Spanne vom vorsichtigen bis zum zuversichtlichen Fall, hellrot ohne Reform, hellgrün mit Zukunftsplan." : " Die Linien zeigen den Verlauf mit den eingestellten Annahmen. Das helle Band dahinter zeigt hier die Spanne vom ungünstigen bis zum günstigen Fall, wenn alle Annahmen auf einmal so kommen, hellrot ohne Reform, hellgrün mit Zukunftsplan.";
   drawChart(reihen);
   // Tabelle
   const row = (n, s, l, cls = "") => `<tr class="${cls}"><td>${n}</td><td>${mrd(s)}</td><td>${mrd(l)}</td></tr>`;
@@ -2858,6 +2858,8 @@ function szAnwenden() {
 function szAlle(s) {
   szBuch = false; for (const r of SZEN) SZ_POS[r.k] = s;
 }
+// Grundansicht: wie im Buch oder alle Annahmen wahrscheinlich; dann zeigt das Band vorsichtig bis zuversichtlich wie auf der Startseite
+function szGrund() { return szBuch || Object.values(SZ_POS).every(x => x === 0); }
 function szStand() {
   if (szBuch) return "Wie im Buch (Version 41)";
   const v = Object.values(SZ_POS), alle = v.every(x => x === v[0]);
