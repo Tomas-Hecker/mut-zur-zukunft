@@ -16,10 +16,10 @@ for p in sorted(glob.glob(os.path.join(ORD, 'anhang-*.html'))):
     ids += [k for k, v in st.items() if v.split('#')[0] == nm and k not in ids]
     titel = re.search(r'<h1>(.*?)</h1>', s).group(1)
     anker = ''.join(f'<span id="{i}"></span>' for i in ids)
-    main = (f'<main class="bmain"><div class="bhero"><div class="bwrap"><div class="bnum">{b.upper()}</div><div><p class="eyebrow">Anhang {b.upper()}</p>'
-            f'<h1>{titel}</h1></div></div></div><article class="bwrap anhang-hinweis">{anker}'
-            '<p class="blead">Dieser Anhang wird gerade auf den neuen Stand des Buchs gebracht (Version 41: Freibetrag 1.200 € im Monat, 600 € je Kind, '
-            'Prämie 40 €, Chancen für alle, Bürgerfonds, gute Kitas und mehr Forschung). Bis dahin steht er hier nicht, damit keine alten Zahlen neben dem neuen Text stehen.</p>'
+    main = (f'<main class="bmain">{anker}<div class="bhero"><div class="bwrap"><div class="bnum">{b.upper()}</div><div><p class="eyebrow">Anhang {b.upper()}</p>'
+            f'<h1>{titel}</h1></div></div></div><article class="bwrap anhang-hinweis" style="display:block;padding:2rem clamp(16px,4vw,48px)">'
+            '<p style="font-size:1.2rem;font-weight:600">Dieser Anhang wird gerade mit den neuen Zahlen des Buchs neu gerechnet. Bis dahin steht er hier nicht, '
+            'damit keine alten Zahlen neben dem neuen Text stehen.</p>'
             '<p>Jede Rechnung lässt sich schon jetzt nachprüfen: Der <a href="../steuerrechner/">Steuerrechner</a> rechnet mit denselben Annahmen wie das Buch, '
             'für deinen Haushalt und für den Staat bis 2070, und zeigt bei jeder Annahme die Quelle. '
             '<a href="./">Zum Inhaltsverzeichnis</a></p></article></main>')
