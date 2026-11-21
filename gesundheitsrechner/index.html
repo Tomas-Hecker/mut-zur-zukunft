@@ -187,6 +187,11 @@ details.grp > summary { font-size: 14.5px }
 .chips button { font: 600 14px var(--body); border: 1px solid var(--line); background: var(--field); color: var(--fg); border-radius: 999px; padding: 7px 13px; cursor: pointer }
 .chips button[aria-pressed="true"] { background: var(--ok); border-color: var(--ok); color: #fff }
 .plan { display: grid; gap: 8px }
+.broschuere { display: flex; gap: 12px; align-items: center; justify-self: start; max-width: 720px; text-decoration: none; color: var(--fg); background: var(--panel); border: 2px solid var(--mid); border-radius: 12px; padding: 10px 14px }
+.broschuere:hover { background: var(--field) }
+.broschuere b { display: block; color: var(--fg) }
+.broschuere small { display: block; color: var(--muted); font-size: 13px; line-height: 1.4 }
+.broschuere .bi-ic { flex: none; width: 44px; height: 52px; border-radius: 6px; background: var(--mid); color: #fff; font: 800 13px/52px var(--display); text-align: center }
 /* Bauch-Index */
 .bi-liste { display: grid; gap: 5px; font-size: 14.5px }
 .bi-row { display: grid; grid-template-columns: minmax(0, 13em) minmax(0, 1fr) 5.5em; gap: 10px; align-items: center }
@@ -304,6 +309,7 @@ h1,h2,h3{break-after:avoid}
     <div class="eyebrow">Gesundheit über das ganze Leben</div>
     <h1>Mein Bauch-Check: Was jeder Zentimeter bringt</h1>
     <p class="lead">Maßband, Körpergröße, fertig. Du siehst sofort, wo dein Bauch steht, was dein nächstes kleines Ziel ist und was dir jeder Zentimeter weniger bringt: an Lebenszeit, an weniger Krankheitsrisiko und an gesparten Kosten. Alles beruht auf großen Studien mit Millionen Menschen und wird immer als Spanne gezeigt.</p>
+    <a class="broschuere" href="broschuere-kleine-schritte-grosse-wirkung.pdf" download><span class="bi-ic" aria-hidden="true">PDF</span><span><b>Broschüre „Kleine Schritte. Große Wirkung.“ herunterladen</b><small>Für Fettleber, Vorstufe Diabetes und Typ-2-Diabetes: Teller-Regel, Tauschideen, Rezepte, 4-Wochen-Plan und der Bauch-Index. 14 Seiten, PDF, 2 MB</small></span></a>
   </header>
 
   <section class="panel check" id="check" aria-labelledby="check_h">
@@ -453,7 +459,7 @@ h1,h2,h3{break-after:avoid}
       </div>
       <p id="bi_txt"></p>
     </div>
-    <p class="note"><b>Gut zu wissen:</b> Der Index zeigt die Richtung, keine genauen Zentimeter. Er beschreibt Zusammenhänge im Durchschnitt vieler Menschen. Kalorien allein sagen wenig: Nüsse und Joghurt haben viele Kalorien und hingen trotzdem mit weniger Zunahme zusammen. Was zählt, ist, wie satt ein Lebensmittel macht, wie es den Blutzucker bewegt und was man stattdessen isst. Ob es bei dir wirkt, zeigt dein Maßband.</p>
+    <p class="note"><b>Gut zu wissen:</b> Der Index zeigt die Richtung, keine genauen Zentimeter. Er beschreibt Zusammenhänge im Durchschnitt vieler Menschen. Kalorien allein sagen wenig: Nüsse und Joghurt haben viele Kalorien und hingen trotzdem mit weniger Zunahme zusammen. Was zählt, ist, wie satt ein Lebensmittel macht, wie es den Blutzucker bewegt und was man stattdessen isst. Ob es bei dir wirkt, zeigt dein Maßband. Den Bauch-Index zum Ausdrucken, mit Einkaufszettel und Rezepten, gibt es in der <a href="broschuere-kleine-schritte-grosse-wirkung.pdf" download>Broschüre „Kleine Schritte. Große Wirkung.“ (PDF)</a>.</p>
   </div>
 
   <div class="panel" id="zucker">
