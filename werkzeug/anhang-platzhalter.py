@@ -26,3 +26,15 @@ for p in sorted(glob.glob(os.path.join(ORD, 'anhang-*.html'))):
     s = s[:s.index('<main')] + main + s[s.index('</main>') + 7:]
     open(p, 'w', encoding='utf-8').write(s)
     print(nm, len(ids), 'Anker als Hinweis')
+
+# Quellen: bleiben stehen, mit einem Hinweis, bis die neue Liste mit den Anhängen kommt
+p = os.path.join(sys.argv[1], 'quellen.html')
+if os.path.exists(p):
+    s = open(p, encoding='utf-8').read()
+    if 'quellen-hinweis' not in s:
+        a = '<article class="btext">'
+        assert s.count(a) == 1
+        s = s.replace(a, a + '<p class="quellen-hinweis" style="font-weight:600">Diese Liste ist vom 15.11. und wird mit den Anhängen gerade auf den neuen Stand gebracht. '
+                      'Einige Hinweise auf Anhänge und Bausteine beziehen sich noch auf die alte Fassung.</p>')
+        open(p, 'w', encoding='utf-8').write(s)
+        print('quellen.html mit Hinweis')
