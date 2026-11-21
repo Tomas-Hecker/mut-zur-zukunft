@@ -622,7 +622,7 @@ h1,h2,h3{break-after:avoid}
             <div class="field"><label for="e_strom">Haushaltsstrom im Jahr, kWh</label><input id="e_strom" type="number" min="0" step="100" value="3500"><span class="hint">ohne Wärmepumpe und Auto; leer lassen: nach Personen geschätzt</span></div>
             <div class="field"><label for="e_wp">Heizung</label><select id="e_wp"><option value="0">bleibt wie sie ist</option><option value="1">Wärmepumpe statt Gas</option></select></div>
             <div class="field"><label for="e_waerme">Wärme im Jahr, kWh</label><input id="e_waerme" type="number" min="0" step="500" value="15000"><span class="hint">ungefähr Gasverbrauch × 0,9</span></div>
-            <div class="field"><label for="e_ev">Auto</label><select id="e_ev"><option value="0">bleibt wie es ist</option><option value="1">E-Auto statt Verbrenner</option></select></div>
+            <div class="field"><label for="e_ev">Auto</label><select id="e_ev"><option value="0">kein Auto</option><option value="2" selected>Verbrenner, bleibt</option><option value="1">E-Auto statt Verbrenner</option></select><span class="hint">mit der Reform zahlt jedes Auto ab 2030 eine Kilometerabgabe nach Verbrauch</span></div>
             <div class="field"><label for="e_km">Kilometer im Jahr</label><input id="e_km" type="number" min="0" step="500" value="13500"></div>
             <div class="field"><label for="e_pv">Solaranlage auf dem Dach, kWp</label><input id="e_pv" type="number" min="0" max="30" step="0.5" value="0"><span class="hint">0 = keine; mit Speicher, wenn er sich lohnt</span></div>
             <label class="check field"><input id="e_balkon" type="checkbox"> Balkonkraftwerk 800 W</label>
@@ -2206,14 +2206,24 @@ const E_BASIS = { waerme: 15000, km: 13500, kwp: 10 };
 const E_DECKT = { "Heizungsrechner": ["wp"], "E-Auto-Rechner": ["ev"], "Energie-Rechner": ["pv"], "Balkon-Rechner": ["balkon"] };   // der Energie-Rechner gibt nur zurück, was die Solaranlage bringt
 const E_EXTERN = {};
 let E_STROM_EIGEN = false;   // Haushaltsstrom selbst eingetragen? Sonst nach Personen geschätzt
-const eUebernimm = (quelle, h, r) => { quelle = String(quelle || "").slice(0, 40); if (!E_DECKT[quelle]) return; E_EXTERN[quelle] = { heute: +h || 0, reform: +r || 0 }; };
+const eUebernimm = (quelle, h, r) => { quelle = String(quelle || "").slice(0, 40); if (!E_DECKT[quelle]) return; E_EXTERN[quelle] = { heute: +h || 0, reform: +r || 0 }; if (quelle === "E-Auto-Rechner") $("e_ev").value = "1"; if (quelle === "Heizungsrechner") $("e_wp").value = "1"; };
 try { const q = new URLSearchParams(location.search); if (q.has("eHeute") && q.has("eReform")) eUebernimm(q.get("eQuelle"), q.get("eHeute"), q.get("eReform")); } catch (e) {}
 addEventListener("message", ev => { if (ev.origin !== location.origin || !ev.data || ev.data.typ !== "energie-ersparnis") return; eUebernimm(ev.data.quelle, ev.data.heute, ev.data.reform); $("energieBox").open = true; updateHH(); });
 function energieLesen() {
   const n = id => Math.max(0, parseFloat($(id).value) || 0);
   const pers = (+$("erw").value || 1) + (Math.round(parseFloat($("kinder").value) || 0)), stromAuto = [0, 1500, 2500, 3500][Math.min(3, pers)] || 4000;
   if (!E_STROM_EIGEN) $("e_strom").value = stromAuto;
-  return { fall: $("e_fall").value, strom: n("e_strom"), wp: $("e_wp").value === "1", waerme: n("e_waerme"), ev: $("e_ev").value === "1", km: n("e_km"), kwp: Math.min(30, n("e_pv")), balkon: $("e_balkon").checked, hhstrom: $("e_hhstrom").checked };
+  return { fall: $("e_fall").value, strom: n("e_strom"), wp: $("e_wp").value === "1", waerme: n("e_waerme"), ev: $("e_ev").value === "1", auto: $("e_ev").value !== "0", km: n("e_km"), kwp: Math.min(30, n("e_pv")), balkon: $("e_balkon").checked, hhstrom: $("e_hhstrom").checked };
+}
+// Kilometerabgabe mit der Reform (Paket A, Buch Version 40, Entwurf): Satz in ct je kWh laut Hersteller, real 2025, ab 2030; danach gleich.
+// Verbrenner zahlt den Mehrbetrag über seiner Energiesteuer; Autos vor 2028 zahlen 2030 25 % davon, je Jahr 10 Punkte mehr.
+const KM_SATZ = { 2030: 21.62, 2031: 19.59, 2032: 18.70, 2033: 18.19, 2034: 18.37, 2035: 18.70, 2036: 19.16, 2037: 19.69, 2038: 20.49, 2039: 21.59, 2040: 22.73, 2041: 23.98, 2042: 25.25, 2043: 26.54, 2044: 27.79, 2045: 28.85, 2046: 29.70 };
+const KM_EV_KWH = 0.18, KM_V_L = 0.07, KM_KWH_L = 8.86, KM_EST = 0.6545;   // E-Auto 18 kWh/100 km, Benziner 7 l/100 km, Energiesteuer Benzin je Liter
+function kmAbgabe(km) {   // Mittel 2027 bis 2046 wie die übrigen Werte: { ev: E-Auto, v: Verbrenner von vor 2028 (Mehrbetrag über der Energiesteuer) }
+  let ev = 0, v = 0;
+  for (let j = 2027; j <= 2046; j++) { const s = (KM_SATZ[j] || 0) / 100; if (!s) continue;
+    ev += s * KM_EV_KWH * km; v += Math.max(0, s * KM_V_L * KM_KWH_L - KM_V_L * KM_EST) * km * Math.min(1, 0.25 + 0.1 * (j - 2030)); }
+  return { ev: ev / 20, v: v / 20 };
 }
 function energieRechne(e) {
   const out = {};
@@ -2221,7 +2231,11 @@ function energieRechne(e) {
     const k = ENERGIE[e.fall + "_" + r], t = [], ext = new Set(Object.keys(E_EXTERN).flatMap(q => E_DECKT[q]));
     for (const [q, x] of Object.entries(E_EXTERN)) t.push([`Aus dem ${q}${q === "Energie-Rechner" ? " (Solaranlage)" : ""}`, x[r]]);
     if (e.wp && !ext.has("wp")) t.push(["Wärmepumpe statt Gasheizung (geschätzt)", k.wpVar * e.waerme / E_BASIS.waerme + k.wpFix]);
+    const ka = kmAbgabe(e.km);
     if (e.ev && !ext.has("ev")) t.push(["E-Auto statt Verbrenner (geschätzt)", k.evVar * e.km / E_BASIS.km + k.evFix]);
+    // Kilometerabgabe getrennt ausgewiesen; Werte aus dem E-Auto-Rechner kommen ohne sie
+    if (r === "reform" && e.ev) t.push(["Kilometerabgabe für das E-Auto (ab 2030)", -ka.ev]);
+    else if (r === "reform" && e.auto) t.push(["Kilometerabgabe für den Verbrenner, Mehrbetrag über seiner Energiesteuer (ab 2030, Übergang bis 2038)", -ka.v]);
     const pvF = Math.min(e.kwp / E_BASIS.kwp, 1.5);
     if (e.kwp > 0 && !ext.has("pv")) t.push([`Solaranlage ${fmt(e.kwp, 1)} kWp (geschätzt)`, k.pv * pvF + (e.wp ? k.synWp * pvF : 0) + (e.ev ? k.synEv * pvF : 0) + (e.wp && e.ev ? k.synAll * pvF : 0)]);
     if (e.balkon && !ext.has("balkon")) t.push(["Balkonkraftwerk 800 W (geschätzt)", k.balkon]);
@@ -2258,7 +2272,7 @@ function energieZeigen(plus) {
     ${namen.map(n => zeile(n, wert(E.heute.teile, n), wert(E.reform.teile, n))).join("")}
     ${E.hhstrom ? zeile(`Strom mit 5 % Mehrwertsteuer, ohne Umlagen: ${fmt(e.strom)} kWh Haushaltsstrom`, 0, E.hhstrom) : ""}
     <tr class="sum"><td>Zusammen</td><td>${sign(H)} €</td><td>${sign(R)} €</td></tr></tbody></table></div>
-    <p class="note">Entwurf, grobe Schätzung: ${({ ung: "ungünstige", wahr: "wahrscheinliche", guen: "günstige" })[e.fall]} Annahmen. Gezählt wird, was die Anlagen sparen, und der billigere Strom, wenn eingeschaltet. Die Schätzung lädt und heizt im günstigsten Stromtarif (heute dynamisch, mit der Reform mit den 8 Stunden ohne Netzentgelt); der E-Auto- und der Heizungsrechner rechnen mit dem Strompreis, den du dort einträgst, und liegen deshalb etwas darunter. Die höhere Mehrwertsteuer auf Gas und Benzin steckt schon in der Rechnung oben, das Klimageld ist nicht eingerechnet.</p>`;
+    <p class="note">Entwurf, grobe Schätzung: ${({ ung: "ungünstige", wahr: "wahrscheinliche", guen: "günstige" })[e.fall]} Annahmen. Gezählt wird, was die Anlagen sparen, und der billigere Strom, wenn eingeschaltet. Die Schätzung lädt und heizt im günstigsten Stromtarif (heute dynamisch, mit der Reform mit den 8 Stunden ohne Netzentgelt); der E-Auto- und der Heizungsrechner rechnen mit dem Strompreis, den du dort einträgst, und liegen deshalb etwas darunter. Die Kilometerabgabe ist ein Entwurf (Paket A, Satz je kWh laut Hersteller, Benziner 7 l, E-Auto 18 kWh je 100 km). Die höhere Mehrwertsteuer auf Gas und Benzin steckt schon in der Rechnung oben, das Klimageld ist nicht eingerechnet.</p>`;
   return { heute: H, reform: R };
 }
 $("e_strom").addEventListener("input", () => { E_STROM_EIGEN = $("e_strom").value !== ""; });
