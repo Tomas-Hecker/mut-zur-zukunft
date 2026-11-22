@@ -153,6 +153,26 @@ details.grp > summary { font-size: 14.5px }
 .gscale.hb { position: relative; height: 1.2em; display: block }
 .gscale.hb span { position: absolute; transform: translateX(-50%) }
 .gscale.hb span:nth-child(1) { left: 0; transform: none } .gscale.hb span:nth-child(2) { left: 21.8% } .gscale.hb span:nth-child(3) { left: 36.4% } .gscale.hb span:nth-child(4) { left: 63.6% } .gscale.hb span:nth-child(5) { left: auto; right: 0; transform: none }
+/* Gesund und glücklich: Aufwärtsspirale */
+.glueck { gap: 16px }
+.glueck .lead { font-size: 17px }
+.spirale-grid { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 24px; align-items: center }
+@media (max-width: 640px) { .spirale-grid { grid-template-columns: minmax(0, 1fr); gap: 8px } #g_spirale { max-width: 170px; justify-self: center } }
+#g_spirale { width: 100%; height: auto }
+#g_spirale text { font: 800 15px var(--display); fill: #fff; text-anchor: middle; dominant-baseline: central }
+.spirale { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column-reverse; gap: 10px }
+.spirale li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 2px 12px; align-items: start }
+.spirale li > span { grid-row: span 2; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font: 800 15px var(--display); color: #fff }
+.spirale li b { font: 800 17px/1.25 var(--display) }
+.spirale li p { margin: 0; font-size: 15px; color: var(--muted) }
+.spirale li p strong { color: var(--fg) }
+.spirale li.top { background: var(--z1); border-radius: 12px; padding: 10px 12px; margin: 0 -12px }
+.warum { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 8px }
+.warum-satz { font: 700 18px/1.35 var(--display); color: var(--good); margin: 4px 0 0 }
+.teilen { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 10px }
+.teil-knoepfe { display: flex; flex-wrap: wrap; gap: 8px }
+.teil-knoepfe .btn { text-decoration: none; display: inline-block }
+.btn.alt { background: var(--field); color: var(--fg); border: 1px solid var(--line) }
 .zucker-check { border-top: 1px solid var(--line); padding-top: 18px }
 /* Persönliche Tafel: Bauch × Langzeitzucker, Farben wie in der Broschüre */
 .tafel-box { border-top: 1px solid var(--line); padding-top: 18px; display: grid; gap: 12px }
@@ -429,7 +449,7 @@ h1,h2,h3{break-after:avoid}
         <div class="gw-tiles vier" id="t_tiles"></div>
         <p class="gw-sub" id="t_alltag"></p>
       </div>
-      <p class="hinweis glueck"><b>Gesundheit und Glück</b> hängen zusammen, in beide Richtungen. Wer einen gesunden Bauch hat, verbringt zwischen 50 und 75 deutlich mehr Jahre ohne chronische Krankheit, bei starkem Übergewicht sind es 7 bis 9 Jahre weniger (<a href="#q-stenholm">Stenholm 2017</a>). Und wer zufrieden ist, lebt im Schnitt länger: In 35 Langzeitstudien mit gesunden Menschen war das Sterberisiko um rund 18 % niedriger (<a href="#q-chida">Chida und Steptoe 2008</a>). Alle Zahlen sind Schätzbereiche, keine Vorhersage für dich.</p>
+      <p class="hinweis">Mehr gesunde Jahre heißt auch mehr gute Zeit. Wie Gesundheit und Glück sich gegenseitig verstärken, zeigt <a href="#glueck">der nächste Abschnitt</a>. Alle Zahlen sind Schätzbereiche, keine Vorhersage für dich.</p>
     </div>
 
     <div class="weg">
@@ -444,6 +464,34 @@ h1,h2,h3{break-after:avoid}
       </div>
       <p class="note">Deine Messungen bleiben nur in diesem Browser auf deinem Gerät, nichts wird übertragen. <button type="button" class="linkbtn" id="c_del">Gespeicherte Messungen löschen</button></p>
     </div>
+  </section>
+
+  <section class="panel glueck" id="glueck" aria-labelledby="glueck_h">
+    <h2 id="glueck_h">Gesund und glücklich: Deine Aufwärtsspirale</h2>
+    <p class="lead">Gesundheit und Glück verstärken sich gegenseitig. Jeder kleine Schritt dreht die Spirale ein Stück weiter nach oben.</p>
+    <div class="spirale-grid">
+      <svg id="g_spirale" viewBox="0 0 240 330" role="img" aria-label="Spirale, die von unten nach oben steigt, mit fünf Stationen"></svg>
+      <ol class="spirale" id="g_stationen"></ol>
+    </div>
+    <div class="warum">
+      <h3>Mein Warum: Wofür will ich die gesunden Jahre?</h3>
+      <p class="note">Wer weiß, wofür er es tut, bleibt leichter dran. Tipp an, was dir wichtig ist, gern mehreres.</p>
+      <div class="chips" id="g_warum"></div>
+      <p class="warum-satz" id="g_warumtxt" aria-live="polite"></p>
+    </div>
+    <div class="teilen">
+      <h3>Nimm jemanden mit</h3>
+      <p class="note">Zu zweit fällt jeder Schritt leichter. Schick den Rechner oder die Broschüre an Freunde oder Familie. Geteilt wird nur der Link, nie deine Werte.</p>
+      <div class="seg" role="group" aria-label="Was teilen?" id="s_was"><button type="button" data-was="rechner" aria-pressed="true">Rechner</button><button type="button" data-was="broschuere" aria-pressed="false">Broschüre</button></div>
+      <div class="teil-knoepfe">
+        <button type="button" class="btn" id="s_share" hidden>Teilen …</button>
+        <a class="btn alt" id="s_wa" target="_blank" rel="noopener">WhatsApp</a>
+        <a class="btn alt" id="s_mail">E-Mail</a>
+        <button type="button" class="btn alt" id="s_copy">Link kopieren</button>
+      </div>
+      <p class="note" id="s_ok" role="status"></p>
+    </div>
+    <p class="hinweis">Die Studien zeigen Zusammenhänge in großen Gruppen, keinen Beweis für jeden Einzelnen. <a href="#q-singh">Singh 2023</a>, <a href="#q-mujcic">Mujcic und Oswald 2016</a>, <a href="#q-stenholm">Stenholm 2017</a>, <a href="#q-chida">Chida und Steptoe 2008</a>.</p>
   </section>
 
   <div class="eyebrow" id="genauer" style="margin-top:8px">Genauer rechnen</div>
@@ -678,6 +726,18 @@ h1,h2,h3{break-after:avoid}
         <dl><dt>Was wurde untersucht?</dt><dd>Ein großer Verbund von Forschenden (Universität Cambridge u. a.) hat Daten von rund 1,5 Millionen Menschen aus 19 reichen Ländern ausgewertet: Wie lange leben Menschen, je nachdem, in welchem Alter ihr Typ-2-Diabetes festgestellt wurde?</dd><dt>Was kam heraus?</dt><dd>In Europa verliert, wer mit 30 Jahren Diabetes bekommt, rund 13 Lebensjahre, mit 40 rund 9 und mit 50 rund 5. Jedes Jahrzehnt früher kostet etwa 3 bis 4 Jahre mehr.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Grundwert für Diabetes (Schritt 3). Der Rechner stellt den Faktor auf das Sterberisiko für jedes Alter so ein, dass genau diese Jahre herauskommen. Für 60 und älter ist der Wert fortgeschrieben.</dd></dl>
         <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract), Abschnitt „Findings“, Werte für die Europäische Union; Pressemitteilung der Universität Cambridge. <a href="https://www.cam.ac.uk/research/news/type-2-diabetes-diagnosis-at-age-30-reduces-life-expectancy-by-as-much-as-14-years" target="_blank" rel="noopener">Zur Studie ›</a></div>
       </article>
+      <article class="studie" id="q-singh">
+        <h3>Bewegung hebt die Stimmung: über 1.000 Studien</h3>
+        <div class="wer">Singh B. u. a. (2023), <i>British Journal of Sports Medicine</i> 57:1203–1209</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung von 97 Übersichtsarbeiten mit 1.039 Studien und 128.119 Erwachsenen: Wie wirkt Bewegung auf Depression, Angst und psychische Belastung?</dd><dt>Was kam heraus?</dt><dd>Bewegung hatte einen mittleren Effekt gegen Depression und Angst (Effektstärke −0,43 und −0,42) und einen noch größeren gegen psychische Belastung (−0,60).</dd><dt>Wofür der Rechner das nutzt</dt><dd>Station 2 der Aufwärtsspirale, nur als Hinweis, nicht in der Rechnung.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract): „Physical activity had medium effects on depression (median effect size=−0.43…)“. <a href="https://doi.org/10.1136/bjsports-2022-106195" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-mujcic">
+        <h3>Obst und Gemüse machen zufriedener</h3>
+        <div class="wer">Mujcic R., Oswald A. J. (2016), <i>American Journal of Public Health</i> 106:1504</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>12.385 Erwachsene in Australien, über mehrere Jahre befragt: Ändert sich die Lebenszufriedenheit, wenn Menschen mehr Obst und Gemüse essen?</dd><dt>Was kam heraus?</dt><dd>Wer bis zu 8 Portionen mehr am Tag aß, gewann innerhalb von 24 Monaten bis zu 0,24 Punkte Lebenszufriedenheit. Das ist etwa so viel wie der Schritt von Arbeitslosigkeit zurück in Arbeit.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Station 2 der Aufwärtsspirale, nur als Hinweis.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract), Langzeitbefragung HILDA. <a href="https://pubmed.ncbi.nlm.nih.gov/?term=Mujcic+Oswald+Evolution+of+well-being+and+happiness+after+increases+in+consumption+of+fruit+and+vegetables" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
       <article class="studie" id="q-stenholm">
         <h3>Gesunder Bauch, mehr gesunde Jahre</h3>
         <div class="wer">Stenholm S. u. a. (2017), <i>International Journal of Obesity</i></div>
@@ -687,7 +747,7 @@ h1,h2,h3{break-after:avoid}
       <article class="studie" id="q-chida">
         <h3>Wer zufrieden ist, lebt länger</h3>
         <div class="wer">Chida Y., Steptoe A. (2008), <i>Psychosomatic Medicine</i> 70:741–756</div>
-        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung von 70 Langzeitstudien: Leben Menschen länger, die zufrieden, optimistisch und guter Stimmung sind?</dd><dt>Was kam heraus?</dt><dd>Bei anfangs gesunden Menschen war das Sterberisiko um 18 % niedriger (Spanne 11 bis 24 %). Bei Menschen, die schon krank waren, war der Effekt klein (2 %).</dd><dt>Wofür der Rechner das nutzt</dt><dd>Nur als Hinweis unter deiner Tafel, nicht in der Rechnung.</dd></dl>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung von 70 Langzeitstudien: Leben Menschen länger, die zufrieden, optimistisch und guter Stimmung sind?</dd><dt>Was kam heraus?</dt><dd>Bei anfangs gesunden Menschen war das Sterberisiko um 18 % niedriger (Spanne 11 bis 24 %). Bei Menschen, die schon krank waren, war der Effekt klein (2 %).</dd><dt>Wofür der Rechner das nutzt</dt><dd>Station 5 der Aufwärtsspirale, nur als Hinweis, nicht in der Rechnung. Es ist ein Zusammenhang, kein Beweis für die Ursache.</dd></dl>
         <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract): „combined hazard ratio (HR) = 0.82; 95% Confidence Interval (CI) = 0.76-0.89“ für gesunde Bevölkerungen. <a href="https://doi.org/10.1097/PSY.0b013e31818105ba" target="_blank" rel="noopener">Zur Studie ›</a></div>
       </article>
       <article class="studie" id="q-zhang">
@@ -893,6 +953,7 @@ const lies = () => { try { return JSON.parse(localStorage.getItem(SPEICHER)) || 
 const schreib = d => { try { localStorage.setItem(SPEICHER, JSON.stringify(d)); return true; } catch (e) { return false; } };
 const GESP = lies();
 let MESS = GESP && Array.isArray(GESP.mess) ? GESP.mess.filter(m => m && m.b > 0 && /^\d{4}-\d\d-\d\d$/.test(m.d)) : [], PLAN = GESP && typeof GESP.plan === "string" ? GESP.plan : "";
+let WARUM = GESP && Array.isArray(GESP.warum) ? GESP.warum.filter(x => typeof x === "string") : [];
 if (GESP && GESP.v) MERK.forEach(k => { if (k in GESP.v && typeof GESP.v[k] === typeof V[k]) V[k] = GESP.v[k]; });
 const FELD = [["alter", "Alter", "Jahre", 1, 18, 95], ["groesse", "Körpergröße", "cm", 1, 120, 220], ["bauch", "Bauchumfang", "cm", 1, 50, 200]];
 FELD.forEach(([k, l, u, st, mi, ma]) => {
@@ -1028,6 +1089,7 @@ function zeigeCheck() {
     return `<li><span>${r.n} <a href="#${r.q}">${r.qt}</a></span><span class="rb" aria-hidden="true"><i class="lo" style="left:0;width:${z / maxR * 100}%"></i><i style="left:0;width:${a / maxR * 100}%"></i></span><b>− ${spanne(a * 100, z * 100, v => fmt(v) + " %")}</b></li>`; }).join("");
   zeigeZucker();
   zeigeTafel();
+  zeigeGlueck();
   zeigeWeg();
 }
 // Langzeitzucker: gleiche Logik wie beim Bauch. Ziel unter 5,7 %; bei Diabetes (oder ab 6,5 %) unter 7,0 % wie im Rechner oben.
@@ -1071,6 +1133,7 @@ const T_FARBE = ["#6aaa7c", "#a9cf7a", "#e2cc62", "#e8a453", "#df7a45", "#cc5438
 // grob auf Taille/Größe übertragen: unter 0,5 normal, 0,55 Übergewicht, 0,65 Adipositas I, ab 0,75 Adipositas II
 const GUT = [[0.5, 0.81], [0.55, 0.76], [0.65, 0.64], [0.75, 0.53]];
 let T_WAHL = null;
+const anteil = w => ip(GUT, Math.min(0.75, Math.max(0.5, w)));
 function farbe(t) {
   const x = Math.min(1, Math.max(0, t)) * (T_FARBE.length - 1), i = Math.min(T_FARBE.length - 2, Math.floor(x)), f = x - i;
   const a = T_FARBE[i].match(/\w\w/g).map(v => parseInt(v, 16)), b = T_FARBE[i + 1].match(/\w\w/g).map(v => parseInt(v, 16));
@@ -1119,7 +1182,6 @@ function zeigeTafel() {
   }
   const G = {}; ["lo", "mid", "hi"].forEach(v => { const a = rechne(V, v), b = rechne(ziel, v); G[v] = { j: a.yll - b.yll, k: a.kasse - b.kasse, g: a.ges - b.ges, rest: b.e1 }; });
   const J = [G.lo.j, G.mid.j, G.hi.j].map(v => Math.max(0, v)), jm = G.mid.j;
-  const anteil = w => ip(GUT, Math.min(0.75, Math.max(0.5, w)));
   const fenster = V.alter < 75 ? 75 - Math.max(V.alter, 50) : 0, gutJ = (anteil(bauchT / g) - anteil(V.bauch / g)) * fenster;
   const beschr = [];
   if (bauchT < V.bauch) beschr.push(`Bauch von ${cm(V.bauch)} auf ${cm(Math.round(bauchT))}`);
@@ -1142,10 +1204,71 @@ function zeigeTafel() {
   $("t_alltag").innerHTML = teile.length ? `<b>Im Alltag heißt das:</b> ${und ? teile[0] + " " + teile.slice(1).join(", ") : teile.join(", ")}.` : "";
 }
 
+// ---------- Gesund und glücklich: Aufwärtsspirale und „Mein Warum“ ----------
+const WARUM_OPT = ["Zeit mit Kindern oder Enkeln", "Reisen", "Sport und Natur", "Garten", "Freunde und Familie", "Ehrenamt", "Lange fit im Beruf", "Unabhängig bleiben im Alter"];
+const G_FARBE = ["#c98a00", "#a99a1c", "#6f9f3a", "#2f9563", "#1d7a46"];
+function zeichneSpirale() {
+  const svg = $("g_spirale"); if (svg.dataset.fertig) return;
+  const N = 140, T = 2.6 * 2 * Math.PI, P = i => { const th = i / N * T; return [120 + 92 * Math.sin(th), 300 - th * 15.5 + 18 * Math.cos(th), Math.cos(th)]; };
+  let h = `<defs><linearGradient id="g_grad" gradientUnits="userSpaceOnUse" x1="0" y1="320" x2="0" y2="20"><stop offset="0" stop-color="${G_FARBE[0]}"/><stop offset="1" stop-color="${G_FARBE[4]}"/></linearGradient>
+    <marker id="g_pfeil" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="3.2" markerHeight="3.2" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${G_FARBE[4]}"/></marker></defs>`;
+  // hinten liegende Bögen blasser, vorne kräftig
+  let seg = [], vorne = P(0)[2] >= 0;
+  const flush = () => { if (seg.length > 1) h += `<path d="M${seg.map(q => q[0].toFixed(1) + "," + q[1].toFixed(1)).join("L")}" fill="none" stroke="url(#g_grad)" stroke-width="${vorne ? 9 : 5}" stroke-linecap="round" opacity="${vorne ? 1 : .35}"/>`; };
+  for (let i = 0; i <= N; i++) { const q = P(i), v = q[2] >= 0; if (v !== vorne) { seg.push(q); flush(); seg = [q]; vorne = v; } else seg.push(q); }
+  flush();
+  const e = P(N), e0 = P(N - 3); h += `<path d="M${e0[0]},${e0[1]}L${e[0]},${e[1]}" stroke="${G_FARBE[4]}" stroke-width="9" marker-end="url(#g_pfeil)"/>`;
+  [0.04, 0.27, 0.5, 0.72, 0.93].forEach((f, k) => { const q = P(Math.round(f * N)); h += `<circle cx="${q[0]}" cy="${q[1]}" r="15" fill="${G_FARBE[k]}" stroke="var(--panel)" stroke-width="3"/><text x="${q[0]}" y="${q[1]}">${k + 1}</text>`; });
+  svg.innerHTML = h; svg.dataset.fertig = 1;
+}
+function zeigeGlueck() {
+  zeichneSpirale();
+  const g = V.groesse, gruenB = V.bauch < gruenCm(), gruenH = V.hba1c < (V.dm || V.hba1c >= 6.5 ? 7 : 5.7);
+  const eB = $("c_etappe").querySelector(".v"), eH = $("c_hetappe").querySelector(".v");
+  const werte = gruenB && gruenH ? "Deine Werte sind im grünen Bereich. Halten ist jetzt dein Erfolg."
+    : `Dein nächstes Etappenziel: ${[!gruenB && eB ? `Bauch <strong>${eB.textContent}</strong>` : "", !gruenH && eH ? `Langzeitzucker <strong>${eH.textContent}</strong>` : ""].filter(Boolean).join(" und ")}.`;
+  const fenster = V.alter < 75 ? 75 - Math.max(V.alter, 50) : 0, gutJ = (anteil(Math.min(V.bauch, g * 0.5) / g) - anteil(V.bauch / g)) * fenster;
+  const jahre = gutJ >= 0.3 ? `Bis zu deinem Ziel sind das grob geschätzt <strong>+ ${spanne(gutJ * 0.75, gutJ * 1.4, v => fmt(v, 1) + " Jahre")} bei guter Gesundheit</strong> bis 75. ` : "";
+  const st = [
+    ["Ein kleiner Schritt", "Zum Beispiel 10 Minuten gehen nach dem Essen oder Wasser statt Limo. Einen fertigen Plan findest du oben unter „Mein Weg“."],
+    ["Bessere Stimmung", `Bewegung hilft deutlich gegen Niedergeschlagenheit und Angst, das zeigen über 1.000 Studien (<a href="#q-singh">Singh 2023</a>). Und wer mehr Obst und Gemüse isst, wird messbar zufriedener (<a href="#q-mujcic">Mujcic und Oswald 2016</a>).`],
+    ["Mehr Kraft für den nächsten Schritt", "Wer sich besser fühlt, bleibt leichter dran. So wird aus einem Schritt eine Gewohnheit, ganz ohne Verbote."],
+    ["Bessere Werte", werte],
+    ["Mehr gute Jahre", `${jahre}Mit gesundem Gewicht verbringen Menschen zwischen 50 und 75 rund 7 Jahre mehr bei guter Gesundheit (<a href="#q-stenholm">Stenholm 2017</a>). Und zufriedene Menschen leben im Schnitt länger (<a href="#q-chida">Chida und Steptoe 2008</a>). Die Spirale dreht sich weiter.`],
+  ];
+  $("g_stationen").innerHTML = st.map(([t, x], k) => `<li${k === 4 ? ' class="top"' : ""}><span style="background:${G_FARBE[k]}">${k + 1}</span><b>${t}</b><p>${x}</p></li>`).join("");
+  $("g_warum").innerHTML = WARUM_OPT.map((w, i) => `<button type="button" data-w="${i}" aria-pressed="${WARUM.includes(w)}">${w}</button>`).join("");
+  $("g_warum").querySelectorAll("button").forEach(b => b.onclick = () => { const w = WARUM_OPT[+b.dataset.w]; WARUM = WARUM.includes(w) ? WARUM.filter(x => x !== w) : [...WARUM, w]; speichern(); zeigeGlueck(); });
+  const liste = WARUM.length > 1 ? WARUM.slice(0, -1).join(", ") + " und " + WARUM[WARUM.length - 1] : WARUM[0];
+  $("g_warumtxt").innerHTML = WARUM.length ? `Mein Warum: Mehr gesunde Jahre für ${liste.replace(/^Zeit/, "Zeit").replace(/^Lange/, "lange").replace(/^Unabhängig/, "unabhängig")}.` : "";
+}
+
+// ---------- Teilen: nur der Link, keine persönlichen Werte ----------
+const TEILEN = {
+  rechner: { url: "https://tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner/", titel: "Mein Bauch-Check",
+    text: "Schau mal, der Bauch-Check zeigt, was jeder Zentimeter und jeder Zehntelpunkt beim Zucker bringt. Kostenlos, deine Werte bleiben auf deinem Gerät:" },
+  broschuere: { url: "https://tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner/broschuere-kleine-schritte-grosse-wirkung.pdf", titel: "Kleine Schritte, große Wirkung",
+    text: "Eine kurze Broschüre mit kleinen Schritten für einen gesünderen Bauch und Zucker:" } };
+let TEIL_WAS = "rechner";
+function zeigeTeilen(ok) {
+  const t = TEILEN[TEIL_WAS];
+  $("s_was").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.was === TEIL_WAS));
+  $("s_wa").href = "https://wa.me/?text=" + encodeURIComponent(t.text + " " + t.url);
+  $("s_mail").href = "mailto:?subject=" + encodeURIComponent(t.titel) + "&body=" + encodeURIComponent(t.text + "\n" + t.url);
+  $("s_share").hidden = !navigator.share;
+  $("s_ok").textContent = ok || "";
+}
+$("s_was").querySelectorAll("button").forEach(b => b.onclick = () => { TEIL_WAS = b.dataset.was; zeigeTeilen(); });
+$("s_share").addEventListener("click", async () => { const t = TEILEN[TEIL_WAS]; try { await navigator.share({ title: t.titel, text: t.text, url: t.url }); zeigeTeilen("Danke fürs Weitersagen!"); } catch (e) {} });
+$("s_copy").addEventListener("click", async () => { const t = TEILEN[TEIL_WAS];
+  try { await navigator.clipboard.writeText(t.url); zeigeTeilen("Link kopiert. Jetzt einfach in eine Nachricht einfügen."); }
+  catch (e) { zeigeTeilen("Kopieren ging nicht. Der Link lautet: " + t.url); } });
+zeigeTeilen();
+
 // ---------- Mein Weg: Messungen nur im eigenen Browser ----------
 const heute = () => new Date().toISOString().slice(0, 10);
 const datumT = d => d.split("-").reverse().slice(0, 2).join(".");
-function speichern() { if (!MESS.length && !PLAN) return; schreib({ mess: MESS, plan: PLAN, v: Object.fromEntries(MERK.map(k => [k, V[k]])) }); }
+function speichern() { if (!MESS.length && !PLAN && !WARUM.length) return; schreib({ mess: MESS, plan: PLAN, warum: WARUM, v: Object.fromEntries(MERK.map(k => [k, V[k]])) }); }
 function abzeichen() {
   const basis = MESS.length ? Math.max(MESS[0].b, V.bauchVor || 0) : V.bauchVor || 0, weg = basis ? basis - V.bauch : 0;
   return [["1.", "Erste Messung", MESS.length >= 1], ["3×", "Dreimal gemessen", MESS.length >= 3], ["−1", "1 cm weniger", weg >= 1], ["−3", "Erste Etappe", weg >= 3],
@@ -1184,7 +1307,7 @@ $("c_save").addEventListener("click", () => {
     V.bauch === letzte ? "Gehalten. Auch das ist ein Erfolg." : "Gespeichert. Schwankungen sind normal, dein Weg zählt, nicht ein einzelner Tag.";
   syncFelder(); run(); zeigeWeg(t + extra);
 });
-$("c_del").addEventListener("click", () => { try { localStorage.removeItem(SPEICHER); } catch (e) {} MESS = []; PLAN = ""; zeigeWeg("Gespeicherte Messungen gelöscht."); });
+$("c_del").addEventListener("click", () => { try { localStorage.removeItem(SPEICHER); } catch (e) {} MESS = []; PLAN = ""; WARUM = []; zeigeGlueck(); zeigeWeg("Gespeicherte Messungen gelöscht."); });
 
 // ---------- Rechenkern ----------
 const ip = (tab, x) => { if (x <= tab[0][0]) return tab[0][1]; for (let i = 1; i < tab.length; i++) if (x <= tab[i][0]) { const [x0, y0] = tab[i - 1], [x1, y1] = tab[i]; return y0 + (y1 - y0) * (x - x0) / (x1 - x0); } return tab[tab.length - 1][1]; };
