@@ -334,6 +334,50 @@ details.grp > summary { font-size: 14.5px }
 .hk-btn:hover{filter:brightness(1.08)}.hk-btn.ghost:hover{border-color:var(--mid)}
 .hk-sprung{margin:0;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
 @media (max-width:900px){.sitenav.flush ~ .wrap > header.kopf{grid-template-columns:1fr}.sitenav.flush ~ .wrap > header.kopf > .hefte{grid-column:1}}
+/* Neuer Aufbau: fünf Teile mit Leitsatz, Sprungleiste, Hintergrund zugeklappt */
+.teile-nav{position:sticky;top:0;z-index:20;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:8px 10px;margin:0 -2px;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.teile-nav::-webkit-scrollbar{display:none}
+.teile-nav a{flex:none;text-decoration:none;font-weight:700;font-size:14px;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 14px}
+.teile-nav a.on{background:var(--mid);border-color:var(--mid);color:#17201e}
+.teil-kopf{display:flex;gap:16px;align-items:center;margin-top:20px;padding:4px 0 2px;scroll-margin-top:64px}
+.teil-n{flex:none;width:52px;height:52px;border-radius:14px;background:var(--tc);color:#fff;font:800 28px/52px var(--display);text-align:center}
+.teil-t{font-size:clamp(24px,3vw,32px);font-weight:800}
+.teil-l{color:var(--muted);font-size:17px;margin-top:2px}
+[id^="q-"],#genauer,#glueck,#check,#bauchindex,#zucker,#allegesund,#rechenweg,#studien,#fazit{scroll-margin-top:64px}
+.unter{font-size:19px;margin-top:6px}.unter-l{margin-top:-14px}
+details.mehr{border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+details.mehr > summary{cursor:pointer;font-weight:700;padding:12px 16px 12px 50px;list-style:none;display:block;position:relative;white-space:normal}
+details.mehr > summary::before{position:absolute;left:16px;top:10px}
+details.mehr > summary::-webkit-details-marker,details.hg > summary::-webkit-details-marker{display:none}
+details.mehr > summary::before,details.hg > summary::before{content:"+";flex:none;width:24px;height:24px;border-radius:50%;background:var(--field);border:1px solid var(--line);text-align:center;font:700 16px/22px var(--body);color:var(--ok)}
+details.mehr[open] > summary::before,details.hg[open] > summary::before{content:"−"}
+details.mehr > .cols,details.mehr > .mehr-in{padding:0 16px 16px}
+.panel details.mehr{background:var(--field)}
+.mehr-in{display:grid;gap:16px;min-width:0;grid-template-columns:minmax(0,1fr)}
+details.mehr{min-width:0;max-width:100%}
+details.hg{display:block}
+details.hg > summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:12px}
+details.hg > summary h2{font-size:19px}
+details.hg[open] > summary{margin-bottom:16px}
+details.hg[open]{display:grid}
+.bi-liste.kurz .bi-row:nth-child(n+6):nth-last-child(n+6){display:none}
+.bi-alle{justify-self:start}
+.hk-mehr{font-size:14.5px;color:var(--muted)}
+.st-filter{flex-wrap:wrap}
+.studien.kurz .studie:not(.auf) > :not(h3,.wer){display:none}
+.studien .studie{cursor:pointer}
+.studien .studie h3::after{content:" +";color:var(--ok)}
+.studien .studie.auf h3::after{content:" −"}
+.studie[hidden]{display:none!important}
+.fazit{border:2px solid var(--ok);background:linear-gradient(135deg,var(--hl),var(--panel));margin-top:20px}
+.fz-zahlen{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.fz-zahlen > div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.fz-zahlen small{display:block;font:700 12px/1.2 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fz-zahlen b{display:block;font:800 24px/1.15 var(--display);margin-top:4px;color:var(--good)}
+.fz-zahlen span{font-size:13.5px;color:var(--muted)}
+.fz-etappe{font-size:17px}
+.fz-btns{display:flex;flex-wrap:wrap;gap:8px}
+@media print{.teile-nav,.fazit .fz-btns{display:none!important}.teil-kopf{margin-top:8px}.studien.kurz .studie > *{display:revert!important}}
 </style>
 <style id="sitenav-css">
 .sitenav{background:#12372a;color:#fbf8f1;font:600 15px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
@@ -431,6 +475,9 @@ h1,h2,h3{break-after:avoid}
     </aside>
   </header>
 
+  <nav class="teile-nav" aria-label="Teile dieser Seite"><a href="#teil-check">Dein Check</a><a href="#teil-glueck">Glücklich</a><a href="#teil-essen">Essen</a><a href="#teil-alle">Für alle</a><a href="#teil-hintergrund">Hintergrund</a><a href="#fazit">Auf einen Blick</a></nav>
+
+  <div class="teil-kopf" id="teil-check" style="--tc:var(--ok)"><span class="teil-n">1</span><div><h2 class="teil-t">Dein Check</h2><p class="teil-l">Jeder Zentimeter zählt, und du siehst sofort, was er dir bringt.</p></div></div>
   <section class="panel check" id="check" aria-labelledby="check_h">
     <div class="check-grid">
       <div class="grp check-ein">
@@ -511,7 +558,7 @@ h1,h2,h3{break-after:avoid}
         <div class="gw-tiles vier" id="t_tiles"></div>
         <p class="gw-sub" id="t_alltag"></p>
       </div>
-      <p class="hinweis">Mehr gesunde Jahre heißt auch mehr gute Zeit. Wie Gesundheit und Glück sich gegenseitig verstärken, zeigt <a href="#glueck">der nächste Abschnitt</a>. Alle Zahlen sind Schätzbereiche, keine Vorhersage für dich.</p>
+      <p class="hinweis">Mehr gesunde Jahre heißt auch mehr gute Zeit. Wie Gesundheit und Glück sich gegenseitig verstärken, zeigt <a href="#teil-glueck">Teil 2</a>. Alle Zahlen sind Schätzbereiche, keine Vorhersage für dich.</p>
     </div>
 
     <div class="weg">
@@ -528,57 +575,8 @@ h1,h2,h3{break-after:avoid}
     </div>
   </section>
 
-  <section class="panel glueck" id="glueck" aria-labelledby="glueck_h">
-    <h2 id="glueck_h">Gesund und glücklich: Deine Aufwärtsspirale</h2>
-    <p class="lead">Gesundheit und Glück verstärken sich gegenseitig. Jeder kleine Schritt dreht die Spirale ein Stück weiter nach oben.</p>
-    <div class="spirale-grid">
-      <svg id="g_spirale" viewBox="0 0 240 330" role="img" aria-label="Spirale, die von unten nach oben steigt, mit fünf Stationen"></svg>
-      <ol class="spirale" id="g_stationen"></ol>
-    </div>
-    <div class="warum">
-      <h3>Mein Warum: Wofür will ich die gesunden Jahre?</h3>
-      <p class="note">Wer weiß, wofür er es tut, bleibt leichter dran. Tipp an, was dir wichtig ist, gern mehreres.</p>
-      <div class="chips" id="g_warum"></div>
-      <p class="warum-satz" id="g_warumtxt" aria-live="polite"></p>
-    </div>
-    <div class="teilen">
-      <h3>Nimm jemanden mit</h3>
-      <p class="note">Zu zweit fällt jeder Schritt leichter: Wer mit Freunden abnimmt, hält sein Gewicht viel öfter, 66 % statt 24 % (<a href="#q-wing">Wing und Jeffery 1999</a>). Bei Diabetes senkt Begleitung durch andere Betroffene den Langzeitzucker um rund 0,6 Punkte (<a href="#q-qi">Qi 2015</a>). Lade jemanden ein, Freunde, Familie, Nachbarn oder Kollegen. Rechner und Broschüre sind beide kostenfrei. Geteilt wird nur die Einladung mit dem Link, nie deine Werte.</p>
-      <div class="gemeinsam">
-        <p class="k">Was wollt ihr zusammen machen?</p>
-        <div class="chips" id="m_akt"></div>
-        <figure class="akt-bild"><img id="m_bild" src="bilder/x_gehen.jpg" alt="" width="720" height="360" loading="lazy" decoding="async"></figure>
-        <p class="k">Wie oft?</p>
-        <div class="chips" id="m_oft"></div>
-        <blockquote class="einladung" id="m_text"></blockquote>
-      </div>
-      <div class="seg" role="group" aria-label="Was teilen?" id="s_was"><button type="button" data-was="einladung" aria-pressed="true">Einladung</button><button type="button" data-was="rechner" aria-pressed="false">Rechner</button><button type="button" data-was="broschuere" aria-pressed="false">Broschüre</button></div>
-      <div class="teil-knoepfe">
-        <button type="button" class="btn" id="s_share" hidden>Teilen …</button>
-        <a class="btn alt" id="s_wa" target="_blank" rel="noopener">WhatsApp</a>
-        <a class="btn alt" id="s_mail">E-Mail</a>
-        <button type="button" class="btn alt" id="s_copy">Link kopieren</button>
-      </div>
-      <p class="note" id="s_ok" role="status"></p>
-      <div class="dabei">
-        <span>Bei mir sind schon dabei:</span>
-        <div class="st-row mini"><button type="button" class="st-b" id="m_minus" aria-label="eine Person weniger">−</button><output id="m_zahl" aria-live="polite">0</output><button type="button" class="st-b" id="m_plus" aria-label="eine Person mehr">+</button></div>
-        <span class="note" id="m_dabeitxt"></span>
-      </div>
-    </div>
-    <div class="schneeball">
-      <figure class="akt-bild kette-bild"><img src="bilder/x_kette.jpg" alt="Eine fröhliche Gruppe wandert gemeinsam durch den Herbstwald" width="960" height="400" loading="lazy" decoding="async"></figure>
-      <h3>Die Gesundheitskette: Einer fängt an. Alle gewinnen.</h3>
-      <p class="note">Gewohnheiten stecken an: Hört ein Freund auf zu rauchen, sinkt die eigene Wahrscheinlichkeit zu rauchen um 36 % (<a href="#q-christakis">Christakis und Fowler 2008</a>). Gehgruppen senken Blutdruck, BMI und Niedergeschlagenheit, und drei von vier bleiben dabei (<a href="#q-hanson">Hanson und Jones 2015</a>). Du nimmst jemanden mit, und jede Person nimmt wieder jemanden mit. Wie viele nimmt jede Person mit?</p>
-      <div class="seg" role="group" aria-label="Personen pro Runde" id="m_je"><button type="button" data-je="1">1</button><button type="button" data-je="2" aria-pressed="true">2</button><button type="button" data-je="3">3</button></div>
-      <div class="sb-runden" id="m_runden"></div>
-      <p class="gw-sub" id="m_summe"></p>
-    </div>
-    <p class="hinweis">Die Studien zeigen Zusammenhänge in großen Gruppen, keinen Beweis für jeden Einzelnen. <a href="#q-singh">Singh 2023</a>, <a href="#q-mujcic">Mujcic und Oswald 2016</a>, <a href="#q-stenholm">Stenholm 2017</a>, <a href="#q-chida">Chida und Steptoe 2008</a>, <a href="#q-wing">Wing und Jeffery 1999</a>, <a href="#q-qi">Qi 2015</a>, <a href="#q-christakis">Christakis und Fowler 2008</a>, <a href="#q-hanson">Hanson und Jones 2015</a>.</p>
-  </section>
-
-  <div class="eyebrow" id="genauer" style="margin-top:8px">Genauer rechnen</div>
-  <p class="note" style="margin-top:-16px">Mit Alter, Geschlecht, Langzeitzucker und Lebensstil. Bei jedem kleinen <b>i</b> steht, was eine Zahl bedeutet und woher sie kommt. Ganz unten: <a href="#rechenweg">der Rechenweg mit deinen Zahlen</a>, <a href="#bauchindex">der Bauch-Index für Lebensmittel</a> und <a href="#studien">jede Studie einzeln</a>.</p>
+  <h3 class="unter" id="genauer">Genauer rechnen: Alter, Geschlecht und Lebensstil</h3>
+  <p class="note unter-l">Mit Alter, Geschlecht, Langzeitzucker und Lebensstil. Bei jedem kleinen <b>i</b> steht, was eine Zahl bedeutet und woher sie kommt. Ganz unten: <a href="#rechenweg">der Rechenweg mit deinen Zahlen</a>, <a href="#bauchindex">der Bauch-Index für Lebensmittel</a> und <a href="#studien">jede Studie einzeln</a>.</p>
 
   <div class="main">
     <div class="panel">
@@ -637,6 +635,7 @@ h1,h2,h3{break-after:avoid}
     </div>
   </div>
 
+  <details class="mehr" id="kurven"><summary>Die Kurven ansehen: Bauch und Langzeitzucker</summary>
   <div class="cols">
     <div class="panel">
       <h2>Bauch: Taille geteilt durch Körpergröße</h2>
@@ -651,13 +650,66 @@ h1,h2,h3{break-after:avoid}
       <p class="note">Statistisch verlorene Lebensjahre nur durch den Blutzucker, bei gesundem Bauchumfang. Unter 5,7 % steigt das Risiko kaum, in der Vorstufe (5,7 bis 6,4 %) leicht, ab 6,5 % (Diabetes) deutlich (der Übergang ist in der Kurve zwischen 6 und 7 % geglättet), und jeder Prozentpunkt über 7 % kostet weitere Jahre. Quellen: <a href="#q-zhong">Zhong 2016</a>, <a href="#q-huang">Huang 2016</a>, <a href="#q-erfc">ERFC 2023</a>, <a href="#q-zhang">Zhang 2012</a>.</p>
     </div>
   </div>
+  </details>
 
+  <div class="teil-kopf" id="teil-glueck" style="--tc:var(--good)"><span class="teil-n">2</span><div><h2 class="teil-t">Gesund und glücklich</h2><p class="teil-l">Das eine stärkt das andere. Und zusammen geht es leichter.</p></div></div>
+  <section class="panel glueck" id="glueck" aria-labelledby="glueck_h">
+    <h2 id="glueck_h">Gesund und glücklich: Deine Aufwärtsspirale</h2>
+    <p class="lead">Gesundheit und Glück verstärken sich gegenseitig. Jeder kleine Schritt dreht die Spirale ein Stück weiter nach oben.</p>
+    <div class="spirale-grid">
+      <svg id="g_spirale" viewBox="0 0 240 330" role="img" aria-label="Spirale, die von unten nach oben steigt, mit fünf Stationen"></svg>
+      <ol class="spirale" id="g_stationen"></ol>
+    </div>
+    <div class="warum">
+      <h3>Mein Warum: Wofür will ich die gesunden Jahre?</h3>
+      <p class="note">Wer weiß, wofür er es tut, bleibt leichter dran. Tipp an, was dir wichtig ist, gern mehreres.</p>
+      <div class="chips" id="g_warum"></div>
+      <p class="warum-satz" id="g_warumtxt" aria-live="polite"></p>
+    </div>
+    <div class="teilen">
+      <h3>Nimm jemanden mit</h3>
+      <p class="note">Zu zweit fällt jeder Schritt leichter: Wer mit Freunden abnimmt, hält sein Gewicht viel öfter, 66 % statt 24 % (<a href="#q-wing">Wing und Jeffery 1999</a>). Bei Diabetes senkt Begleitung durch andere Betroffene den Langzeitzucker um rund 0,6 Punkte (<a href="#q-qi">Qi 2015</a>). Lade jemanden ein, Freunde, Familie, Nachbarn oder Kollegen. Rechner und Broschüre sind beide kostenfrei. Geteilt wird nur die Einladung mit dem Link, nie deine Werte.</p>
+      <div class="gemeinsam">
+        <p class="k">Was wollt ihr zusammen machen?</p>
+        <div class="chips" id="m_akt"></div>
+        <figure class="akt-bild"><img id="m_bild" src="bilder/x_gehen.jpg" alt="" width="720" height="360" loading="lazy" decoding="async"></figure>
+        <p class="k">Wie oft?</p>
+        <div class="chips" id="m_oft"></div>
+        <blockquote class="einladung" id="m_text"></blockquote>
+      </div>
+      <div class="seg" role="group" aria-label="Was teilen?" id="s_was"><button type="button" data-was="einladung" aria-pressed="true">Einladung</button><button type="button" data-was="rechner" aria-pressed="false">Rechner</button><button type="button" data-was="broschuere" aria-pressed="false">Broschüre</button></div>
+      <div class="teil-knoepfe">
+        <button type="button" class="btn" id="s_share" hidden>Teilen …</button>
+        <a class="btn alt" id="s_wa" target="_blank" rel="noopener">WhatsApp</a>
+        <a class="btn alt" id="s_mail">E-Mail</a>
+        <button type="button" class="btn alt" id="s_copy">Link kopieren</button>
+      </div>
+      <p class="note" id="s_ok" role="status"></p>
+      <div class="dabei">
+        <span>Bei mir sind schon dabei:</span>
+        <div class="st-row mini"><button type="button" class="st-b" id="m_minus" aria-label="eine Person weniger">−</button><output id="m_zahl" aria-live="polite">0</output><button type="button" class="st-b" id="m_plus" aria-label="eine Person mehr">+</button></div>
+        <span class="note" id="m_dabeitxt"></span>
+      </div>
+    </div>
+    <div class="schneeball">
+      <figure class="akt-bild kette-bild"><img src="bilder/x_kette.jpg" alt="Eine fröhliche Gruppe wandert gemeinsam durch den Herbstwald" width="960" height="400" loading="lazy" decoding="async"></figure>
+      <h3>Die Gesundheitskette: Einer fängt an. Alle gewinnen.</h3>
+      <p class="note">Gewohnheiten stecken an: Hört ein Freund auf zu rauchen, sinkt die eigene Wahrscheinlichkeit zu rauchen um 36 % (<a href="#q-christakis">Christakis und Fowler 2008</a>). Gehgruppen senken Blutdruck, BMI und Niedergeschlagenheit, und drei von vier bleiben dabei (<a href="#q-hanson">Hanson und Jones 2015</a>). Du nimmst jemanden mit, und jede Person nimmt wieder jemanden mit. Wie viele nimmt jede Person mit?</p>
+      <div class="seg" role="group" aria-label="Personen pro Runde" id="m_je"><button type="button" data-je="1">1</button><button type="button" data-je="2" aria-pressed="true">2</button><button type="button" data-je="3">3</button></div>
+      <div class="sb-runden" id="m_runden"></div>
+      <p class="gw-sub" id="m_summe"></p>
+    </div>
+    <p class="hinweis">Die Studien zeigen Zusammenhänge in großen Gruppen, keinen Beweis für jeden Einzelnen. <a href="#q-singh">Singh 2023</a>, <a href="#q-mujcic">Mujcic und Oswald 2016</a>, <a href="#q-stenholm">Stenholm 2017</a>, <a href="#q-chida">Chida und Steptoe 2008</a>, <a href="#q-wing">Wing und Jeffery 1999</a>, <a href="#q-qi">Qi 2015</a>, <a href="#q-christakis">Christakis und Fowler 2008</a>, <a href="#q-hanson">Hanson und Jones 2015</a>.</p>
+  </section>
+
+  <div class="teil-kopf" id="teil-essen" style="--tc:var(--mid)"><span class="teil-n">3</span><div><h2 class="teil-t">Was auf den Teller kommt</h2><p class="teil-l">Erkennen statt zählen: Was satt macht und was den Bauch wachsen lässt.</p></div></div>
   <div class="panel" id="bauchindex">
-    <div class="eyebrow">Was auf den Teller kommt</div>
-    <h2>Der Bauch-Index: Welche Lebensmittel helfen und welche belasten</h2>
+        <h2>Der Bauch-Index: Welche Lebensmittel helfen und welche belasten</h2>
     <p>Drei große US-Langzeitstudien haben über 120.000 Menschen 20 Jahre lang begleitet und alle vier Jahre gefragt, was sie essen und wie viel sie wiegen (<a href="#q-mozaffarian">Mozaffarian u. a. 2011</a>). Die Balken zeigen, wie viel mehr oder weniger Menschen in vier Jahren zunahmen, wenn sie von einem Lebensmittel täglich eine Portion mehr aßen. Zum Vergleich: Im Durchschnitt nahmen alle rund 1,5 kg in vier Jahren zu.</p>
     <div class="legend"><span><i class="sq" style="background:var(--good)"></i>hilft beim Schlankbleiben</span><span><i class="sq" style="background:var(--risk)"></i>belastet</span></div>
-    <div class="bi-liste" id="bi_liste"></div>
+    <div class="bi-liste kurz" id="bi_liste"></div>
+    <button type="button" class="linkbtn bi-alle" id="bi_alle" aria-controls="bi_liste" aria-expanded="false">Alle 19 Lebensmittel zeigen</button>
+    <p class="hk-mehr">Mehr im Lebensmittel-Ratgeber: <a href="ratgeber/#bauch-index">Bauch-Index mit 30 Lebensmitteln</a> · <a href="ratgeber/#bananen">So satt wie 2 Bananen</a> · <a href="ratgeber/#tauschliste">Die 20 besten Tausche</a></p>
     <div class="tausch">
       <h3>Tausch-Rechner: Ein Tausch pro Tag</h3>
       <div class="row2">
@@ -669,9 +721,14 @@ h1,h2,h3{break-after:avoid}
     <p class="note"><b>Gut zu wissen:</b> Der Index zeigt die Richtung, keine genauen Zentimeter. Er beschreibt Zusammenhänge im Durchschnitt vieler Menschen. Kalorien allein sagen wenig: Nüsse und Joghurt haben viele Kalorien und hingen trotzdem mit weniger Zunahme zusammen. Was zählt, ist, wie satt ein Lebensmittel macht, wie es den Blutzucker bewegt und was man stattdessen isst. Ob es bei dir wirkt, zeigt dein Maßband. Ausführlich mit allen 30 gemessenen Lebensmitteln steht der Bauch-Index im Lebensmittel-Ratgeber „Erkennen statt zählen“: <a href="ratgeber/#bauch-index">Bauch-Index</a> und <a href="ratgeber/#bananen">So satt wie 2 Bananen</a>. Einkaufszettel und Rezepte gibt es in der Broschüre „Kleine Schritte. Große Wirkung.“: <a href="broschuere/">online lesen</a> oder <a href="broschuere-kleine-schritte-grosse-wirkung.pdf" download>als PDF</a>.</p>
   </div>
 
+  <div class="teil-kopf" id="teil-alle" style="--tc:var(--risk)"><span class="teil-n">4</span><div><h2 class="teil-t">Was es uns allen bringt</h2><p class="teil-l">Gesündere Menschen, gesündere Kassen: was eine Zuckerabgabe und ein gesünderes Land bringen könnten.</p></div></div>
   <div class="panel" id="zucker">
-    <div class="eyebrow">Für alle gerechnet</div>
-    <h2>Was eine Zuckerabgabe bringt und was gesunde Ernährung insgesamt bringen könnte</h2>
+        <h2>Was eine Zuckerabgabe bringt und was gesunde Ernährung insgesamt bringen könnte</h2>
+<div class="tiles t3" id="tiles_z"></div>
+    <div class="legend" id="lg_z"></div>
+    <div class="chart" id="c_z"></div>
+    <details class="mehr"><summary>Wie das gerechnet ist: Großbritannien, Pläne der Regierung, Regler und Tabelle</summary>
+    <div class="mehr-in">
     <p>Großbritannien erhebt seit 2018 eine Abgabe auf gesüßte Getränke, gestaffelt nach dem Zuckergehalt. Die Hersteller haben daraufhin ihre Rezepte geändert: Der Zucker in den betroffenen Getränken sank um mehr als 40 %, und bei Mädchen in der 6. Klasse ging Fettleibigkeit um rund 8 % zurück. Für Deutschland hat ein Team der TU München und der Universität Oxford das 2023 durchgerechnet (<a href="#q-emmert">Emmert-Fees u. a.</a>). Der Rechner schreibt diese Ergebnisse bis 2070 fort und vergleicht sie mit der Abgabe auf allen zugesetzten Zucker aus dem Buch und mit dem, was möglich wäre, wenn sich alle gesund ernähren.</p>
     <p class="warn"><b>Aktueller Stand:</b> Die Bundesregierung plant eine Steuer auf zuckergesüßte Getränke ab 1. Juli 2027: 0,26 € je Liter bei 5 bis unter 8 g Zucker je 100 ml und 0,32 € je Liter ab 8 g. Säfte, Süßstoff- und Milchgetränke sind ausgenommen, der Bundestag muss noch zustimmen, und die Einnahmen (rund 0,7 bis 1,2 Mrd. € im Jahr) sind nicht für Gesundheit zweckgebunden (Stand Oktober 2026, Ärzteblatt, Verbraucherzentrale Hamburg). Das kommt der „Limonaden-Abgabe in Stufen“ unten nahe.</p>
     <p class="note"><b>Grobe Schätzung:</b> Die Studie von Emmert-Fees rechnet nur bis 2043. Alles danach bis 2070 schreibt der Rechner selbst fort. Die großen Summen zeigen die Größenordnung, keine Vorhersage.</p>
@@ -679,19 +736,22 @@ h1,h2,h3{break-after:avoid}
       <div class="range"><label for="r_g">Abgabe auf allen Zucker (Buch): Menschen essen im Schnitt <b id="o_g"></b> Zucker weniger am Tag</label><input id="r_g" type="range" min="2" max="30" step="1" value="12"><small class="note">Heute rund 90 g zugesetzter Zucker am Tag. Die Limonaden-Abgabe allein spart 2,3 g.</small></div>
       <div class="range"><label for="r_r">Volle Wirkung erreicht nach <b id="o_r"></b></label><input id="r_r" type="range" min="10" max="30" step="1" value="20"><small class="note">Krankheiten wie Diabetes entstehen über Jahre, deshalb wirkt gesünderes Essen erst nach und nach.</small></div>
     </div>
-    <div class="tiles t3" id="tiles_z"></div>
-    <div class="legend" id="lg_z"></div>
-    <div class="chart" id="c_z"></div>
+    
     <p class="note">Aufsummierte Einsparung für Krankenkassen und Wirtschaft von 2027 bis 2070, in heutigen Euro, ohne Abzinsung. Gestrichelt: nur der Teil, der bei den Krankenkassen ankommt.</p>
     <div class="tbl"><table id="t_z"></table></div>
     <p class="note">📖 Im Buch: <a href="../buch/kapitel-5.html#7-gesundheitsabgabe-und-gesundheitsbonus">Kapitel 5, Gesundheitsabgabe und Gesundheitsbonus</a> · <a href="../buch/anhang-c.html#ann-ZuckSatz">Anhang C, Zuckerabgabe je Kilogramm</a> · <a href="../buch/kapitel-6.html#zukunftsplan">Kapitel 6, niedrigere Gesundheitsausgaben im Zukunftsplan</a></p>
+    </div></details>
   </div>
 
   <div class="panel" id="allegesund">
-    <div class="eyebrow">Für alle gerechnet</div>
-    <h2>Wenn alle gesund leben: was das bis 2070 bringen könnte</h2>
+        <h2>Wenn alle gesund leben: was das bis 2070 bringen könnte</h2>
     <p>Was wäre, wenn ab 2027 alle gesund essen, niemand mehr raucht, kaum jemand Alkohol trinkt und sich alle genug bewegen? Für jeden dieser Punkte gibt es Studien, die ausrechnen, was er Deutschland heute jedes Jahr kostet: bei den Krankenkassen und in der Wirtschaft durch Krankheitstage, Frührente und frühen Tod. Der Rechner zeigt, wie viel davon bis 2070 zusammenkäme.</p>
     <p class="note"><b>Ehrlich gesagt:</b> Das ist eine Hoffnung, keine Vorhersage. Kein Land der Welt hat das geschafft. Die Zahlen zeigen, wie groß der Schatz ist, der hier liegt, nicht wie viel eine einzelne Maßnahme hebt.</p>
+<div class="tiles t3" id="tiles_a"></div>
+    <div class="legend" id="lg_a"></div>
+    <div class="chart" id="c_a"></div>
+    <details class="mehr"><summary>Annahmen zum Verstellen, Tabellen und was davon beim Staat ankommt</summary>
+    <div class="mehr-in">
     <div class="annahmen" id="annahmen_a">
       <h3>Annahmen zum Verstellen</h3>
       <div class="row2" style="align-items:end">
@@ -710,9 +770,7 @@ h1,h2,h3{break-after:avoid}
         </ul>
       </details>
     </div>
-    <div class="tiles t3" id="tiles_a"></div>
-    <div class="legend" id="lg_a"></div>
-    <div class="chart" id="c_a"></div>
+    
     <p class="note">Aufsummierte Einsparung für Krankenkassen und Wirtschaft von 2027 bis 2070, in Euro der jeweiligen Studie, ohne Abzinsung und ohne Preissteigerung. Jede Linie wächst langsam an, weil Krankheiten erst nach Jahren verschwinden.</p>
     <div class="tbl"><table id="t_a"></table></div>
     <h3>Was davon beim Staat ankommt</h3>
@@ -724,17 +782,18 @@ h1,h2,h3{break-after:avoid}
       <li><b>Wer länger lebt, braucht später auch Pflege und Rente.</b> Ein Teil der Ersparnis bei den Kassen wird in den gewonnenen Lebensjahren wieder ausgegeben (<a href="#q-vanbaal">van Baal 2008</a>). Der Gewinn an gesunden Jahren und an Arbeitskraft bleibt.</li>
       <li><b>Die Schätzungen sind unterschiedlich sicher.</b> Die Kosten des Rauchens und des Alkohols sind gut untersucht. Bei der Bewegung stammt die Zahl aus einem Vergleich zwischen aktiven und inaktiven Menschen; dass Kranke sich weniger bewegen, spielt da mit hinein.</li>
     </ul>
+    </div></details>
   </div>
 
-  <div class="panel" id="rechenweg">
-    <div class="eyebrow">Nachvollziehen</div>
-    <h2>So rechnet der Rechner, Schritt für Schritt mit deinen Zahlen</h2>
+  <div class="teil-kopf" id="teil-hintergrund" style="--tc:var(--muted)"><span class="teil-n">5</span><div><h2 class="teil-t">Hintergrund</h2><p class="teil-l">Zum Nachprüfen: der Rechenweg mit deinen Zahlen, was die Zahlen bedeuten und alle Studien. Zum Aufklappen.</p></div></div>
+  <details class="panel hg" id="rechenweg">
+    <summary><h2>So rechnet der Rechner, Schritt für Schritt mit deinen Zahlen</h2></summary>
     <p>Hier siehst du jeden Rechenschritt mit den Werten, die du oben eingegeben hast. Ändere oben etwas, dann ändern sich auch die Zahlen hier. Hinter jedem Schritt steht die Studie, aus der die Zahl kommt; ein Klick auf den Namen springt zur Erklärung der Studie.</p>
     <ol class="steps" id="rw"></ol>
-  </div>
+  </details>
 
-  <div class="panel">
-    <h2>Was die Zahlen bedeuten und was nicht</h2>
+  <details class="panel hg" id="bedeutung">
+    <summary><h2>Was die Zahlen bedeuten und was nicht</h2></summary>
     <ul class="txt">
       <li><b>Zusammenhang ist nicht gleich Ursache.</b> Die Studien beobachten, dass Menschen mit großem Bauch oder hohem Blutzucker früher sterben. Ein Teil davon geht auf Dinge zurück, die oft zusammen auftreten: Bewegungsmangel, Rauchen, Armut, Veranlagung. Die Studien rechnen das so gut es geht heraus. Dass Abnehmen und ein besserer Blutzucker wirklich helfen, zeigen zusätzlich Versuche mit Programmen und Medikamenten.</li>
       <li><b>Durchschnitt, keine Vorhersage.</b> Wer heute einen großen Bauch hat, kann trotzdem sehr alt werden, und wer schlank ist, kann früh krank werden. Die Zahlen gelten für viele Menschen zusammen, so wie eine Wettervorhersage von 70 % Regen nicht sagt, ob es bei dir regnet.</li>
@@ -743,13 +802,14 @@ h1,h2,h3{break-after:avoid}
       <li><b>Wer früher stirbt, kostet die Krankenkasse in den verlorenen Jahren nichts mehr.</b> Eine Studie aus den Niederlanden (<a href="#q-vanbaal">van Baal u. a. 2008</a>) fand deshalb, dass Menschen mit starkem Übergewicht über das ganze Leben sogar etwas weniger Gesundheitskosten verursachen als gesund Lebende. Der Rechner zeigt diesen Betrag offen als Gegenrechnung. Ein früher Tod ist aber kein Gewinn: verlorene Lebensjahre, Krankheit, Pflege und fehlende Arbeitskraft wiegen schwerer. Warum es trotzdem richtig ist, dass die Gemeinschaft für alle zahlt, auch wenn jemand „selbst schuld“ ist, erklärt das Buch in <a href="../buch/kapitel-5.html#baustein-10-grundschutz-aus-der-steuer-bei-krankheit-arbeits">Kapitel 5, Baustein 10</a>.</li>
       <li><b>Keine ärztliche Beratung.</b> Bei einem HbA1c ab 5,7 % oder einem Bauchumfang über der halben Körpergröße lohnt sich ein Gespräch mit der Hausärztin oder dem Hausarzt. Für Kinder, Jugendliche und Schwangere gilt der Rechner nicht.</li>
     </ul>
-  </div>
+  </details>
 
-  <div class="panel" id="studien">
-    <div class="eyebrow">Die Grundlage</div>
-    <h2>Die Studien hinter dem Rechner, einfach erklärt</h2>
+  <details class="panel hg" id="studien">
+    <summary><h2>Die Studien hinter dem Rechner, einfach erklärt</h2></summary>
     <p>Der Rechner erfindet keine Zahlen. Jede Annahme kommt aus einer veröffentlichten, von anderen Fachleuten geprüften Studie oder aus amtlichen Zahlen. Eingebaut ist nur, wofür es große Studien mit Hunderttausenden Menschen gibt; wo der Rechner selbst etwas annimmt, steht das dabei. Bei jeder Studie steht, was untersucht wurde, was herauskam, wofür der Rechner das nutzt und wo genau in der Studie du die Zahl findest.</p>
-    <div class="studien">
+    <div class="seg st-filter" role="group" aria-label="Studien filtern" id="st_filter"></div>
+    <p class="note">Tippe eine Studie an, um zu lesen, was untersucht wurde und was herauskam.</p>
+    <div class="studien kurz">
       <article class="studie" id="q-risiko">
         <h3>So schätzt der Bauch-Check das Risiko je Krankheit</h3>
         <div class="wer">Eigene Umrechnung aus den fünf Studien darunter</div>
@@ -1013,7 +1073,15 @@ h1,h2,h3{break-after:avoid}
         <div class="fund"><b>Fundstelle:</b> Destatis: Sterbetafel 2021/23 und Gesundheitsausgaben 2024; DDG-Factsheet 2026. <a href="https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Gesundheit/Gesundheitsausgaben/_inhalt.html" target="_blank" rel="noopener">Zur Studie ›</a></div>
       </article>
     </div>
-  </div>
+  </details>
+
+  <section class="panel fazit" id="fazit" aria-labelledby="fazit_h">
+    <h2 id="fazit_h">Dein Ergebnis auf einen Blick</h2>
+    <div class="fz-zahlen" id="fz_zahlen"></div>
+    <p class="fz-etappe" id="fz_etappe"></p>
+    <div class="fz-btns"><button type="button" class="btn" id="fz_save">Messung von heute speichern</button><a class="btn alt" href="#glueck">Jemanden mitnehmen</a><a class="btn alt" href="broschuere/">Broschüre lesen</a><a class="btn alt" href="ratgeber/">Ratgeber lesen</a><a class="btn alt" href="#teil-check">Nach oben zum Check</a></div>
+    <p class="note">Alle Zahlen sind Schätzbereiche aus großen Studien, keine Vorhersage für dich. Deine Werte bleiben auf deinem Gerät.</p>
+  </section>
 </div>
 <div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Wir können uns die Zukunft leisten“. Die Ergebnisse sind Größenordnungen, können Fehler enthalten und ersetzen keine ärztliche, Steuer-, Rechts-, Finanz- oder Energieberatung. Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>
 <footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Rechner und Broschüre sind kostenfrei. Der Rechner läuft im Browser. Gespeichert wird nur, wenn du auf „Messung speichern“ tippst, und dann nur in deinem Browser auf deinem Gerät. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p><p class="bildnachweis" style="margin:8px 0 0">Bildnachweis der Hefte: <a href="ratgeber/#bildnachweis">Lebensmittel-Ratgeber</a> · <a href="broschuere/#quellen">Broschüre</a></p><details class="bildnachweis"><summary>Bildnachweis dieser Seite: Fotos von Wikimedia Commons (gemeinfrei oder CC0) und ein KI-Bild</summary><ul><li><a href="https://commons.wikimedia.org/wiki/File:French_fries_%F0%9F%8D%9F.jpg" target="_blank" rel="noopener">pommes.jpg</a>: Fumikas Sagisavas, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Potato_chips_-_Massachusetts.jpg" target="_blank" rel="noopener">chips.jpg</a>: Daderot, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Glass_cola.jpg" target="_blank" rel="noopener">cola.jpg</a>: pic_p_ter, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Steak_Dinner_1_(Unsplash).jpg" target="_blank" rel="noopener">steak.jpg</a>: Alex Munsell alexmunsell, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Huit_merguez_et_trois_saucisses_en_d%C3%A9but_de_cuisson_au_barbecue_en_mars_2020.jpg" target="_blank" rel="noopener">bratwurst.jpg</a>: Benoît Prieur, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Potatoes,_boiled,_with_olive_oil,_garlic,_salt_-_Massachusetts.jpg" target="_blank" rel="noopener">pellkartoffeln.jpg</a>: Daderot, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Milky-Way-Simply-Caramel-Split.jpg" target="_blank" rel="noopener">schokoriegel.jpg</a>: Evan-Amos, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Baguette-246424.jpg" target="_blank" rel="noopener">weissbrot.jpg</a>: cocoparisienne, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Beer_glass_(1).jpg" target="_blank" rel="noopener">bier.jpg</a>: Jon Sullivan, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Orange_juice_1_edit1.jpg" target="_blank" rel="noopener">saft.jpg</a>: Agency of the United States Department of Agriculture Edited, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:NCI_butter.jpg" target="_blank" rel="noopener">butter.jpg</a>: Renee Comet (National Cancer Institute), Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Cheese_limburger_edit.jpg" target="_blank" rel="noopener">hartkaese.jpg</a>: Original photo by John Sullivan. Edit own work., Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Basket_of_broccoli_in_Singapore_market.jpg" target="_blank" rel="noopener">brokkoli.jpg</a>: David, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Rye_bread_Roggenbengel_2025-02-14_05.jpg" target="_blank" rel="noopener">vollkornbrot.jpg</a>: Leonhard Lenz, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Apple_fruit_in_illorin.jpg" target="_blank" rel="noopener">aepfel.jpg</a>: Eunice Ameh, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Californian_walnut_kernel_within_a_half-broken_shell,_photographed_in_West_Bengal,_India,_on_January_14,_2024.jpg" target="_blank" rel="noopener">walnuesse.jpg</a>: Billjones94, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Lancaster,_United_States_(Unsplash).jpg" target="_blank" rel="noopener">joghurt.jpg</a>: Peter Hershey peterhershey, CC0</li><li>x_gehen.jpg, x_kette.jpg, x_kochen.jpg, x_mittag.jpg, x_rad.jpg und x_sport.jpg: KI-Bild (ChatGPT), Tomas Hecker, keine realen Personen</li><li><a href="https://commons.wikimedia.org/wiki/File:Glass_cola.jpg" target="_blank" rel="noopener">zero.jpg</a>: pic_p_ter, Public domain</li></ul></details></footer>
@@ -1894,6 +1962,49 @@ Info.texte(".cols", {
   "Blutzucker: Langzeitwert": ["Die Kurve zeigt für dein Alter und Geschlecht, wie viele Lebensjahre bei jedem Langzeitzucker statistisch fehlen. Der schwarze Punkt bist du. Grün ist normal, gelb die Vorstufe, rot Diabetes."],
 });
 </script>
+<script id="aufbau-js">(() => {
+  const $ = id => document.getElementById(id);
+  // Sprungleiste: aktiven Teil markieren
+  const links = [...document.querySelectorAll(".teile-nav a")], ziele = links.map(a => document.querySelector(a.getAttribute("href")));
+  let tick = false;
+  const mark = () => { tick = false; let cur = 0; ziele.forEach((z, i) => { if (z && z.getBoundingClientRect().top < 140) cur = i; }); links.forEach((a, i) => a.classList.toggle("on", i === cur));
+    const a = links[cur], nav = a && a.parentElement; if (nav && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = Math.max(0, a.offsetLeft - 12); };
+  addEventListener("scroll", () => { if (!tick) { tick = true; requestAnimationFrame(mark); } }, { passive: true }); mark();
+  // Zugeklappte Bereiche öffnen, wenn ein Link hineinzeigt
+  const oeffne = id => { const z = id && document.getElementById(id); if (!z) return; let d = z.closest("details"); while (d) { d.open = true; d = d.parentElement.closest("details"); }
+    if (z.classList.contains("studie")) { z.hidden = false; z.classList.add("auf"); } };
+  const geh = () => { const id = decodeURIComponent(location.hash.slice(1)); if (!id) return; oeffne(id); const z = document.getElementById(id); if (z) z.scrollIntoView(); };
+  addEventListener("hashchange", geh); if (location.hash) setTimeout(geh, 50);
+  document.addEventListener("click", e => { const a = e.target.closest('a[href^="#"]'); if (a) oeffne(decodeURIComponent(a.getAttribute("href").slice(1))); });
+  // Bauch-Index: alle zeigen
+  const bl = $("bi_liste"), bb = $("bi_alle");
+  if (bb) bb.onclick = () => { const k = bl.classList.toggle("kurz"); bb.setAttribute("aria-expanded", !k); bb.textContent = k ? "Alle 19 Lebensmittel zeigen" : "Nur die wichtigsten zeigen"; };
+  // Studien: antippen zum Aufklappen, Filter nach Thema
+  const karten = [...document.querySelectorAll(".studien .studie")];
+  karten.forEach(k => k.addEventListener("click", e => { if (e.target.closest("a")) return; k.classList.toggle("auf"); }));
+  const THEMEN = [["alle", "Alle", null], ["bauch", "Bauch", /bauch|taille|übergewicht|bmi|gewicht|fett/i], ["zucker", "Zucker", /zucker|diabetes|hba1c|blutzucker|limonade|getränk/i],
+    ["leben", "Rauchen, Alkohol, Bewegung", /rauch|alkohol|bewegung|schritt|sport|gehgrupp|check-up/i], ["glueck", "Glück und Gemeinschaft", /glück|freund|partner|lebensfreude|optimis|gemeinsam|ansteck/i],
+    ["kosten", "Kosten", /kosten|ausgaben|euro|€|mrd|krankenkass/i]];
+  const f = $("st_filter");
+  if (f) { f.innerHTML = THEMEN.map(([k, t]) => `<button type="button" data-t="${k}" aria-pressed="${k === "alle"}">${t}</button>`).join("");
+    f.onclick = e => { const b = e.target.closest("button"); if (!b) return; f.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+      const re = THEMEN.find(t => t[0] === b.dataset.t)[2]; karten.forEach(k => k.hidden = !!re && !re.test(k.querySelector("h3").textContent + " " + k.querySelector(".wer").textContent + " " + (k.querySelector("dd") || {}).textContent)); }; }
+  // Zum Schluss: Ergebnis auf einen Blick, aus den Werten oben
+  const txt = id => ($(id) && $(id).textContent.trim()) || "";
+  const fazit = () => {
+    const z = [];
+    z.push(["Dein Bauch", `${txt("c_ratio")}`, `geteilt durch Größe · ${txt("c_tag")}`]);
+    if (txt("c_hb")) z.push(["Dein Langzeitzucker", txt("c_hb"), txt("c_htag")]);
+    document.querySelectorAll("#c_gw_tiles > *").forEach((t, i) => { if (i > 1) return; const k = t.querySelector(".k, small, .lbl"), v = t.querySelector(".v, b, strong");
+      if (k && v) z.push([k.textContent.trim(), v.textContent.trim(), "wenn du dein Ziel erreichst"]); });
+    $("fz_zahlen").innerHTML = z.map(([k, v, s]) => `<div><small>${k}</small><b>${v}</b><span>${s}</span></div>`).join("");
+    const et = $("c_etappe"), ev = et && et.querySelector(".v"), en = ev && ev.nextElementSibling;
+    $("fz_etappe").innerHTML = ev ? `<b>Dein nächstes Etappenziel:</b> ${ev.textContent.trim()}${en ? ` (${en.textContent.trim()})` : ""}. Jeder Zentimeter zählt.` : "";
+  };
+  ["c_ratio", "c_gw_tiles", "c_hb", "c_etappe"].forEach(id => $(id) && new MutationObserver(fazit).observe($(id), { childList: true, subtree: true, characterData: true }));
+  setTimeout(fazit, 200);
+  if ($("fz_save")) $("fz_save").onclick = () => { $("c_save").click(); $("fz_save").textContent = "Gespeichert ✓"; };
+})();</script>
 <script id="druck-js">(() => {
   let alt = null, zu = [];
   addEventListener("beforeprint", () => {
