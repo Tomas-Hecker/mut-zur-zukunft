@@ -205,9 +205,12 @@ details.grp > summary { font-size: 14.5px }
 .tz .j { font-size: 13.5px }
 .tz.weg { box-shadow: inset 0 0 0 2px rgb(23 32 30 / .55); background-image: repeating-linear-gradient(135deg, rgb(255 255 255 / .18) 0 6px, transparent 6px 12px) }
 .tz.wahl { outline: 3px solid var(--fg); outline-offset: 2px }
-.tz.du { box-shadow: inset 0 0 0 3px #17201e }
+.tz.du { box-shadow: inset 0 0 0 3px var(--fg) }
 .tz .pin { justify-self: center; font: 800 11px/1 var(--body); letter-spacing: .04em; text-transform: uppercase; background: var(--fg); color: var(--panel); border-radius: 999px; padding: 4px 7px; white-space: nowrap }
 .tz .pin.z { background: var(--good); color: #fff }
+/* Du/Ziel als Plakette auf der Kante: alle Felder bleiben gleich hoch */
+.tz .pin { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); z-index: 1; box-shadow: 0 0 0 2px var(--panel) }
+.tafel { row-gap: 10px } .tz { display: block } .tz-in { display: grid; align-content: center; gap: 2px; height: 100% } .tz { height: 64px; min-height: 0 } @media (max-width: 560px) { .tz { height: 56px } }
 .tz:focus-visible { outline: 3px solid var(--ok); outline-offset: 2px }
 .t-leg { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; font-size: 13.5px; color: var(--muted) }
 .t-skala { display: flex; align-items: center; gap: 8px }
@@ -312,6 +315,25 @@ details.grp > summary { font-size: 14.5px }
   .steps .calc { font-size: 11.5px !important; white-space: normal }
   .tile, .bonus, .steps > li, tr { break-inside: avoid }
 }
+/* Kopf: Text links, Hefte als Seitenleiste rechts */
+.sitenav.flush ~ .wrap > header.kopf{grid-template-columns:minmax(0,1fr) 380px;gap:16px 40px;align-items:start}
+.sitenav.flush ~ .wrap > header.kopf > .kopf-text{grid-column:1;display:grid;gap:10px;align-content:start}
+.sitenav.flush ~ .wrap > header.kopf > .hefte{grid-column:2}
+.sitenav.flush ~ .wrap > header.kopf .lead{font-size:16px;line-height:1.5;max-width:62ch}
+.kopf .buchlinks{margin:0!important}
+.hefte{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:12px}
+.hefte-h{font:700 12px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.hk{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:start}
+.hk + .hk{border-top:1px solid var(--line);padding-top:12px}
+.hk-titel img{display:block;width:64px;height:auto;border-radius:3px;box-shadow:0 1px 6px rgb(0 0 0 / .25)}
+.hk b{display:block;font-family:var(--display);font-size:15.5px;line-height:1.2}
+.hk small{display:block;color:var(--muted);font-size:13px;line-height:1.35;margin-top:2px}
+.hk-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.hk-btn{font-weight:700;font-size:13.5px;text-decoration:none;border-radius:999px;padding:5px 12px;background:var(--mid);color:#17201e;border:1.5px solid var(--mid)}
+.hk-btn.ghost{background:transparent;color:var(--fg);border-color:var(--line)}
+.hk-btn:hover{filter:brightness(1.08)}.hk-btn.ghost:hover{border-color:var(--mid)}
+.hk-sprung{margin:0;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+@media (max-width:900px){.sitenav.flush ~ .wrap > header.kopf{grid-template-columns:1fr}.sitenav.flush ~ .wrap > header.kopf > .hefte{grid-column:1}}
 </style>
 <style id="sitenav-css">
 .sitenav{background:#12372a;color:#fbf8f1;font:600 15px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
@@ -386,15 +408,27 @@ h1,h2,h3{break-after:avoid}
 <body>
 <nav class="sitenav flush" aria-label="Hauptmenü"><div class="sn-in"><a class="sn-logo" href="../" aria-label="Mut zur Zukunft, zur Startseite"><svg viewBox="0 0 100 100" width="34" height="34" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#f2b33d" stroke-width="3"/><path d="M30,64 A20,20 0 0 1 70,64 Z" fill="#f2b33d"/><path d="M50,64 L50,33" stroke="#fbf8f1" stroke-width="4" stroke-linecap="round"/><path d="M50,47 C41,46 33,39 31,28 C41,29 48,36 50,47 Z" fill="#9fd8b0"/><path d="M50,40 C57,37 65,30 68,19 C58,20 51,28 50,40 Z" fill="#9fd8b0"/><line x1="17" y1="64" x2="83" y2="64" stroke="#fbf8f1" stroke-width="3.5" stroke-linecap="round"/></svg><span>Mut zur <b>Zukunft</b></span></a><div class="sn-links"><a class="sn-buch" href="../buch/">Zum Buch</a><a href="../">Start</a><a href="../steuerrechner/">Steuerrechner</a><a href="../eauto-rechner/">E-Auto-Rechner</a><a href="../heizungsrechner/">Heizung und Dämmung</a><a href="../energie-rechner/">Energie-Rechner</a><a href="../balkon-rechner/">Balkon-Rechner</a><a href="../gesundheitsrechner/" aria-current="page">Gesundheitsrechner</a><a href="../ueber-mich.html">Über mich</a><button type="button" class="sn-druck" onclick="print()" title="Eingaben und Ergebnisse drucken oder als PDF speichern">Drucken / PDF</button></div></div></nav>
 <div class="wrap">
-  <header>
+  <header class="kopf">
+    <div class="kopf-text">
     <div class="eyebrow">Gesundheit über das ganze Leben</div>
     <h1>Mein Bauch-Check: Was jeder Zentimeter bringt</h1>
     <p class="lead">Maßband, Körpergröße, fertig. Du siehst sofort, wo dein Bauch steht, was dein nächstes kleines Ziel ist und was dir jeder Zentimeter weniger bringt: an Lebenszeit, an weniger Krankheitsrisiko und an gesparten Kosten. Alles beruht auf großen Studien mit Millionen Menschen und wird immer als Spanne gezeigt.</p>
-    <a class="broschuere" href="broschuere-kleine-schritte-grosse-wirkung.pdf" download><span class="bi-ic" aria-hidden="true">PDF</span><span><b>Broschüre „Kleine Schritte. Große Wirkung.“ herunterladen</b><small>Für Fettleber, Vorstufe Diabetes und Typ-2-Diabetes: Teller-Regel, Tauschideen, Rezepte, 4-Wochen-Plan, Bauch-Index, Gesund und glücklich, Gesundheitskette. 18 Seiten, PDF, 4,6 MB</small></span></a>
-    <a class="broschuere" href="lebensmittel-ratgeber.pdf" download><span class="bi-ic" aria-hidden="true">PDF</span><span><b>Lebensmittel-Ratgeber „Erkennen statt zählen“ herunterladen</b><small>Welche Lebensmittel lange satt machen und welche den Bauch wachsen lassen, mit echten Fotos, Sättigungs-Ampel und Bauch-Index. 48 Seiten, PDF, 13 MB</small></span></a>
-    <p class="sprung"><b>Online lesen:</b> <a href="broschuere/">Broschüre</a> · <a href="ratgeber/">Lebensmittel-Ratgeber</a></p>
-    <p class="sprung">Im Ratgeber direkt zu: <a href="ratgeber/#bauch-index">Bauch-Index</a> · <a href="ratgeber/#bananen">So satt wie 2 Bananen</a> · <a href="ratgeber/#rezepte">Rezepte</a> · <a href="ratgeber/#tauschliste">Tauschliste</a> · <a href="ratgeber/#quellen">Quellen</a></p>
     <p class="kostenfrei"><b>Kostenfrei für alle.</b> Dieser Rechner, die Broschüre und der Ratgeber sind kostenfrei. Es macht mich glücklich, das für dich tun zu dürfen. <span class="sig">Tomas Hecker</span></p>
+    </div>
+    <aside class="hefte" aria-label="Kostenfreie Hefte zum Lesen und Herunterladen">
+      <div class="hefte-h">Kostenfreie Hefte</div>
+      <div class="hk">
+        <a class="hk-titel" href="broschuere/" tabindex="-1" aria-hidden="true"><img src="hefte/titel-broschuere.webp" width="64" height="91" alt=""></a>
+        <div><b>Kleine Schritte. Große Wirkung.</b><small>Broschüre, 18 Seiten: Teller-Regel, Tauschideen, 4-Wochen-Plan, Gesundheitskette</small>
+        <div class="hk-btns"><a class="hk-btn" href="broschuere/">Online lesen</a><a class="hk-btn ghost" href="broschuere-kleine-schritte-grosse-wirkung.pdf" download>PDF, 4,6 MB</a></div></div>
+      </div>
+      <div class="hk">
+        <a class="hk-titel" href="ratgeber/" tabindex="-1" aria-hidden="true"><img src="hefte/titel-ratgeber.webp" width="64" height="91" alt=""></a>
+        <div><b>Erkennen statt zählen</b><small>Lebensmittel-Ratgeber, 48 Seiten: 150 Lebensmittel mit Sättigungs-Ampel und Bauch-Index</small>
+        <div class="hk-btns"><a class="hk-btn" href="ratgeber/">Online lesen</a><a class="hk-btn ghost" href="lebensmittel-ratgeber.pdf" download>PDF, 13 MB</a></div></div>
+      </div>
+      <p class="hk-sprung">Direkt zu: <a href="ratgeber/#bauch-index">Bauch-Index</a> · <a href="ratgeber/#bananen">So satt wie 2 Bananen</a> · <a href="ratgeber/#rezepte">Rezepte</a> · <a href="ratgeber/#tauschliste">Tauschliste</a></p>
+    </aside>
   </header>
 
   <section class="panel check" id="check" aria-labelledby="check_h">
@@ -1237,7 +1271,7 @@ function zeigeTafel() {
       const inhalt = gesund ? `<span class="n gs">gesund</span><span class="j zt">${ziel ? "dein Ziel" : "&nbsp;"}</span>`
         : `<span class="n">${fmt(Math.round(c.ges / 1000))}<small> Tsd. €</small></span><span class="j">−${fmt(c.j, 1)} <span class="lang">Jahre</span><span class="kurz">J.</span></span>`;
       const cls = ["tz", du ? "du" : "", weg.has(zi + "," + si) && !du ? "weg" : "", T_WAHL.z === zi && T_WAHL.s === si ? "wahl" : ""].join(" ");
-      h += `<button type="button" class="${cls}" data-z="${zi}" data-s="${si}" style="background-color:${farbe(c.ges / max)}" aria-pressed="${T_WAHL.z === zi && T_WAHL.s === si}" aria-label="Langzeitzucker ${fmt(z.h, 1)} %, Bauch ${fmt(Math.round(g * sp))} cm: ${gesund ? "gesund" : `${fmt(Math.round(c.ges / 1000))} Tausend Euro Mehrkosten, ${fmt(c.j, 1)} Jahre weniger`}${du ? ", hier stehst du" : ""}">${pin}${inhalt}</button>`;
+      h += `<button type="button" class="${cls}" data-z="${zi}" data-s="${si}" style="background-color:${farbe(c.ges / max)}" aria-pressed="${T_WAHL.z === zi && T_WAHL.s === si}" aria-label="Langzeitzucker ${fmt(z.h, 1)} %, Bauch ${fmt(Math.round(g * sp))} cm: ${gesund ? "gesund" : `${fmt(Math.round(c.ges / 1000))} Tausend Euro Mehrkosten, ${fmt(c.j, 1)} Jahre weniger`}${du ? ", hier stehst du" : ""}">${pin}<span class="tz-in">${inhalt}</span></button>`;
     });
   });
   $("t_grid").innerHTML = h;
