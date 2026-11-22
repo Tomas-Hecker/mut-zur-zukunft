@@ -607,7 +607,7 @@ h1,h2,h3{break-after:avoid}
             <div class="field"><label for="gmbh">Gewinn der eigenen GmbH</label><input id="gmbh" type="number" min="0" step="1000"></div>
             <div class="field"><label for="aus">Ausschüttung aus der GmbH</label><input id="aus" type="number" min="0" step="1000"></div>
             <div class="field"><label for="transfer">Grundsicherung und andere steuerfreie Leistungen</label><input id="transfer" type="number" min="0" step="100"></div>
-            <label class="check field wide"><input id="bjob" type="checkbox"> Im Vorschlag im Bürgerjob statt Grundsicherung (17 Stunden in der Woche, 1.400 € im Monat, gibt alles aus)</label>
+            <label class="check field wide"><input id="bjob" type="checkbox"> Im Vorschlag im Bürgerjob statt Grundsicherung (18 Stunden in der Woche zum Mindestlohn, 1.314 € im Monat, gibt alles aus)</label>
             <div class="field"><label for="verm">Verbrauch aus vorhandenem Vermögen</label><input id="verm" type="number" min="0" step="1000"><span class="hint">zusätzlich zum laufenden Einkommen</span></div>
             <label class="check field wide"><input id="kinderlos" type="checkbox"> Kinderlos (keine eigenen Kinder, auch keine erwachsenen; höherer Pflegebeitrag)</label>
             <label class="check field wide"><input id="allein" type="checkbox"> Alleinerziehend</label>
@@ -1977,7 +1977,7 @@ const fmt = (x, d = 0) => (Math.round(x * 10 ** d) / 10 ** d).toLocaleString("de
 const eur = x => fmt(x) + " €";
 const sign = x => (x > 0.5 ? "+" : x < -0.5 ? "−" : "") + fmt(Math.abs(x));
 const mrd = (x, d = 1) => (x < 0 ? "−" : "") + fmt(Math.abs(x), d);
-const pct = (x, d = 1) => fmt(x * 100, d) + " %";
+const pct = (x, d = 0) => fmt(x * 100, d) + " %";   // Prozente ganz (22.11.2026): ohne Nachkommastellen, feste Regelwerte geben d an
 const $ = id => document.getElementById(id);
 
 // Ergebniskarte zum Teilen: nur der Monatsbetrag, keine weiteren Angaben
@@ -2555,9 +2555,9 @@ function updateGesamt() {
   const cl = x => x >= 0 ? "good" : "bad";
   const s0 = kr.rows[0].saldo, j70 = kr.rows.find(r => r.jahr === 2070);
   const ohneA = `Bei gleichem Einkauf und ohne Ausgleich wären es ${mrd(saldoMitStufe4(g, false))} Mrd. €.`;
-  let t = tile("Saldo am Start", mrd(s0) + " Mrd. €", (s0 < 0 && -s0 / A.BIP <= A.SBRaum ? `${pct(-s0 / A.BIP, 2)} des BIP; passt in die Schuldenbremse (${pct(A.SBRaum, 2)}).` : (s0 >= 0 ? `${pct(s0 / A.BIP, 2)} des BIP; Überschuss vom ersten Jahr an.` : `${pct(s0 / A.BIP, 2)} des BIP; negativ heißt Lücke.`)) + ` Mit Ausgleich, Einsparungen und Verhalten der Haushalte. ${ohneA}`, cl(s0));
+  let t = tile("Saldo am Start", mrd(s0) + " Mrd. €", (s0 < 0 && -s0 / A.BIP <= A.SBRaum ? `${pct(-s0 / A.BIP)} des BIP; passt in die Schuldenbremse (${pct(A.SBRaum, 2)}).` : (s0 >= 0 ? `${pct(s0 / A.BIP)} des BIP; Überschuss vom ersten Jahr an.` : `${pct(s0 / A.BIP)} des BIP; negativ heißt Lücke.`)) + ` Mit Ausgleich, Einsparungen und Verhalten der Haushalte. ${ohneA}`, cl(s0));
   const sL4 = saldoMitStufe4(g, true);
-  t += tile("Saldo langfristig", mrd(sL4) + " Mrd. €", `${pct(sL4 / A.BIP, 1)} des BIP, nach ${A.Jahre} Jahren, bei gleichem Einkauf` + (j70 ? `; mit Verhalten der Haushalte 2070 rund ${mrd(j70.saldo)} Mrd. €` : ""), cl(sL4));
+  t += tile("Saldo langfristig", mrd(sL4) + " Mrd. €", `${pct(sL4 / A.BIP)} des BIP, nach ${A.Jahre} Jahren, bei gleichem Einkauf` + (j70 ? `; mit Verhalten der Haushalte 2070 rund ${mrd(j70.saldo)} Mrd. €` : ""), cl(sL4));
   let tilg;
   if (kr.unendlich) tilg = tile("Kredit am Start", "nicht getilgt", "Der Überschuss reicht nicht aus. Erhöhe die Sätze oder schalte Ausgaben ab.", "bad");
   else if (kr.peak <= 0.05) tilg = tile("Kredit am Start", "keiner", "Das System trägt sich von Anfang an.", "good");
@@ -3054,12 +3054,12 @@ function updateSan() {
   const verlierer = [!okM(mH) ? `die Mieter zahlen ${sEur(mH)} im Monat mehr` : "", !okV(vH) ? `der Vermieter legt ${sEur(-vH)} im Jahr drauf` : ""].filter(Boolean).join(" und ");
   vd.innerHTML = nix ? `<b>Noch nichts gewählt</b><span>Wähle oben, was gemacht wird.</span>` : `<b>${heuteOk && reformOk ? "Lohnt sich schon heute, mit der Reform mehr" : !heuteOk && reformOk ? "Heute rechnet es sich nicht, mit der Reform für beide" : reformOk ? "Mit der Reform für beide" : "Auch mit der Reform nicht für alle"}</b>
     <span>${!heuteOk ? `Heute: ${verlierer}, im Schnitt der 20 Jahre.` : `Heute: Die Mieter ${mH <= 0 ? "sparen " + sEur(-mH) : "zahlen " + sEur(mH) + " mehr"} im Monat, der Vermieter ${vH >= 0 ? "behält " + sEur(vH) : "legt " + sEur(-vH) + " drauf"} im Jahr.`}</span>
-    <span>Mit der Reform ${mR <= 0 ? "sparen die Mieter " + sEur(-mR) : "zahlen die Mieter " + sEur(mR) + " mehr"} im Monat ${wer}${(() => { const d = mean("wR") / M - r.w0R / M; return Math.abs(d) >= 1 ? ` (gegenüber dem Haus, das mit der Reform bei ${traeger} bleibt, ${d < 0 ? sEur(-d) + " weniger" : sEur(d) + " mehr"})` : ""; })()}, ${Math.abs(vR) < 1 ? "und der Vermieter zahlt nichts drauf: " + (r.Tn + r.Fn > 0 ? "Die Tilgung legt er um" + (r.Bn > 0 ? ", für die Bauteile braucht er kein eigenes Geld" : "") : "Für die Bauteile braucht er kein eigenes Geld") : vR > 0 ? "und der Vermieter behält " + sEur(vR) + " im Jahr" : "und der Vermieter legt " + sEur(-vR) + " im Jahr drauf"}.${r.Bn > 0 && !v.abl ? ` Dafür gehören dem Staat ${pct(r.anteil, 1)} des Hauses, bis der Eigentümer den Anteil ablöst.` : ""}</span>`;
+    <span>Mit der Reform ${mR <= 0 ? "sparen die Mieter " + sEur(-mR) : "zahlen die Mieter " + sEur(mR) + " mehr"} im Monat ${wer}${(() => { const d = mean("wR") / M - r.w0R / M; return Math.abs(d) >= 1 ? ` (gegenüber dem Haus, das mit der Reform bei ${traeger} bleibt, ${d < 0 ? sEur(-d) + " weniger" : sEur(d) + " mehr"})` : ""; })()}, ${Math.abs(vR) < 1 ? "und der Vermieter zahlt nichts drauf: " + (r.Tn + r.Fn > 0 ? "Die Tilgung legt er um" + (r.Bn > 0 ? ", für die Bauteile braucht er kein eigenes Geld" : "") : "Für die Bauteile braucht er kein eigenes Geld") : vR > 0 ? "und der Vermieter behält " + sEur(vR) + " im Jahr" : "und der Vermieter legt " + sEur(-vR) + " im Jahr drauf"}.${r.Bn > 0 && !v.abl ? ` Dafür gehören dem Staat ${pct(r.anteil)} des Hauses, bis der Eigentümer den Anteil ablöst.` : ""}</span>`;
   // Wer gewinnt
   const cl = ok => ok ? "gut" : "schlecht";
   $("s_wer").innerHTML = `<thead><tr><th></th><th>Heutiges Recht</th><th>Reform</th></tr></thead><tbody>`
     + `<tr><td>Mieter: Warmmiete gegenüber heute, im Monat${N > 1 ? `<small>Wohnung mit ${fmt(qm)} m², Schnitt der 20 Jahre</small>` : "<small>Schnitt der 20 Jahre</small>"}</td><td class="${cl(okM(mH))}">${sPlus(mH)}</td><td class="${cl(okM(mR))}">${sPlus(mR)}<small>${sPlus(mean("wR") / M - r.w0R / M)} gegenüber dem Haus, das mit der Reform bei ${traeger} bleibt</small></td></tr>`
-    + `<tr><td>Vermieter: bleibt im Jahr<small>ganzes Haus, Schnitt der 20 Jahre</small></td><td class="${cl(okV(vH))}">${sPlus(vH)}${r.uH > 0 ? `<small>danach ${sPlus(r.uH)} im Jahr auf Dauer</small>` : ""}</td><td class="${cl(okV(vR))}">${sPlus(vR)}${r.Bn > 0 && !v.abl ? `<small>Staat hält ${pct(r.anteil, 1)} am Haus</small>` : ""}</td></tr>`
+    + `<tr><td>Vermieter: bleibt im Jahr<small>ganzes Haus, Schnitt der 20 Jahre</small></td><td class="${cl(okV(vH))}">${sPlus(vH)}${r.uH > 0 ? `<small>danach ${sPlus(r.uH)} im Jahr auf Dauer</small>` : ""}</td><td class="${cl(okV(vR))}">${sPlus(vR)}${r.Bn > 0 && !v.abl ? `<small>Staat hält ${pct(r.anteil)} am Haus</small>` : ""}</td></tr>`
     + `<tr><td>Staat: über 20 Jahre<small>Mehrwertsteuer auf die Arbeiten, Zuschuss, entgangene Zinsen</small></td><td>${sPlus(r.staatH)}</td><td>${sPlus(r.staatR)}${r.Bn > 0 ? `<small>dazu ${sEur(r.Bn)} ausgelegt, die mit der Wertsteigerung zurückkommen</small>` : ""}</td></tr>`
     + `</tbody>`;
   // Mieter
@@ -3109,7 +3109,7 @@ function updateSan() {
   $("s_verm").innerHTML = `<thead><tr><th></th><th>Heutiges Recht</th><th>Reform</th></tr></thead><tbody>`
     + z("Kosten", `${sEur(r.tech + r.hk + r.fen + r.bau)}<small>mit 19 % Mehrwertsteuer</small>`, `${sEur(r.Tn + r.Fn + r.Bn)}<small>Mehrwertsteuer erstattet${r.fen + r.bau > 0 ? ", auf die Arbeit an Dämmung und Fenstern 5 %" : ""}</small>`)
     + z("Zuschuss", sEur(r.ZT + r.ZB), "–")
-    + z("Finanziert über", r.K > 0 ? `Bankkredit ${sEur(r.K)}<small>${fmt(v.zins, 1)} % über 20 Jahre</small>` : "–", `${kred ? "zinsloser Kredit: " + kred : ""}${r.Bn > 0 ? `<small>Anteil am Hauswert ${sEur(r.Bn)} für ${[r.tech > 0 ? "Einbau der Wärmepumpe" : "", r.hk > 0 ? "Heizkörper und Rohre" : "", r.fen > 0 ? "Fenster" : "", r.bau > 0 ? "Dämmung" : ""].filter(Boolean).join(", ")}, ${pct(r.anteil, 1)} des Hauses</small>` : ""}`)
+    + z("Finanziert über", r.K > 0 ? `Bankkredit ${sEur(r.K)}<small>${fmt(v.zins, 1)} % über 20 Jahre</small>` : "–", `${kred ? "zinsloser Kredit: " + kred : ""}${r.Bn > 0 ? `<small>Anteil am Hauswert ${sEur(r.Bn)} für ${[r.tech > 0 ? "Einbau der Wärmepumpe" : "", r.hk > 0 ? "Heizkörper und Rohre" : "", r.fen > 0 ? "Fenster" : "", r.bau > 0 ? "Dämmung" : ""].filter(Boolean).join(", ")}, ${pct(r.anteil)} des Hauses</small>` : ""}`)
     + z("Zinsen und Tilgung im Jahr", sEur(-r.ann), `${sEur(-(r1.tilg))} in Jahr 1 bis ${SAN.TilgFrei}<small>${sEur(-(r4.tilg))} ab Jahr ${SAN.TilgFrei + 1}${v.abl && r.Bn > 0 ? `, dazu Ablösen ${sEur(-r1.abl)} im ersten Jahr` : ""}</small>`)
     + z("Mehr Miete im Jahr", sPlus(r.uH), `${sPlus(r1.umlR)} in Jahr 1 bis ${SAN.TilgFrei}<small>${sPlus(r4.umlR)} ab Jahr ${SAN.TilgFrei + 1}: genau die Tilgung</small>`)
     + `<tr class="sum"><td>Bleibt über 20 Jahre</td><td>${sPlus(sH)}</td><td>${sPlus(sR)}</td></tr>`
