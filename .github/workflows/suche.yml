@@ -16,26 +16,28 @@ jobs:
           rm -rf suche; mkdir -p suche
           while read -r q; do
             [ -z "$q" ] && continue
-            curl -sfG -A "$UA" "https://commons.wikimedia.org/w/api.php" --data-urlencode "action=query" --data-urlencode "format=json" --data-urlencode "generator=search" --data-urlencode "gsrnamespace=6" --data-urlencode "gsrlimit=25" --data-urlencode "gsrsearch=$q filetype:bitmap" --data-urlencode "prop=imageinfo" --data-urlencode "iiprop=url|extmetadata" --data-urlencode "iiurlwidth=400" > "suche/$(echo $q|tr ' ' _).json"
+            curl -sfG -A "$UA" "https://commons.wikimedia.org/w/api.php" --data-urlencode "action=query" --data-urlencode "format=json" --data-urlencode "generator=search" --data-urlencode "gsrnamespace=6" --data-urlencode "gsrlimit=40" --data-urlencode "gsrsearch=$q filetype:bitmap" --data-urlencode "prop=imageinfo" --data-urlencode "iiprop=url|extmetadata" --data-urlencode "iiurlwidth=400" > "suche/$(echo $q|tr ' ' _).json"
             sleep 1
           done < suche.txt
           python3 - <<'PY'
           import json,glob,re,subprocess,os
           rows=[]
-          for f in glob.glob('suche/*.json'):
+          for f in sorted(glob.glob('suche/*.json')):
               d=json.load(open(f)).get('query',{}).get('pages',{})
               for p in d.values():
                   ii=p['imageinfo'][0]; m=ii.get('extmetadata',{})
                   lic=m.get('LicenseShortName',{}).get('value','')
                   if not re.search(r'CC0|[Pp]ublic domain|PD',lic): continue
                   art=re.sub('<[^>]+>','',m.get('Artist',{}).get('value',''))
-                  rows.append([p['title'],ii['thumburl'],ii['url'],ii['descriptionurl'],lic,art])
-          seen=set();i=0;out=[]
+                  rows.append([p['title'],ii['thumburl'],ii['url'],ii['descriptionurl'],lic,art,os.path.basename(f)[:-5]])
+          seen=set();out=[];cnt={}
           for r in rows:
               if r[0] in seen: continue
-              seen.add(r[0]); i+=1
-              subprocess.run(['curl','-sfL','-A','mut-zur-zukunft-ratgeber/1.0','-o',f'suche/k{i:02d}.jpg',r[1]])
-              out.append([f'k{i:02d}']+r)
+              seen.add(r[0]); q=r[-1]; cnt[q]=cnt.get(q,0)+1
+              if cnt[q]>12: continue
+              k=f'{q}_{cnt[q]:02d}'
+              subprocess.run(['curl','-sfL','-A','mut-zur-zukunft-ratgeber/1.0','-o',f'suche/{k}.jpg',r[1]])
+              out.append([k]+r[:-1])
           json.dump(out,open('suche/treffer.json','w'),ensure_ascii=False,indent=1)
           print(len(out))
           PY
