@@ -259,6 +259,9 @@ details.grp > summary { font-size: 14.5px }
 .plan { display: grid; gap: 8px }
 .broschuere { display: flex; gap: 12px; align-items: center; justify-self: start; max-width: 720px; text-decoration: none; color: var(--fg); background: var(--panel); border: 2px solid var(--mid); border-radius: 12px; padding: 10px 14px }
 .broschuere:hover { background: var(--field) }
+.kostenfrei { margin: 0; max-width: 720px; border-left: 4px solid var(--good); background: var(--z1); border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: 15.5px }
+.kostenfrei b { color: var(--good) }
+.kostenfrei .sig { display: block; font-style: italic; color: var(--muted); margin-top: 2px }
 .broschuere b { display: block; color: var(--fg) }
 .broschuere small { display: block; color: var(--muted); font-size: 13px; line-height: 1.4 }
 .broschuere .bi-ic { flex: none; width: 44px; height: 52px; border-radius: 6px; background: var(--mid); color: #fff; font: 800 13px/52px var(--display); text-align: center }
@@ -379,7 +382,8 @@ h1,h2,h3{break-after:avoid}
     <div class="eyebrow">Gesundheit über das ganze Leben</div>
     <h1>Mein Bauch-Check: Was jeder Zentimeter bringt</h1>
     <p class="lead">Maßband, Körpergröße, fertig. Du siehst sofort, wo dein Bauch steht, was dein nächstes kleines Ziel ist und was dir jeder Zentimeter weniger bringt: an Lebenszeit, an weniger Krankheitsrisiko und an gesparten Kosten. Alles beruht auf großen Studien mit Millionen Menschen und wird immer als Spanne gezeigt.</p>
-    <a class="broschuere" href="broschuere-kleine-schritte-grosse-wirkung.pdf" download><span class="bi-ic" aria-hidden="true">PDF</span><span><b>Broschüre „Kleine Schritte. Große Wirkung.“ herunterladen</b><small>Für Fettleber, Vorstufe Diabetes und Typ-2-Diabetes: Teller-Regel, Tauschideen, Rezepte, 4-Wochen-Plan und der Bauch-Index. 14 Seiten, PDF, 2 MB</small></span></a>
+    <a class="broschuere" href="broschuere-kleine-schritte-grosse-wirkung.pdf" download><span class="bi-ic" aria-hidden="true">PDF</span><span><b>Broschüre „Kleine Schritte. Große Wirkung.“ herunterladen</b><small>Für Fettleber, Vorstufe Diabetes und Typ-2-Diabetes: Teller-Regel, Tauschideen, Rezepte, 4-Wochen-Plan, Bauch-Index, Gesund und glücklich, Gesundheitskette. 17 Seiten, PDF, 2,4 MB</small></span></a>
+    <p class="kostenfrei"><b>Kostenfrei für alle.</b> Dieser Rechner und die Broschüre sind kostenfrei. Es macht mich glücklich, das für dich tun zu dürfen. <span class="sig">Tomas Hecker</span></p>
   </header>
 
   <section class="panel check" id="check" aria-labelledby="check_h">
@@ -494,7 +498,7 @@ h1,h2,h3{break-after:avoid}
     </div>
     <div class="teilen">
       <h3>Nimm jemanden mit</h3>
-      <p class="note">Zu zweit fällt jeder Schritt leichter: Wer mit Freunden abnimmt, hält sein Gewicht viel öfter, 66 % statt 24 % (<a href="#q-wing">Wing und Jeffery 1999</a>). Bei Diabetes senkt Begleitung durch andere Betroffene den Langzeitzucker um rund 0,6 Punkte (<a href="#q-qi">Qi 2015</a>). Lade jemanden ein, Freunde, Familie, Nachbarn oder Kollegen. Geteilt wird nur die Einladung mit dem Link, nie deine Werte.</p>
+      <p class="note">Zu zweit fällt jeder Schritt leichter: Wer mit Freunden abnimmt, hält sein Gewicht viel öfter, 66 % statt 24 % (<a href="#q-wing">Wing und Jeffery 1999</a>). Bei Diabetes senkt Begleitung durch andere Betroffene den Langzeitzucker um rund 0,6 Punkte (<a href="#q-qi">Qi 2015</a>). Lade jemanden ein, Freunde, Familie, Nachbarn oder Kollegen. Rechner und Broschüre sind beide kostenfrei. Geteilt wird nur die Einladung mit dem Link, nie deine Werte.</p>
       <div class="gemeinsam">
         <p class="k">Was wollt ihr zusammen machen?</p>
         <div class="chips" id="m_akt"></div>
@@ -965,7 +969,7 @@ h1,h2,h3{break-after:avoid}
   </div>
 </div>
 <div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Wir können uns die Zukunft leisten“. Die Ergebnisse sind Größenordnungen, können Fehler enthalten und ersetzen keine ärztliche, Steuer-, Rechts-, Finanz- oder Energieberatung. Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>
-<footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Der Rechner läuft im Browser. Gespeichert wird nur, wenn du auf „Messung speichern“ tippst, und dann nur in deinem Browser auf deinem Gerät. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
+<footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Rechner und Broschüre sind kostenfrei. Der Rechner läuft im Browser. Gespeichert wird nur, wenn du auf „Messung speichern“ tippst, und dann nur in deinem Browser auf deinem Gerät. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
 <script>
 const $ = id => document.getElementById(id);
 const fmt = (v, d = 0) => (+v).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -1304,9 +1308,9 @@ function zeigeGlueck() {
 // ---------- Teilen: nur der Link, keine persönlichen Werte ----------
 const TEILEN = {
   rechner: { url: "https://tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner/", titel: "Mein Bauch-Check",
-    text: "Schau mal, der Bauch-Check zeigt, was jeder Zentimeter und jeder Zehntelpunkt beim Zucker bringt. Kostenlos, deine Werte bleiben auf deinem Gerät:" },
+    text: "Schau mal, der Bauch-Check zeigt, was jeder Zentimeter und jeder Zehntelpunkt beim Zucker bringt. Kostenfrei, und deine Werte bleiben auf deinem Gerät:" },
   broschuere: { url: "https://tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner/broschuere-kleine-schritte-grosse-wirkung.pdf", titel: "Kleine Schritte, große Wirkung",
-    text: "Eine kurze Broschüre mit kleinen Schritten für einen gesünderen Bauch und Zucker:" } };
+    text: "Eine kurze, kostenfreie Broschüre mit kleinen Schritten für einen gesünderen Bauch und Zucker:" } };
 let TEIL_WAS = "einladung";
 const AKT = [["Gehtreff", "eine Runde spazieren zu gehen, 20 Minuten"], ["Kochrunde", "zusammen gesund zu kochen, reihum bei einem von uns"], ["Sport zusammen", "zusammen Sport zu machen"], ["Rad fahren", "eine Runde Rad zu fahren"], ["Mittagsrunde", "in der Mittagspause eine Runde zu gehen"]];
 const OFT = ["einmal pro Woche", "zweimal pro Woche"];
