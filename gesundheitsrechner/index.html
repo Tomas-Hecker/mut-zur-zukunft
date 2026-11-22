@@ -258,13 +258,24 @@ details.grp > summary { font-size: 14.5px }
 .chips button[aria-pressed="true"] { background: var(--ok); border-color: var(--ok); color: #fff }
 .plan { display: grid; gap: 8px }
 .broschuere { display: flex; gap: 12px; align-items: center; justify-self: start; max-width: 720px; text-decoration: none; color: var(--fg); background: var(--panel); border: 2px solid var(--mid); border-radius: 12px; padding: 10px 14px }
+.bi-n { display: flex; align-items: center; gap: 10px; min-width: 0 }
+.bi-n img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; flex: none; background: var(--grid) }
+.akt-bild { margin: 4px 0 2px; border-radius: 12px; overflow: hidden; aspect-ratio: 2 / 1; max-width: 560px; background: var(--grid) }
+.kette-bild { aspect-ratio: 12 / 5; max-width: 720px }
+.akt-bild img { width: 100%; height: 100%; object-fit: cover; display: block }
+.bildnachweis { font-size: 12.5px; color: var(--muted); margin-top: 8px }
+.bildnachweis ul { margin: 6px 0 0; padding-left: 18px; columns: 2 260px }
 .broschuere:hover { background: var(--field) }
+.sprung { margin: -4px 0 0; font-size: 14px; color: var(--muted) }
+.kostenfrei { margin: 0; max-width: 720px; border-left: 4px solid var(--good); background: var(--z1); border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: 15.5px }
+.kostenfrei b { color: var(--good) }
+.kostenfrei .sig { display: block; font-style: italic; color: var(--muted); margin-top: 2px }
 .broschuere b { display: block; color: var(--fg) }
 .broschuere small { display: block; color: var(--muted); font-size: 13px; line-height: 1.4 }
 .broschuere .bi-ic { flex: none; width: 44px; height: 52px; border-radius: 6px; background: var(--mid); color: #fff; font: 800 13px/52px var(--display); text-align: center }
 /* Bauch-Index */
 .bi-liste { display: grid; gap: 5px; font-size: 14.5px }
-.bi-row { display: grid; grid-template-columns: minmax(0, 13em) minmax(0, 1fr) 5.5em; gap: 10px; align-items: center }
+.bi-row { display: grid; grid-template-columns: minmax(0, 17em) minmax(0, 1fr) 5.5em; gap: 10px; align-items: center }
 @media (max-width: 520px) { .bi-row { grid-template-columns: minmax(0, 1fr) 5em } .bi-row .bb { grid-column: 1 / -1; grid-row: 2 } }
 .bi-row small { color: var(--muted) }
 .bb { position: relative; height: 14px }
@@ -379,7 +390,10 @@ h1,h2,h3{break-after:avoid}
     <div class="eyebrow">Gesundheit über das ganze Leben</div>
     <h1>Mein Bauch-Check: Was jeder Zentimeter bringt</h1>
     <p class="lead">Maßband, Körpergröße, fertig. Du siehst sofort, wo dein Bauch steht, was dein nächstes kleines Ziel ist und was dir jeder Zentimeter weniger bringt: an Lebenszeit, an weniger Krankheitsrisiko und an gesparten Kosten. Alles beruht auf großen Studien mit Millionen Menschen und wird immer als Spanne gezeigt.</p>
-    <a class="broschuere" href="broschuere-kleine-schritte-grosse-wirkung.pdf" download><span class="bi-ic" aria-hidden="true">PDF</span><span><b>Broschüre „Kleine Schritte. Große Wirkung.“ herunterladen</b><small>Für Fettleber, Vorstufe Diabetes und Typ-2-Diabetes: Teller-Regel, Tauschideen, Rezepte, 4-Wochen-Plan und der Bauch-Index. 14 Seiten, PDF, 2 MB</small></span></a>
+    <a class="broschuere" href="broschuere-kleine-schritte-grosse-wirkung.pdf" download><span class="bi-ic" aria-hidden="true">PDF</span><span><b>Broschüre „Kleine Schritte. Große Wirkung.“ herunterladen</b><small>Für Fettleber, Vorstufe Diabetes und Typ-2-Diabetes: Teller-Regel, Tauschideen, Rezepte, 4-Wochen-Plan, Bauch-Index, Gesund und glücklich, Gesundheitskette. 18 Seiten, PDF, 4,6 MB</small></span></a>
+    <a class="broschuere" href="lebensmittel-ratgeber.pdf" download><span class="bi-ic" aria-hidden="true">PDF</span><span><b>Lebensmittel-Ratgeber „Erkennen statt zählen“ herunterladen</b><small>Welche Lebensmittel lange satt machen und welche den Bauch wachsen lassen, mit echten Fotos, Sättigungs-Ampel und Bauch-Index. 48 Seiten, PDF, 13 MB</small></span></a>
+    <p class="sprung">Direkt zu: <a href="lebensmittel-ratgeber.pdf#page=5" target="_blank" rel="noopener">Bauch-Index</a> · <a href="lebensmittel-ratgeber.pdf#page=6" target="_blank" rel="noopener">So satt wie 2 Bananen</a> · <a href="lebensmittel-ratgeber.pdf#page=33" target="_blank" rel="noopener">Rezepte</a> · <a href="lebensmittel-ratgeber.pdf#page=40" target="_blank" rel="noopener">Tauschliste</a> · <a href="lebensmittel-ratgeber.pdf#page=42" target="_blank" rel="noopener">Quellen</a></p>
+    <p class="kostenfrei"><b>Kostenfrei für alle.</b> Dieser Rechner, die Broschüre und der Ratgeber sind kostenfrei. Es macht mich glücklich, das für dich tun zu dürfen. <span class="sig">Tomas Hecker</span></p>
   </header>
 
   <section class="panel check" id="check" aria-labelledby="check_h">
@@ -494,10 +508,11 @@ h1,h2,h3{break-after:avoid}
     </div>
     <div class="teilen">
       <h3>Nimm jemanden mit</h3>
-      <p class="note">Zu zweit fällt jeder Schritt leichter: Wer mit Freunden abnimmt, hält sein Gewicht viel öfter, 66 % statt 24 % (<a href="#q-wing">Wing und Jeffery 1999</a>). Bei Diabetes senkt Begleitung durch andere Betroffene den Langzeitzucker um rund 0,6 Punkte (<a href="#q-qi">Qi 2015</a>). Lade jemanden ein, Freunde, Familie, Nachbarn oder Kollegen. Geteilt wird nur die Einladung mit dem Link, nie deine Werte.</p>
+      <p class="note">Zu zweit fällt jeder Schritt leichter: Wer mit Freunden abnimmt, hält sein Gewicht viel öfter, 66 % statt 24 % (<a href="#q-wing">Wing und Jeffery 1999</a>). Bei Diabetes senkt Begleitung durch andere Betroffene den Langzeitzucker um rund 0,6 Punkte (<a href="#q-qi">Qi 2015</a>). Lade jemanden ein, Freunde, Familie, Nachbarn oder Kollegen. Rechner und Broschüre sind beide kostenfrei. Geteilt wird nur die Einladung mit dem Link, nie deine Werte.</p>
       <div class="gemeinsam">
         <p class="k">Was wollt ihr zusammen machen?</p>
         <div class="chips" id="m_akt"></div>
+        <figure class="akt-bild"><img id="m_bild" src="bilder/x_gehen.jpg" alt="" width="720" height="360" loading="lazy" decoding="async"></figure>
         <p class="k">Wie oft?</p>
         <div class="chips" id="m_oft"></div>
         <blockquote class="einladung" id="m_text"></blockquote>
@@ -517,6 +532,7 @@ h1,h2,h3{break-after:avoid}
       </div>
     </div>
     <div class="schneeball">
+      <figure class="akt-bild kette-bild"><img src="bilder/x_kette.jpg" alt="Eine fröhliche Gruppe wandert gemeinsam durch den Herbstwald" width="960" height="400" loading="lazy" decoding="async"></figure>
       <h3>Die Gesundheitskette: Einer fängt an. Alle gewinnen.</h3>
       <p class="note">Gewohnheiten stecken an: Hört ein Freund auf zu rauchen, sinkt die eigene Wahrscheinlichkeit zu rauchen um 36 % (<a href="#q-christakis">Christakis und Fowler 2008</a>). Gehgruppen senken Blutdruck, BMI und Niedergeschlagenheit, und drei von vier bleiben dabei (<a href="#q-hanson">Hanson und Jones 2015</a>). Du nimmst jemanden mit, und jede Person nimmt wieder jemanden mit. Wie viele nimmt jede Person mit?</p>
       <div class="seg" role="group" aria-label="Personen pro Runde" id="m_je"><button type="button" data-je="1">1</button><button type="button" data-je="2" aria-pressed="true">2</button><button type="button" data-je="3">3</button></div>
@@ -615,7 +631,7 @@ h1,h2,h3{break-after:avoid}
       </div>
       <p id="bi_txt"></p>
     </div>
-    <p class="note"><b>Gut zu wissen:</b> Der Index zeigt die Richtung, keine genauen Zentimeter. Er beschreibt Zusammenhänge im Durchschnitt vieler Menschen. Kalorien allein sagen wenig: Nüsse und Joghurt haben viele Kalorien und hingen trotzdem mit weniger Zunahme zusammen. Was zählt, ist, wie satt ein Lebensmittel macht, wie es den Blutzucker bewegt und was man stattdessen isst. Ob es bei dir wirkt, zeigt dein Maßband. Den Bauch-Index zum Ausdrucken, mit Einkaufszettel und Rezepten, gibt es in der <a href="broschuere-kleine-schritte-grosse-wirkung.pdf" download>Broschüre „Kleine Schritte. Große Wirkung.“ (PDF)</a>.</p>
+    <p class="note"><b>Gut zu wissen:</b> Der Index zeigt die Richtung, keine genauen Zentimeter. Er beschreibt Zusammenhänge im Durchschnitt vieler Menschen. Kalorien allein sagen wenig: Nüsse und Joghurt haben viele Kalorien und hingen trotzdem mit weniger Zunahme zusammen. Was zählt, ist, wie satt ein Lebensmittel macht, wie es den Blutzucker bewegt und was man stattdessen isst. Ob es bei dir wirkt, zeigt dein Maßband. Ausführlich mit allen 30 gemessenen Lebensmitteln steht der Bauch-Index im Lebensmittel-Ratgeber „Erkennen statt zählen“: <a href="lebensmittel-ratgeber.pdf#page=5" target="_blank" rel="noopener">Bauch-Index (S. 5)</a> und <a href="lebensmittel-ratgeber.pdf#page=6" target="_blank" rel="noopener">So satt wie 2 Bananen (S. 6)</a>. Einkaufszettel und Rezepte gibt es in der <a href="broschuere-kleine-schritte-grosse-wirkung.pdf" download>Broschüre „Kleine Schritte. Große Wirkung.“ (PDF)</a>.</p>
   </div>
 
   <div class="panel" id="zucker">
@@ -965,7 +981,7 @@ h1,h2,h3{break-after:avoid}
   </div>
 </div>
 <div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Wir können uns die Zukunft leisten“. Die Ergebnisse sind Größenordnungen, können Fehler enthalten und ersetzen keine ärztliche, Steuer-, Rechts-, Finanz- oder Energieberatung. Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>
-<footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Der Rechner läuft im Browser. Gespeichert wird nur, wenn du auf „Messung speichern“ tippst, und dann nur in deinem Browser auf deinem Gerät. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
+<footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Rechner und Broschüre sind kostenfrei. Der Rechner läuft im Browser. Gespeichert wird nur, wenn du auf „Messung speichern“ tippst, und dann nur in deinem Browser auf deinem Gerät. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p><p class="bildnachweis" style="margin:8px 0 0">Bildnachweis der Hefte: <a href="lebensmittel-ratgeber.pdf#page=44" target="_blank" rel="noopener">Lebensmittel-Ratgeber (S. 44)</a> · <a href="broschuere-kleine-schritte-grosse-wirkung.pdf#page=17" target="_blank" rel="noopener">Broschüre (S. 17)</a></p><details class="bildnachweis"><summary>Bildnachweis dieser Seite: Fotos von Wikimedia Commons (gemeinfrei oder CC0) und ein KI-Bild</summary><ul><li><a href="https://commons.wikimedia.org/wiki/File:French_fries_%F0%9F%8D%9F.jpg" target="_blank" rel="noopener">pommes.jpg</a>: Fumikas Sagisavas, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Potato_chips_-_Massachusetts.jpg" target="_blank" rel="noopener">chips.jpg</a>: Daderot, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Glass_cola.jpg" target="_blank" rel="noopener">cola.jpg</a>: pic_p_ter, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Steak_Dinner_1_(Unsplash).jpg" target="_blank" rel="noopener">steak.jpg</a>: Alex Munsell alexmunsell, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Huit_merguez_et_trois_saucisses_en_d%C3%A9but_de_cuisson_au_barbecue_en_mars_2020.jpg" target="_blank" rel="noopener">bratwurst.jpg</a>: Benoît Prieur, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Potatoes,_boiled,_with_olive_oil,_garlic,_salt_-_Massachusetts.jpg" target="_blank" rel="noopener">pellkartoffeln.jpg</a>: Daderot, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Milky-Way-Simply-Caramel-Split.jpg" target="_blank" rel="noopener">schokoriegel.jpg</a>: Evan-Amos, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Baguette-246424.jpg" target="_blank" rel="noopener">weissbrot.jpg</a>: cocoparisienne, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Beer_glass_(1).jpg" target="_blank" rel="noopener">bier.jpg</a>: Jon Sullivan, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Orange_juice_1_edit1.jpg" target="_blank" rel="noopener">saft.jpg</a>: Agency of the United States Department of Agriculture Edited, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:NCI_butter.jpg" target="_blank" rel="noopener">butter.jpg</a>: Renee Comet (National Cancer Institute), Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Cheese_limburger_edit.jpg" target="_blank" rel="noopener">hartkaese.jpg</a>: Original photo by John Sullivan. Edit own work., Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Basket_of_broccoli_in_Singapore_market.jpg" target="_blank" rel="noopener">brokkoli.jpg</a>: David, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Rye_bread_Roggenbengel_2025-02-14_05.jpg" target="_blank" rel="noopener">vollkornbrot.jpg</a>: Leonhard Lenz, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Apple_fruit_in_illorin.jpg" target="_blank" rel="noopener">aepfel.jpg</a>: Eunice Ameh, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Californian_walnut_kernel_within_a_half-broken_shell,_photographed_in_West_Bengal,_India,_on_January_14,_2024.jpg" target="_blank" rel="noopener">walnuesse.jpg</a>: Billjones94, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Lancaster,_United_States_(Unsplash).jpg" target="_blank" rel="noopener">joghurt.jpg</a>: Peter Hershey peterhershey, CC0</li><li>x_gehen.jpg, x_kette.jpg, x_kochen.jpg, x_mittag.jpg, x_rad.jpg und x_sport.jpg: KI-Bild (ChatGPT), Tomas Hecker, keine realen Personen</li><li><a href="https://commons.wikimedia.org/wiki/File:Glass_cola.jpg" target="_blank" rel="noopener">zero.jpg</a>: pic_p_ter, Public domain</li></ul></details></footer>
 <script>
 const $ = id => document.getElementById(id);
 const fmt = (v, d = 0) => (+v).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -1304,10 +1320,11 @@ function zeigeGlueck() {
 // ---------- Teilen: nur der Link, keine persönlichen Werte ----------
 const TEILEN = {
   rechner: { url: "https://tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner/", titel: "Mein Bauch-Check",
-    text: "Schau mal, der Bauch-Check zeigt, was jeder Zentimeter und jeder Zehntelpunkt beim Zucker bringt. Kostenlos, deine Werte bleiben auf deinem Gerät:" },
+    text: "Schau mal, der Bauch-Check zeigt, was jeder Zentimeter und jeder Zehntelpunkt beim Zucker bringt. Kostenfrei, und deine Werte bleiben auf deinem Gerät:" },
   broschuere: { url: "https://tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner/broschuere-kleine-schritte-grosse-wirkung.pdf", titel: "Kleine Schritte, große Wirkung",
-    text: "Eine kurze Broschüre mit kleinen Schritten für einen gesünderen Bauch und Zucker:" } };
+    text: "Eine kurze, kostenfreie Broschüre mit kleinen Schritten für einen gesünderen Bauch und Zucker:" } };
 let TEIL_WAS = "einladung";
+const AKT_BILD = [["x_gehen", "Eine fröhliche Gruppe wandert durch den Herbstwald"], ["x_kochen", "Ein Paar kocht gemeinsam mit Gemüse, Kichererbsensalat und Vollkornbrot"], ["x_sport", "Eine gemischte Gruppe macht lachend Dehnübungen im Park"], ["x_rad", "Ein lachendes Paar fährt mit Helm Rad zwischen Feldern und Waldrand"], ["x_mittag", "Drei Kollegen spazieren lachend in der Mittagspause durch einen Park"]];
 const AKT = [["Gehtreff", "eine Runde spazieren zu gehen, 20 Minuten"], ["Kochrunde", "zusammen gesund zu kochen, reihum bei einem von uns"], ["Sport zusammen", "zusammen Sport zu machen"], ["Rad fahren", "eine Runde Rad zu fahren"], ["Mittagsrunde", "in der Mittagspause eine Runde zu gehen"]];
 const OFT = ["einmal pro Woche", "zweimal pro Woche"];
 let M_AKT = 0, M_OFT = 0;
@@ -1335,6 +1352,7 @@ function zeigeMit() {
   $("m_oft").innerHTML = OFT.map((t, i) => `<button type="button" data-o="${i}" aria-pressed="${i === M_OFT}">${t}</button>`).join("");
   $("m_akt").querySelectorAll("button").forEach(b => b.onclick = () => { M_AKT = +b.dataset.a; TEIL_WAS = "einladung"; zeigeTeilen(); zeigeMit(); });
   $("m_oft").querySelectorAll("button").forEach(b => b.onclick = () => { M_OFT = +b.dataset.o; TEIL_WAS = "einladung"; zeigeTeilen(); zeigeMit(); });
+  const bild = $("m_bild"); if (!bild.src.endsWith(AKT_BILD[M_AKT][0] + ".jpg")) bild.src = "bilder/" + AKT_BILD[M_AKT][0] + ".jpg"; bild.alt = AKT_BILD[M_AKT][1];
   $("m_zahl").textContent = MIT;
   $("m_dabeitxt").textContent = MIT === 0 ? "Tippe auf +, wenn jemand zusagt." : MIT === 1 ? "Super, der Schneeball rollt!" : `Du hast ${MIT} Menschen mitgenommen. Stark!`;
   zeigeSchneeball();
@@ -1761,14 +1779,15 @@ $("r_g").addEventListener("input", zucker); $("r_r").addEventListener("input", z
 run();
 allegesund();
 // ---------- Bauch-Index (Mozaffarian u. a. 2011, NEJM): kg Gewichtsänderung in 4 Jahren je zusätzlicher Tagesportion ----------
+const BI_BILD = ["pommes", "chips", "cola", "steak", "bratwurst", "pellkartoffeln", "schokoriegel", "weissbrot", "bier", "saft", "butter", "hartkaese", "zero", "brokkoli", "vollkornbrot", "aepfel", "walnuesse", "joghurt"];
 const BI = [["Pommes frites", "1 Portion", 1.52], ["Kartoffelchips", "1 kleine Tüte, 30 g", 0.77], ["Limonade, Cola, Eistee", "1 Dose, 0,33 l", 0.45], ["Rotes Fleisch", "1 Portion", 0.43],
   ["Wurst, Schinken, Speck", "1 Scheibe oder Würstchen", 0.42], ["Kartoffeln, gekocht oder Brei", "1 mittelgroße", 0.26], ["Süßigkeiten, Kuchen", "1 Portion", 0.18], ["Weißbrot, helle Nudeln, Reis", "1 Scheibe oder ½ Tasse", 0.18],
   ["Bier, Wein", "1 Glas", 0.18], ["Fruchtsaft", "1 kleines Glas", 0.14], ["Butter", "1 Teelöffel", 0.14], ["Käse", "1 Scheibe", 0], ["Getränke mit Süßstoff", "1 Dose", 0],
   ["Gemüse", "1 Portion", -0.10], ["Vollkornbrot, Haferflocken", "1 Scheibe oder ½ Tasse", -0.17], ["Obst", "1 Stück", -0.22], ["Nüsse", "1 Handvoll, 30 g", -0.26], ["Joghurt", "1 Becher", -0.37]];
 function bauchIndex() {
   const mx = 1.6, kg = v => (v > 0 ? "+" : v < 0 ? "−" : "±") + fmt(Math.abs(v), 1) + " kg";
-  $("bi_liste").innerHTML = BI.map(([n, p, v]) => { const wd = Math.abs(v) / mx * 50;
-    return `<div class="bi-row"><span>${n} <small>${p}</small></span><span class="bb" aria-hidden="true"><i style="${v >= 0 ? `left:50%` : `right:50%`};width:${wd}%;background:var(${v > 0 ? "--risk" : "--good"})"></i></span><span class="w">${kg(v)}</span></div>`; }).join("");
+  $("bi_liste").innerHTML = BI.map(([n, p, v], i) => { const wd = Math.abs(v) / mx * 50;
+    return `<div class="bi-row"><span class="bi-n"><img src="bilder/${BI_BILD[i]}.jpg" alt="" width="44" height="44" loading="lazy" decoding="async"><span>${n} <small>${p}</small></span></span><span class="bb" aria-hidden="true"><i style="${v >= 0 ? `left:50%` : `right:50%`};width:${wd}%;background:var(${v > 0 ? "--risk" : "--good"})"></i></span><span class="w">${kg(v)}</span></div>`; }).join("");
   const opt = (l, sel) => l.map(([n, , v], i) => `<option value="${BI.indexOf(l[i])}"${n === sel ? " selected" : ""}>${n}</option>`).join("");
   $("bi_statt").innerHTML = opt(BI.filter(b => b[2] > 0), "Limonade, Cola, Eistee");
   $("bi_lieber").innerHTML = opt(BI.filter(b => b[2] <= 0), "Getränke mit Süßstoff");
