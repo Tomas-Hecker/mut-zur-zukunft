@@ -1,16 +1,18 @@
 /* Satzumbruch: Ein Satz, der am Zeilenende beginnt und dann umbricht, aber in eine Zeile passen würde,
    beginnt in der nächsten Zeile. Längere Sätze laufen normal weiter. Ebenso ein Satzteil nach Komma, Semikolon,
-   Doppelpunkt oder Gedankenstrich, wenn er in der hinteren Hälfte der Zeile beginnt (Wunsch Tomas, 16.11.2026). Läuft beim Laden, bei jeder Größenänderung
+   Doppelpunkt oder Gedankenstrich, wenn er in der hinteren Hälfte der Zeile beginnt (Wunsch Tomas, 16.11.2026).
+   In Überschriften gilt das für jeden Satzteil, egal wo er beginnt: „Gleich satt.“ / „Ganz anders für den Bauch.“ (Wunsch Tomas, 22.11.2026). Läuft beim Laden, bei jeder Größenänderung
    und wenn ein Rechner neue Ergebnisse schreibt. */
 (function () {
   "use strict";
   if (!window.ResizeObserver || !window.MutationObserver || !document.createRange) return;
-  var SKIP = "script,style,svg,button,label,select,option,textarea,input,code,pre,nav,h1,h2,h3,h4,h5,h6,table,.logo,.sitenav,[data-nosatz]";
+  var SKIP = "script,style,svg,button,label,select,option,textarea,input,code,pre,nav,table,.logo,.sitenav,[data-nosatz]";
   var ABK = /(?:^|[\s(„"])(?:z|B|u|a|d|h|o|g|v|s|S|Nr|ca|bzw|vgl|Mio|Mrd|Tsd|etc|usw|ggf|evtl|inkl|zzgl|Abs|Art|Dr|Prof|St|Std|Min|max|min|rd|bspw|Jh|Kap|Tab|Abb|Anm|sog|gem|lt|Bd|Hrsg|ff|f)\.$/;
   var ENDE = /([.!?…])([“”"»)\]]*)(\s+)(?=[A-ZÄÖÜ„"»(0-9])/g;
   // Zahl und Einheit bleiben zusammen: „17,2 Mrd. €“, „74 von 100“, „4 %“
   var BINDE = /(\d) (?=(?:€|%|Mrd\.|Mio\.|Tsd\.|Prozent|Punkte|Stunden|Jahre|Jahren|Monate|kWh|kW|km|Wp|W)(?![A-Za-zÄÖÜäöüß]))/g;
   var VON = /(\d) von (\d)/g, MRD = /(Mrd\.|Mio\.|Tsd\.) €/g;
+  var KOPF = "h1,h2,h3,h4,h5,h6";
   var TEIL = /([,;:])([“”"»)\]]*)(\s+)(?=\S)|(\s)(?=[–—]\s)/g;
   var st = document.createElement("style");
   st.textContent = ".sb{display:inline}.sb.on::before{content:'\\A';white-space:pre}";
@@ -97,6 +99,7 @@
     if (W <= 0) return;
     d.w = block.clientWidth;
     var lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.4;
+    var kopf = block.matches(KOPF);
     d.ms.forEach(function (m) { m.classList.remove("on"); });
     for (var i = 0; i < d.ms.length; i++) {
       var m = d.ms[i];
@@ -110,7 +113,7 @@
       if (z.length < 2) continue;
       z.sort(function (a, b) { return a.top - b.top; });
       if (z[0].l <= links + 2) continue; // beginnt schon am Zeilenanfang
-      if (m.classList.contains("teil") && z[0].l - links < W / 2) continue; // Satzteil: nur aus der hinteren Hälfte der Zeile
+      if (m.classList.contains("teil") && !kopf && z[0].l - links < W / 2) continue; // Satzteil: nur aus der hinteren Hälfte der Zeile
       var breite = z.reduce(function (s, x) { return s + (x.r - x.l); }, 0);
       if (breite <= W - 4) m.classList.add("on");
     }
@@ -171,6 +174,6 @@
     beobachten();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(offenAlle);
   }
-  function offenAlle() { document.querySelectorAll("p,li,div,dd,figcaption,blockquote").forEach(function (b) { var d = daten.get(b); if (d && d.sichtbar) { d.w = -1; planen(b); } }); }
+  function offenAlle() { document.querySelectorAll("p,li,div,dd,figcaption,blockquote,h1,h2,h3,h4,h5,h6").forEach(function (b) { var d = daten.get(b); if (d && d.sichtbar) { d.w = -1; planen(b); } }); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
 })();

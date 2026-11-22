@@ -148,6 +148,76 @@ details.grp > summary { font-size: 14.5px }
 .gauge i { position: absolute; top: -9px; width: 5px; height: 32px; margin-left: -2.5px; background: var(--fg); border: 2px solid var(--panel); border-radius: 3px; transition: left .35s }
 .gauge b { position: absolute; top: -5px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; border: 2px solid var(--fg); background: var(--panel); opacity: .7 }
 @media (prefers-reduced-motion: reduce) { .gauge i { transition: none } }
+/* Zucker-Skala 4,5 bis 10 %: grün bis 5,7, gelb bis 6,5, rot darüber */
+.gauge.hb { background: linear-gradient(90deg, var(--ok) 0 21.8%, var(--mid) 21.8% 36.4%, var(--risk) 36.4%) }
+.gscale.hb { position: relative; height: 1.2em; display: block }
+.gscale.hb span { position: absolute; transform: translateX(-50%) }
+.gscale.hb span:nth-child(1) { left: 0; transform: none } .gscale.hb span:nth-child(2) { left: 21.8% } .gscale.hb span:nth-child(3) { left: 36.4% } .gscale.hb span:nth-child(4) { left: 63.6% } .gscale.hb span:nth-child(5) { left: auto; right: 0; transform: none }
+/* Gesund und glücklich: Aufwärtsspirale */
+.glueck { gap: 16px }
+.glueck .lead { font-size: 17px }
+.spirale-grid { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 24px; align-items: center }
+@media (max-width: 640px) { .spirale-grid { grid-template-columns: minmax(0, 1fr); gap: 8px } #g_spirale { max-width: 170px; justify-self: center } }
+#g_spirale { width: 100%; height: auto }
+#g_spirale text { font: 800 15px var(--display); fill: #fff; text-anchor: middle; dominant-baseline: central }
+.spirale { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column-reverse; gap: 10px }
+.spirale li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 2px 12px; align-items: start }
+.spirale li > span { grid-row: span 2; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font: 800 15px var(--display); color: #fff }
+.spirale li b { font: 800 17px/1.25 var(--display) }
+.spirale li p { margin: 0; font-size: 15px; color: var(--muted) }
+.spirale li p strong { color: var(--fg) }
+.spirale li.top { background: var(--z1); border-radius: 12px; padding: 10px 12px; margin: 0 -12px }
+.warum { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 8px }
+.warum-satz { font: 700 18px/1.35 var(--display); color: var(--good); margin: 4px 0 0 }
+.teilen { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 10px }
+.teil-knoepfe { display: flex; flex-wrap: wrap; gap: 8px }
+.teil-knoepfe .btn { text-decoration: none; display: inline-block }
+.btn.alt { background: var(--field); color: var(--fg); border: 1px solid var(--line) }
+.gemeinsam { display: grid; gap: 6px }
+.gemeinsam .k { margin: 4px 0 0; font-weight: 700; font-size: 14.5px }
+.einladung { margin: 6px 0 0; border-left: 4px solid var(--ok); background: var(--z1); border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: 15.5px }
+.dabei { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 4px }
+.st-row.mini { padding: 3px; gap: 6px } .st-row.mini output { font-size: 22px; min-width: 2.2em } .st-row.mini .st-b { width: 38px; height: 38px; font-size: 20px }
+.schneeball { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 10px }
+.sb-runden { display: grid; gap: 6px }
+.sb-r { display: grid; grid-template-columns: 5.2em minmax(0, 1fr) 4.2em; gap: 10px; align-items: center; font-size: 14px }
+.sb-r .p { display: flex; flex-wrap: wrap; gap: 3px }
+.sb-r .p i { width: 10px; height: 10px; border-radius: 50%; background: var(--ok) }
+.sb-r .p i.du { background: var(--mid) }
+.sb-r .p em { font-style: normal; font-size: 12.5px; color: var(--muted); margin-left: 4px }
+.sb-r b { text-align: right; font-variant-numeric: tabular-nums }
+.zucker-check { border-top: 1px solid var(--line); padding-top: 18px }
+/* Persönliche Tafel: Bauch × Langzeitzucker, Farben wie in der Broschüre */
+.tafel-box { border-top: 1px solid var(--line); padding-top: 18px; display: grid; gap: 12px }
+.tafel { display: grid; grid-template-columns: minmax(3.4em, auto) repeat(5, minmax(0, 1fr)); gap: 6px; font-variant-numeric: tabular-nums }
+.tafel .kh { text-align: center; font: 800 15px/1.15 var(--display); padding-bottom: 2px }
+.tafel .kh small { display: block; font: 500 12px var(--body); color: var(--muted) }
+.tafel .kh small.e { display: inline; font: inherit; color: inherit; margin-left: .25em }
+@media (max-width: 560px) { .tafel .kh small.e { display: block; font: 500 12px var(--body); color: var(--muted); margin: 0 } }
+.tafel .rh { font: 800 18px/1.1 var(--display); align-self: center }
+.tafel .rh small { display: block; font: 500 12.5px/1.2 var(--body); color: var(--muted) }
+.tafel .ecke { font-size: 12px; color: var(--muted); align-self: end }
+.tz { position: relative; border: 0; border-radius: 10px; padding: 10px 4px; min-height: 64px; color: #17201e; cursor: pointer; text-align: center; display: grid; align-content: center; gap: 2px; font: inherit; touch-action: manipulation }
+.tz .n { font: 800 20px/1.05 var(--display) }
+.tz .n.gs { font-size: 16px }
+.tafel .rh, .tafel .kh { hyphens: auto; overflow-wrap: anywhere }
+.tz .n small { font-size: 13px; font-weight: 700 }
+.tz .j { font-size: 13.5px }
+.tz.weg { box-shadow: inset 0 0 0 2px rgb(23 32 30 / .55); background-image: repeating-linear-gradient(135deg, rgb(255 255 255 / .18) 0 6px, transparent 6px 12px) }
+.tz.wahl { outline: 3px solid var(--fg); outline-offset: 2px }
+.tz.du { box-shadow: inset 0 0 0 3px #17201e }
+.tz .pin { justify-self: center; font: 800 11px/1 var(--body); letter-spacing: .04em; text-transform: uppercase; background: var(--fg); color: var(--panel); border-radius: 999px; padding: 4px 7px; white-space: nowrap }
+.tz .pin.z { background: var(--good); color: #fff }
+.tz:focus-visible { outline: 3px solid var(--ok); outline-offset: 2px }
+.t-leg { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; font-size: 13.5px; color: var(--muted) }
+.t-skala { display: flex; align-items: center; gap: 8px }
+.t-skala i { width: 120px; height: 10px; border-radius: 5px; background: linear-gradient(90deg, #6aaa7c, #a9cf7a, #e2cc62, #e8a453, #df7a45, #cc5438) }
+.tafel-ziel { display: grid; gap: 10px }
+.gw-tiles.vier { grid-template-columns: repeat(4, minmax(0, 1fr)) }
+@media (max-width: 900px) { .gw-tiles.vier { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+@media (max-width: 420px) { .gw-tiles.vier { grid-template-columns: minmax(0, 1fr) } }
+@media (max-width: 560px) { .tafel { gap: 4px; grid-template-columns: 58px repeat(5, minmax(0, 1fr)) } .tz .n.gs { font-size: 12px } .tz .zt, .tafel .kh .q { display: none } .tz .pin { font-size: 9.5px; padding: 3px 5px } .tz { padding: 8px 2px; min-height: 56px; border-radius: 8px } .tz .n { font-size: 16px } .tz .n small { display: none } .tz .j { font-size: 12px } .tafel .kh { font-size: 13px } .tafel .rh { font-size: 15px } .tafel .rh small { font-size: 11px } .tz .lang { display: none } }
+@media (min-width: 561px) { .tz .kurz { display: none } }
 .gscale { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums }
 .etappe { border-radius: 12px; padding: 14px 16px; background: var(--hl); display: grid; gap: 6px }
 .etappe .k { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted) }
@@ -330,7 +400,7 @@ h1,h2,h3{break-after:avoid}
           <div class="st-row"><button type="button" class="st-b" data-st="bauchVor" data-d="-1" aria-label="Startwert 1 cm weniger">−</button><output id="o_cs" aria-labelledby="l_cs"></output><button type="button" class="st-b" data-st="bauchVor" data-d="1" aria-label="Startwert 1 cm mehr">+</button></div>
         </div>
         <details class="howto"><summary>So misst du richtig</summary><p class="note">Im Stehen, nach dem Ausatmen, Maßband waagerecht in der Mitte zwischen unterster Rippe und Hüftknochen (meist knapp über dem Bauchnabel). Am besten immer morgens, vor dem Frühstück, einmal im Monat. Faustregel: Der Bauch sollte weniger als die Hälfte der Körpergröße messen.</p></details>
-        <p class="note">Alter, Geschlecht, Langzeitzucker und Lebensstil kannst du <a href="#genauer">weiter unten</a> ergänzen. Dann wird die Schätzung genauer.</p>
+        <p class="note">Alter, Geschlecht und Lebensstil kannst du <a href="#genauer">weiter unten</a> ergänzen. Dann wird die Schätzung genauer.</p>
       </div>
       <div class="grp check-aus">
         <h2>2. Deine Ampel</h2>
@@ -344,6 +414,31 @@ h1,h2,h3{break-after:avoid}
       </div>
     </div>
 
+    <div class="check-grid zucker-check">
+      <div class="grp check-ein">
+        <div class="stepper">
+          <span class="lbl" id="l_ch">Langzeitzucker (HbA1c)</span>
+          <div class="st-row"><button type="button" class="st-b" data-st="hba1c" data-d="-0.1" aria-label="Langzeitzucker 0,1 Prozentpunkte weniger">−</button><output id="o_ch" aria-labelledby="l_ch"></output><button type="button" class="st-b" data-st="hba1c" data-d="0.1" aria-label="Langzeitzucker 0,1 Prozentpunkte mehr">+</button></div>
+          <input type="range" id="r_ch" min="4.5" max="12" step="0.1" aria-label="Langzeitzucker in Prozent">
+        </div>
+        <div class="stepper">
+          <span class="lbl" id="l_chs">Langzeitzucker beim Start <small>(vor einem Jahr; freiwillig)</small></span>
+          <div class="st-row"><button type="button" class="st-b" data-st="hbVor" data-d="-0.1" aria-label="Startwert Zucker 0,1 weniger">−</button><output id="o_chs" aria-labelledby="l_chs"></output><button type="button" class="st-b" data-st="hbVor" data-d="0.1" aria-label="Startwert Zucker 0,1 mehr">+</button></div>
+        </div>
+        <label class="chk"><input type="checkbox" id="c_dm"> Bei mir ist Diabetes schon festgestellt</label>
+        <details class="howto"><summary>Wo finde ich den Wert?</summary><p class="note">Im Laborbefund vom Check-up, als HbA1c in % oder in mmol/mol (39 mmol/mol = 5,7 %). Er zeigt deinen Blutzucker der letzten 2 bis 3 Monate. Kein Wert zur Hand? Frag beim nächsten Check-up danach, er gehört bei Bauch über der halben Körpergröße dazu.</p></details>
+      </div>
+      <div class="grp check-aus">
+        <div class="ampelbox">
+          <div class="ab-kopf"><span class="k">Langzeitzucker</span><span class="v" id="c_hb"></span><span class="tag" id="c_htag"></span></div>
+          <div class="gauge hb" aria-hidden="true"><i id="c_hneedle"></i><b id="c_hstartmark" hidden></b></div>
+          <div class="gscale hb"><span>4,5 %</span><span>5,7</span><span>6,5</span><span>8</span><span>10 %</span></div>
+          <p id="c_hampeltxt"></p>
+        </div>
+        <div class="etappe" id="c_hetappe"></div>
+      </div>
+    </div>
+
     <div class="gewinn" aria-live="polite">
       <div class="gw-kopf">
         <h2 id="c_gw_h">3. Dein Gewinn</h2>
@@ -351,13 +446,27 @@ h1,h2,h3{break-after:avoid}
       </div>
       <p class="gw-sub" id="c_gw_sub"></p>
       <div class="gw-tiles" id="c_gw_tiles"></div>
+      <p class="gw-sub" id="c_gw_zucker" hidden></p>
       <h3>Dein Risiko sinkt</h3>
       <ul class="risiken" id="c_risiken"></ul>
       <p class="hinweis">Gut zu wissen: Das sind Schätzbereiche aus großen Bevölkerungsstudien. Sie zeigen, wie viel seltener Menschen mit kleinerem Bauch im Durchschnitt erkranken, keine Garantie für dich. Jeder Zentimeter zählt trotzdem. <a href="#q-risiko">Woher die Zahlen kommen</a></p>
     </div>
 
+    <div class="tafel-box">
+      <div class="gw-kopf"><h2>4. Deine Tafel: Wo du stehst, wohin es geht</h2></div>
+      <p class="gw-sub" id="t_sub"></p>
+      <div class="tafel" id="t_grid" lang="de"></div>
+      <div class="t-leg"><span>Felder: Mehrkosten über das restliche Leben, darunter die Lebensjahre, die im Schnitt fehlen.</span><span class="t-skala"><small>weniger</small><i></i><small>mehr</small></span></div>
+      <div class="tafel-ziel" aria-live="polite">
+        <h3 id="t_h"></h3>
+        <div class="gw-tiles vier" id="t_tiles"></div>
+        <p class="gw-sub" id="t_alltag"></p>
+      </div>
+      <p class="hinweis">Mehr gesunde Jahre heißt auch mehr gute Zeit. Wie Gesundheit und Glück sich gegenseitig verstärken, zeigt <a href="#glueck">der nächste Abschnitt</a>. Alle Zahlen sind Schätzbereiche, keine Vorhersage für dich.</p>
+    </div>
+
     <div class="weg">
-      <div class="gw-kopf"><h2>4. Mein Weg</h2><button type="button" class="btn" id="c_save">Messung von heute speichern</button></div>
+      <div class="gw-kopf"><h2>5. Mein Weg</h2><button type="button" class="btn" id="c_save">Messung von heute speichern</button></div>
       <div id="c_verlauf"></div>
       <div class="badges" id="c_badges"></div>
       <div class="plan">
@@ -368,6 +477,53 @@ h1,h2,h3{break-after:avoid}
       </div>
       <p class="note">Deine Messungen bleiben nur in diesem Browser auf deinem Gerät, nichts wird übertragen. <button type="button" class="linkbtn" id="c_del">Gespeicherte Messungen löschen</button></p>
     </div>
+  </section>
+
+  <section class="panel glueck" id="glueck" aria-labelledby="glueck_h">
+    <h2 id="glueck_h">Gesund und glücklich: Deine Aufwärtsspirale</h2>
+    <p class="lead">Gesundheit und Glück verstärken sich gegenseitig. Jeder kleine Schritt dreht die Spirale ein Stück weiter nach oben.</p>
+    <div class="spirale-grid">
+      <svg id="g_spirale" viewBox="0 0 240 330" role="img" aria-label="Spirale, die von unten nach oben steigt, mit fünf Stationen"></svg>
+      <ol class="spirale" id="g_stationen"></ol>
+    </div>
+    <div class="warum">
+      <h3>Mein Warum: Wofür will ich die gesunden Jahre?</h3>
+      <p class="note">Wer weiß, wofür er es tut, bleibt leichter dran. Tipp an, was dir wichtig ist, gern mehreres.</p>
+      <div class="chips" id="g_warum"></div>
+      <p class="warum-satz" id="g_warumtxt" aria-live="polite"></p>
+    </div>
+    <div class="teilen">
+      <h3>Nimm jemanden mit</h3>
+      <p class="note">Zu zweit fällt jeder Schritt leichter: Wer mit Freunden abnimmt, hält sein Gewicht viel öfter, 66 % statt 24 % (<a href="#q-wing">Wing und Jeffery 1999</a>). Bei Diabetes senkt Begleitung durch andere Betroffene den Langzeitzucker um rund 0,6 Punkte (<a href="#q-qi">Qi 2015</a>). Lade jemanden ein, Freunde, Familie, Nachbarn oder Kollegen. Geteilt wird nur die Einladung mit dem Link, nie deine Werte.</p>
+      <div class="gemeinsam">
+        <p class="k">Was wollt ihr zusammen machen?</p>
+        <div class="chips" id="m_akt"></div>
+        <p class="k">Wie oft?</p>
+        <div class="chips" id="m_oft"></div>
+        <blockquote class="einladung" id="m_text"></blockquote>
+      </div>
+      <div class="seg" role="group" aria-label="Was teilen?" id="s_was"><button type="button" data-was="einladung" aria-pressed="true">Einladung</button><button type="button" data-was="rechner" aria-pressed="false">Rechner</button><button type="button" data-was="broschuere" aria-pressed="false">Broschüre</button></div>
+      <div class="teil-knoepfe">
+        <button type="button" class="btn" id="s_share" hidden>Teilen …</button>
+        <a class="btn alt" id="s_wa" target="_blank" rel="noopener">WhatsApp</a>
+        <a class="btn alt" id="s_mail">E-Mail</a>
+        <button type="button" class="btn alt" id="s_copy">Link kopieren</button>
+      </div>
+      <p class="note" id="s_ok" role="status"></p>
+      <div class="dabei">
+        <span>Bei mir sind schon dabei:</span>
+        <div class="st-row mini"><button type="button" class="st-b" id="m_minus" aria-label="eine Person weniger">−</button><output id="m_zahl" aria-live="polite">0</output><button type="button" class="st-b" id="m_plus" aria-label="eine Person mehr">+</button></div>
+        <span class="note" id="m_dabeitxt"></span>
+      </div>
+    </div>
+    <div class="schneeball">
+      <h3>Die Gesundheitskette: Einer fängt an. Alle gewinnen.</h3>
+      <p class="note">Gewohnheiten stecken an: Hört ein Freund auf zu rauchen, sinkt die eigene Wahrscheinlichkeit zu rauchen um 36 % (<a href="#q-christakis">Christakis und Fowler 2008</a>). Gehgruppen senken Blutdruck, BMI und Niedergeschlagenheit, und drei von vier bleiben dabei (<a href="#q-hanson">Hanson und Jones 2015</a>). Du nimmst jemanden mit, und jede Person nimmt wieder jemanden mit. Wie viele nimmt jede Person mit?</p>
+      <div class="seg" role="group" aria-label="Personen pro Runde" id="m_je"><button type="button" data-je="1">1</button><button type="button" data-je="2" aria-pressed="true">2</button><button type="button" data-je="3">3</button></div>
+      <div class="sb-runden" id="m_runden"></div>
+      <p class="gw-sub" id="m_summe"></p>
+    </div>
+    <p class="hinweis">Die Studien zeigen Zusammenhänge in großen Gruppen, keinen Beweis für jeden Einzelnen. <a href="#q-singh">Singh 2023</a>, <a href="#q-mujcic">Mujcic und Oswald 2016</a>, <a href="#q-stenholm">Stenholm 2017</a>, <a href="#q-chida">Chida und Steptoe 2008</a>, <a href="#q-wing">Wing und Jeffery 1999</a>, <a href="#q-qi">Qi 2015</a>, <a href="#q-christakis">Christakis und Fowler 2008</a>, <a href="#q-hanson">Hanson und Jones 2015</a>.</p>
   </section>
 
   <div class="eyebrow" id="genauer" style="margin-top:8px">Genauer rechnen</div>
@@ -602,6 +758,54 @@ h1,h2,h3{break-after:avoid}
         <dl><dt>Was wurde untersucht?</dt><dd>Ein großer Verbund von Forschenden (Universität Cambridge u. a.) hat Daten von rund 1,5 Millionen Menschen aus 19 reichen Ländern ausgewertet: Wie lange leben Menschen, je nachdem, in welchem Alter ihr Typ-2-Diabetes festgestellt wurde?</dd><dt>Was kam heraus?</dt><dd>In Europa verliert, wer mit 30 Jahren Diabetes bekommt, rund 13 Lebensjahre, mit 40 rund 9 und mit 50 rund 5. Jedes Jahrzehnt früher kostet etwa 3 bis 4 Jahre mehr.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Grundwert für Diabetes (Schritt 3). Der Rechner stellt den Faktor auf das Sterberisiko für jedes Alter so ein, dass genau diese Jahre herauskommen. Für 60 und älter ist der Wert fortgeschrieben.</dd></dl>
         <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract), Abschnitt „Findings“, Werte für die Europäische Union; Pressemitteilung der Universität Cambridge. <a href="https://www.cam.ac.uk/research/news/type-2-diabetes-diagnosis-at-age-30-reduces-life-expectancy-by-as-much-as-14-years" target="_blank" rel="noopener">Zur Studie ›</a></div>
       </article>
+      <article class="studie" id="q-singh">
+        <h3>Bewegung hebt die Stimmung: über 1.000 Studien</h3>
+        <div class="wer">Singh B. u. a. (2023), <i>British Journal of Sports Medicine</i> 57:1203–1209</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung von 97 Übersichtsarbeiten mit 1.039 Studien und 128.119 Erwachsenen: Wie wirkt Bewegung auf Depression, Angst und psychische Belastung?</dd><dt>Was kam heraus?</dt><dd>Bewegung hatte einen mittleren Effekt gegen Depression und Angst (Effektstärke −0,43 und −0,42) und einen noch größeren gegen psychische Belastung (−0,60).</dd><dt>Wofür der Rechner das nutzt</dt><dd>Station 2 der Aufwärtsspirale, nur als Hinweis, nicht in der Rechnung.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract): „Physical activity had medium effects on depression (median effect size=−0.43…)“. <a href="https://doi.org/10.1136/bjsports-2022-106195" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-mujcic">
+        <h3>Obst und Gemüse machen zufriedener</h3>
+        <div class="wer">Mujcic R., Oswald A. J. (2016), <i>American Journal of Public Health</i> 106:1504</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>12.385 Erwachsene in Australien, über mehrere Jahre befragt: Ändert sich die Lebenszufriedenheit, wenn Menschen mehr Obst und Gemüse essen?</dd><dt>Was kam heraus?</dt><dd>Wer bis zu 8 Portionen mehr am Tag aß, gewann innerhalb von 24 Monaten bis zu 0,24 Punkte Lebenszufriedenheit. Das ist etwa so viel wie der Schritt von Arbeitslosigkeit zurück in Arbeit.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Station 2 der Aufwärtsspirale, nur als Hinweis.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract), Langzeitbefragung HILDA. <a href="https://pubmed.ncbi.nlm.nih.gov/?term=Mujcic+Oswald+Evolution+of+well-being+and+happiness+after+increases+in+consumption+of+fruit+and+vegetables" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-christakis">
+        <h3>Gesunde Gewohnheiten stecken an</h3>
+        <div class="wer">Christakis N. A., Fowler J. H. (2008), <i>New England Journal of Medicine</i> 358:2249–2258</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>12.067 Menschen aus der Framingham-Studie über 32 Jahre: Wie breitet sich das Aufhören mit dem Rauchen in Familien und Freundeskreisen aus?</dd><dt>Was kam heraus?</dt><dd>Hörte ein Freund auf, sank die eigene Wahrscheinlichkeit zu rauchen um 36 %, beim Ehepartner um 67 %, bei Geschwistern um 25 %.</dd><dt>Wofür der Rechner das nutzt</dt><dd>„Die Gesundheitskette“, nur als Hinweis.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract). <a href="https://doi.org/10.1056/NEJMsa0706154" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-hanson">
+        <h3>Gehgruppen wirken, und die Leute bleiben dabei</h3>
+        <div class="wer">Hanson S., Jones A. (2015), <i>British Journal of Sports Medicine</i> 49:710–715</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung von 42 Studien mit 1.843 Teilnehmenden in Gehgruppen im Freien.</dd><dt>Was kam heraus?</dt><dd>Der Blutdruck sank um 3,7 zu 3,1 mmHg, der BMI um 0,7, und Depressionswerte gingen deutlich zurück (Effekt −0,67). Im Mittel blieben 75 % dabei.</dd><dt>Wofür der Rechner das nutzt</dt><dd>„Die Gesundheitskette“, nur als Hinweis.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract). <a href="https://pubmed.ncbi.nlm.nih.gov/?term=Hanson+Jones+2015+walking+groups+meta-analysis" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-wing">
+        <h3>Mit Freunden abnehmen wirkt länger</h3>
+        <div class="wer">Wing R. R., Jeffery R. W. (1999), <i>Journal of Consulting and Clinical Psychology</i> 67:132–138</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Abnehmprogramm, das Menschen allein oder zusammen mit drei Freunden oder Angehörigen begannen.</dd><dt>Was kam heraus?</dt><dd>Mit Freunden und zusätzlicher Unterstützung hielten 66 % ihr Gewicht ein halbes Jahr später, allein nur 24 %. Bis zum Ende dabei blieben 95 % statt 76 %.</dd><dt>Wofür der Rechner das nutzt</dt><dd>„Nimm jemanden mit“, nur als Hinweis.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract). <a href="https://pubmed.ncbi.nlm.nih.gov/?term=Wing+Jeffery+1999+benefits+of+recruiting+participants+with+friends" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-qi">
+        <h3>Bei Diabetes hilft Begleitung durch andere Betroffene</h3>
+        <div class="wer">Qi L. u. a. (2015), <i>BMC Public Health</i> 15:471</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung von 13 Studien mit 2.352 Menschen mit Typ-2-Diabetes, die von anderen Betroffenen begleitet wurden.</dd><dt>Was kam heraus?</dt><dd>Der Langzeitzucker sank im Schnitt um 0,57 Prozentpunkte stärker als ohne Begleitung.</dd><dt>Wofür der Rechner das nutzt</dt><dd>„Nimm jemanden mit“, nur als Hinweis.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract). <a href="https://pubmed.ncbi.nlm.nih.gov/?term=Qi+2015+peer+support+type+2+diabetes+BMC+Public+Health" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-stenholm">
+        <h3>Gesunder Bauch, mehr gesunde Jahre</h3>
+        <div class="wer">Stenholm S. u. a. (2017), <i>International Journal of Obesity</i></div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Vier Langzeitstudien aus England, Finnland, Frankreich und Schweden mit zusammen über 70.000 Menschen: Wie viele Jahre zwischen 50 und 75 verbringen Menschen je nach Gewicht bei guter Gesundheit und ohne chronische Krankheit?</dd><dt>Was kam heraus?</dt><dd>Normalgewichtige sind 81 % dieser Jahre bei guter Gesundheit, mit starkem Übergewicht (BMI ab 35) nur 53 %. Das sind im Schnitt 7 Jahre weniger bei guter Gesundheit und 7 bis 9 Jahre weniger ohne chronische Krankheit.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Kachel „Gesunde Jahre“ in deiner Tafel. Die Studie misst den BMI, nicht den Bauch. Der Rechner ordnet den Bauch deshalb grob zu und zeigt eine weite Spanne (Unterschiede zwischen den Ländern).</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract): „from 81% in normal weight men and women to 53% in men and women with class II obesity“. <a href="https://doi.org/10.1038/ijo.2017.29" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-chida">
+        <h3>Wer zufrieden ist, lebt länger</h3>
+        <div class="wer">Chida Y., Steptoe A. (2008), <i>Psychosomatic Medicine</i> 70:741–756</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung von 70 Langzeitstudien: Leben Menschen länger, die zufrieden, optimistisch und guter Stimmung sind?</dd><dt>Was kam heraus?</dt><dd>Bei anfangs gesunden Menschen war das Sterberisiko um 18 % niedriger (Spanne 11 bis 24 %). Bei Menschen, die schon krank waren, war der Effekt klein (2 %).</dd><dt>Wofür der Rechner das nutzt</dt><dd>Station 5 der Aufwärtsspirale, nur als Hinweis, nicht in der Rechnung. Es ist ein Zusammenhang, kein Beweis für die Ursache.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract): „combined hazard ratio (HR) = 0.82; 95% Confidence Interval (CI) = 0.76-0.89“ für gesunde Bevölkerungen. <a href="https://doi.org/10.1097/PSY.0b013e31818105ba" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
       <article class="studie" id="q-zhang">
         <h3>Bei Diabetes zählt jeder Prozentpunkt</h3>
         <div class="wer">Zhang Y. u. a. (2012), <i>PLOS ONE</i> 7:e42551</div>
@@ -800,11 +1004,13 @@ const bewOk = p => p.bewEinheit === "schritte" ? p.schritte >= SCHRITTE.ziel : p
 // ---------- Eingaben ----------
 const V = { sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, einheit: "pct", dm: false, bauchVor: 0, hbVor: 0, glVor: 0, rauch: "nie", zig: 15, aufh: 40, glaeser: 3, bewegung: 150, bewEinheit: "min", schritte: 7800, vorsorge: false, programm: false };
 // Gespeicherte Messungen (nur wenn man selbst auf „Messung speichern“ getippt hat; bleibt im eigenen Browser)
-const SPEICHER = "mzz-bauch", MERK = ["sex", "alter", "groesse", "bauch", "bauchVor", "hba1c", "dm"];
+const SPEICHER = "mzz-bauch", MERK = ["sex", "alter", "groesse", "bauch", "bauchVor", "hba1c", "hbVor", "dm"];
 const lies = () => { try { return JSON.parse(localStorage.getItem(SPEICHER)) || null; } catch (e) { return null; } };
 const schreib = d => { try { localStorage.setItem(SPEICHER, JSON.stringify(d)); return true; } catch (e) { return false; } };
 const GESP = lies();
 let MESS = GESP && Array.isArray(GESP.mess) ? GESP.mess.filter(m => m && m.b > 0 && /^\d{4}-\d\d-\d\d$/.test(m.d)) : [], PLAN = GESP && typeof GESP.plan === "string" ? GESP.plan : "";
+let WARUM = GESP && Array.isArray(GESP.warum) ? GESP.warum.filter(x => typeof x === "string") : [];
+let MIT = GESP && Number.isInteger(GESP.mit) && GESP.mit > 0 ? Math.min(999, GESP.mit) : 0;
 if (GESP && GESP.v) MERK.forEach(k => { if (k in GESP.v && typeof GESP.v[k] === typeof V[k]) V[k] = GESP.v[k]; });
 const FELD = [["alter", "Alter", "Jahre", 1, 18, 95], ["groesse", "Körpergröße", "cm", 1, 120, 220], ["bauch", "Bauchumfang", "cm", 1, 50, 200]];
 FELD.forEach(([k, l, u, st, mi, ma]) => {
@@ -869,13 +1075,19 @@ const euroR = v => fmt(rundE(Math.max(0, v))) + " €";
 function syncFelder() {
   const set = (id, v) => { const el = $(id); if (el && document.activeElement !== el) el.value = v || (id === "i_bauchVor" ? "" : v); };
   set("i_groesse", V.groesse); set("i_bauch", V.bauch); set("i_bauchVor", V.bauchVor);
+  if (document.activeElement !== $("i_hba1c")) zeigeHb();
+  if (document.activeElement !== $("i_hbVor")) zeigeHbVor();
+  $("c_dm").checked = V.dm;
 }
 document.querySelectorAll("[data-st]").forEach(b => b.addEventListener("click", () => {
-  const k = b.dataset.st, d = +b.dataset.d, lim = { groesse: [120, 220], bauch: [50, 200], bauchVor: [50, 200] }[k];
+  const k = b.dataset.st, d = +b.dataset.d, lim = { groesse: [120, 220], bauch: [50, 200], bauchVor: [50, 200], hba1c: [4, 14], hbVor: [4, 14] }[k];
   if (k === "bauchVor" && !V.bauchVor) V.bauchVor = V.bauch;
-  V[k] = Math.min(lim[1], Math.max(lim[0], V[k] + d)); syncFelder(); run();
+  if (k === "hbVor" && !V.hbVor) V.hbVor = V.hba1c;
+  V[k] = Math.round(Math.min(lim[1], Math.max(lim[0], V[k] + d)) * 10) / 10; syncFelder(); run();
 }));
 $("r_cb").addEventListener("input", e => { V.bauch = +e.target.value; syncFelder(); run(); });
+$("r_ch").addEventListener("input", e => { V.hba1c = +e.target.value; syncFelder(); run(); });
+$("c_dm").addEventListener("change", e => { V.dm = e.target.checked; $("i_dm").checked = V.dm; run(); });
 
 function gewinnZwischen(von, nach) {
   const res = {};
@@ -932,13 +1144,223 @@ function zeigeCheck() {
   const maxR = Math.max(...RISIKO.map(r => senkung(r.hi, d)), 0.01);
   $("c_risiken").innerHTML = RISIKO.map(r => { const a = senkung(r.lo, d), z = senkung(r.hi, d);
     return `<li><span>${r.n} <a href="#${r.q}">${r.qt}</a></span><span class="rb" aria-hidden="true"><i class="lo" style="left:0;width:${z / maxR * 100}%"></i><i style="left:0;width:${a / maxR * 100}%"></i></span><b>− ${spanne(a * 100, z * 100, v => fmt(v) + " %")}</b></li>`; }).join("");
+  zeigeZucker();
+  zeigeTafel();
+  zeigeGlueck();
   zeigeWeg();
 }
+// Langzeitzucker: gleiche Logik wie beim Bauch. Ziel unter 5,7 %; bei Diabetes (oder ab 6,5 %) unter 7,0 % wie im Rechner oben.
+const HB_ETAPPE = 0.3;  // so viel zählt auch für den Bonus als Fortschritt
+const f1p = v => fmt(v, 1) + " %";
+function zeigeZucker() {
+  const h = V.hba1c, dm = V.dm || h >= 6.5, ziel = dm ? 7.0 : 5.7, s = V.hbVor, [kh, ch] = katH(h, V.dm);
+  $("o_ch").innerHTML = `${fmt(h, 1)}<small>% · ${fmt(mmol(h))} mmol/mol</small>`;
+  $("o_chs").innerHTML = s ? `${fmt(s, 1)}<small>%</small>` : `<small>noch leer, + oder − tippen</small>`;
+  if (document.activeElement !== $("r_ch")) $("r_ch").value = h;
+  $("c_hb").textContent = f1p(h); $("c_htag").textContent = kh; $("c_htag").className = "tag " + ch;
+  const pos = v => Math.min(100, Math.max(0, (v - 4.5) / 5.5 * 100)) + "%";
+  $("c_hneedle").style.left = pos(h);
+  $("c_hstartmark").hidden = !s || s === h; if (s) $("c_hstartmark").style.left = pos(s);
+  const fehlt = Math.round((h - ziel + 0.1) * 10) / 10;
+  $("c_hampeltxt").innerHTML = h < ziel ? (dm ? `Gut eingestellt: unter 7 %. Dein Ziel ist, das zu halten. Dein persönliches Ziel legst du mit deiner Ärztin oder deinem Arzt fest.` : `Prima: Dein Langzeitzucker ist <b>normal</b>. Dein Ziel ist, das zu halten.`)
+    : dm ? `${V.dm ? "" : "Ab 6,5 % spricht man von Diabetes. Bitte lass das ärztlich abklären. "}Ein gutes Ziel ist meist unter 7 %. Bis dahin sind es noch <b>${fmt(fehlt, 1)} Prozentpunkte</b>. Jeder Punkt weniger senkt das Sterberisiko um rund ein Achtel (<a href="#q-zhang">Zhang 2012</a>).`
+    : `Grün heißt: unter 5,7 %. Bis dahin sind es noch <b>${fmt(fehlt, 1)} Prozentpunkte</b>. In der Vorstufe lässt sich viel zurückdrehen: Bewegung und ein kleinerer Bauch wirken direkt.`;
+  const start = Math.max(s || h, h), weg = Math.round((start - h) * 10) / 10, zielT = dm ? "7,0 %" : "5,7 %";
+  if (h < ziel) $("c_hetappe").innerHTML = `<span class="k">Dein Ziel</span><span class="v">Unter ${zielT} bleiben</span><span class="note">${weg > 0 ? `Seit dem Start ${fmt(weg, 1)} Punkte weniger. ` : ""}Einmal im Jahr beim Check-up messen lassen reicht${dm ? ", bei Diabetes meist alle 3 Monate" : ""}.</span>`;
+  else {
+    const n = Math.floor(weg / HB_ETAPPE + 1e-9), naechste = Math.max(Math.round((ziel - 0.1) * 10) / 10, Math.round((start - HB_ETAPPE * (n + 1)) * 10) / 10);
+    const anteil = Math.min(100, weg / Math.max(0.1, start - ziel + 0.1) * 100);
+    $("c_hetappe").innerHTML = `<span class="k">Nächstes Etappenziel</span><span class="v">${f1p(naechste)}</span><span>noch ${fmt(Math.round((h - naechste) * 10) / 10, 1)} Punkte${n ? `, ${n} ${n > 1 ? "Etappen" : "Etappe"} schon geschafft` : ""}</span>
+      <div class="bar" role="img" aria-label="Weg bis zum Ziel: ${Math.round(anteil)} Prozent"><i style="width:${anteil}%"></i></div><span class="note">Weg vom Start (${f1p(start)}) bis zum Ziel (unter ${zielT})</span>`;
+  }
+  // Gewinn, wenn der Zucker um 0,5 Punkte sinkt (höchstens bis zum Ziel)
+  const nach = Math.max(Math.round((ziel - 0.1) * 10) / 10, Math.round((h - 0.5) * 10) / 10), el = $("c_gw_zucker");
+  if (h < ziel || nach >= h) { el.hidden = true; return; }
+  const G = {}; ["lo", "mid", "hi"].forEach(v => { const a = rechne(V, v), b = rechne({ ...V, hba1c: nach }, v); G[v] = { j: a.yll - b.yll, k: a.kasse - b.kasse }; });
+  const J = [G.lo.j, G.mid.j, G.hi.j], K = [G.lo.k, G.hi.k];
+  el.hidden = false;
+  el.innerHTML = `<b>Und beim Zucker:</b> Sinkt dein Langzeitzucker von ${f1p(h)} auf ${f1p(nach)}, gewinnst du statistisch <b>+ ${spanne(Math.max(0, Math.min(...J)), Math.max(...J), v => fmt(v, 1) + " Jahre")}</b>${Math.max(...K) >= 250 ? ` und sparst <b>${spanne(K[0], K[1], euroR)}</b> Krankheitskosten über das Leben` : ""}. Schätzbereich aus den Studien im Rechner (<a href="#q-zhong">Zhong</a>, <a href="#q-huang">Huang</a>, <a href="#q-erfc">ERFC</a>, <a href="#q-zhang">Zhang</a>).`;
+}
+
+// ---------- Persönliche Tafel (wie in der Broschüre, aber mit den eigenen Werten gerechnet) ----------
+const T_SP = [0.5, 0.55, 0.6, 0.65, 0.7];
+const T_ZE = [{ h: 8.5, dm: true, t: "Diabetes, hoch" }, { h: 7.0, dm: true, t: "Diabetes, gut eingestellt" }, { h: 6.0, dm: false, t: "Vorstufe" }, { h: 5.2, dm: false, t: "unauffällig" }];
+const T_FARBE = ["#6aaa7c", "#a9cf7a", "#e2cc62", "#e8a453", "#df7a45", "#cc5438"];
+// Anteil der Jahre zwischen 50 und 75 bei guter Gesundheit nach Gewichtsgruppe (Stenholm 2017: 81 / 76 / 64 / 53 %),
+// grob auf Taille/Größe übertragen: unter 0,5 normal, 0,55 Übergewicht, 0,65 Adipositas I, ab 0,75 Adipositas II
+const GUT = [[0.5, 0.81], [0.55, 0.76], [0.65, 0.64], [0.75, 0.53]];
+let T_WAHL = null;
+const anteil = w => ip(GUT, Math.min(0.75, Math.max(0.5, w)));
+function farbe(t) {
+  const x = Math.min(1, Math.max(0, t)) * (T_FARBE.length - 1), i = Math.min(T_FARBE.length - 2, Math.floor(x)), f = x - i;
+  const a = T_FARBE[i].match(/\w\w/g).map(v => parseInt(v, 16)), b = T_FARBE[i + 1].match(/\w\w/g).map(v => parseInt(v, 16));
+  return `rgb(${a.map((v, k) => Math.round(v + (b[k] - v) * f)).join(" ")})`;
+}
+function tafelPos() {
+  const w = V.bauch / V.groesse, h = V.hba1c, dm = V.dm || h >= 6.5;
+  const sp = w < 0.525 ? 0 : T_SP.reduce((bi, v, i) => Math.abs(v - w) < Math.abs(T_SP[bi] - w) ? i : bi, 0);
+  const ze = dm ? (h > 7.7 ? 0 : 1) : h >= 5.7 ? 2 : 3;
+  return [ze, sp];
+}
+function zeigeTafel() {
+  const g = V.groesse, basis = { ...V, bauch: g * 0.5, hba1c: 5.2, dm: false }, r0 = rechne(basis);
+  const [dz, ds] = tafelPos(), zz = V.dm || V.hba1c >= 6.5 ? 1 : 3, wer = `${V.alter} Jahre, ${V.sex === "m" ? "Mann" : "Frau"}, ${fmt(g)} cm`;
+  // Weg: erst der Bauch (nach links), dann der Zucker (nach unten)
+  const weg = new Set(); for (let s = ds; s >= 0; s--) weg.add(dz + "," + s); for (let z = dz; z <= zz; z++) weg.add(z + "," + 0);
+  const naechst = ds > 0 ? [dz, ds - 1] : dz < zz ? [dz + 1, 0] : [dz, ds];
+  if (!T_WAHL || T_WAHL.auto) T_WAHL = { z: naechst[0], s: naechst[1], auto: true };
+  const zellen = T_ZE.map(z => T_SP.map(sp => { const r = rechne({ ...V, bauch: g * sp, hba1c: z.h, dm: z.dm }); return { ges: Math.max(0, r.ges - r0.ges), j: Math.max(0, r.yll - r0.yll) }; }));
+  const max = Math.max(...zellen.flat().map(c => c.ges), 1);
+  let h = `<div class="ecke">Zucker ↓<br>Bauch →</div>` + T_SP.map((sp, i) => `<div class="kh">${i ? "" : "bis "}${fmt(Math.round(g * sp))}<small class="e">cm</small><small class="q">${i ? fmt(sp, 2) : "halbe Größe"}</small></div>`).join("");
+  T_ZE.forEach((z, zi) => {
+    h += `<div class="rh">${fmt(z.h, 1)} %<small>${z.t}</small></div>`;
+    T_SP.forEach((sp, si) => {
+      const c = zellen[zi][si], gesund = c.ges < 500, du = zi === dz && si === ds, ziel = zi === zz && si === 0;
+      const pin = du ? `<span class="pin">Du</span>` : ziel ? `<span class="pin z">Ziel</span>` : "";
+      const inhalt = gesund ? `<span class="n gs">gesund</span><span class="j zt">${ziel ? "dein Ziel" : "&nbsp;"}</span>`
+        : `<span class="n">${fmt(Math.round(c.ges / 1000))}<small> Tsd. €</small></span><span class="j">−${fmt(c.j, 1)} <span class="lang">Jahre</span><span class="kurz">J.</span></span>`;
+      const cls = ["tz", du ? "du" : "", weg.has(zi + "," + si) && !du ? "weg" : "", T_WAHL.z === zi && T_WAHL.s === si ? "wahl" : ""].join(" ");
+      h += `<button type="button" class="${cls}" data-z="${zi}" data-s="${si}" style="background-color:${farbe(c.ges / max)}" aria-pressed="${T_WAHL.z === zi && T_WAHL.s === si}" aria-label="Langzeitzucker ${fmt(z.h, 1)} %, Bauch ${fmt(Math.round(g * sp))} cm: ${gesund ? "gesund" : `${fmt(Math.round(c.ges / 1000))} Tausend Euro Mehrkosten, ${fmt(c.j, 1)} Jahre weniger`}${du ? ", hier stehst du" : ""}">${pin}${inhalt}</button>`;
+    });
+  });
+  $("t_grid").innerHTML = h;
+  $("t_grid").querySelectorAll(".tz").forEach(b => b.onclick = () => { T_WAHL = { z: +b.dataset.z, s: +b.dataset.s, auto: false }; zeigeTafel(); });
+  $("t_sub").innerHTML = `Für dich gerechnet: ${wer}, mit deinem Lebensstil. <b>Du</b> stehst im markierten Feld, der gestreifte Weg führt zum <b>Ziel</b>. Tippe ein Feld an, und du siehst, was du gewinnst.`;
+  // Gewinn bis zum gewählten Feld
+  const zi = T_WAHL.z, si = T_WAHL.s, zr = T_ZE[zi];
+  // In der eigenen Zeile bzw. Spalte bleibt der eigene Wert, sonst der Wert des Feldes
+  const bauchT = si === ds ? V.bauch : Math.min(V.bauch, g * T_SP[si]), hbT = zi === dz ? V.hba1c : Math.min(V.hba1c, zr.h);
+  const dmT = V.dm ? (zr.dm || zi >= 2) : zr.dm && V.hba1c >= 6.5 ? true : false;
+  const ziel = { ...V, bauch: bauchT, hba1c: hbT, dm: V.dm ? true : dmT };
+  if (bauchT >= V.bauch && hbT >= V.hba1c) {
+    $("t_h").textContent = zi === dz && si === ds ? "Hier stehst du gerade" : "Dieses Feld hast du schon hinter dir";
+    $("t_tiles").innerHTML = ""; $("t_alltag").innerHTML = zi === dz && si === ds ? "Tippe ein Feld weiter links oder weiter unten an. Dann siehst du, was dir der nächste Schritt bringt." : "Prima. Tippe ein Feld weiter links oder weiter unten an, um den nächsten Schritt zu sehen.";
+    return;
+  }
+  const G = {}; ["lo", "mid", "hi"].forEach(v => { const a = rechne(V, v), b = rechne(ziel, v); G[v] = { j: a.yll - b.yll, k: a.kasse - b.kasse, g: a.ges - b.ges, rest: b.e1 }; });
+  const J = [G.lo.j, G.mid.j, G.hi.j].map(v => Math.max(0, v)), jm = G.mid.j;
+  const fenster = V.alter < 75 ? 75 - Math.max(V.alter, 50) : 0, gutJ = (anteil(bauchT / g) - anteil(V.bauch / g)) * fenster;
+  const beschr = [];
+  if (bauchT < V.bauch) beschr.push(`Bauch von ${cm(V.bauch)} auf ${cm(Math.round(bauchT))}`);
+  if (hbT < V.hba1c) beschr.push(`Langzeitzucker von ${f1p(V.hba1c)} auf ${f1p(hbT)}`);
+  $("t_h").innerHTML = `${zi === zz && si === 0 ? "Bis zum Ziel" : zi === naechst[0] && si === naechst[1] ? "Dein nächster Schritt" : "Bis zu diesem Feld"}: ${beschr.join(" und ")}`;
+  const zeit = jm >= 1 ? `rund ${fmt(Math.round(jm * 12))} Monate mehr Leben` : jm >= 0.1 ? `rund ${fmt(Math.max(1, Math.round(jm * 12)))} Monate mehr Leben` : "";
+  $("t_tiles").innerHTML = [
+    ["Lebenszeit", Math.max(...J) < 0.05 ? "kaum" : `+ ${spanne(Math.min(...J), Math.max(...J), v => fmt(v, 1) + " Jahre")}`, "statistisch gewonnen"],
+    ["Gesunde Jahre", gutJ >= 0.3 ? `+ ${spanne(gutJ * 0.75, gutJ * 1.4, v => fmt(v, 1) + " Jahre")}` : fenster ? "kaum durch den Bauch" : "–",
+      fenster ? `zwischen ${Math.max(V.alter, 50)} und 75 ohne große Beschwerden (grobe Schätzung, nur Bauch)` : "Die Studie reicht nur bis 75"],
+    ["Deine Krankheitskosten", G.hi.k < 250 ? "kaum" : spanne(G.lo.k, G.hi.k, euroR), "weniger über das restliche Leben"],
+    ["Für die Gesellschaft", G.hi.g < 250 ? "kaum" : spanne(G.lo.g, G.hi.g, euroR), "gespart: Behandlung, Krankheitstage, Frührente"],
+  ].map(([k, v, t]) => `<div class="gw-tile"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${t}</span></div>`).join("");
+  const proJahr = G.mid.g / Math.max(1, G.mid.rest), proMonat = G.mid.k / Math.max(1, G.mid.rest) / 12;
+  const teile = [];
+  if (zeit) teile.push(zeit);
+  const und = gutJ >= 0.3 && zeit;
+  if (gutJ >= 0.3) teile.push(`${zeit ? "und " : ""}mehr gesunde Zeit für Familie, Reisen und Hobbys`);
+  if (proJahr >= 100) teile.push(`im Schnitt rund ${fmt(Math.round(proJahr / (proJahr < 1000 ? 50 : 100)) * (proJahr < 1000 ? 50 : 100))} € im Jahr weniger Kosten für uns alle${proMonat >= 20 ? `, davon gut ${fmt(Math.round(proMonat / 10) * 10)} € im Monat bei deiner Krankenkasse` : ""}`);
+  $("t_alltag").innerHTML = teile.length ? `<b>Im Alltag heißt das:</b> ${und ? teile[0] + " " + teile.slice(1).join(", ") : teile.join(", ")}.` : "";
+}
+
+// ---------- Gesund und glücklich: Aufwärtsspirale und „Mein Warum“ ----------
+const WARUM_OPT = ["Zeit mit Kindern oder Enkeln", "Reisen", "Sport und Natur", "Garten", "Freunde und Familie", "Ehrenamt", "Lange fit im Beruf", "Unabhängig bleiben im Alter"];
+const G_FARBE = ["#c98a00", "#a99a1c", "#6f9f3a", "#2f9563", "#1d7a46"];
+function zeichneSpirale() {
+  const svg = $("g_spirale"); if (svg.dataset.fertig) return;
+  const N = 140, T = 2.6 * 2 * Math.PI, P = i => { const th = i / N * T; return [120 + 92 * Math.sin(th), 300 - th * 15.5 + 18 * Math.cos(th), Math.cos(th)]; };
+  let h = `<defs><linearGradient id="g_grad" gradientUnits="userSpaceOnUse" x1="0" y1="320" x2="0" y2="20"><stop offset="0" stop-color="${G_FARBE[0]}"/><stop offset="1" stop-color="${G_FARBE[4]}"/></linearGradient>
+    <marker id="g_pfeil" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="3.2" markerHeight="3.2" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${G_FARBE[4]}"/></marker></defs>`;
+  // hinten liegende Bögen blasser, vorne kräftig
+  let seg = [], vorne = P(0)[2] >= 0;
+  const flush = () => { if (seg.length > 1) h += `<path d="M${seg.map(q => q[0].toFixed(1) + "," + q[1].toFixed(1)).join("L")}" fill="none" stroke="url(#g_grad)" stroke-width="${vorne ? 9 : 5}" stroke-linecap="round" opacity="${vorne ? 1 : .35}"/>`; };
+  for (let i = 0; i <= N; i++) { const q = P(i), v = q[2] >= 0; if (v !== vorne) { seg.push(q); flush(); seg = [q]; vorne = v; } else seg.push(q); }
+  flush();
+  const e = P(N), e0 = P(N - 3); h += `<path d="M${e0[0]},${e0[1]}L${e[0]},${e[1]}" stroke="${G_FARBE[4]}" stroke-width="9" marker-end="url(#g_pfeil)"/>`;
+  [0.04, 0.27, 0.5, 0.72, 0.93].forEach((f, k) => { const q = P(Math.round(f * N)); h += `<circle cx="${q[0]}" cy="${q[1]}" r="15" fill="${G_FARBE[k]}" stroke="var(--panel)" stroke-width="3"/><text x="${q[0]}" y="${q[1]}">${k + 1}</text>`; });
+  svg.innerHTML = h; svg.dataset.fertig = 1;
+}
+function zeigeGlueck() {
+  zeichneSpirale();
+  const g = V.groesse, gruenB = V.bauch < gruenCm(), gruenH = V.hba1c < (V.dm || V.hba1c >= 6.5 ? 7 : 5.7);
+  const eB = $("c_etappe").querySelector(".v"), eH = $("c_hetappe").querySelector(".v");
+  const werte = gruenB && gruenH ? "Deine Werte sind im grünen Bereich. Halten ist jetzt dein Erfolg."
+    : `Dein nächstes Etappenziel: ${[!gruenB && eB ? `Bauch <strong>${eB.textContent}</strong>` : "", !gruenH && eH ? `Langzeitzucker <strong>${eH.textContent}</strong>` : ""].filter(Boolean).join(" und ")}.`;
+  const fenster = V.alter < 75 ? 75 - Math.max(V.alter, 50) : 0, gutJ = (anteil(Math.min(V.bauch, g * 0.5) / g) - anteil(V.bauch / g)) * fenster;
+  const jahre = gutJ >= 0.3 ? `Bis zu deinem Ziel sind das grob geschätzt <strong>+ ${spanne(gutJ * 0.75, gutJ * 1.4, v => fmt(v, 1) + " Jahre")} bei guter Gesundheit</strong> bis 75. ` : "";
+  const st = [
+    ["Ein kleiner Schritt", "Zum Beispiel 10 Minuten gehen nach dem Essen oder Wasser statt Limo. Einen fertigen Plan findest du oben unter „Mein Weg“."],
+    ["Bessere Stimmung", `Bewegung hilft deutlich gegen Niedergeschlagenheit und Angst, das zeigen über 1.000 Studien (<a href="#q-singh">Singh 2023</a>). Und wer mehr Obst und Gemüse isst, wird messbar zufriedener (<a href="#q-mujcic">Mujcic und Oswald 2016</a>).`],
+    ["Mehr Kraft für den nächsten Schritt", "Wer sich besser fühlt, bleibt leichter dran. So wird aus einem Schritt eine Gewohnheit, ganz ohne Verbote."],
+    ["Bessere Werte", werte],
+    ["Mehr gute Jahre", `${jahre}Mit gesundem Gewicht verbringen Menschen zwischen 50 und 75 rund 7 Jahre mehr bei guter Gesundheit (<a href="#q-stenholm">Stenholm 2017</a>). Und zufriedene Menschen leben im Schnitt länger (<a href="#q-chida">Chida und Steptoe 2008</a>). Die Spirale dreht sich weiter.`],
+  ];
+  $("g_stationen").innerHTML = st.map(([t, x], k) => `<li${k === 4 ? ' class="top"' : ""}><span style="background:${G_FARBE[k]}">${k + 1}</span><b>${t}</b><p>${x}</p></li>`).join("");
+  $("g_warum").innerHTML = WARUM_OPT.map((w, i) => `<button type="button" data-w="${i}" aria-pressed="${WARUM.includes(w)}">${w}</button>`).join("");
+  $("g_warum").querySelectorAll("button").forEach(b => b.onclick = () => { const w = WARUM_OPT[+b.dataset.w]; WARUM = WARUM.includes(w) ? WARUM.filter(x => x !== w) : [...WARUM, w]; speichern(); zeigeGlueck(); });
+  const liste = WARUM.length > 1 ? WARUM.slice(0, -1).join(", ") + " und " + WARUM[WARUM.length - 1] : WARUM[0];
+  $("g_warumtxt").innerHTML = WARUM.length ? `Mein Warum: Mehr gesunde Jahre für ${liste.replace(/^Zeit/, "Zeit").replace(/^Lange/, "lange").replace(/^Unabhängig/, "unabhängig")}.` : "";
+  zeigeMit();
+}
+
+// ---------- Teilen: nur der Link, keine persönlichen Werte ----------
+const TEILEN = {
+  rechner: { url: "https://tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner/", titel: "Mein Bauch-Check",
+    text: "Schau mal, der Bauch-Check zeigt, was jeder Zentimeter und jeder Zehntelpunkt beim Zucker bringt. Kostenlos, deine Werte bleiben auf deinem Gerät:" },
+  broschuere: { url: "https://tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner/broschuere-kleine-schritte-grosse-wirkung.pdf", titel: "Kleine Schritte, große Wirkung",
+    text: "Eine kurze Broschüre mit kleinen Schritten für einen gesünderen Bauch und Zucker:" } };
+let TEIL_WAS = "einladung";
+const AKT = [["Gehtreff", "eine Runde spazieren zu gehen, 20 Minuten"], ["Kochrunde", "zusammen gesund zu kochen, reihum bei einem von uns"], ["Sport zusammen", "zusammen Sport zu machen"], ["Rad fahren", "eine Runde Rad zu fahren"], ["Mittagsrunde", "in der Mittagspause eine Runde zu gehen"]];
+const OFT = ["einmal pro Woche", "zweimal pro Woche"];
+let M_AKT = 0, M_OFT = 0;
+const einladungText = () => `Hast du Lust, ${OFT[M_OFT]} mit mir ${AKT[M_AKT][1]}? Lass uns 4 Wochen zusammen durchziehen: Wir messen heute beide den Bauch und in 4 Wochen wieder. Der Bauch-Check zeigt, was jeder Zentimeter bringt, und deine Werte bleiben auf deinem Gerät. Und wenn es dir gefällt, nimmst du selbst jemanden mit:`;
+const teilInhalt = () => TEIL_WAS === "einladung" ? { ...TEILEN.rechner, titel: "Machst du mit?", text: einladungText() } : TEILEN[TEIL_WAS];
+function zeigeTeilen(ok) {
+  const t = teilInhalt();
+  $("m_text").textContent = einladungText() + " " + TEILEN.rechner.url;
+  $("s_was").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.was === TEIL_WAS));
+  $("s_wa").href = "https://wa.me/?text=" + encodeURIComponent(t.text + " " + t.url);
+  $("s_mail").href = "mailto:?subject=" + encodeURIComponent(t.titel) + "&body=" + encodeURIComponent(t.text + "\n" + t.url);
+  $("s_share").hidden = !navigator.share;
+  $("s_ok").textContent = ok || "";
+}
+$("s_was").querySelectorAll("button").forEach(b => b.onclick = () => { TEIL_WAS = b.dataset.was; zeigeTeilen(); });
+$("s_share").addEventListener("click", async () => { const t = teilInhalt(); try { await navigator.share({ title: t.titel, text: t.text, url: t.url }); zeigeTeilen("Danke fürs Weitersagen!"); } catch (e) {} });
+$("s_copy").addEventListener("click", async () => { const t = teilInhalt();
+  try { await navigator.clipboard.writeText(TEIL_WAS === "einladung" ? t.text + " " + t.url : t.url); zeigeTeilen(TEIL_WAS === "einladung" ? "Einladung kopiert. Jetzt einfach in eine Nachricht einfügen." : "Link kopiert. Jetzt einfach in eine Nachricht einfügen."); }
+  catch (e) { zeigeTeilen("Kopieren ging nicht. Der Link lautet: " + t.url); } });
+zeigeTeilen();
+
+// Mitmachen: Aktivität wählen, Zähler, Schneeball
+function zeigeMit() {
+  $("m_akt").innerHTML = AKT.map(([t], i) => `<button type="button" data-a="${i}" aria-pressed="${i === M_AKT}">${t}</button>`).join("");
+  $("m_oft").innerHTML = OFT.map((t, i) => `<button type="button" data-o="${i}" aria-pressed="${i === M_OFT}">${t}</button>`).join("");
+  $("m_akt").querySelectorAll("button").forEach(b => b.onclick = () => { M_AKT = +b.dataset.a; TEIL_WAS = "einladung"; zeigeTeilen(); zeigeMit(); });
+  $("m_oft").querySelectorAll("button").forEach(b => b.onclick = () => { M_OFT = +b.dataset.o; TEIL_WAS = "einladung"; zeigeTeilen(); zeigeMit(); });
+  $("m_zahl").textContent = MIT;
+  $("m_dabeitxt").textContent = MIT === 0 ? "Tippe auf +, wenn jemand zusagt." : MIT === 1 ? "Super, der Schneeball rollt!" : `Du hast ${MIT} Menschen mitgenommen. Stark!`;
+  zeigeSchneeball();
+}
+let M_JE = 2;
+const SB_PERSON = { ...V, ...NEUTRAL, sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, dm: false };
+function zeigeSchneeball() {
+  $("m_je").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.je === M_JE));
+  let n = 1, summe = 1, h = `<div class="sb-r"><span>Runde 1</span><span class="p"><i class="du"></i></span><b>du</b></div>`;
+  for (let r = 2; r <= 5; r++) {
+    n *= M_JE; summe += n; const zeig = Math.min(n, 60);
+    h += `<div class="sb-r"><span>Runde ${r}</span><span class="p">${"<i></i>".repeat(zeig)}${n > zeig ? `<em>+ ${fmt(n - zeig)}</em>` : ""}</span><b>${fmt(n)}</b></div>`;
+  }
+  $("m_runden").innerHTML = h;
+  const g = v => { const a = rechne(SB_PERSON, v), b = rechne({ ...SB_PERSON, bauch: 95 }, v); return a.ges - b.ges; };
+  const lo = g("lo") * summe, hi = g("hi") * summe, f = v => v >= 1e6 ? fmt(v / 1e6, 1) + " Mio. €" : v >= 1e5 ? fmt(Math.round(v / 1e4) * 1e4) + " €" : euroR(v);
+  $("m_summe").innerHTML = `Nach 5 Runden sind <b>${fmt(summe)} Menschen</b> dabei. Wenn jede und jeder nur 3 cm Bauch verliert, spart das der Gesellschaft grob <b>${lo === hi ? f(hi) : f(lo).replace(/ (Mio\. )?€$/, "") + " bis " + f(hi)}</b> (grobe Schätzung für einen Durchschnittsmann mit 50 Jahren, 1,78 m und 98 cm). ${M_JE > 1 ? "Und auch wenn nur jede zweite Einladung klappt, wächst der Schneeball weiter." : "Schon eine Person pro Runde macht aus dir fünf."}`;
+}
+$("m_je").querySelectorAll("button").forEach(b => b.onclick = () => { M_JE = +b.dataset.je; zeigeSchneeball(); });
+$("m_plus").addEventListener("click", () => { MIT = Math.min(999, MIT + 1); speichern(); zeigeMit(); });
+$("m_minus").addEventListener("click", () => { MIT = Math.max(0, MIT - 1); speichern(); zeigeMit(); });
 
 // ---------- Mein Weg: Messungen nur im eigenen Browser ----------
 const heute = () => new Date().toISOString().slice(0, 10);
 const datumT = d => d.split("-").reverse().slice(0, 2).join(".");
-function speichern() { if (!MESS.length && !PLAN) return; schreib({ mess: MESS, plan: PLAN, v: Object.fromEntries(MERK.map(k => [k, V[k]])) }); }
+function speichern() { if (!MESS.length && !PLAN && !WARUM.length && !MIT) return; schreib({ mess: MESS, plan: PLAN, warum: WARUM, mit: MIT, v: Object.fromEntries(MERK.map(k => [k, V[k]])) }); }
 function abzeichen() {
   const basis = MESS.length ? Math.max(MESS[0].b, V.bauchVor || 0) : V.bauchVor || 0, weg = basis ? basis - V.bauch : 0;
   return [["1.", "Erste Messung", MESS.length >= 1], ["3×", "Dreimal gemessen", MESS.length >= 3], ["−1", "1 cm weniger", weg >= 1], ["−3", "Erste Etappe", weg >= 3],
@@ -969,7 +1391,7 @@ function zeigeWeg(toast) {
 $("c_save").addEventListener("click", () => {
   const vorher = abzeichen().filter(a => a[2]).length, letzte = MESS.length ? MESS[MESS.length - 1].b : null;
   if (!V.bauchVor) V.bauchVor = MESS.length ? MESS[0].b : V.bauch;
-  const m = { d: heute(), b: V.bauch, g: V.groesse };
+  const m = { d: heute(), b: V.bauch, g: V.groesse, h: V.hba1c };
   if (MESS.length && MESS[MESS.length - 1].d === m.d) MESS[MESS.length - 1] = m; else MESS.push(m);
   speichern();
   const neu = abzeichen().filter(a => a[2]), extra = neu.length > vorher ? ` Neues Abzeichen: ${neu[neu.length - 1][1]}!` : "";
@@ -977,7 +1399,7 @@ $("c_save").addEventListener("click", () => {
     V.bauch === letzte ? "Gehalten. Auch das ist ein Erfolg." : "Gespeichert. Schwankungen sind normal, dein Weg zählt, nicht ein einzelner Tag.";
   syncFelder(); run(); zeigeWeg(t + extra);
 });
-$("c_del").addEventListener("click", () => { try { localStorage.removeItem(SPEICHER); } catch (e) {} MESS = []; PLAN = ""; zeigeWeg("Gespeicherte Messungen gelöscht."); });
+$("c_del").addEventListener("click", () => { try { localStorage.removeItem(SPEICHER); } catch (e) {} MESS = []; PLAN = ""; WARUM = []; MIT = 0; zeigeGlueck(); zeigeMit(); zeigeWeg("Gespeicherte Messungen gelöscht."); });
 
 // ---------- Rechenkern ----------
 const ip = (tab, x) => { if (x <= tab[0][0]) return tab[0][1]; for (let i = 1; i < tab.length; i++) if (x <= tab[i][0]) { const [x0, y0] = tab[i - 1], [x1, y1] = tab[i]; return y0 + (y1 - y0) * (x - x0) / (x1 - x0); } return tab[tab.length - 1][1]; };
