@@ -378,6 +378,31 @@ details.hg[open]{display:grid}
 .fz-etappe{font-size:17px}
 .fz-btns{display:flex;flex-wrap:wrap;gap:8px}
 @media print{.teile-nav,.fazit .fz-btns{display:none!important}.teil-kopf{margin-top:8px}.studien.kurz .studie > *{display:revert!important}}
+/* Gesamtkonzept: fünf Stufen mit Farben, „Dein kleiner Schritt“, Wegweiser */
+:root{--st1:#EE6F4F;--st2:#3E7CB1;--st3:#2F7D52;--st4:#F5C044;--st5:#4FA987;--sf1:#17201e;--sf2:#fff;--sf3:#fff;--sf4:#17201e;--sf5:#17201e}
+.teil-n{color:var(--tf,#fff)}
+.teil-k{font:700 12px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+.teil-kopf.extra{border-top:1px solid var(--line);padding-top:20px;margin-top:28px}
+.teile-nav a i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--tc);margin-right:7px}
+.teile-nav a.on{background:var(--tc,var(--mid));border-color:var(--tc,var(--mid));color:var(--tf,#17201e)}
+.teile-nav a.on i{background:var(--tf)}
+.schritt{display:grid;gap:2px;border-left:6px solid var(--tc);background:color-mix(in srgb,var(--tc) 14%,var(--panel));border-radius:0 10px 10px 0;padding:11px 16px}
+.schritt b{font:800 12px/1.2 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.schritt span{font:700 18px/1.3 var(--display)}
+.wegw{max-width:none;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0;border-left:4px solid var(--st2);background:color-mix(in srgb,var(--st2) 9%,var(--panel));border-radius:0 10px 10px 0;padding:9px 14px;font-size:14px}
+.wegw b{font:800 11.5px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--st2);margin-right:4px}
+.wegw a{text-decoration:none;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-weight:600}
+.wegw a:hover{border-color:var(--st2)}
+.wegw.erg span{flex:1 0 100%;font-size:15.5px}.wegw.erg b{flex:1 0 100%}.wegw.erg:empty{display:none}
+.chips.wunsch button{font-size:15.5px;padding:10px 16px}
+.chips.wunsch button[aria-pressed="true"]{background:var(--st1);border-color:var(--st1);color:var(--sf1)}
+.wunsch-dann{margin:0;font-size:16px}
+.glueck .warum-satz{margin:0}
+.dran{border-color:var(--st4)}#check{border-color:var(--st2)}
+.dran > .gewinn,#gemeinsam > .teilen{border-top:0;padding-top:0}
+#gemeinsam h2{font-size:19px}
+#dran,#gemeinsam,#teil-neugier{scroll-margin-top:64px}
+@media print{.wegw,.schritt{break-inside:avoid}}
 /* Eingaben nur einmal: Größe, Bauch, Zucker und Startwerte kommen aus dem Check oben (Felder bleiben für die Rechnung, nur unsichtbar) */
 #eing .f:has(#i_groesse),#eing .f:has(#i_bauch),.main .grp:has(#i_hba1c),#bonusfelder .f:has(#i_bauchVor),#bonusfelder .f:has(#i_hbVor){display:none}
 /* Tafel: Alter, Geschlecht und Größe direkt im Satz einstellbar */
@@ -461,7 +486,7 @@ h1,h2,h3{break-after:avoid}
 <div class="wrap">
   <header class="kopf">
     <div class="kopf-text">
-    <div class="eyebrow">Gesundheit über das ganze Leben</div>
+    <div class="eyebrow">Gesund und glücklich werden, Schritt für Schritt</div>
     <h1>Mein Bauch-Check: Was jeder Zentimeter bringt</h1>
     <p class="lead">Maßband, Körpergröße, fertig. Du siehst sofort, wo dein Bauch steht, was dein nächstes kleines Ziel ist und was dir jeder Zentimeter weniger bringt: an Lebenszeit, an weniger Krankheitsrisiko und an gesparten Kosten. Alles beruht auf großen Studien mit Millionen Menschen und wird immer als Spanne gezeigt.</p>
     <p class="kostenfrei"><b>Kostenfrei für alle.</b> Dieser Rechner, die Broschüre und der Ratgeber sind kostenfrei. Es macht mich glücklich, das für dich tun zu dürfen. <span class="sig">Tomas Hecker</span></p>
@@ -482,13 +507,33 @@ h1,h2,h3{break-after:avoid}
     </aside>
   </header>
 
-  <nav class="teile-nav" aria-label="Teile dieser Seite"><a href="#teil-check">Dein Check</a><a href="#teil-glueck">Glücklich</a><a href="#teil-essen">Essen</a><a href="#teil-alle">Für alle</a><a href="#teil-hintergrund">Hintergrund</a><a href="#fazit">Auf einen Blick</a></nav>
+  <nav class="teile-nav" aria-label="Die fünf Stufen dieser Seite"><a href="#teil-neugier" style="--tc:var(--st1);--tf:var(--sf1)"><i></i>1 Neugier</a><a href="#teil-check" style="--tc:var(--st2);--tf:var(--sf2)"><i></i>2 Verstehen</a><a href="#teil-essen" style="--tc:var(--st3);--tf:var(--sf3)"><i></i>3 Genießen</a><a href="#teil-dran" style="--tc:var(--st4);--tf:var(--sf4)"><i></i>4 Dranbleiben</a><a href="#teil-gemeinsam" style="--tc:var(--st5);--tf:var(--sf5)"><i></i>5 Gemeinsam</a><a href="#teil-alle">Für alle</a><a href="#teil-hintergrund">Hintergrund</a><a href="#fazit">Auf einen Blick</a></nav>
 
-  <div class="teil-kopf" id="teil-check" style="--tc:var(--ok)"><span class="teil-n">1</span><div><h2 class="teil-t">Dein Check</h2><p class="teil-l">Jeder Zentimeter zählt, und du siehst sofort, was er dir bringt.</p></div></div>
+  <div class="teil-kopf" id="teil-neugier" style="--tc:var(--st1);--tf:var(--sf1)"><span id="teil-glueck"></span><span class="teil-n">1</span><div><p class="teil-k">Stufe 1 · Neugier</p><h2 class="teil-t">Was wünschst du dir?</h2><p class="teil-l">Gesund und glücklich werden, Schritt für Schritt. Am Anfang steht dein Wunsch.</p></div></div>
+  <section class="panel glueck" id="glueck" aria-labelledby="glueck_h">
+    <h2 id="glueck_h">Was wünschst du dir für die nächsten Jahre?</h2>
+    <p class="lead">Bevor es um Bauch und Blutzucker geht, eine einfache Frage: Was möchtest du in zehn Jahren noch erleben? Tipp an, was dir wichtig ist, gern mehreres.</p>
+    <div class="chips wunsch" id="g_warum"></div>
+    <p class="warum-satz" id="g_warumtxt" aria-live="polite"></p>
+    <p class="wunsch-dann">Alles davon braucht vor allem eines: einen Körper, der mitmacht. Bauch, Leber und Blutzucker sind dabei deine wichtigsten Helfer. Kleine Schritte reichen, um sie zu stärken.</p>
+    <div class="warum">
+    <h3>Die Glücksspirale: Gesund und glücklich verstärken sich</h3>
+    <p class="note">Jeder kleine Schritt hebt die Stimmung, und gute Stimmung macht den nächsten Schritt leichter. So dreht sich die Spirale nach oben.</p>
+    <div class="spirale-grid">
+      <svg id="g_spirale" viewBox="0 0 240 330" role="img" aria-label="Spirale, die von unten nach oben steigt, mit fünf Stationen"></svg>
+      <ol class="spirale" id="g_stationen"></ol>
+    </div>
+    </div>
+    <p class="hinweis">Die Studien zeigen Zusammenhänge in großen Gruppen, keinen Beweis für jeden Einzelnen. <a href="#q-singh">Singh 2023</a>, <a href="#q-mujcic">Mujcic und Oswald 2016</a>, <a href="#q-stenholm">Stenholm 2017</a>, <a href="#q-chida">Chida und Steptoe 2008</a>.</p>
+  </section>
+  <div class="schritt" style="--tc:var(--st1)"><b>Dein kleiner Schritt</b><span>Schreib deinen wichtigsten Wunsch auf einen Zettel. Häng ihn an den Kühlschrank.</span></div>
+  <p class="wegw"><b>Mehr dazu</b><a href="broschuere/#wuensche">Broschüre · Was wünschen Sie sich?</a><a href="broschuere/#quiz">Broschüre · Kleines Quiz</a><a href="broschuere/#gluecklich">Broschüre · Die Glücksspirale</a><a href="ratgeber/#gluecklich">Ratgeber · Gesund und glücklich</a></p>
+
+  <div class="teil-kopf" id="teil-check" style="--tc:var(--st2);--tf:var(--sf2)"><span class="teil-n">2</span><div><p class="teil-k">Stufe 2 · Verstehen</p><h2 class="teil-t">Wo stehst du heute?</h2><p class="teil-l">Maßband und Körpergröße genügen. Die Ampel zeigt sofort, wo dein Bauch steht.</p></div></div>
   <section class="panel check" id="check" aria-labelledby="check_h">
     <div class="check-grid">
       <div class="grp check-ein">
-        <h2 id="check_h">1. Messen</h2>
+        <h2 id="check_h">Messen</h2>
         <div class="stepper">
           <span class="lbl" id="l_cg">Körpergröße</span>
           <div class="st-row"><button type="button" class="st-b" data-st="groesse" data-d="-1" aria-label="Größe 1 cm weniger">−</button><output id="o_cg" aria-labelledby="l_cg"></output><button type="button" class="st-b" data-st="groesse" data-d="1" aria-label="Größe 1 cm mehr">+</button></div>
@@ -506,7 +551,7 @@ h1,h2,h3{break-after:avoid}
         <p class="note">Alter, Geschlecht und Lebensstil kannst du <a href="#genauer">weiter unten</a> ergänzen. Dann wird die Schätzung genauer.</p>
       </div>
       <div class="grp check-aus">
-        <h2>2. Deine Ampel</h2>
+        <h2>Deine Ampel</h2>
         <div class="ampelbox">
           <div class="ab-kopf"><span class="k">Bauch geteilt durch Größe</span><span class="v" id="c_ratio"></span><span class="tag" id="c_tag"></span></div>
           <div class="gauge" aria-hidden="true"><i id="c_needle"></i><b id="c_startmark" hidden></b></div>
@@ -541,45 +586,7 @@ h1,h2,h3{break-after:avoid}
         <div class="etappe" id="c_hetappe"></div>
       </div>
     </div>
-
-    <div class="gewinn" aria-live="polite">
-      <div class="gw-kopf">
-        <h2 id="c_gw_h">3. Dein Gewinn</h2>
-        <div class="seg" role="group" aria-label="Gewinn rechnen für" id="c_ziele"></div>
-      </div>
-      <p class="gw-sub" id="c_gw_sub"></p>
-      <div class="gw-tiles" id="c_gw_tiles"></div>
-      <p class="gw-sub" id="c_gw_zucker" hidden></p>
-      <h3>Dein Risiko sinkt</h3>
-      <ul class="risiken" id="c_risiken"></ul>
-      <p class="hinweis">Gut zu wissen: Das sind Schätzbereiche aus großen Bevölkerungsstudien. Sie zeigen, wie viel seltener Menschen mit kleinerem Bauch im Durchschnitt erkranken, keine Garantie für dich. Jeder Zentimeter zählt trotzdem. <a href="#q-risiko">Woher die Zahlen kommen</a></p>
-    </div>
-
-    <div class="tafel-box">
-      <div class="gw-kopf"><h2>4. Deine Tafel: Wo du stehst, wohin es geht</h2></div>
-      <p class="gw-sub" id="t_sub"></p>
-      <div class="tafel" id="t_grid" lang="de"></div>
-      <div class="t-leg"><span>Felder: Mehrkosten über das restliche Leben, darunter die Lebensjahre, die im Schnitt fehlen.</span><span class="t-skala"><small>weniger</small><i></i><small>mehr</small></span></div>
-      <div class="tafel-ziel" aria-live="polite">
-        <h3 id="t_h"></h3>
-        <div class="gw-tiles vier" id="t_tiles"></div>
-        <p class="gw-sub" id="t_alltag"></p>
-      </div>
-      <p class="hinweis">Mehr gesunde Jahre heißt auch mehr gute Zeit. Wie Gesundheit und Glück sich gegenseitig verstärken, zeigt <a href="#teil-glueck">Teil 2</a>. Alle Zahlen sind Schätzbereiche, keine Vorhersage für dich.</p>
-    </div>
-
-    <div class="weg">
-      <div class="gw-kopf"><h2>5. Mein Weg</h2><button type="button" class="btn" id="c_save">Messung von heute speichern</button></div>
-      <div id="c_verlauf"></div>
-      <div class="badges" id="c_badges"></div>
-      <div class="plan">
-        <h3>Mein Plan für diese Woche</h3>
-        <p class="note">Ein konkreter Wenn-dann-Plan hilft mehr als ein guter Vorsatz. Tipp einen an, einer reicht.</p>
-        <div class="chips" id="c_plaene"></div>
-        <p class="note" id="c_plantxt"></p>
-      </div>
-      <p class="note">Deine Messungen bleiben nur in diesem Browser auf deinem Gerät, nichts wird übertragen. <button type="button" class="linkbtn" id="c_del">Gespeicherte Messungen löschen</button></p>
-    </div>
+    <div class="wegw erg" id="wegw_erg" aria-live="polite"></div>
   </section>
 
   <h3 class="unter" id="genauer">Genauer rechnen: Alter, Geschlecht und Lebensstil</h3>
@@ -659,22 +666,77 @@ h1,h2,h3{break-after:avoid}
   </div>
   </details>
 
-  <div class="teil-kopf" id="teil-glueck" style="--tc:var(--good)"><span class="teil-n">2</span><div><h2 class="teil-t">Gesund und glücklich</h2><p class="teil-l">Das eine stärkt das andere. Und zusammen geht es leichter.</p></div></div>
-  <section class="panel glueck" id="glueck" aria-labelledby="glueck_h">
-    <h2 id="glueck_h">Gesund und glücklich: Deine Aufwärtsspirale</h2>
-    <p class="lead">Gesundheit und Glück verstärken sich gegenseitig. Jeder kleine Schritt dreht die Spirale ein Stück weiter nach oben.</p>
-    <div class="spirale-grid">
-      <svg id="g_spirale" viewBox="0 0 240 330" role="img" aria-label="Spirale, die von unten nach oben steigt, mit fünf Stationen"></svg>
-      <ol class="spirale" id="g_stationen"></ol>
+  <div class="schritt" style="--tc:var(--st2)"><b>Dein kleiner Schritt</b><span>Miss heute deinen Bauch: im Stehen, nach dem Ausatmen, knapp über dem Nabel.</span></div>
+  <p class="wegw"><b>Mehr dazu</b><a href="broschuere/#gute-nachricht">Broschüre · Die gute Nachricht</a><a href="broschuere/#bauch-index">Broschüre · Der Bauch-Index</a><a href="ratgeber/#bauch-index">Ratgeber · Bauch-Index über 20 Jahre</a></p>
+
+  <div class="teil-kopf" id="teil-essen" style="--tc:var(--st3);--tf:var(--sf3)"><span class="teil-n">3</span><div><p class="teil-k">Stufe 3 · Genießen</p><h2 class="teil-t">Was kommt auf den Teller?</h2><p class="teil-l">Erkennen statt zählen: was satt macht, was dem Bauch hilft und was sich zu tauschen lohnt.</p></div></div>
+  <div class="panel" id="bauchindex">
+        <h2>Der Bauch-Index: Welche Lebensmittel helfen und welche belasten</h2>
+    <p>Drei große US-Langzeitstudien haben über 120.000 Menschen 20 Jahre lang begleitet und alle vier Jahre gefragt, was sie essen und wie viel sie wiegen (<a href="#q-mozaffarian">Mozaffarian u. a. 2011</a>). Die Balken zeigen, wie viel mehr oder weniger Menschen in vier Jahren zunahmen, wenn sie von einem Lebensmittel täglich eine Portion mehr aßen. Zum Vergleich: Im Durchschnitt nahmen alle rund 1,5 kg in vier Jahren zu.</p>
+    <div class="legend"><span><i class="sq" style="background:var(--good)"></i>hilft beim Schlankbleiben</span><span><i class="sq" style="background:var(--risk)"></i>belastet</span></div>
+    <div class="bi-liste kurz" id="bi_liste"></div>
+    <button type="button" class="linkbtn bi-alle" id="bi_alle" aria-controls="bi_liste" aria-expanded="false">Alle 19 Lebensmittel zeigen</button>
+    <div class="tausch">
+      <h3>Tausch-Rechner: Ein Tausch pro Tag</h3>
+      <div class="row2">
+        <div class="f"><label for="bi_statt">Statt täglich</label><select id="bi_statt"></select></div>
+        <div class="f"><label for="bi_lieber">lieber</label><select id="bi_lieber"></select></div>
+      </div>
+      <p id="bi_txt"></p>
     </div>
-    <div class="warum">
-      <h3>Mein Warum: Wofür will ich die gesunden Jahre?</h3>
-      <p class="note">Wer weiß, wofür er es tut, bleibt leichter dran. Tipp an, was dir wichtig ist, gern mehreres.</p>
-      <div class="chips" id="g_warum"></div>
-      <p class="warum-satz" id="g_warumtxt" aria-live="polite"></p>
+    <p class="note"><b>Gut zu wissen:</b> Der Index zeigt die Richtung, keine genauen Zentimeter. Er beschreibt Zusammenhänge im Durchschnitt vieler Menschen. Kalorien allein sagen wenig: Nüsse und Joghurt haben viele Kalorien und hingen trotzdem mit weniger Zunahme zusammen. Was zählt, ist, wie satt ein Lebensmittel macht, wie es den Blutzucker bewegt und was man stattdessen isst. Ob es bei dir wirkt, zeigt dein Maßband. Ausführlich mit allen 30 gemessenen Lebensmitteln steht der Bauch-Index im Lebensmittel-Ratgeber „Erkennen statt zählen“: <a href="ratgeber/#bauch-index">Bauch-Index</a> und <a href="ratgeber/#bananen">So satt wie 2 Bananen</a>. Einkaufszettel und Rezepte gibt es in der Broschüre „Kleine Schritte. Große Wirkung.“: <a href="broschuere/">online lesen</a> oder <a href="broschuere-kleine-schritte-grosse-wirkung.pdf" download>als PDF</a>.</p>
+  </div>
+  <div class="schritt" style="--tc:var(--st3)"><b>Dein kleiner Schritt</b><span>Tausche heute ein Lebensmittel, zum Beispiel Wasser statt Limo.</span></div>
+  <p class="wegw"><b>Mehr dazu</b><a href="ratgeber/#teller">Ratgeber · Das Tellerprinzip</a><a href="ratgeber/#bananen">Ratgeber · So satt wie 2 Bananen</a><a href="ratgeber/#tauschliste">Ratgeber · Die 20 besten Tausche</a><a href="ratgeber/#rezepte">Ratgeber · 21 Rezepte</a><a href="broschuere/#teller-regel">Broschüre · Die Teller-Regel</a></p>
+
+  <div class="teil-kopf" id="teil-dran" style="--tc:var(--st4);--tf:var(--sf4)"><span class="teil-n">4</span><div><p class="teil-k">Stufe 4 · Dranbleiben</p><h2 class="teil-t">Was bringt es dir, und wie bleibst du dran?</h2><p class="teil-l">Gewonnene gesunde Jahre, gesparte Kosten und dein Fortschritt, Zentimeter für Zentimeter.</p></div></div>
+  <section class="panel check dran" id="dran" aria-labelledby="c_gw_h">
+    <div class="gewinn" aria-live="polite">
+      <div class="gw-kopf">
+        <h2 id="c_gw_h">Dein Gewinn</h2>
+        <div class="seg" role="group" aria-label="Gewinn rechnen für" id="c_ziele"></div>
+      </div>
+      <p class="gw-sub" id="c_gw_sub"></p>
+      <div class="gw-tiles" id="c_gw_tiles"></div>
+      <p class="gw-sub" id="c_gw_zucker" hidden></p>
+      <h3>Dein Risiko sinkt</h3>
+      <ul class="risiken" id="c_risiken"></ul>
+      <p class="hinweis">Gut zu wissen: Das sind Schätzbereiche aus großen Bevölkerungsstudien. Sie zeigen, wie viel seltener Menschen mit kleinerem Bauch im Durchschnitt erkranken, keine Garantie für dich. Jeder Zentimeter zählt trotzdem. <a href="#q-risiko">Woher die Zahlen kommen</a></p>
     </div>
+
+    <div class="tafel-box">
+      <div class="gw-kopf"><h2>Deine Tafel: Wo du stehst, wohin es geht</h2></div>
+      <p class="gw-sub" id="t_sub"></p>
+      <div class="tafel" id="t_grid" lang="de"></div>
+      <div class="t-leg"><span>Felder: Mehrkosten über das restliche Leben, darunter die Lebensjahre, die im Schnitt fehlen.</span><span class="t-skala"><small>weniger</small><i></i><small>mehr</small></span></div>
+      <div class="tafel-ziel" aria-live="polite">
+        <h3 id="t_h"></h3>
+        <div class="gw-tiles vier" id="t_tiles"></div>
+        <p class="gw-sub" id="t_alltag"></p>
+      </div>
+      <p class="hinweis">Mehr gesunde Jahre heißt auch mehr gute Zeit. Wie Gesundheit und Glück sich gegenseitig verstärken, zeigt <a href="#glueck">die Glücksspirale ganz oben</a>. Alle Zahlen sind Schätzbereiche, keine Vorhersage für dich.</p>
+    </div>
+
+    <div class="weg">
+      <div class="gw-kopf"><h2>Mein Weg</h2><button type="button" class="btn" id="c_save">Messung von heute speichern</button></div>
+      <div id="c_verlauf"></div>
+      <div class="badges" id="c_badges"></div>
+      <div class="plan">
+        <h3>Mein Plan für diese Woche</h3>
+        <p class="note">Ein konkreter Wenn-dann-Plan hilft mehr als ein guter Vorsatz. Tipp einen an, einer reicht.</p>
+        <div class="chips" id="c_plaene"></div>
+        <p class="note" id="c_plantxt"></p>
+      </div>
+      <p class="note">Deine Messungen bleiben nur in diesem Browser auf deinem Gerät, nichts wird übertragen. <button type="button" class="linkbtn" id="c_del">Gespeicherte Messungen löschen</button></p>
+    </div>
+  </section>
+  <div class="schritt" style="--tc:var(--st4)"><b>Dein kleiner Schritt</b><span>Speichere deine Messung von heute. Miss in vier Wochen wieder.</span></div>
+  <p class="wegw"><b>Mehr dazu</b><a href="broschuere/#bewegung">Broschüre · Jeder Schritt ist Medizin</a><a href="broschuere/#startplan">Broschüre · Vier Wochen, vier Gewohnheiten</a><a href="broschuere/#tafel">Broschüre · Was jeder Zentimeter wert ist</a><a href="ratgeber/#legende">Ratgeber · Ausgleich in Schritten</a></p>
+
+  <div class="teil-kopf" id="teil-gemeinsam" style="--tc:var(--st5);--tf:var(--sf5)"><span class="teil-n">5</span><div><p class="teil-k">Stufe 5 · Gemeinsam</p><h2 class="teil-t">Wen nimmst du mit?</h2><p class="teil-l">Zu zweit fällt jeder Schritt leichter. Und Gesundheit steckt an.</p></div></div>
+  <section class="panel glueck" id="gemeinsam" aria-labelledby="gemeinsam_h">
     <div class="teilen">
-      <h3>Nimm jemanden mit</h3>
+      <h2 id="gemeinsam_h">Nimm jemanden mit</h2>
       <p class="note">Zu zweit fällt jeder Schritt leichter: Wer mit Freunden abnimmt, hält sein Gewicht viel öfter, 66 % statt 24 % (<a href="#q-wing">Wing und Jeffery 1999</a>). Bei Diabetes senkt Begleitung durch andere Betroffene den Langzeitzucker um rund 0,6 Punkte (<a href="#q-qi">Qi 2015</a>). Lade jemanden ein, Freunde, Familie, Nachbarn oder Kollegen. Rechner und Broschüre sind beide kostenfrei. Geteilt wird nur die Einladung mit dem Link, nie deine Werte.</p>
       <div class="gemeinsam">
         <p class="k">Was wollt ihr zusammen machen?</p>
@@ -706,29 +768,12 @@ h1,h2,h3{break-after:avoid}
       <div class="sb-runden" id="m_runden"></div>
       <p class="gw-sub" id="m_summe"></p>
     </div>
-    <p class="hinweis">Die Studien zeigen Zusammenhänge in großen Gruppen, keinen Beweis für jeden Einzelnen. <a href="#q-singh">Singh 2023</a>, <a href="#q-mujcic">Mujcic und Oswald 2016</a>, <a href="#q-stenholm">Stenholm 2017</a>, <a href="#q-chida">Chida und Steptoe 2008</a>, <a href="#q-wing">Wing und Jeffery 1999</a>, <a href="#q-qi">Qi 2015</a>, <a href="#q-christakis">Christakis und Fowler 2008</a>, <a href="#q-hanson">Hanson und Jones 2015</a>.</p>
+    <p class="hinweis">Die Studien zeigen Zusammenhänge in großen Gruppen, keinen Beweis für jeden Einzelnen. <a href="#q-wing">Wing und Jeffery 1999</a>, <a href="#q-qi">Qi 2015</a>, <a href="#q-christakis">Christakis und Fowler 2008</a>, <a href="#q-hanson">Hanson und Jones 2015</a>.</p>
   </section>
+  <div class="schritt" style="--tc:var(--st5)"><b>Dein kleiner Schritt</b><span>Schick heute eine Einladung an einen Menschen, mit dem du gern unterwegs bist.</span></div>
+  <p class="wegw"><b>Mehr dazu</b><a href="broschuere/#gemeinsam">Broschüre · Nehmen Sie jemanden mit</a><a href="broschuere/#gesundheitskette">Broschüre · Die Gesundheitskette</a><a href="ratgeber/#gemeinsam">Ratgeber · Gemeinsam kochen</a></p>
 
-  <div class="teil-kopf" id="teil-essen" style="--tc:var(--mid)"><span class="teil-n">3</span><div><h2 class="teil-t">Was auf den Teller kommt</h2><p class="teil-l">Erkennen statt zählen: Was satt macht und was den Bauch wachsen lässt.</p></div></div>
-  <div class="panel" id="bauchindex">
-        <h2>Der Bauch-Index: Welche Lebensmittel helfen und welche belasten</h2>
-    <p>Drei große US-Langzeitstudien haben über 120.000 Menschen 20 Jahre lang begleitet und alle vier Jahre gefragt, was sie essen und wie viel sie wiegen (<a href="#q-mozaffarian">Mozaffarian u. a. 2011</a>). Die Balken zeigen, wie viel mehr oder weniger Menschen in vier Jahren zunahmen, wenn sie von einem Lebensmittel täglich eine Portion mehr aßen. Zum Vergleich: Im Durchschnitt nahmen alle rund 1,5 kg in vier Jahren zu.</p>
-    <div class="legend"><span><i class="sq" style="background:var(--good)"></i>hilft beim Schlankbleiben</span><span><i class="sq" style="background:var(--risk)"></i>belastet</span></div>
-    <div class="bi-liste kurz" id="bi_liste"></div>
-    <button type="button" class="linkbtn bi-alle" id="bi_alle" aria-controls="bi_liste" aria-expanded="false">Alle 19 Lebensmittel zeigen</button>
-    <p class="hk-mehr">Mehr im Lebensmittel-Ratgeber: <a href="ratgeber/#bauch-index">Bauch-Index mit 30 Lebensmitteln</a> · <a href="ratgeber/#bananen">So satt wie 2 Bananen</a> · <a href="ratgeber/#tauschliste">Die 20 besten Tausche</a></p>
-    <div class="tausch">
-      <h3>Tausch-Rechner: Ein Tausch pro Tag</h3>
-      <div class="row2">
-        <div class="f"><label for="bi_statt">Statt täglich</label><select id="bi_statt"></select></div>
-        <div class="f"><label for="bi_lieber">lieber</label><select id="bi_lieber"></select></div>
-      </div>
-      <p id="bi_txt"></p>
-    </div>
-    <p class="note"><b>Gut zu wissen:</b> Der Index zeigt die Richtung, keine genauen Zentimeter. Er beschreibt Zusammenhänge im Durchschnitt vieler Menschen. Kalorien allein sagen wenig: Nüsse und Joghurt haben viele Kalorien und hingen trotzdem mit weniger Zunahme zusammen. Was zählt, ist, wie satt ein Lebensmittel macht, wie es den Blutzucker bewegt und was man stattdessen isst. Ob es bei dir wirkt, zeigt dein Maßband. Ausführlich mit allen 30 gemessenen Lebensmitteln steht der Bauch-Index im Lebensmittel-Ratgeber „Erkennen statt zählen“: <a href="ratgeber/#bauch-index">Bauch-Index</a> und <a href="ratgeber/#bananen">So satt wie 2 Bananen</a>. Einkaufszettel und Rezepte gibt es in der Broschüre „Kleine Schritte. Große Wirkung.“: <a href="broschuere/">online lesen</a> oder <a href="broschuere-kleine-schritte-grosse-wirkung.pdf" download>als PDF</a>.</p>
-  </div>
-
-  <div class="teil-kopf" id="teil-alle" style="--tc:var(--risk)"><span class="teil-n">4</span><div><h2 class="teil-t">Was es uns allen bringt</h2><p class="teil-l">Gesündere Menschen, gesündere Kassen: was eine Zuckerabgabe und ein gesünderes Land bringen könnten.</p></div></div>
+  <div class="teil-kopf extra" id="teil-alle"><div><p class="teil-k">Zum Weiterdenken</p><h2 class="teil-t">Was es uns allen bringt</h2><p class="teil-l">Gesündere Menschen, gesündere Kassen: was eine Zuckerabgabe und ein gesünderes Land bringen könnten.</p></div></div>
   <div class="panel" id="zucker">
         <h2>Was eine Zuckerabgabe bringt und was gesunde Ernährung insgesamt bringen könnte</h2>
 <div class="tiles t3" id="tiles_z"></div>
@@ -792,7 +837,7 @@ h1,h2,h3{break-after:avoid}
     </div></details>
   </div>
 
-  <div class="teil-kopf" id="teil-hintergrund" style="--tc:var(--muted)"><span class="teil-n">5</span><div><h2 class="teil-t">Hintergrund</h2><p class="teil-l">Zum Nachprüfen: der Rechenweg mit deinen Zahlen, was die Zahlen bedeuten und alle Studien. Zum Aufklappen.</p></div></div>
+  <div class="teil-kopf extra" id="teil-hintergrund"><div><p class="teil-k">Zum Nachprüfen</p><h2 class="teil-t">Hintergrund</h2><p class="teil-l">Zum Nachprüfen: der Rechenweg mit deinen Zahlen, was die Zahlen bedeuten und alle Studien. Zum Aufklappen.</p></div></div>
   <details class="panel hg" id="rechenweg">
     <summary><h2>So rechnet der Rechner, Schritt für Schritt mit deinen Zahlen</h2></summary>
     <p>Hier siehst du jeden Rechenschritt mit den Werten, die du oben eingegeben hast. Ändere oben etwas, dann ändern sich auch die Zahlen hier. Hinter jedem Schritt steht die Studie, aus der die Zahl kommt; ein Klick auf den Namen springt zur Erklärung der Studie.</p>
@@ -1086,7 +1131,8 @@ h1,h2,h3{break-after:avoid}
     <h2 id="fazit_h">Dein Ergebnis auf einen Blick</h2>
     <div class="fz-zahlen" id="fz_zahlen"></div>
     <p class="fz-etappe" id="fz_etappe"></p>
-    <div class="fz-btns"><button type="button" class="btn" id="fz_save">Messung von heute speichern</button><a class="btn alt" href="#glueck">Jemanden mitnehmen</a><a class="btn alt" href="broschuere/">Broschüre lesen</a><a class="btn alt" href="ratgeber/">Ratgeber lesen</a><a class="btn alt" href="#teil-check">Nach oben zum Check</a></div>
+    <p class="fz-etappe" id="fz_wunsch"></p>
+    <div class="fz-btns"><button type="button" class="btn" id="fz_save">Messung von heute speichern</button><a class="btn alt" href="#teil-gemeinsam">Jemanden mitnehmen</a><a class="btn alt" href="broschuere/">Broschüre lesen</a><a class="btn alt" href="ratgeber/">Ratgeber lesen</a><a class="btn alt" href="#teil-neugier">Nach oben</a></div>
     <p class="note">Alle Zahlen sind Schätzbereiche aus großen Studien, keine Vorhersage für dich. Deine Werte bleiben auf deinem Gerät.</p>
   </section>
 </div>
@@ -1260,7 +1306,7 @@ function zeigeCheck() {
   $("c_ziele").querySelectorAll("button").forEach(x => x.onclick = () => { ZIEL = x.dataset.z; ZIEL_GEWAEHLT = true; zeigeCheck(); });
   const von = ZIEL === "start" ? s : b, nach = ZIEL === "start" ? b : ZIEL === "gruen" ? Math.ceil(gr) - 1 : b - +ZIEL, d = von - nach;
   const G = gewinnZwischen(von, nach), wer = `${V.alter} Jahre, ${V.sex === "m" ? "Mann" : "Frau"}`;
-  $("c_gw_h").textContent = ZIEL === "start" ? "3. Dein Gewinn seit dem Start" : "3. Was dir das bringen kann";
+  $("c_gw_h").textContent = ZIEL === "start" ? "Dein Gewinn seit dem Start" : "Was dir das bringen kann";
   $("c_gw_sub").innerHTML = ZIEL === "start" ? `Von ${cm(von)} auf ${cm(nach)}: <b>${cm(d)} weniger</b>. Das ist schon ein echter Gewinn.`
     : `Wenn dein Bauch von ${cm(von)} auf ${cm(nach)} sinkt, also <b>${cm(d)} weniger</b>:`;
   const J = [G.lo.jahre, G.hi.jahre, G.mid.jahre], jMax = Math.max(...J), jMin = Math.min(...J);
@@ -1396,7 +1442,7 @@ function zeigeTafel() {
 }
 
 // ---------- Gesund und glücklich: Aufwärtsspirale und „Mein Warum“ ----------
-const WARUM_OPT = ["Zeit mit Kindern oder Enkeln", "Reisen", "Sport und Natur", "Garten", "Freunde und Familie", "Ehrenamt", "Lange fit im Beruf", "Unabhängig bleiben im Alter"];
+const WARUM_OPT = ["Mit den Enkeln toben und wandern", "Treppen steigen ohne Pause", "Noch einmal ans Meer reisen", "Im Garten werkeln", "Morgens ausgeschlafen aufwachen", "Mit weniger Tabletten auskommen", "Tanzen gehen", "Mit Freunden Rad fahren"];
 const G_FARBE = ["#c98a00", "#a99a1c", "#6f9f3a", "#2f9563", "#1d7a46"];
 function zeichneSpirale() {
   const svg = $("g_spirale"); if (svg.dataset.fertig) return;
@@ -1413,7 +1459,7 @@ function zeichneSpirale() {
   svg.innerHTML = h; svg.dataset.fertig = 1;
 }
 function zeigeGlueck() {
-  zeichneSpirale();
+  zeichneSpirale(); WARUM = WARUM.filter(w => WARUM_OPT.includes(w));
   const g = V.groesse, gruenB = V.bauch < gruenCm(), gruenH = V.hba1c < (V.dm || V.hba1c >= 6.5 ? 7 : 5.7);
   const eB = $("c_etappe").querySelector(".v"), eH = $("c_hetappe").querySelector(".v");
   const werte = gruenB && gruenH ? "Deine Werte sind im grünen Bereich. Halten ist jetzt dein Erfolg."
@@ -1421,7 +1467,7 @@ function zeigeGlueck() {
   const fenster = V.alter < 75 ? 75 - Math.max(V.alter, 50) : 0, gutJ = (anteil(Math.min(V.bauch, g * 0.5) / g) - anteil(V.bauch / g)) * fenster;
   const jahre = gutJ >= 0.3 ? `Bis zu deinem Ziel sind das grob geschätzt <strong>+ ${spanne(gutJ * 0.75, gutJ * 1.4, v => fmt(v, 1) + " Jahre")} bei guter Gesundheit</strong> bis 75. ` : "";
   const st = [
-    ["Ein kleiner Schritt", "Zum Beispiel 10 Minuten gehen nach dem Essen oder Wasser statt Limo. Einen fertigen Plan findest du oben unter „Mein Weg“."],
+    ["Ein kleiner Schritt", "Zum Beispiel 10 Minuten gehen nach dem Essen oder Wasser statt Limo. Einen fertigen Plan findest du weiter unten unter „Mein Weg“."],
     ["Bessere Stimmung", `Bewegung hilft deutlich gegen Niedergeschlagenheit und Angst, das zeigen über 1.000 Studien (<a href="#q-singh">Singh 2023</a>). Und wer mehr Obst und Gemüse isst, wird messbar zufriedener (<a href="#q-mujcic">Mujcic und Oswald 2016</a>).`],
     ["Mehr Kraft für den nächsten Schritt", "Wer sich besser fühlt, bleibt leichter dran. So wird aus einem Schritt eine Gewohnheit, ganz ohne Verbote."],
     ["Bessere Werte", werte],
@@ -1430,8 +1476,18 @@ function zeigeGlueck() {
   $("g_stationen").innerHTML = st.map(([t, x], k) => `<li${k === 4 ? ' class="top"' : ""}><span style="background:${G_FARBE[k]}">${k + 1}</span><b>${t}</b><p>${x}</p></li>`).join("");
   $("g_warum").innerHTML = WARUM_OPT.map((w, i) => `<button type="button" data-w="${i}" aria-pressed="${WARUM.includes(w)}">${w}</button>`).join("");
   $("g_warum").querySelectorAll("button").forEach(b => b.onclick = () => { const w = WARUM_OPT[+b.dataset.w]; WARUM = WARUM.includes(w) ? WARUM.filter(x => x !== w) : [...WARUM, w]; speichern(); zeigeGlueck(); });
-  const liste = WARUM.length > 1 ? WARUM.slice(0, -1).join(", ") + " und " + WARUM[WARUM.length - 1] : WARUM[0];
-  $("g_warumtxt").innerHTML = WARUM.length ? `Mein Warum: Mehr gesunde Jahre für ${liste.replace(/^Zeit/, "Zeit").replace(/^Lange/, "lange").replace(/^Unabhängig/, "unabhängig")}.` : "";
+  const liste = WARUM.join(" · ");
+  $("g_warumtxt").textContent = WARUM.length ? `Dein Warum: ${liste}` : "";
+  $("fz_wunsch").innerHTML = WARUM.length ? `<b>Dein Warum:</b> ${liste}. Dafür lohnt sich jeder kleine Schritt.` : `<b>Dein Warum:</b> <a href="#teil-neugier">Tipp oben an, was du dir wünschst.</a>`;
+  // Wegweiser passend zum Ergebnis
+  const W = { tausch: ["ratgeber/#tauschliste", "Ratgeber · Die 20 besten Tausche"], btausch: ["broschuere/#tauschen", "Broschüre · Clever tauschen"], beweg: ["broschuere/#bewegung", "Broschüre · Jeder Schritt ist Medizin"],
+    teller: ["broschuere/#teller-regel", "Broschüre · Die Teller-Regel"], banane: ["ratgeber/#bananen", "Ratgeber · So satt wie 2 Bananen"], plan: ["broschuere/#startplan", "Broschüre · Vier Wochen, vier Gewohnheiten"],
+    rezepte: ["ratgeber/#rezepte", "Ratgeber · 21 Rezepte"], erfolg: ["broschuere/#fortschritt", "Broschüre · Ihre Werte, Ihre Erfolge"], mit: ["broschuere/#gemeinsam", "Broschüre · Nehmen Sie jemanden mit"] };
+  const [wt, wl] = !gruenB && !gruenH ? ["Bauch und Langzeitzucker liegen noch über dem Ziel. Hier setzt du am besten an:", ["tausch", "teller", "beweg", "plan"]]
+    : !gruenB ? ["Dein Bauch liegt noch über der Hälfte deiner Größe. Hier setzt du am besten an:", ["tausch", "btausch", "beweg"]]
+    : !gruenH ? ["Dein Langzeitzucker liegt noch über dem Ziel. Hier setzt du am besten an:", ["teller", "banane", "plan"]]
+    : ["Deine Werte sind im grünen Bereich. So bleibt es dabei:", ["rezepte", "erfolg", "mit"]];
+  $("wegw_erg").innerHTML = `<b>Passend zu deinem Ergebnis</b><span>${wt}</span>${wl.map(k => `<a href="${W[k][0]}">${W[k][1]}</a>`).join("")}`;
   zeigeMit();
 }
 
