@@ -13,15 +13,16 @@ o = d['oben_ohne_reform_mittel']; u = d['unten_mit_reform_und_zukunftsplan']
 # Zahlen 2070 ohne Reform aus den Beschriftungen der Grafik selbst (der obere Block im JSON kann älter sein als die Grafik)
 num = lambda x: int(x.replace('−', '-'))
 teile = [num(v) for v in re.findall(r'<text[^>]*x="369\.0"[^>]*>([0-9]+)</text>', svg)]
-assert len(teile) == 3, teile
-t = {'altschulden': teile[0], 'laenger_leben': teile[1], 'demografieschulden': teile[2], 'zusammen': num(re.search(r'>([0-9]+) % mittel<', svg).group(1))}
+assert len(teile) in (3, 4), teile
+if len(teile) == 3: teile = [teile[0], 0] + teile[1:]   # bis 21.11.2026 ohne die Schicht für Verteidigung und Infrastruktur
+t = {'altschulden': teile[0], 'neue_kredite': teile[1], 'laenger_leben': teile[2], 'demografieschulden': teile[3], 'zusammen': num(re.search(r'>([0-9]+) % mittel<', svg).group(1))}
 assert sum(teile) == t['zusammen'], (teile, t)
 sp = {'vorsichtig': num(re.search(r'>([0-9]+) % vorsichtig<', svg).group(1)), 'zuversichtlich': num(re.search(r'>([0-9]+) % zuversichtlich<', svg).group(1))}
 sf = u['schuldenfrei']; z = u['2070']
 def stand2070(w):
     return f'2070 noch {w} % Schulden' if w > 0 else f'2070 {-w} % Vermögen im Zukunftsfonds'
 label = (f'Staatsschulden in Prozent der Wirtschaftsleistung bis 2070. Oben ohne Reform im mittleren Fall: 2070 rund {t["zusammen"]} %, '
-         f'davon {t["altschulden"]} Altschulden, {t["laenger_leben"]} weil wir länger leben und {t["demografieschulden"]} Demografieschulden, weil weniger Kinder geboren werden; '
+         f'davon {t["altschulden"]} Altschulden, ' + (f'{t["neue_kredite"]} neue Kredite für Verteidigung und Infrastruktur, ' if t["neue_kredite"] else '') + f'{t["laenger_leben"]} weil wir länger leben und {t["demografieschulden"]} Demografieschulden, weil weniger Kinder geboren werden; '
          f'hellrot hinterlegt die Spanne von {sp["zuversichtlich"]} % im zuversichtlichen bis {sp["vorsichtig"]} % im vorsichtigen Fall. '
          f'Unten mit Reform und Zukunftsplan, hellgrün hinterlegt die Spanne: im mittleren Fall {stand2070(z["mittel"])}, schuldenfrei {sf["mittel"]}; '
          f'im zuversichtlichen Fall schuldenfrei {sf["zuversichtlich"]} und {stand2070(z["zuversichtlich"])}, im vorsichtigen Fall schuldenfrei {sf["vorsichtig"]}.')
@@ -35,7 +36,7 @@ sec2 = re.sub(r'<figcaption>.*?</figcaption>',
   '<figcaption>Eigene Rechnung auf Grundlage des <a href="https://dserver.bundestag.de/btd/20/112/2011235.pdf#page=7" target="_blank" rel="noopener">Sechsten Tragfähigkeitsberichts (BMF 2024)</a>. '
   'Die Linien zeigen den mittleren, wahrscheinlichsten Fall. Hell hinterlegt ist die Spanne vom vorsichtigen bis zum zuversichtlichen Fall, hellrot ohne Reform, hellgrün mit Reform. '
   'Schraffiert ist der Teil, der auf höhere Ausgaben für Krankenkasse und Pflege zurückgeht. Die drei Fälle und die Rechnung stehen in '
-  '<a href="buch/kapitel-6.html">Kapitel&nbsp;6</a> und im <a href="buch/anhang-c.html#c9">Anhang&nbsp;C9</a>.</figcaption>', sec2, count=1, flags=re.S)
+  '<a href="buch/kapitel-6.html">Kapitel&nbsp;6</a> und im <a href="buch/anhang-c.html#c14">Anhang&nbsp;C14</a>.</figcaption>', sec2, count=1, flags=re.S)
 s = s[:a] + sec2 + s[b:]
 open(p, 'w', encoding='utf-8').write(s)
 print('schulden ok', len(svg))
