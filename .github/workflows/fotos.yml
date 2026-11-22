@@ -1,0 +1,32 @@
+name: Ratgeber-Fotos laden
+on:
+  push:
+    branches: [ratgeber-fotos]
+    paths: [fotos.tsv]
+permissions:
+  contents: write
+jobs:
+  laden:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fotos von Wikimedia Commons laden
+        run: |
+          mkdir -p bilder
+          UA="mut-zur-zukunft-ratgeber/1.0 (https://github.com/Tomas-Hecker/mut-zur-zukunft)"
+          echo "datei,quelle_url,urheber,lizenz,titel" > bilder/quellen.csv
+          while IFS=$'\t' read -r key thumb orig page lic art title; do
+            [ -f "bilder/$key.jpg" ] || curl -sfL -A "$UA" -o "bilder/$key.jpg" "$thumb" || curl -sfL -A "$UA" -o "bilder/$key.jpg" "$orig" || echo "FEHLT $key"
+            sleep 0.3
+            printf '%s,"%s","%s","%s","%s"\n' "$key.jpg" "$page" "${art//\"/}" "$lic" "${title//\"/}" >> bilder/quellen.csv
+          done < fotos.tsv
+          sudo apt-get install -y -qq imagemagick >/dev/null 2>&1 || true
+          for f in bilder/*.jpg; do mogrify -resize '960x960>' -quality 82 -strip "$f" || true; done
+          ls bilder | wc -l; du -sh bilder
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add bilder
+          git commit -m "Fotos von Wikimedia Commons (CC0/gemeinfrei) mit Bildnachweis" || echo "nichts neu"
+          git push
