@@ -233,6 +233,7 @@ def page(title, desc, body, cur='', extra_head=''):
 <footer><div class="wrap"><span>© 2026 Tomas Hecker · Mut zur Zukunft · Alle Angaben ohne Gewähr</span><nav aria-label="Rechtliches"><a href="Wir-koennen-uns-die-Zukunft-leisten.pdf" download>Buch als PDF</a><a href="../impressum.html#haftung">Haftungsausschluss</a><a href="../impressum.html">Impressum</a><a href="../datenschutz.html">Datenschutz</a></nav></div></footer>
 <script src="buch.js" defer></script>
 <script src="../satz.js" defer></script>
+<script src="../teilen.js" defer></script>
 </body>
 </html>
 '''
@@ -278,7 +279,7 @@ for c in chapters:
     subs = ''.join(f'<li><a href="{c["slug"]}.html#{i}">{f"<b>{a}</b> " if a else ""}{html.escape(t[len(a):].strip() if a else t)}</a></li>' for i, t, a in c['heads'])
     lis.append(f'''<li class="kap"><details{" open" if c["no"] in ("7", "9") else ""}><summary><a href="{c["slug"]}.html"><span class="no">{c["no"]}</span><span class="tt">{html.escape(c["title"])}</span></a></summary>{f'<ol class="sub">{subs}</ol>' if subs else ''}</details></li>''')
 uebersicht = f'''<div class="bhero big"><div class="bwrap"><div><p class="eyebrow">Das Buch online lesen</p><h1>Wir können uns die Zukunft leisten</h1><p class="blead">Wie die meisten mehr Geld behalten, der Staat schuldenfrei wird und Deutschland aufblüht. Das ganze Buch, Kapitel für Kapitel, mit allen Grafiken. Tippe auf ein Kapitel, um es zu lesen, oder auf den Pfeil, um seine Abschnitte zu sehen.</p>
-<div class="btns"><a class="btn" href="vorwort.html">Mit dem Vorwort beginnen</a><a class="btn ghost" href="Wir-koennen-uns-die-Zukunft-leisten.pdf" download>Als PDF herunterladen</a><a class="btn ghost" href="Wir-koennen-uns-die-Zukunft-leisten-Kurzfassung.pdf" download>Kurzheft, 21 Seiten</a><a class="btn ghost" href="Wir-koennen-uns-die-Zukunft-leisten-Flyer.pdf" download>Flyer zum Weitergeben</a></div></div></div></div>
+<div class="btns"><a class="btn" href="vorwort.html">Mit dem Vorwort beginnen</a><a class="btn ghost" href="Wir-koennen-uns-die-Zukunft-leisten.pdf" download>Buch als PDF</a><button type="button" class="btn ghost" data-teilen data-url="./" data-titel="Wir können uns die Zukunft leisten" data-text="Das Buch „Wir können uns die Zukunft leisten“, kostenlos online lesen:" aria-haspopup="menu" aria-expanded="false">Buch teilen</button><a class="btn ghost" href="../lesen/kurzheft.html">Kurzheft lesen</a><a class="btn ghost" href="../lesen/flyer.html">Flyer lesen</a><a class="btn ghost" href="../lesen/vortrag.html">Vortrag ansehen</a></div></div></div></div>
 <main class="wrap uebersicht">{SEARCHBOX}<h2>Inhalt</h2><ol class="ktoc">{''.join(lis)}</ol>
 <aside class="rechner"><div><strong>Selbst nachrechnen</strong><p>Was das Steuersystem aus Kapitel 4 für deinen Haushalt bedeutet, zeigt der Steuerrechner.</p></div><div class="rbtns"><a class="rbtn" href="../steuerrechner/">Zum Steuerrechner</a></div></aside>
 <aside class="rechner"><div><strong>Vertiefungen</strong><p>Was im Buch nur kurz steht, findest du ausführlich auf eigenen Seiten, mit allen Beispielen, Studien und Rechnungen.</p></div><div class="rbtns"><a class="rbtn" href="../vertiefung/">Zu den Vertiefungen</a></div></aside></main>'''

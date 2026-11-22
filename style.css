@@ -32,6 +32,7 @@ header.top nav a:hover,header.top nav a[aria-current]{border-color:var(--accent-
 .btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
 .btn{display:inline-block;padding:12px 20px;border-radius:999px;font-weight:700;text-decoration:none;background:var(--accent-fill);color:#12372a}
 .btn.ghost{background:transparent;color:var(--brand-fg);border:1.5px solid #6f9a86}
+button.btn{font:inherit;font-weight:700;line-height:inherit;cursor:pointer}
 section.block{padding:56px 0;border-bottom:1px solid var(--line)}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}

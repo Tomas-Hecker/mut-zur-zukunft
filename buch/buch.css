@@ -22,9 +22,9 @@ html { scroll-padding-top: 64px; }
 body.buch main.uebersicht { max-width: 1040px; }
 @media (min-width: 1240px) { .bhero.big .bwrap { padding: 0 max(32px, env(safe-area-inset-left, 0px)); } }
 .bhero.big .bwrap > div { flex: 1; min-width: 0; }
-.bhero.big .btns { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.bhero.big .btns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .bhero.big .btns .btn { display: flex; align-items: center; justify-content: center; text-align: center; white-space: nowrap; padding: 14px 6px; margin: 0; }
-@media (max-width: 1000px) { .bhero.big .btns { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 1000px) { .bhero.big .btns { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .bhero.big .btns { grid-template-columns: 1fr; } }
 
 /* Layout */
