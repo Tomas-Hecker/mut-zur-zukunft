@@ -82,6 +82,7 @@ for ch in chapters:
         anr = h.find(class_='anr')
         sg = h.find(class_='sorge')
         hid = anr.get_text(strip=True).lower() if anr else slugify(''.join(x.get_text(' ') if hasattr(x, 'get_text') else str(x) for x in h.contents if x is not sg) if sg else h.get_text(' ', strip=True))
+        if not anr and h.get('id') and h['id'] not in used: hid = h['id']   # ids aus dem Satz unverändert übernehmen
         base, k = hid, 2
         while hid in used: hid = f'{base}-{k}'; k += 1
         used.add(hid); h['id'] = hid
