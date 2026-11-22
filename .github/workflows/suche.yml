@@ -1,0 +1,46 @@
+name: Commons-Suche
+on:
+  push:
+    branches: [ratgeber-fotos]
+    paths: [suche.txt]
+permissions:
+  contents: write
+jobs:
+  suche:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Suchen
+        run: |
+          UA="mut-zur-zukunft-ratgeber/1.0 (https://github.com/Tomas-Hecker/mut-zur-zukunft)"
+          rm -rf suche; mkdir -p suche
+          while read -r q; do
+            [ -z "$q" ] && continue
+            curl -sfG -A "$UA" "https://commons.wikimedia.org/w/api.php" --data-urlencode "action=query" --data-urlencode "format=json" --data-urlencode "generator=search" --data-urlencode "gsrnamespace=6" --data-urlencode "gsrlimit=25" --data-urlencode "gsrsearch=$q filetype:bitmap" --data-urlencode "prop=imageinfo" --data-urlencode "iiprop=url|extmetadata" --data-urlencode "iiurlwidth=400" > "suche/$(echo $q|tr ' ' _).json"
+            sleep 1
+          done < suche.txt
+          python3 - <<'PY'
+          import json,glob,re,subprocess,os
+          rows=[]
+          for f in glob.glob('suche/*.json'):
+              d=json.load(open(f)).get('query',{}).get('pages',{})
+              for p in d.values():
+                  ii=p['imageinfo'][0]; m=ii.get('extmetadata',{})
+                  lic=m.get('LicenseShortName',{}).get('value','')
+                  if not re.search(r'CC0|[Pp]ublic domain|PD',lic): continue
+                  art=re.sub('<[^>]+>','',m.get('Artist',{}).get('value',''))
+                  rows.append([p['title'],ii['thumburl'],ii['url'],ii['descriptionurl'],lic,art])
+          seen=set();i=0;out=[]
+          for r in rows:
+              if r[0] in seen: continue
+              seen.add(r[0]); i+=1
+              subprocess.run(['curl','-sfL','-A','mut-zur-zukunft-ratgeber/1.0','-o',f'suche/k{i:02d}.jpg',r[1]])
+              out.append([f'k{i:02d}']+r)
+          json.dump(out,open('suche/treffer.json','w'),ensure_ascii=False,indent=1)
+          print(len(out))
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add suche; git commit -m "Commons-Suchergebnisse" || true; git push
