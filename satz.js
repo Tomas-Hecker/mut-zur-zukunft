@@ -6,7 +6,7 @@
 (function () {
   "use strict";
   if (!window.ResizeObserver || !window.MutationObserver || !document.createRange) return;
-  var SKIP = "script,style,svg,button,label,select,option,textarea,input,code,pre,nav,table,.logo,.sitenav,[data-nosatz]";
+  var SKIP = "script,style,svg,button,.btn,label,select,option,textarea,input,code,pre,nav,table,.logo,.sitenav,[data-nosatz]";
   var ABK = /(?:^|[\s(„"])(?:z|B|u|a|d|h|o|g|v|s|S|Nr|ca|bzw|vgl|Mio|Mrd|Tsd|etc|usw|ggf|evtl|inkl|zzgl|Abs|Art|Dr|Prof|St|Std|Min|max|min|rd|bspw|Jh|Kap|Tab|Abb|Anm|sog|gem|lt|Bd|Hrsg|ff|f)\.$/;
   var ENDE = /([.!?…])([“”"»)\]]*)(\s+)(?=[A-ZÄÖÜ„"»(0-9])/g;
   // Zahl und Einheit bleiben zusammen: „17,2 Mrd. €“, „74 von 100“, „4 %“
