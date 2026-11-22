@@ -380,6 +380,11 @@ details.hg[open]{display:grid}
 @media print{.teile-nav,.fazit .fz-btns{display:none!important}.teil-kopf{margin-top:8px}.studien.kurz .studie > *{display:revert!important}}
 /* Eingaben nur einmal: Größe, Bauch, Zucker und Startwerte kommen aus dem Check oben (Felder bleiben für die Rechnung, nur unsichtbar) */
 #eing .f:has(#i_groesse),#eing .f:has(#i_bauch),.main .grp:has(#i_hba1c),#bonusfelder .f:has(#i_bauchVor),#bonusfelder .f:has(#i_hbVor){display:none}
+/* Tafel: Alter, Geschlecht und Größe direkt im Satz einstellbar */
+.t-wahl{appearance:none;-webkit-appearance:none;font:inherit;font-weight:700;color:var(--fg);background:var(--field) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2300907f' stroke-width='1.8'/%3E%3C/svg%3E") no-repeat right 9px center;border:1.5px solid var(--ok);border-radius:999px;padding:1px 24px 1px 10px;margin:2px 0;cursor:pointer;line-height:1.5}
+.t-wahl:hover,.t-wahl:focus-visible{background-color:var(--hl);outline:none}
+.t-tipp{font-size:.88em;color:var(--muted)}
+.t-fuer{display:block}.t-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:4px 0 8px}
 </style>
 <style id="sitenav-css">
 .sitenav{background:#12372a;color:#fbf8f1;font:600 15px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
@@ -1207,6 +1212,11 @@ document.querySelectorAll("[data-st]").forEach(b => b.addEventListener("click", 
   V[k] = Math.round(Math.min(lim[1], Math.max(lim[0], V[k] + d)) * 10) / 10; syncFelder(); run();
 }));
 $("r_cb").addEventListener("input", e => { V.bauch = +e.target.value; syncFelder(); run(); });
+$("t_sub").addEventListener("change", e => { const t = e.target, v = t.value;
+  if (t.id === "t_alter") { V.alter = +v; $("i_alter").value = V.alter; run(); }
+  else if (t.id === "t_sex") setSex(v);
+  else if (t.id === "t_gr") { V.groesse = +v; syncFelder(); run(); }
+  const neu = $(t.id); if (neu) neu.focus(); });
 $("r_ch").addEventListener("input", e => { V.hba1c = +e.target.value; syncFelder(); run(); });
 $("c_dm").addEventListener("change", e => { V.dm = e.target.checked; $("i_dm").checked = V.dm; run(); });
 
@@ -1346,7 +1356,10 @@ function zeigeTafel() {
   });
   $("t_grid").innerHTML = h;
   $("t_grid").querySelectorAll(".tz").forEach(b => b.onclick = () => { T_WAHL = { z: +b.dataset.z, s: +b.dataset.s, auto: false }; zeigeTafel(); });
-  $("t_sub").innerHTML = `Für dich gerechnet: ${wer}, mit deinem Lebensstil. <b>Du</b> stehst im markierten Feld, der gestreifte Weg führt zum <b>Ziel</b>. Tippe ein Feld an, und du siehst, was du gewinnst.`;
+  const wahl = (id, opts, cur, lab) => `<select class="t-wahl" id="${id}" aria-label="${lab}">${opts.map(([v, t]) => `<option value="${v}"${+v === +cur || v === cur ? " selected" : ""}>${t}</option>`).join("")}</select>`;
+  const reihe = (a, b, e) => Array.from({ length: b - a + 1 }, (_, i) => [a + i, fmt(a + i) + e]);
+  const werW = `<span class="t-chips">${wahl("t_alter", reihe(18, 95, " Jahre"), V.alter, "Alter ändern")}${wahl("t_sex", [["m", "Mann"], ["f", "Frau"]], V.sex, "Geschlecht ändern")}${wahl("t_gr", reihe(120, 220, " cm"), Math.round(g), "Körpergröße ändern")}<span class="t-tipp">zum Ändern antippen</span></span>`;
+  $("t_sub").innerHTML = `<span class="t-fuer">Für dich gerechnet, mit deinem Lebensstil:</span>${werW}<b>Du</b> stehst im markierten Feld, der gestreifte Weg führt zum <b>Ziel</b>. Tippe ein Feld an, und du siehst, was du gewinnst.`;
   // Gewinn bis zum gewählten Feld
   const zi = T_WAHL.z, si = T_WAHL.s, zr = T_ZE[zi];
   // In der eigenen Zeile bzw. Spalte bleibt der eigene Wert, sonst der Wert des Feldes
