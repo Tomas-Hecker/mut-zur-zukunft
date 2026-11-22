@@ -31,6 +31,17 @@ while i < len(secs):
         chapters.append(dict(slug=slug, no=no, kicker=kicker, title=title,
                              lead=lead.decode_contents() if lead else '', body=body))
         i += 2; continue
+    if 'chapter' in cls and s.get('id') in ('anhaenge', 'woerterbuch', 'quellenverzeichnis'):
+        # Satz ab 22.11.2026: Einleitung zu den Anhängen, Wörterbuch und Quellen mit h2 statt h1, je eine eigene Seite
+        h2 = s.find('h2'); title = h2.get_text(' ', strip=True)
+        for r in s.find_all(class_='runner'): r.decompose()
+        sp = soup.new_tag('span', attrs={'id': h2.get('id')}) if h2.get('id') else None
+        if sp: h2.replace_with(sp)
+        else: h2.decompose()
+        slug, kicker = {'anhaenge': ('anhaenge', 'Anhänge'), 'woerterbuch': ('woerterbuch', 'Zum Nachschlagen'),
+                        'quellenverzeichnis': ('quellen', 'Anhang')}[s['id']]
+        chapters.append(dict(slug=slug, no='', kicker=kicker, title=title, lead='', body=s))
+        i += 1; continue
     if 'chapter' in cls and s.find('h1') is None:
         i += 1; continue   # eigenes Inhaltsverzeichnis (Version 23)
     if 'chapter' in cls:
@@ -268,7 +279,8 @@ for c in chapters:
 uebersicht = f'''<div class="bhero big"><div class="bwrap"><div><p class="eyebrow">Das Buch online lesen</p><h1>Wir können uns die Zukunft leisten</h1><p class="blead">Wie die meisten mehr Geld behalten, der Staat schuldenfrei wird und Deutschland aufblüht. Das ganze Buch, Kapitel für Kapitel, mit allen Grafiken. Tippe auf ein Kapitel, um es zu lesen, oder auf den Pfeil, um seine Abschnitte zu sehen.</p>
 <div class="btns"><a class="btn" href="vorwort.html">Mit dem Vorwort beginnen</a><a class="btn ghost" href="Wir-koennen-uns-die-Zukunft-leisten.pdf" download>Als PDF herunterladen</a><a class="btn ghost" href="Wir-koennen-uns-die-Zukunft-leisten-Kurzfassung.pdf" download>Kurzheft, 21 Seiten</a><a class="btn ghost" href="Wir-koennen-uns-die-Zukunft-leisten-Flyer.pdf" download>Flyer zum Weitergeben</a></div></div></div></div>
 <main class="wrap uebersicht">{SEARCHBOX}<h2>Inhalt</h2><ol class="ktoc">{''.join(lis)}</ol>
-<aside class="rechner"><div><strong>Selbst nachrechnen</strong><p>Was das Steuersystem aus Kapitel 7 für deinen Haushalt bedeutet, zeigt der Steuerrechner.</p></div><div class="rbtns"><a class="rbtn" href="../steuerrechner/">Zum Steuerrechner</a></div></aside></main>'''
+<aside class="rechner"><div><strong>Selbst nachrechnen</strong><p>Was das Steuersystem aus Kapitel 4 für deinen Haushalt bedeutet, zeigt der Steuerrechner.</p></div><div class="rbtns"><a class="rbtn" href="../steuerrechner/">Zum Steuerrechner</a></div></aside>
+<aside class="rechner"><div><strong>Vertiefungen</strong><p>Was im Buch nur kurz steht, findest du ausführlich auf eigenen Seiten, mit allen Beispielen, Studien und Rechnungen.</p></div><div class="rbtns"><a class="rbtn" href="../vertiefung/">Zu den Vertiefungen</a></div></aside></main>'''
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8').write(page('Das Buch online lesen · Wir können uns die Zukunft leisten', '„Wir können uns die Zukunft leisten“ von Tomas Hecker: das ganze Buch online lesen, mit Inhaltsverzeichnis, Suche und Verweisen zum Nachrechnen.', uebersicht))
 
 suche = f'''<main class="wrap uebersicht"><h1 class="sh">Im Buch suchen</h1>{SEARCHBOX}<p id="treffer-info" class="small"></p><ol id="treffer" class="treffer"></ol><p><a href="./">Zum Inhaltsverzeichnis</a></p></main>'''
@@ -301,6 +313,10 @@ for f in sorted(_glob.glob(os.path.join(OUT, '*.html'))):
     if nm in ('index.html', 'suche.html', 'stelle.html'): continue
     for i in re.findall(r' id="([^"]+)"', open(f, encoding='utf-8').read()):
         if i not in ('top', 'seite', 'q', 'treffer', 'treffer-info') and i not in stellen: stellen[i] = f'{nm}#{i}'
+# alte Namen aus dem Register des Rechners (buch-anker-v41.json, "_stellen": alt -> neue id)
+if os.path.exists(_AP):
+    for _alt, _neu in json.load(open(_AP, encoding='utf-8')).get('_stellen', {}).items():
+        if _alt not in stellen and _neu in stellen: stellen[_alt] = stellen[_neu]
 stelle = ('<main class="wrap uebersicht"><h1 class="sh">Buchstelle</h1><p id="st">Die Buchstelle wird geöffnet …</p><p><a href="./">Zum Inhaltsverzeichnis</a></p></main>'
   '<script>(function(){var S=' + _json.dumps(stellen, ensure_ascii=False) + ';var k=decodeURIComponent((location.hash||"").slice(1));'
   'if(S[k]){location.replace(S[k]);}else{document.getElementById("st").textContent=k?"Diese Buchstelle gibt es nicht: "+k:"Keine Buchstelle angegeben.";}})();</script>')

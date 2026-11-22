@@ -20,7 +20,7 @@
     b5: ["anhang-b.html#b5", "Anhang B5, Wohnen, Wärme und Strom"],
     leisten: ["kapitel-6.html#leisten", "Kapitel 6, Können wir uns das leisten?"],
     plan: ["kapitel-6.html#zukunftsplan", "Kapitel 6, Der Zukunftsplan"],
-    c2: ["anhang-c.html#c2", "Anhang C2, Die Gesamtrechnung"],
+    c2: ["kapitel-6.html#ergebnis", "Kapitel 6, Die Rechnung auf einen Blick"],
     a1: ["anhang-a.html#a1", "Anhang A1"],
   };
   const e = (t, b) => [t, ...(b ? B[b] : [])];
