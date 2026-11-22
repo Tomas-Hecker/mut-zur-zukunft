@@ -378,6 +378,8 @@ details.hg[open]{display:grid}
 .fz-etappe{font-size:17px}
 .fz-btns{display:flex;flex-wrap:wrap;gap:8px}
 @media print{.teile-nav,.fazit .fz-btns{display:none!important}.teil-kopf{margin-top:8px}.studien.kurz .studie > *{display:revert!important}}
+/* Eingaben nur einmal: Größe, Bauch, Zucker und Startwerte kommen aus dem Check oben (Felder bleiben für die Rechnung, nur unsichtbar) */
+#eing .f:has(#i_groesse),#eing .f:has(#i_bauch),.main .grp:has(#i_hba1c),#bonusfelder .f:has(#i_bauchVor),#bonusfelder .f:has(#i_hbVor){display:none}
 </style>
 <style id="sitenav-css">
 .sitenav{background:#12372a;color:#fbf8f1;font:600 15px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
@@ -576,7 +578,7 @@ h1,h2,h3{break-after:avoid}
   </section>
 
   <h3 class="unter" id="genauer">Genauer rechnen: Alter, Geschlecht und Lebensstil</h3>
-  <p class="note unter-l">Mit Alter, Geschlecht, Langzeitzucker und Lebensstil. Bei jedem kleinen <b>i</b> steht, was eine Zahl bedeutet und woher sie kommt. Ganz unten: <a href="#rechenweg">der Rechenweg mit deinen Zahlen</a>, <a href="#bauchindex">der Bauch-Index für Lebensmittel</a> und <a href="#studien">jede Studie einzeln</a>.</p>
+  <p class="note unter-l">Größe, Bauch und Langzeitzucker übernimmt der Rechner aus deinem Check oben, hier kommen nur Alter, Geschlecht und Lebensstil dazu. Bei jedem kleinen <b>i</b> steht, was eine Zahl bedeutet und woher sie kommt. Ganz unten: <a href="#rechenweg">der Rechenweg mit deinen Zahlen</a>, <a href="#bauchindex">der Bauch-Index für Lebensmittel</a> und <a href="#studien">jede Studie einzeln</a>.</p>
 
   <div class="main">
     <div class="panel">
@@ -625,7 +627,7 @@ h1,h2,h3{break-after:avoid}
     </div>
 
     <div class="panel">
-      <h2>Ergebnis</h2>
+      <h2>Dein Ergebnis mit Lebensstil</h2>
       <div class="verdict" id="verdict"></div>
       <div class="tiles" id="tiles"></div>
       <div class="tbl"><table id="t_herkunft"></table></div>
