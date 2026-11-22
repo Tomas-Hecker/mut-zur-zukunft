@@ -258,6 +258,12 @@ details.grp > summary { font-size: 14.5px }
 .chips button[aria-pressed="true"] { background: var(--ok); border-color: var(--ok); color: #fff }
 .plan { display: grid; gap: 8px }
 .broschuere { display: flex; gap: 12px; align-items: center; justify-self: start; max-width: 720px; text-decoration: none; color: var(--fg); background: var(--panel); border: 2px solid var(--mid); border-radius: 12px; padding: 10px 14px }
+.bi-n { display: flex; align-items: center; gap: 10px; min-width: 0 }
+.bi-n img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; flex: none; background: var(--grid) }
+.akt-bild { margin: 4px 0 2px; border-radius: 12px; overflow: hidden; aspect-ratio: 2 / 1; max-width: 560px; background: var(--grid) }
+.akt-bild img { width: 100%; height: 100%; object-fit: cover; display: block }
+.bildnachweis { font-size: 12.5px; color: var(--muted); margin-top: 8px }
+.bildnachweis ul { margin: 6px 0 0; padding-left: 18px; columns: 2 260px }
 .broschuere:hover { background: var(--field) }
 .kostenfrei { margin: 0; max-width: 720px; border-left: 4px solid var(--good); background: var(--z1); border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: 15.5px }
 .kostenfrei b { color: var(--good) }
@@ -267,7 +273,7 @@ details.grp > summary { font-size: 14.5px }
 .broschuere .bi-ic { flex: none; width: 44px; height: 52px; border-radius: 6px; background: var(--mid); color: #fff; font: 800 13px/52px var(--display); text-align: center }
 /* Bauch-Index */
 .bi-liste { display: grid; gap: 5px; font-size: 14.5px }
-.bi-row { display: grid; grid-template-columns: minmax(0, 13em) minmax(0, 1fr) 5.5em; gap: 10px; align-items: center }
+.bi-row { display: grid; grid-template-columns: minmax(0, 17em) minmax(0, 1fr) 5.5em; gap: 10px; align-items: center }
 @media (max-width: 520px) { .bi-row { grid-template-columns: minmax(0, 1fr) 5em } .bi-row .bb { grid-column: 1 / -1; grid-row: 2 } }
 .bi-row small { color: var(--muted) }
 .bb { position: relative; height: 14px }
@@ -502,6 +508,7 @@ h1,h2,h3{break-after:avoid}
       <div class="gemeinsam">
         <p class="k">Was wollt ihr zusammen machen?</p>
         <div class="chips" id="m_akt"></div>
+        <figure class="akt-bild"><img id="m_bild" src="bilder/x_gehen.jpg" alt="" width="720" height="360" loading="lazy" decoding="async"></figure>
         <p class="k">Wie oft?</p>
         <div class="chips" id="m_oft"></div>
         <blockquote class="einladung" id="m_text"></blockquote>
@@ -969,7 +976,7 @@ h1,h2,h3{break-after:avoid}
   </div>
 </div>
 <div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Wir können uns die Zukunft leisten“. Die Ergebnisse sind Größenordnungen, können Fehler enthalten und ersetzen keine ärztliche, Steuer-, Rechts-, Finanz- oder Energieberatung. Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>
-<footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Rechner und Broschüre sind kostenfrei. Der Rechner läuft im Browser. Gespeichert wird nur, wenn du auf „Messung speichern“ tippst, und dann nur in deinem Browser auf deinem Gerät. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
+<footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Rechner und Broschüre sind kostenfrei. Der Rechner läuft im Browser. Gespeichert wird nur, wenn du auf „Messung speichern“ tippst, und dann nur in deinem Browser auf deinem Gerät. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p><details class="bildnachweis"><summary>Bildnachweis: Fotos von Wikimedia Commons, gemeinfrei oder CC0</summary><ul><li><a href="https://commons.wikimedia.org/wiki/File:French_fries_%F0%9F%8D%9F.jpg" target="_blank" rel="noopener">pommes.jpg</a>: Fumikas Sagisavas, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Potato_chips_-_Massachusetts.jpg" target="_blank" rel="noopener">chips.jpg</a>: Daderot, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Glass_cola.jpg" target="_blank" rel="noopener">cola.jpg</a>: pic_p_ter, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Steak_Dinner_1_(Unsplash).jpg" target="_blank" rel="noopener">steak.jpg</a>: Alex Munsell alexmunsell, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Huit_merguez_et_trois_saucisses_en_d%C3%A9but_de_cuisson_au_barbecue_en_mars_2020.jpg" target="_blank" rel="noopener">bratwurst.jpg</a>: Benoît Prieur, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Potatoes,_boiled,_with_olive_oil,_garlic,_salt_-_Massachusetts.jpg" target="_blank" rel="noopener">pellkartoffeln.jpg</a>: Daderot, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Milky-Way-Simply-Caramel-Split.jpg" target="_blank" rel="noopener">schokoriegel.jpg</a>: Evan-Amos, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Baguette-246424.jpg" target="_blank" rel="noopener">weissbrot.jpg</a>: cocoparisienne, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Beer_glass_(1).jpg" target="_blank" rel="noopener">bier.jpg</a>: Jon Sullivan, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Orange_juice_1_edit1.jpg" target="_blank" rel="noopener">saft.jpg</a>: Agency of the United States Department of Agriculture Edited, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:NCI_butter.jpg" target="_blank" rel="noopener">butter.jpg</a>: Renee Comet (National Cancer Institute), Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Cheese_limburger_edit.jpg" target="_blank" rel="noopener">hartkaese.jpg</a>: Original photo by John Sullivan. Edit own work., Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Basket_of_broccoli_in_Singapore_market.jpg" target="_blank" rel="noopener">brokkoli.jpg</a>: David, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Rye_bread_Roggenbengel_2025-02-14_05.jpg" target="_blank" rel="noopener">vollkornbrot.jpg</a>: Leonhard Lenz, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Apple_fruit_in_illorin.jpg" target="_blank" rel="noopener">aepfel.jpg</a>: Eunice Ameh, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Californian_walnut_kernel_within_a_half-broken_shell,_photographed_in_West_Bengal,_India,_on_January_14,_2024.jpg" target="_blank" rel="noopener">walnuesse.jpg</a>: Billjones94, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Lancaster,_United_States_(Unsplash).jpg" target="_blank" rel="noopener">joghurt.jpg</a>: Peter Hershey peterhershey, CC0</li><li><a href="https://commons.wikimedia.org/wiki/File:Group_walking_(53585245011).jpg" target="_blank" rel="noopener">x_gehen.jpg</a>: BLMUtah, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:20131022-OO-AC-0017_(10440709533).jpg" target="_blank" rel="noopener">x_kochen.jpg</a>: USDAgov, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Flickr_-_Official_U.S._Navy_Imagery_-_Sailors_exercise_with_celebrity_fitness_star_Tony_Horton..jpg" target="_blank" rel="noopener">x_sport.jpg</a>: Official Navy Page from United States of America Mass Commun, Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Boys_with_bicycles_in_Bamyan-2012.jpg" target="_blank" rel="noopener">x_rad.jpg</a>: Sgt. Ken Scar (U.S. Armed Forces), Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:US_Army_52778_Walkers_prove_you_don%27t_need_snow_to_use_poles.jpg" target="_blank" rel="noopener">x_mittag.jpg</a>: Kevin Stabinsky (USAG Fort McPherson), Public domain</li><li><a href="https://commons.wikimedia.org/wiki/File:Glass_cola.jpg" target="_blank" rel="noopener">zero.jpg</a>: pic_p_ter, Public domain</li></ul></details></footer>
 <script>
 const $ = id => document.getElementById(id);
 const fmt = (v, d = 0) => (+v).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -1312,6 +1319,7 @@ const TEILEN = {
   broschuere: { url: "https://tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner/broschuere-kleine-schritte-grosse-wirkung.pdf", titel: "Kleine Schritte, große Wirkung",
     text: "Eine kurze, kostenfreie Broschüre mit kleinen Schritten für einen gesünderen Bauch und Zucker:" } };
 let TEIL_WAS = "einladung";
+const AKT_BILD = [["x_gehen", "Eine Gruppe wandert gemeinsam"], ["x_kochen", "Mehrere Menschen kochen zusammen in einer Küche"], ["x_sport", "Gemeinsames Training im Freien"], ["x_rad", "Zwei Jungen mit Fahrrädern auf einem Feldweg"], ["x_mittag", "Zwei Frauen gehen mit Stöcken durch einen Park"]];
 const AKT = [["Gehtreff", "eine Runde spazieren zu gehen, 20 Minuten"], ["Kochrunde", "zusammen gesund zu kochen, reihum bei einem von uns"], ["Sport zusammen", "zusammen Sport zu machen"], ["Rad fahren", "eine Runde Rad zu fahren"], ["Mittagsrunde", "in der Mittagspause eine Runde zu gehen"]];
 const OFT = ["einmal pro Woche", "zweimal pro Woche"];
 let M_AKT = 0, M_OFT = 0;
@@ -1339,6 +1347,7 @@ function zeigeMit() {
   $("m_oft").innerHTML = OFT.map((t, i) => `<button type="button" data-o="${i}" aria-pressed="${i === M_OFT}">${t}</button>`).join("");
   $("m_akt").querySelectorAll("button").forEach(b => b.onclick = () => { M_AKT = +b.dataset.a; TEIL_WAS = "einladung"; zeigeTeilen(); zeigeMit(); });
   $("m_oft").querySelectorAll("button").forEach(b => b.onclick = () => { M_OFT = +b.dataset.o; TEIL_WAS = "einladung"; zeigeTeilen(); zeigeMit(); });
+  const bild = $("m_bild"); if (!bild.src.endsWith(AKT_BILD[M_AKT][0] + ".jpg")) bild.src = "bilder/" + AKT_BILD[M_AKT][0] + ".jpg"; bild.alt = AKT_BILD[M_AKT][1];
   $("m_zahl").textContent = MIT;
   $("m_dabeitxt").textContent = MIT === 0 ? "Tippe auf +, wenn jemand zusagt." : MIT === 1 ? "Super, der Schneeball rollt!" : `Du hast ${MIT} Menschen mitgenommen. Stark!`;
   zeigeSchneeball();
@@ -1765,14 +1774,15 @@ $("r_g").addEventListener("input", zucker); $("r_r").addEventListener("input", z
 run();
 allegesund();
 // ---------- Bauch-Index (Mozaffarian u. a. 2011, NEJM): kg Gewichtsänderung in 4 Jahren je zusätzlicher Tagesportion ----------
+const BI_BILD = ["pommes", "chips", "cola", "steak", "bratwurst", "pellkartoffeln", "schokoriegel", "weissbrot", "bier", "saft", "butter", "hartkaese", "zero", "brokkoli", "vollkornbrot", "aepfel", "walnuesse", "joghurt"];
 const BI = [["Pommes frites", "1 Portion", 1.52], ["Kartoffelchips", "1 kleine Tüte, 30 g", 0.77], ["Limonade, Cola, Eistee", "1 Dose, 0,33 l", 0.45], ["Rotes Fleisch", "1 Portion", 0.43],
   ["Wurst, Schinken, Speck", "1 Scheibe oder Würstchen", 0.42], ["Kartoffeln, gekocht oder Brei", "1 mittelgroße", 0.26], ["Süßigkeiten, Kuchen", "1 Portion", 0.18], ["Weißbrot, helle Nudeln, Reis", "1 Scheibe oder ½ Tasse", 0.18],
   ["Bier, Wein", "1 Glas", 0.18], ["Fruchtsaft", "1 kleines Glas", 0.14], ["Butter", "1 Teelöffel", 0.14], ["Käse", "1 Scheibe", 0], ["Getränke mit Süßstoff", "1 Dose", 0],
   ["Gemüse", "1 Portion", -0.10], ["Vollkornbrot, Haferflocken", "1 Scheibe oder ½ Tasse", -0.17], ["Obst", "1 Stück", -0.22], ["Nüsse", "1 Handvoll, 30 g", -0.26], ["Joghurt", "1 Becher", -0.37]];
 function bauchIndex() {
   const mx = 1.6, kg = v => (v > 0 ? "+" : v < 0 ? "−" : "±") + fmt(Math.abs(v), 1) + " kg";
-  $("bi_liste").innerHTML = BI.map(([n, p, v]) => { const wd = Math.abs(v) / mx * 50;
-    return `<div class="bi-row"><span>${n} <small>${p}</small></span><span class="bb" aria-hidden="true"><i style="${v >= 0 ? `left:50%` : `right:50%`};width:${wd}%;background:var(${v > 0 ? "--risk" : "--good"})"></i></span><span class="w">${kg(v)}</span></div>`; }).join("");
+  $("bi_liste").innerHTML = BI.map(([n, p, v], i) => { const wd = Math.abs(v) / mx * 50;
+    return `<div class="bi-row"><span class="bi-n"><img src="bilder/${BI_BILD[i]}.jpg" alt="" width="44" height="44" loading="lazy" decoding="async"><span>${n} <small>${p}</small></span></span><span class="bb" aria-hidden="true"><i style="${v >= 0 ? `left:50%` : `right:50%`};width:${wd}%;background:var(${v > 0 ? "--risk" : "--good"})"></i></span><span class="w">${kg(v)}</span></div>`; }).join("");
   const opt = (l, sel) => l.map(([n, , v], i) => `<option value="${BI.indexOf(l[i])}"${n === sel ? " selected" : ""}>${n}</option>`).join("");
   $("bi_statt").innerHTML = opt(BI.filter(b => b[2] > 0), "Limonade, Cola, Eistee");
   $("bi_lieber").innerHTML = opt(BI.filter(b => b[2] <= 0), "Getränke mit Süßstoff");
