@@ -15,7 +15,9 @@
   var KOPF = "h1,h2,h3,h4,h5,h6";
   var TEIL = /([,;:])([“”"»)\]]*)(\s+)(?=\S)|(\s)(?=[–—]\s)/g;
   var st = document.createElement("style");
-  st.textContent = ".sb{display:inline}.sb.on::before{content:'\\A';white-space:pre}";
+  // Ausgewogener Umbruch (Wunsch Tomas, 22.11.2026): Überschriften und Bildunterschriften ohne einzelnen Rest in der letzten Zeile
+  st.textContent = ".sb{display:inline}.sb.on::before{content:'\\A';white-space:pre}"
+    + "h1,h2,h3,h4,h5,figcaption,caption{text-wrap:balance;hyphens:manual}p,li,td{text-wrap:pretty}";
   document.head.appendChild(st);
 
   var blockCache = new WeakMap();
@@ -169,10 +171,30 @@
   });
   function beobachten() { mo.observe(document.body, { childList: true, subtree: true, characterData: true }); }
 
+  // Browser ohne text-wrap: balance (ältere Safari): die Überschrift so schmal wie möglich, ohne eine Zeile mehr zu brauchen
+  var BAL = !(window.CSS && CSS.supports && CSS.supports("text-wrap", "balance"));
+  var balW = new WeakMap();
+  function ausgleichen(h) {
+    var w = h.parentElement ? h.parentElement.clientWidth : 0;
+    if (!w || balW.get(h) === w) return;
+    balW.set(h, w);
+    h.style.maxWidth = "";
+    var hoehe = h.getBoundingClientRect().height, lh = parseFloat(getComputedStyle(h).lineHeight) || hoehe;
+    if (hoehe < lh * 1.5) return;   // eine Zeile: nichts zu tun
+    var lo = w / 2, hi = w;
+    for (var i = 0; i < 12 && hi - lo > 2; i++) {
+      var m = (lo + hi) / 2; h.style.maxWidth = m + "px";
+      if (h.getBoundingClientRect().height > hoehe + 1) lo = m; else hi = m;
+    }
+    h.style.maxWidth = Math.ceil(hi) + "px";
+  }
+  function alleAusgleichen() { if (BAL) document.querySelectorAll("h1,h2,h3,h4,h5,figcaption,caption").forEach(ausgleichen); }
+  if (BAL) { window.addEventListener("resize", alleAusgleichen); window.addEventListener("load", alleAusgleichen); }
+
   function start() {
     scannen(document.body);
     beobachten();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(offenAlle);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { offenAlle(); alleAusgleichen(); });
   }
   function offenAlle() { document.querySelectorAll("p,li,div,dd,figcaption,blockquote,h1,h2,h3,h4,h5,h6").forEach(function (b) { var d = daten.get(b); if (d && d.sichtbar) { d.w = -1; planen(b); } }); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();

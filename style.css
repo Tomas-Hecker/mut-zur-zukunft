@@ -5,9 +5,9 @@
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:17px;line-height:1.6;margin:0}
 .wrap{max-width:1040px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left,0px))}
-h1,h2,h3{font-family:var(--font-display);line-height:1.2;text-wrap:balance;margin:0 0 .5em}
+h1,h2,h3{font-family:var(--font-display);line-height:1.2;text-wrap:balance;margin:0 0 .5em} h1,h2,h3,h4,h5,figcaption,caption{text-wrap:balance;hyphens:manual}
 h2{font-size:clamp(1.6rem,3.2vw,2.1rem)} h3{font-size:1.15rem}
-p{margin:0 0 1em} p,li,dd,figcaption{text-wrap:pretty;hyphens:manual} a{color:inherit;text-underline-offset:3px}
+p{margin:0 0 1em} p,li,dd,td{text-wrap:pretty;hyphens:manual} a{color:inherit;text-underline-offset:3px}
 .eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:.6em}
 .lead{color:var(--muted);font-size:1.1rem;max-width:62ch}
 header.top{background:var(--brand);color:var(--brand-fg)}
