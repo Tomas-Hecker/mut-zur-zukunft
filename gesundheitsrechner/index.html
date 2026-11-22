@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-<title>Bauch, Blutzucker und Lebenszeit</title>
-<meta name="description" content="Gesundheitsrechner zum Buch „Wir können uns die Zukunft leisten“: Was Bauchumfang und Langzeitzucker statistisch an Lebenszeit kosten, was das für Krankenkasse und Gesellschaft bedeutet und was eine Zuckerabgabe bis 2070 bringen kann. Mit Quellen.">
+<title>Mein Bauch-Check</title>
+<meta name="description" content="Gesundheitsrechner zum Buch „Wir können uns die Zukunft leisten“: Bauch messen, Ampel sehen, Fortschritt feiern. Was jeder Zentimeter weniger an Lebenszeit, Krankheitsrisiko und Kosten bringt, was Bauchumfang und Langzeitzucker statistisch an Lebenszeit kosten, was das für Krankenkasse und Gesellschaft bedeutet und was eine Zuckerabgabe bis 2070 bringen kann. Mit Quellen.">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="../schriften/schriften.css">
 <style>
@@ -124,6 +124,85 @@ details > summary { cursor: pointer; font-weight: 700 }
 .bonus .ja { color: var(--good) } .bonus .nein { color: var(--muted) }
 details.grp > summary { font-size: 14.5px }
 [hidden] { display: none !important }
+/* Bauch-Check: großer, einfacher Einstieg oben */
+.check { border: 2px solid var(--ok); gap: 22px }
+.check h2 { font-size: 19px }
+.check-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 22px; align-items: start }
+@media (max-width: 760px) { .check-grid { grid-template-columns: minmax(0, 1fr) } }
+.stepper { display: grid; gap: 4px }
+.stepper .lbl { font-size: 14px; color: var(--muted) }
+.stepper .lbl small { font-size: 12.5px }
+.st-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--field); border: 1px solid var(--line); border-radius: 12px; padding: 6px }
+.st-row output { font: 800 30px/1.1 var(--display); font-variant-numeric: tabular-nums; text-align: center; flex: 1 }
+.st-row output small { font: 600 15px var(--body); color: var(--muted); margin-left: 4px }
+.st-b { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel); color: var(--fg); font: 700 24px/1 var(--body); cursor: pointer; flex: none; touch-action: manipulation }
+.st-b:active { transform: scale(.94) }
+.stepper input[type=range] { width: 100%; accent-color: var(--ok); margin-top: 6px }
+.howto summary { font-size: 14.5px }
+.ampelbox { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px }
+.ab-kopf { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px }
+.ab-kopf .k { font-size: 13.5px; color: var(--muted); flex-basis: 100% }
+.ab-kopf .v { font: 800 40px/1 var(--display); font-variant-numeric: tabular-nums }
+.ab-kopf .tag { font-size: 14px; padding: 5px 11px }
+.gauge { position: relative; height: 14px; border-radius: 7px; margin: 18px 0 4px; background: linear-gradient(90deg, var(--ok) 0 25%, var(--mid) 25% 50%, var(--risk) 50%) }
+.gauge i { position: absolute; top: -9px; width: 5px; height: 32px; margin-left: -2.5px; background: var(--fg); border: 2px solid var(--panel); border-radius: 3px; transition: left .35s }
+.gauge b { position: absolute; top: -5px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; border: 2px solid var(--fg); background: var(--panel); opacity: .7 }
+@media (prefers-reduced-motion: reduce) { .gauge i { transition: none } }
+.gscale { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums }
+.etappe { border-radius: 12px; padding: 14px 16px; background: var(--hl); display: grid; gap: 6px }
+.etappe .k { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted) }
+.etappe .v { font: 800 22px/1.2 var(--display) }
+.etappe .bar { height: 10px; border-radius: 5px; background: var(--line); overflow: hidden }
+.etappe .bar i { display: block; height: 100%; background: var(--good); border-radius: 5px; transition: width .4s }
+.gewinn, .weg { border-top: 1px solid var(--line); padding-top: 18px; display: grid; gap: 12px }
+.gw-kopf { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px }
+.gw-sub { font-size: 16.5px }
+.gw-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px }
+@media (max-width: 640px) { .gw-tiles { grid-template-columns: minmax(0, 1fr) } }
+.gw-tile { border-radius: 12px; padding: 14px 16px; background: var(--z1); border: 1px solid var(--line); display: grid; gap: 2px; align-content: start }
+.gw-tile .k { font-size: 13px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .05em }
+.gw-tile .v { font: 800 24px/1.2 var(--display); color: var(--good); font-variant-numeric: tabular-nums }
+.gw-tile .s { font-size: 13px; color: var(--muted) }
+.risiken { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px }
+.risiken li { display: grid; grid-template-columns: minmax(0, 11em) minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 15px }
+@media (max-width: 520px) { .risiken li { grid-template-columns: minmax(0, 1fr) auto } .risiken li .rb { grid-column: 1 / -1; grid-row: 2 } }
+.risiken .rb { position: relative; height: 10px; border-radius: 5px; background: var(--grid) }
+.risiken .rb i { position: absolute; top: 0; bottom: 0; border-radius: 5px; background: var(--good) }
+.risiken .rb i.lo { opacity: .35 }
+.risiken b { font-variant-numeric: tabular-nums; color: var(--good); white-space: nowrap }
+.risiken a { font-size: 12.5px }
+.hinweis { font-size: 13.5px; color: var(--muted); background: var(--field); border-radius: 8px; padding: 9px 12px }
+.btn { font: 700 15px var(--body); border: 0; border-radius: 999px; padding: 10px 18px; background: var(--ok); color: #fff; cursor: pointer }
+.btn:hover { filter: brightness(1.08) }
+.linkbtn { font: inherit; color: var(--ok); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer }
+.toast { background: var(--good); color: #fff; border-radius: 10px; padding: 10px 14px; font-weight: 700 }
+.verlauf svg { width: 100%; height: auto; display: block }
+.verlauf text { fill: var(--muted); font: 20px var(--body); font-variant-numeric: tabular-nums }
+.badges { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 10px }
+.badge { text-align: center; font-size: 12.5px; color: var(--muted); display: grid; gap: 4px; justify-items: center }
+.badge span { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font: 800 15px var(--display); border: 2px dashed var(--line); color: var(--muted) }
+.badge.on { color: var(--fg) }
+.badge.on span { border: 2px solid var(--mid); background: var(--z2); color: var(--fg) }
+.chips { display: flex; flex-wrap: wrap; gap: 6px }
+.chips button { font: 600 14px var(--body); border: 1px solid var(--line); background: var(--field); color: var(--fg); border-radius: 999px; padding: 7px 13px; cursor: pointer }
+.chips button[aria-pressed="true"] { background: var(--ok); border-color: var(--ok); color: #fff }
+.plan { display: grid; gap: 8px }
+.broschuere { display: flex; gap: 12px; align-items: center; justify-self: start; max-width: 720px; text-decoration: none; color: var(--fg); background: var(--panel); border: 2px solid var(--mid); border-radius: 12px; padding: 10px 14px }
+.broschuere:hover { background: var(--field) }
+.broschuere b { display: block; color: var(--fg) }
+.broschuere small { display: block; color: var(--muted); font-size: 13px; line-height: 1.4 }
+.broschuere .bi-ic { flex: none; width: 44px; height: 52px; border-radius: 6px; background: var(--mid); color: #fff; font: 800 13px/52px var(--display); text-align: center }
+/* Bauch-Index */
+.bi-liste { display: grid; gap: 5px; font-size: 14.5px }
+.bi-row { display: grid; grid-template-columns: minmax(0, 13em) minmax(0, 1fr) 5.5em; gap: 10px; align-items: center }
+@media (max-width: 520px) { .bi-row { grid-template-columns: minmax(0, 1fr) 5em } .bi-row .bb { grid-column: 1 / -1; grid-row: 2 } }
+.bi-row small { color: var(--muted) }
+.bb { position: relative; height: 14px }
+.bb::before { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; border-left: 1px solid var(--muted) }
+.bb i { position: absolute; top: 0; bottom: 0; border-radius: 3px }
+.bi-row .w { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700 }
+.tausch { display: grid; gap: 10px; border: 1px dashed var(--muted); border-radius: 10px; padding: 12px 14px; background: var(--field) }
+.tausch .row2 select { font: 600 15px var(--body); padding: 7px 9px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); color: var(--fg); width: 100% }
 /* Druck: alles untereinander, kompakt, nichts abgeschnitten */
 @media print {
   html { font-size: 12px }
@@ -228,10 +307,71 @@ h1,h2,h3{break-after:avoid}
 <div class="wrap">
   <header>
     <div class="eyebrow">Gesundheit über das ganze Leben</div>
-    <h1>Bauchumfang und Langzeitzucker: Was kostet das an Lebenszeit und Geld?</h1>
-    <p class="lead">Gib Körpergröße, Bauchumfang und deinen Langzeitzucker (HbA1c) ein. Der Rechner zeigt, wie viele Lebensjahre Menschen mit diesen Werten im Durchschnitt verlieren, was das die Krankenkassen kostet und was es die Gesellschaft kostet. Alles beruht auf großen Studien mit Millionen Menschen. Es sind Durchschnittswerte, keine Vorhersage für dich persönlich.</p>
-    <p class="note">So geht's: <b>1.</b> Werte eingeben (oder ein Beispiel antippen) · <b>2.</b> Ergebnis rechts lesen · <b>3.</b> Bei jedem kleinen <b>i</b> steht in einfachen Worten, was die Zahl bedeutet und woher sie kommt. Ganz unten erklären wir <a href="#rechenweg">den Rechenweg mit deinen Zahlen</a> und <a href="#studien">jede Studie einzeln</a>.</p>
+    <h1>Mein Bauch-Check: Was jeder Zentimeter bringt</h1>
+    <p class="lead">Maßband, Körpergröße, fertig. Du siehst sofort, wo dein Bauch steht, was dein nächstes kleines Ziel ist und was dir jeder Zentimeter weniger bringt: an Lebenszeit, an weniger Krankheitsrisiko und an gesparten Kosten. Alles beruht auf großen Studien mit Millionen Menschen und wird immer als Spanne gezeigt.</p>
+    <a class="broschuere" href="broschuere-kleine-schritte-grosse-wirkung.pdf" download><span class="bi-ic" aria-hidden="true">PDF</span><span><b>Broschüre „Kleine Schritte. Große Wirkung.“ herunterladen</b><small>Für Fettleber, Vorstufe Diabetes und Typ-2-Diabetes: Teller-Regel, Tauschideen, Rezepte, 4-Wochen-Plan und der Bauch-Index. 14 Seiten, PDF, 2 MB</small></span></a>
   </header>
+
+  <section class="panel check" id="check" aria-labelledby="check_h">
+    <div class="check-grid">
+      <div class="grp check-ein">
+        <h2 id="check_h">1. Messen</h2>
+        <div class="stepper">
+          <span class="lbl" id="l_cg">Körpergröße</span>
+          <div class="st-row"><button type="button" class="st-b" data-st="groesse" data-d="-1" aria-label="Größe 1 cm weniger">−</button><output id="o_cg" aria-labelledby="l_cg"></output><button type="button" class="st-b" data-st="groesse" data-d="1" aria-label="Größe 1 cm mehr">+</button></div>
+        </div>
+        <div class="stepper">
+          <span class="lbl" id="l_cb">Bauchumfang heute</span>
+          <div class="st-row"><button type="button" class="st-b" data-st="bauch" data-d="-1" aria-label="Bauch 1 cm weniger">−</button><output id="o_cb" aria-labelledby="l_cb"></output><button type="button" class="st-b" data-st="bauch" data-d="1" aria-label="Bauch 1 cm mehr">+</button></div>
+          <input type="range" id="r_cb" min="50" max="160" step="1" aria-label="Bauchumfang heute in cm">
+        </div>
+        <div class="stepper">
+          <span class="lbl" id="l_cs">Bauchumfang beim Start <small>(vor einem Jahr oder bei deiner ersten Messung; freiwillig)</small></span>
+          <div class="st-row"><button type="button" class="st-b" data-st="bauchVor" data-d="-1" aria-label="Startwert 1 cm weniger">−</button><output id="o_cs" aria-labelledby="l_cs"></output><button type="button" class="st-b" data-st="bauchVor" data-d="1" aria-label="Startwert 1 cm mehr">+</button></div>
+        </div>
+        <details class="howto"><summary>So misst du richtig</summary><p class="note">Im Stehen, nach dem Ausatmen, Maßband waagerecht in der Mitte zwischen unterster Rippe und Hüftknochen (meist knapp über dem Bauchnabel). Am besten immer morgens, vor dem Frühstück, einmal im Monat. Faustregel: Der Bauch sollte weniger als die Hälfte der Körpergröße messen.</p></details>
+        <p class="note">Alter, Geschlecht, Langzeitzucker und Lebensstil kannst du <a href="#genauer">weiter unten</a> ergänzen. Dann wird die Schätzung genauer.</p>
+      </div>
+      <div class="grp check-aus">
+        <h2>2. Deine Ampel</h2>
+        <div class="ampelbox">
+          <div class="ab-kopf"><span class="k">Bauch geteilt durch Größe</span><span class="v" id="c_ratio"></span><span class="tag" id="c_tag"></span></div>
+          <div class="gauge" aria-hidden="true"><i id="c_needle"></i><b id="c_startmark" hidden></b></div>
+          <div class="gscale"><span>0,40</span><span>0,50</span><span>0,60</span><span>0,70</span><span>0,80</span></div>
+          <p id="c_ampeltxt"></p>
+        </div>
+        <div class="etappe" id="c_etappe"></div>
+      </div>
+    </div>
+
+    <div class="gewinn" aria-live="polite">
+      <div class="gw-kopf">
+        <h2 id="c_gw_h">3. Dein Gewinn</h2>
+        <div class="seg" role="group" aria-label="Gewinn rechnen für" id="c_ziele"></div>
+      </div>
+      <p class="gw-sub" id="c_gw_sub"></p>
+      <div class="gw-tiles" id="c_gw_tiles"></div>
+      <h3>Dein Risiko sinkt</h3>
+      <ul class="risiken" id="c_risiken"></ul>
+      <p class="hinweis">Gut zu wissen: Das sind Schätzbereiche aus großen Bevölkerungsstudien. Sie zeigen, wie viel seltener Menschen mit kleinerem Bauch im Durchschnitt erkranken, keine Garantie für dich. Jeder Zentimeter zählt trotzdem. <a href="#q-risiko">Woher die Zahlen kommen</a></p>
+    </div>
+
+    <div class="weg">
+      <div class="gw-kopf"><h2>4. Mein Weg</h2><button type="button" class="btn" id="c_save">Messung von heute speichern</button></div>
+      <div id="c_verlauf"></div>
+      <div class="badges" id="c_badges"></div>
+      <div class="plan">
+        <h3>Mein Plan für diese Woche</h3>
+        <p class="note">Ein konkreter Wenn-dann-Plan hilft mehr als ein guter Vorsatz. Tipp einen an, einer reicht.</p>
+        <div class="chips" id="c_plaene"></div>
+        <p class="note" id="c_plantxt"></p>
+      </div>
+      <p class="note">Deine Messungen bleiben nur in diesem Browser auf deinem Gerät, nichts wird übertragen. <button type="button" class="linkbtn" id="c_del">Gespeicherte Messungen löschen</button></p>
+    </div>
+  </section>
+
+  <div class="eyebrow" id="genauer" style="margin-top:8px">Genauer rechnen</div>
+  <p class="note" style="margin-top:-16px">Mit Alter, Geschlecht, Langzeitzucker und Lebensstil. Bei jedem kleinen <b>i</b> steht, was eine Zahl bedeutet und woher sie kommt. Ganz unten: <a href="#rechenweg">der Rechenweg mit deinen Zahlen</a>, <a href="#bauchindex">der Bauch-Index für Lebensmittel</a> und <a href="#studien">jede Studie einzeln</a>.</p>
 
   <div class="main">
     <div class="panel">
@@ -264,14 +404,15 @@ h1,h2,h3{break-after:avoid}
           <div class="f"><label for="i_bewegung">Bewegung</label><div class="in"><input id="i_bewegung" type="number" inputmode="decimal" step="10" min="0" max="40000"><select id="i_bewEinheit" aria-label="Einheit der Bewegung" style="flex:0 0 auto;width:auto;border-left:1px solid var(--line)"><option value="min">Min./Woche</option><option value="schritte">Schritte/Tag</option></select></div><small id="h_bewegung">zügig gehen, Rad fahren, Sport; anstrengender Sport zählt doppelt</small></div>
         </div>
         <div class="chk"><input type="checkbox" id="i_vorsorge"> <label for="i_vorsorge">Ich gehe zu den empfohlenen Vorsorgeuntersuchungen</label></div>
+        <div class="chk"><input type="checkbox" id="i_programm"> <label for="i_programm">Ich mache bei einem Kurs oder Programm mit (Bewegung, Ernährung, Rauchstopp)</label></div>
       </div>
       <div class="presets"><span>Beispiele:</span><button type="button" data-p="gesund">Gesund</button><button type="button" data-p="bauch">Bauch, Zucker noch normal</button><button type="button" data-p="prae">Vorstufe Diabetes</button><button type="button" data-p="dm">Diabetes, Raucher, kaum Bewegung</button></div>
       <p class="note">So misst du den Bauchumfang: im Stehen, nach dem Ausatmen, mit dem Maßband waagerecht in der Mitte zwischen unterster Rippe und Hüftknochen (meist knapp über dem Bauchnabel). Faustregel: Der Bauchumfang sollte weniger als die Hälfte der Körpergröße sein.</p>
       <details class="grp" id="bonusfelder">
-        <summary>Gesundheitsbonus: deine Werte vor einem Jahr (freiwillig)</summary>
+        <summary>Gesundheitsbonus: deine Werte vor einem Jahr oder beim Start (freiwillig)</summary>
         <p class="note">Der Bonus aus dem Buch belohnt nicht nur gesunde Werte, sondern auch Fortschritte. Trag ein, was du vor einem Jahr hattest, dann sieht der Rechner, ob du dich verbessert hast. Leer lassen geht auch.</p>
         <div class="row2">
-          <div class="f"><label for="i_bauchVor">Bauchumfang vor einem Jahr</label><div class="in"><input id="i_bauchVor" type="number" inputmode="decimal" step="1" min="0" placeholder="leer"><span class="u">cm</span></div></div>
+          <div class="f"><label for="i_bauchVor">Bauchumfang beim Start</label><div class="in"><input id="i_bauchVor" type="number" inputmode="decimal" step="1" min="0" placeholder="leer"><span class="u">cm</span></div></div>
           <div class="f"><label for="i_hbVor">Langzeitzucker vor einem Jahr</label><div class="in"><input id="i_hbVor" type="number" inputmode="decimal" step="0.1" min="0" placeholder="leer"><span class="u" id="u_hbVor">%</span></div></div>
           <div class="f"><label for="i_glVor">Alkohol vor einem Jahr</label><div class="in"><input id="i_glVor" type="number" inputmode="decimal" step="1" min="0" placeholder="leer"><span class="u">Gläser/Woche</span></div></div>
         </div>
@@ -304,10 +445,29 @@ h1,h2,h3{break-after:avoid}
     </div>
   </div>
 
+  <div class="panel" id="bauchindex">
+    <div class="eyebrow">Was auf den Teller kommt</div>
+    <h2>Der Bauch-Index: Welche Lebensmittel helfen und welche belasten</h2>
+    <p>Drei große US-Langzeitstudien haben über 120.000 Menschen 20 Jahre lang begleitet und alle vier Jahre gefragt, was sie essen und wie viel sie wiegen (<a href="#q-mozaffarian">Mozaffarian u. a. 2011</a>). Die Balken zeigen, wie viel mehr oder weniger Menschen in vier Jahren zunahmen, wenn sie von einem Lebensmittel täglich eine Portion mehr aßen. Zum Vergleich: Im Durchschnitt nahmen alle rund 1,5 kg in vier Jahren zu.</p>
+    <div class="legend"><span><i class="sq" style="background:var(--good)"></i>hilft beim Schlankbleiben</span><span><i class="sq" style="background:var(--risk)"></i>belastet</span></div>
+    <div class="bi-liste" id="bi_liste"></div>
+    <div class="tausch">
+      <h3>Tausch-Rechner: Ein Tausch pro Tag</h3>
+      <div class="row2">
+        <div class="f"><label for="bi_statt">Statt täglich</label><select id="bi_statt"></select></div>
+        <div class="f"><label for="bi_lieber">lieber</label><select id="bi_lieber"></select></div>
+      </div>
+      <p id="bi_txt"></p>
+    </div>
+    <p class="note"><b>Gut zu wissen:</b> Der Index zeigt die Richtung, keine genauen Zentimeter. Er beschreibt Zusammenhänge im Durchschnitt vieler Menschen. Kalorien allein sagen wenig: Nüsse und Joghurt haben viele Kalorien und hingen trotzdem mit weniger Zunahme zusammen. Was zählt, ist, wie satt ein Lebensmittel macht, wie es den Blutzucker bewegt und was man stattdessen isst. Ob es bei dir wirkt, zeigt dein Maßband. Den Bauch-Index zum Ausdrucken, mit Einkaufszettel und Rezepten, gibt es in der <a href="broschuere-kleine-schritte-grosse-wirkung.pdf" download>Broschüre „Kleine Schritte. Große Wirkung.“ (PDF)</a>.</p>
+  </div>
+
   <div class="panel" id="zucker">
     <div class="eyebrow">Für alle gerechnet</div>
     <h2>Was eine Zuckerabgabe bringt und was gesunde Ernährung insgesamt bringen könnte</h2>
     <p>Großbritannien erhebt seit 2018 eine Abgabe auf gesüßte Getränke, gestaffelt nach dem Zuckergehalt. Die Hersteller haben daraufhin ihre Rezepte geändert: Der Zucker in den betroffenen Getränken sank um mehr als 40 %, und bei Mädchen in der 6. Klasse ging Fettleibigkeit um rund 8 % zurück. Für Deutschland hat ein Team der TU München und der Universität Oxford das 2023 durchgerechnet (<a href="#q-emmert">Emmert-Fees u. a.</a>). Der Rechner schreibt diese Ergebnisse bis 2070 fort und vergleicht sie mit der Abgabe auf allen zugesetzten Zucker aus dem Buch und mit dem, was möglich wäre, wenn sich alle gesund ernähren.</p>
+    <p class="warn"><b>Aktueller Stand:</b> Die Bundesregierung plant eine Steuer auf zuckergesüßte Getränke ab 1. Juli 2027: 0,26 € je Liter bei 5 bis unter 8 g Zucker je 100 ml und 0,32 € je Liter ab 8 g. Säfte, Süßstoff- und Milchgetränke sind ausgenommen, der Bundestag muss noch zustimmen, und die Einnahmen (rund 0,7 bis 1,2 Mrd. € im Jahr) sind nicht für Gesundheit zweckgebunden (Stand Oktober 2026, Ärzteblatt, Verbraucherzentrale Hamburg). Das kommt der „Limonaden-Abgabe in Stufen“ unten nahe.</p>
+    <p class="note"><b>Grobe Schätzung:</b> Die Studie von Emmert-Fees rechnet nur bis 2043. Alles danach bis 2070 schreibt der Rechner selbst fort. Die großen Summen zeigen die Größenordnung, keine Vorhersage.</p>
     <div class="row2" style="align-items:end">
       <div class="range"><label for="r_g">Abgabe auf allen Zucker (Buch): Menschen essen im Schnitt <b id="o_g"></b> Zucker weniger am Tag</label><input id="r_g" type="range" min="2" max="30" step="1" value="12"><small class="note">Heute rund 90 g zugesetzter Zucker am Tag. Die Limonaden-Abgabe allein spart 2,3 g.</small></div>
       <div class="range"><label for="r_r">Volle Wirkung erreicht nach <b id="o_r"></b></label><input id="r_r" type="range" min="10" max="30" step="1" value="20"><small class="note">Krankheiten wie Diabetes entstehen über Jahre, deshalb wirkt gesünderes Essen erst nach und nach.</small></div>
@@ -383,6 +543,47 @@ h1,h2,h3{break-after:avoid}
     <h2>Die Studien hinter dem Rechner, einfach erklärt</h2>
     <p>Der Rechner erfindet keine Zahlen. Jede Annahme kommt aus einer veröffentlichten, von anderen Fachleuten geprüften Studie oder aus amtlichen Zahlen. Eingebaut ist nur, wofür es große Studien mit Hunderttausenden Menschen gibt; wo der Rechner selbst etwas annimmt, steht das dabei. Bei jeder Studie steht, was untersucht wurde, was herauskam, wofür der Rechner das nutzt und wo genau in der Studie du die Zahl findest.</p>
     <div class="studien">
+      <article class="studie" id="q-risiko">
+        <h3>So schätzt der Bauch-Check das Risiko je Krankheit</h3>
+        <div class="wer">Eigene Umrechnung aus den fünf Studien darunter</div>
+        <dl><dt>Was wird gerechnet?</dt><dd>Jede Studie gibt an, um wie viel das Risiko für eine Krankheit je 10 cm mehr Bauchumfang höher ist (relatives Risiko). Der Rechner dreht das um: Bei d Zentimetern weniger sinkt das Risiko auf RR hoch (−d ÷ 10). Beispiel Diabetes, 8 cm weniger: 1,52 hoch −0,8 = 0,72, also rund 28 % weniger; mit 1,70 sind es 35 %.</dd><dt>Warum eine Spanne?</dt><dd>Gezeigt wird immer die untere und obere Grenze des 95-%-Vertrauensbereichs der Studie. So sieht man, wie sicher die Zahl ist: Beim Diabetes ist sie eng, bei der Fettleber breit.</dd><dt>Was das nicht ist</dt><dd>Die Studien beobachten Menschen. Sie zeigen, dass Menschen mit kleinerem Bauch seltener erkranken, nicht exakt, wie viel ein Einzelner durch Abnehmen gewinnt. Dass Abnehmen wirklich hilft, belegen zusätzlich Versuche, zum Beispiel zum Diabetes-Vorbeugen und zur Fettleber (siehe Broschüre).</dd></dl>
+      </article>
+      <article class="studie" id="q-jayedi22">
+        <h3>Bauch und Typ-2-Diabetes: 21 Millionen Menschen</h3>
+        <div class="wer">Jayedi A. u. a. (2022), <i>BMJ</i> 376:e067516</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung aller großen Langzeitstudien zu Körpermaßen und Diabetes: für den Bauchumfang 78 Studien mit rund 21,5 Millionen Menschen, davon 2 Millionen mit neuem Diabetes.</dd><dt>Was kam heraus?</dt><dd>Je 10 cm mehr Bauch steigt das Diabetes-Risiko um 61 % (Spanne 52 bis 70 %). Je 0,1 mehr beim Verhältnis Bauch zu Größe um 73 %.</dd><dt>Wofür der Rechner das nutzt</dt><dd>„Typ-2-Diabetes“ in „Dein Risiko sinkt“.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Abstract und „Results“: RR 1,61 (95 % KI 1,52 bis 1,70; 78 Studien) je 10 cm Bauchumfang. <a href="https://www.bmj.com/content/376/bmj-2021-067516" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-pang">
+        <h3>Bauch und Fettleber: 20 Studien</h3>
+        <div class="wer">Pang Q. u. a. (2015), <i>World Journal of Gastroenterology</i> 21:1650</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung von 20 Studien mit rund 12.000 Menschen mit nicht alkoholbedingter Fettleber und 34.000 ohne, auch bereinigt um den Body-Mass-Index.</dd><dt>Was kam heraus?</dt><dd>Je Zentimeter mehr Bauch ist die Chance auf eine Fettleber um 6,5 % höher (Spanne 2,9 bis 10,3 %). Der Bauch sagt die Fettleber auch dann voraus, wenn das Gewicht schon berücksichtigt ist.</dd><dt>Wofür der Rechner das nutzt</dt><dd>„Fettleber“. Die Spanne ist breit, und viele Studien waren Querschnittsstudien. Deshalb ist das die unsicherste der fünf Zahlen. Die Studie nennt die Einheit nur „je Einheit Bauchumfang“; da der Bauchumfang in allen eingeschlossenen Studien in Zentimetern gemessen wird, liest der Rechner das als je Zentimeter. Das passt zum zweiten Ergebnis der Studie: Menschen mit großem Bauch hatten gegenüber solchen mit kleinem rund 2,3-mal so oft eine Fettleber (OR 2,34).</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Teil „Results“, Abschnitt „Pooled OR value for WC and WHR“: OR 1,065 (95 % KI 1,029 bis 1,103) je Einheit Bauchumfang, 11 Studien mit 10.454 Menschen; hoch gegen niedrig OR 2,34 (1,83 bis 3,00). <a href="https://www.wjgnet.com/1007-9327/full/v21/i5/1650.htm" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-peters">
+        <h3>Bauch und Herzinfarkt: UK Biobank</h3>
+        <div class="wer">Peters S. A. E., Bots S. H., Woodward M. (2018), <i>Journal of the American Heart Association</i> 7:e008507</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Rund 480.000 Frauen und Männer aus der britischen UK Biobank, im Schnitt 7 Jahre beobachtet; 5.710 hatten einen Herzinfarkt.</dd><dt>Was kam heraus?</dt><dd>Je 13,4 cm mehr Bauch (eine Standardabweichung) stieg das Herzinfarkt-Risiko bei Frauen um 35 %, bei Männern um 28 %. Der Bauch sagte den Herzinfarkt besser voraus als der Body-Mass-Index.</dd><dt>Wofür der Rechner das nutzt</dt><dd>„Herzinfarkt“: die Spanne von 1,23 (untere Grenze Männer) bis 1,42 (obere Grenze Frauen), umgerechnet auf 10 cm.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> „Results“: HR je Standardabweichung Bauchumfang Frauen 1,35 (1,28 bis 1,42), Männer 1,28 (1,23 bis 1,33); SD 13,4 cm. <a href="https://www.ahajournals.org/doi/10.1161/JAHA.117.008507" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-zhongc">
+        <h3>Bauch und Schlaganfall: 15 Langzeitstudien</h3>
+        <div class="wer">Zhong C. K. u. a. (2016), <i>Biomedical and Environmental Sciences</i> 29:12</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung von 15 Langzeitstudien; für den Bauchumfang 12 Studien mit rund 405.000 Menschen und 11.775 Schlaganfällen.</dd><dt>Was kam heraus?</dt><dd>Je 10 cm mehr Bauch steigt das Schlaganfall-Risiko um rund 10 %, vor allem für den Schlaganfall durch ein verstopftes Gefäß.</dd><dt>Wofür der Rechner das nutzt</dt><dd>„Schlaganfall“ mit der Spanne 7 bis 14 % je 10 cm.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Teil „Results“, Abschnitt „Dose-response Analysis“ (Abbildung 3): RR 1,10 (95 % KI 1,07 bis 1,14) je 10 cm Bauchumfang. <a href="https://doi.org/10.3967/bes2016.002" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-abar">
+        <h3>Bauch und Darmkrebs: 47 Studien</h3>
+        <div class="wer">Abar L. u. a. (2018), <i>European Journal of Nutrition</i> 57:1701 (World Cancer Research Fund)</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Die Auswertung des World Cancer Research Fund zu Körperfett und Darmkrebs: 47 Langzeitstudien mit über 7 Millionen Menschen.</dd><dt>Was kam heraus?</dt><dd>Je 10 cm mehr Bauch steigt das Darmkrebs-Risiko um 2 bis 3 %. Das ist wenig für den Einzelnen, aber Darmkrebs ist häufig.</dd><dt>Wofür der Rechner das nutzt</dt><dd>„Darmkrebs“. Für andere Krebsarten wie Leberkrebs gibt es Hinweise auf einen stärkeren Zusammenhang, aber weniger Studien.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Tabelle 1: RR 1,02 (95 % KI 1,02 bis 1,03) je 10 cm Bauchumfang, 10 Studien. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6060816/" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-mozaffarian">
+        <h3>Welche Lebensmittel dick machen: 120.000 Menschen, 20 Jahre</h3>
+        <div class="wer">Mozaffarian D. u. a. (2011), <i>New England Journal of Medicine</i> 364:2392</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Drei US-Langzeitstudien mit 120.877 Frauen und Männern aus Gesundheitsberufen, 1986 bis 2006. Alle vier Jahre: Was wird gegessen, wie ändert sich das Gewicht?</dd><dt>Was kam heraus?</dt><dd>Eine Tagesportion mehr Pommes ging mit 1,5 kg mehr in vier Jahren einher, Chips mit 0,8 kg, Limonade mit 0,5 kg. Joghurt, Nüsse, Obst, Vollkorn und Gemüse hingen mit weniger Zunahme zusammen.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Der Bauch-Index und der Tausch-Rechner. Werte gerundet und von Pfund in Kilogramm umgerechnet.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Abbildung 1: Gewichtsänderung je zusätzlicher Tagesportion in vier Jahren. <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa1014296" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
       <article class="studie" id="q-jayedi">
         <h3>Bauch und Sterberisiko: 72 Studien in einer</h3>
         <div class="wer">Jayedi A. u. a. (2020), <i>BMJ</i> 370:m3324</div>
@@ -560,7 +761,7 @@ h1,h2,h3{break-after:avoid}
   </div>
 </div>
 <div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Wir können uns die Zukunft leisten“. Die Ergebnisse sind Größenordnungen, können Fehler enthalten und ersetzen keine ärztliche, Steuer-, Rechts-, Finanz- oder Energieberatung. Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>
-<footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Der Rechner läuft im Browser und speichert keine Eingaben. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
+<footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Der Rechner läuft im Browser. Gespeichert wird nur, wenn du auf „Messung speichern“ tippst, und dann nur in deinem Browser auf deinem Gerät. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
 <script>
 const $ = id => document.getElementById(id);
 const fmt = (v, d = 0) => (+v).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -597,7 +798,14 @@ const NEUTRAL = { rauch: "nie", zig: 0, glaeser: 0, bewEinheit: "min", bewegung:
 const bewOk = p => p.bewEinheit === "schritte" ? p.schritte >= SCHRITTE.ziel : p.bewegung >= 150;
 
 // ---------- Eingaben ----------
-const V = { sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, einheit: "pct", dm: false, bauchVor: 0, hbVor: 0, glVor: 0, rauch: "nie", zig: 15, aufh: 40, glaeser: 3, bewegung: 150, bewEinheit: "min", schritte: 7800, vorsorge: false };
+const V = { sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, einheit: "pct", dm: false, bauchVor: 0, hbVor: 0, glVor: 0, rauch: "nie", zig: 15, aufh: 40, glaeser: 3, bewegung: 150, bewEinheit: "min", schritte: 7800, vorsorge: false, programm: false };
+// Gespeicherte Messungen (nur wenn man selbst auf „Messung speichern“ getippt hat; bleibt im eigenen Browser)
+const SPEICHER = "mzz-bauch", MERK = ["sex", "alter", "groesse", "bauch", "bauchVor", "hba1c", "dm"];
+const lies = () => { try { return JSON.parse(localStorage.getItem(SPEICHER)) || null; } catch (e) { return null; } };
+const schreib = d => { try { localStorage.setItem(SPEICHER, JSON.stringify(d)); return true; } catch (e) { return false; } };
+const GESP = lies();
+let MESS = GESP && Array.isArray(GESP.mess) ? GESP.mess.filter(m => m && m.b > 0 && /^\d{4}-\d\d-\d\d$/.test(m.d)) : [], PLAN = GESP && typeof GESP.plan === "string" ? GESP.plan : "";
+if (GESP && GESP.v) MERK.forEach(k => { if (k in GESP.v && typeof GESP.v[k] === typeof V[k]) V[k] = GESP.v[k]; });
 const FELD = [["alter", "Alter", "Jahre", 1, 18, 95], ["groesse", "Körpergröße", "cm", 1, 120, 220], ["bauch", "Bauchumfang", "cm", 1, 50, 200]];
 FELD.forEach(([k, l, u, st, mi, ma]) => {
   const d = document.createElement("div"); d.className = "f";
@@ -621,6 +829,7 @@ function zeigeBew() { const st = V.bewEinheit === "schritte"; $("i_bewegung").va
 $("i_bewegung").addEventListener("input", e => { const x = Math.max(0, +e.target.value || 0); if (V.bewEinheit === "schritte") { V.schritte = x; V.bewegung = SCHRITTE.zuMin(x); } else { V.bewegung = x; V.schritte = SCHRITTE.ausMin(x); } run(); });
 $("i_bewEinheit").addEventListener("change", e => { V.bewEinheit = e.target.value; zeigeBew(); run(); });
 $("i_vorsorge").addEventListener("change", e => { V.vorsorge = e.target.checked; run(); });
+$("i_programm").addEventListener("change", e => { V.programm = e.target.checked; run(); });
 function setRauch(r) { V.rauch = r; document.querySelectorAll("[data-r]").forEach(b => b.setAttribute("aria-pressed", b.dataset.r === r)); $("f_zig").hidden = r === "nie"; $("f_aufh").hidden = r !== "frueher"; run(); }
 document.querySelectorAll("[data-r]").forEach(b => b.onclick = () => setRauch(b.dataset.r));
 $("i_dm").addEventListener("change", e => { V.dm = e.target.checked; run(); });
@@ -635,6 +844,140 @@ document.querySelectorAll("[data-p]").forEach(b => b.onclick = () => {
   $("i_bauch").value = V.bauch; $("i_dm").checked = V.dm; zeigeHb(); setRauch(p.rauch);
 });
 zeigeHb(); zeigeBew();
+
+// ---------- Bauch-Check: einfacher Einstieg, Gewinn, Verlauf ----------
+// Krankheitsrisiko je 10 cm mehr Bauchumfang (relatives Risiko, untere und obere Grenze des 95-%-Vertrauensbereichs)
+const RISIKO = [
+  { n: "Typ-2-Diabetes", lo: 1.52, hi: 1.70, q: "q-jayedi22", qt: "Jayedi 2022" },
+  { n: "Fettleber", lo: Math.pow(1.029, 10), hi: Math.pow(1.103, 10), q: "q-pang", qt: "Pang 2015" },
+  { n: "Herzinfarkt", lo: Math.pow(1.23, 10 / 13.4), hi: Math.pow(1.42, 10 / 13.4), q: "q-peters", qt: "Peters 2018" },
+  { n: "Schlaganfall", lo: 1.07, hi: 1.14, q: "q-zhongc", qt: "Zhong 2016" },
+  { n: "Darmkrebs", lo: 1.02, hi: 1.03, q: "q-abar", qt: "Abar 2017" },
+];
+const senkung = (rr, cm) => 1 - Math.pow(rr, -cm / 10);
+const ETAPPE = 3;  // Etappen von 3 cm: genug, um Messschwankungen zu überstehen, klein genug für ein paar Monate
+const PLAENE = ["Wenn ich zu Mittag gegessen habe, gehe ich 10 Minuten um den Block.", "Wenn ich Durst habe, trinke ich zuerst ein Glas Wasser.",
+  "Wenn ich vor dem Aufzug stehe, nehme ich die Treppe.", "Wenn ich einkaufe, lege ich Obst statt Süßem in den Wagen.", "Wenn ich abends fernsehe, steht eine Schale Nüsse oder Joghurt bereit statt Chips."];
+let ZIEL = "", ZIEL_GEWAEHLT = false;
+$("s_m").setAttribute("aria-pressed", V.sex === "m"); $("s_f").setAttribute("aria-pressed", V.sex === "f"); $("i_dm").checked = V.dm;
+const gruenCm = () => V.groesse / 2;
+const cm = v => fmt(v) + " cm";
+const spanne = (a, b, f) => { const lo = Math.min(a, b), hi = Math.max(a, b); return f(lo) === f(hi) ? f(hi) : `${f(lo).replace(/ (€|Jahre?|%)$/, "")} bis ${f(hi)}`; };
+const rundE = v => Math.round(v / 500) * 500;
+const euroR = v => fmt(rundE(Math.max(0, v))) + " €";
+
+function syncFelder() {
+  const set = (id, v) => { const el = $(id); if (el && document.activeElement !== el) el.value = v || (id === "i_bauchVor" ? "" : v); };
+  set("i_groesse", V.groesse); set("i_bauch", V.bauch); set("i_bauchVor", V.bauchVor);
+}
+document.querySelectorAll("[data-st]").forEach(b => b.addEventListener("click", () => {
+  const k = b.dataset.st, d = +b.dataset.d, lim = { groesse: [120, 220], bauch: [50, 200], bauchVor: [50, 200] }[k];
+  if (k === "bauchVor" && !V.bauchVor) V.bauchVor = V.bauch;
+  V[k] = Math.min(lim[1], Math.max(lim[0], V[k] + d)); syncFelder(); run();
+}));
+$("r_cb").addEventListener("input", e => { V.bauch = +e.target.value; syncFelder(); run(); });
+
+function gewinnZwischen(von, nach) {
+  const res = {};
+  ["lo", "mid", "hi"].forEach(v => { const a = rechne({ ...V, bauch: von }, v), b = rechne({ ...V, bauch: nach }, v);
+    res[v] = { jahre: a.yll - b.yll, kasse: a.kasse - b.kasse, ges: a.ges - b.ges }; });
+  return res;
+}
+function zeigeCheck() {
+  syncFelder();
+  const g = V.groesse, b = V.bauch, s = V.bauchVor, w = b / g, gr = gruenCm(), [kw, cw] = katW(w);
+  $("o_cg").innerHTML = `${fmt(g)}<small>cm</small>`;
+  $("o_cb").innerHTML = `${fmt(b)}<small>cm</small>`;
+  $("o_cs").innerHTML = s ? `${fmt(s)}<small>cm</small>` : `<small>noch leer, + oder − tippen</small>`;
+  if (document.activeElement !== $("r_cb")) $("r_cb").value = b;
+  $("c_ratio").textContent = fmt(w, 2);
+  $("c_tag").textContent = kw; $("c_tag").className = "tag " + cw;
+  const pos = v => Math.min(100, Math.max(0, (v - 0.4) / 0.4 * 100)) + "%";
+  $("c_needle").style.left = pos(w);
+  $("c_startmark").hidden = !s || s === b; if (s) $("c_startmark").style.left = pos(s / g);
+  const fehlt = Math.ceil(b - gr + 1e-9);
+  $("c_ampeltxt").innerHTML = w < 0.5 ? `Prima: Dein Bauch ist im <b>grünen Bereich</b>, ${cm(Math.floor(gr - b))} unter der halben Körpergröße. Dein Ziel ist jetzt, das zu halten.`
+    : `Grün heißt: Bauch unter ${cm(gr)}, der halben Körpergröße. Bis dahin sind es noch <b>${cm(fehlt)}</b>. Das schaffst du in Etappen, und jede zählt schon.`;
+  // Etappenziel
+  const start = Math.max(s || b, b), weg = start - b;
+  if (w < 0.5) $("c_etappe").innerHTML = `<span class="k">Dein Ziel</span><span class="v">Unter ${cm(gr)} bleiben</span><span class="note">${weg > 0 ? `Seit dem Start ${cm(weg)} weniger. ` : ""}Einmal im Monat messen reicht.</span>`;
+  else {
+    const naechste = Math.max(Math.ceil(gr) - 1, start - ETAPPE * (Math.floor(weg / ETAPPE) + 1)), geschafft = Math.floor(weg / ETAPPE);
+    const anteil = Math.min(100, weg / Math.max(1, start - gr) * 100);
+    $("c_etappe").innerHTML = `<span class="k">Nächstes Etappenziel</span><span class="v">${cm(naechste)}</span><span>noch ${cm(b - naechste)}${geschafft ? `, ${geschafft} ${geschafft > 1 ? "Etappen" : "Etappe"} schon geschafft` : ""}</span>
+      <div class="bar" role="img" aria-label="Weg bis zum grünen Bereich: ${Math.round(anteil)} Prozent"><i style="width:${anteil}%"></i></div><span class="note">Weg vom Start (${cm(start)}) bis Grün (${cm(gr)})</span>`;
+  }
+  // Gewinn: seit dem Start oder für ein Ziel
+  const opts = [];
+  if (s && s > b) opts.push(["start", "Seit dem Start"]);
+  opts.push(["3", "3 cm weniger"], ["5", "5 cm weniger"]);
+  if (w >= 0.5 && fehlt > 5) opts.push(["gruen", "Bis Grün"]);
+  if (!ZIEL_GEWAEHLT || !opts.some(o => o[0] === ZIEL)) ZIEL = opts[0][0] === "start" ? "start" : "5";
+  $("c_ziele").innerHTML = opts.map(([k, t]) => `<button type="button" data-z="${k}" aria-pressed="${k === ZIEL}">${t}</button>`).join("");
+  $("c_ziele").querySelectorAll("button").forEach(x => x.onclick = () => { ZIEL = x.dataset.z; ZIEL_GEWAEHLT = true; zeigeCheck(); });
+  const von = ZIEL === "start" ? s : b, nach = ZIEL === "start" ? b : ZIEL === "gruen" ? Math.ceil(gr) - 1 : b - +ZIEL, d = von - nach;
+  const G = gewinnZwischen(von, nach), wer = `${V.alter} Jahre, ${V.sex === "m" ? "Mann" : "Frau"}`;
+  $("c_gw_h").textContent = ZIEL === "start" ? "3. Dein Gewinn seit dem Start" : "3. Was dir das bringen kann";
+  $("c_gw_sub").innerHTML = ZIEL === "start" ? `Von ${cm(von)} auf ${cm(nach)}: <b>${cm(d)} weniger</b>. Das ist schon ein echter Gewinn.`
+    : `Wenn dein Bauch von ${cm(von)} auf ${cm(nach)} sinkt, also <b>${cm(d)} weniger</b>:`;
+  const J = [G.lo.jahre, G.hi.jahre, G.mid.jahre], jMax = Math.max(...J), jMin = Math.min(...J);
+  const jahrT = jMax < 0.05 ? "kaum messbar" : `+ ${spanne(Math.max(0, jMin), jMax, v => fmt(v, 1) + " Jahre")}`;
+  const kas = [G.lo.kasse, G.hi.kasse], ges = [G.lo.ges, G.hi.ges];
+  const unterGruen = nach / g < 0.5 && von / g <= 0.5;
+  $("c_gw_tiles").innerHTML = [
+    ["Lebenszeit", jahrT, jMax < 0.05 ? "Dein Bauch ist schon im grünen Bereich, da sinkt die Sterblichkeit kaum noch weiter." : `statistisch gewonnen, für ${wer}`],
+    ["Deine Krankheitskosten", Math.max(...kas) < 250 ? "kaum" : spanne(kas[0], kas[1], euroR), "weniger über das Leben, die die Krankenkasse nicht zahlen muss"],
+    ["Für die Gesellschaft", Math.max(...ges) < 250 ? "kaum" : spanne(ges[0], ges[1], euroR), "gespart: Behandlung, Krankheitstage, Frührente"],
+  ].map(([k, v, t]) => `<div class="gw-tile"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${t}</span></div>`).join("");
+  const maxR = Math.max(...RISIKO.map(r => senkung(r.hi, d)), 0.01);
+  $("c_risiken").innerHTML = RISIKO.map(r => { const a = senkung(r.lo, d), z = senkung(r.hi, d);
+    return `<li><span>${r.n} <a href="#${r.q}">${r.qt}</a></span><span class="rb" aria-hidden="true"><i class="lo" style="left:0;width:${z / maxR * 100}%"></i><i style="left:0;width:${a / maxR * 100}%"></i></span><b>− ${spanne(a * 100, z * 100, v => fmt(v) + " %")}</b></li>`; }).join("");
+  zeigeWeg();
+}
+
+// ---------- Mein Weg: Messungen nur im eigenen Browser ----------
+const heute = () => new Date().toISOString().slice(0, 10);
+const datumT = d => d.split("-").reverse().slice(0, 2).join(".");
+function speichern() { if (!MESS.length && !PLAN) return; schreib({ mess: MESS, plan: PLAN, v: Object.fromEntries(MERK.map(k => [k, V[k]])) }); }
+function abzeichen() {
+  const basis = MESS.length ? Math.max(MESS[0].b, V.bauchVor || 0) : V.bauchVor || 0, weg = basis ? basis - V.bauch : 0;
+  return [["1.", "Erste Messung", MESS.length >= 1], ["3×", "Dreimal gemessen", MESS.length >= 3], ["−1", "1 cm weniger", weg >= 1], ["−3", "Erste Etappe", weg >= 3],
+    ["−5", "5 cm weniger", weg >= 5], ["−10", "10 cm weniger", weg >= 10], ["Grün", "Grüner Bereich", V.bauch < gruenCm() && (MESS.length || V.bauchVor)]];
+}
+function zeigeWeg(toast) {
+  let h = toast ? `<div class="toast" role="status">${toast}</div>` : "";
+  if (!MESS.length) h += `<p class="note">Noch keine Messung gespeichert. Miss einmal im Monat und tippe auf „Messung von heute speichern“. Dann siehst du hier deinen Verlauf und sammelst Abzeichen.</p>`;
+  else {
+    const pts = MESS.slice(-12), lo = Math.min(...pts.map(m => m.b), gruenCm()) - 2, hi = Math.max(...pts.map(m => m.b)) + 2, W = 560, H = 220, L = 40, R = 90, T = 20, B = 36;
+    const X = i => L + (pts.length < 2 ? (W - L - R) / 2 : i * (W - L - R) / (pts.length - 1)), Y = v => T + (hi - v) / (hi - lo) * (H - T - B);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Verlauf Bauchumfang" style="max-width:640px">`;
+    const yg = Y(gruenCm());
+    s += `<line x1="${L}" x2="${W - R}" y1="${yg}" y2="${yg}" stroke="var(--ok)" stroke-dasharray="5 4" stroke-width="1.5"/><text x="${W - R + 8}" y="${yg + 6}">Grün</text>`;
+    s += `<path d="M${pts.map((m, i) => `${X(i)},${Y(m.b)}`).join("L")}" fill="none" stroke="var(--mid)" stroke-width="4" stroke-linejoin="round"/>`;
+    pts.forEach((m, i) => { s += `<circle cx="${X(i)}" cy="${Y(m.b)}" r="${i === pts.length - 1 ? 9 : 6}" fill="var(--mid)" stroke="var(--panel)" stroke-width="2"/>`;
+      if (i === 0 || i === pts.length - 1 || pts.length <= 6) s += `<text x="${X(i)}" y="${H - 8}" text-anchor="middle">${datumT(m.d)}</text>`; });
+    const l = pts[pts.length - 1]; s += `<text x="${X(pts.length - 1) + 14}" y="${Y(l.b) + 4}" style="fill:var(--fg);font-weight:700">${l.b} cm</text></svg>`;
+    const diff = MESS[0].b - MESS[MESS.length - 1].b;
+    h += `${pts.length > 1 ? `<div class="verlauf">${s}</div>` : ""}<p class="note">${MESS.length} ${MESS.length > 1 ? "Messungen" : "Messung"} seit dem ${datumT(MESS[0].d)}.${MESS[0].d.slice(0, 4) !== heute().slice(0, 4) ? MESS[0].d.slice(0, 4) : ""} ${diff > 0 ? `<b>${cm(diff)} weniger</b> als bei der ersten Messung.` : diff === 0 ? "Gehalten. Auch das ist ein Erfolg." : "Schwankungen sind normal. Es zählt der Weg über Monate, nicht ein einzelner Tag."}</p>`;
+  }
+  $("c_verlauf").innerHTML = h;
+  $("c_badges").innerHTML = abzeichen().map(([z, t, on]) => `<div class="badge ${on ? "on" : ""}"><span>${z}</span>${t}</div>`).join("");
+  $("c_plaene").innerHTML = PLAENE.map((p, i) => `<button type="button" data-plan="${i}" aria-pressed="${PLAN === p}">${p}</button>`).join("");
+  $("c_plaene").querySelectorAll("button").forEach(x => x.onclick = () => { PLAN = PLAN === PLAENE[+x.dataset.plan] ? "" : PLAENE[+x.dataset.plan]; speichern(); zeigeWeg(); });
+  $("c_plantxt").textContent = PLAN ? "Dein Plan steht. Bei der nächsten Messung kannst du kurz prüfen: Hat es geklappt? Wenn nicht, such dir einen leichteren aus. Das ist kein Scheitern, sondern Feinschliff." : "";
+}
+$("c_save").addEventListener("click", () => {
+  const vorher = abzeichen().filter(a => a[2]).length, letzte = MESS.length ? MESS[MESS.length - 1].b : null;
+  if (!V.bauchVor) V.bauchVor = MESS.length ? MESS[0].b : V.bauch;
+  const m = { d: heute(), b: V.bauch, g: V.groesse };
+  if (MESS.length && MESS[MESS.length - 1].d === m.d) MESS[MESS.length - 1] = m; else MESS.push(m);
+  speichern();
+  const neu = abzeichen().filter(a => a[2]), extra = neu.length > vorher ? ` Neues Abzeichen: ${neu[neu.length - 1][1]}!` : "";
+  const t = letzte === null ? "Erste Messung gespeichert. Der Anfang ist gemacht!" : V.bauch < letzte ? `Super, ${cm(letzte - V.bauch)} weniger als beim letzten Mal!` :
+    V.bauch === letzte ? "Gehalten. Auch das ist ein Erfolg." : "Gespeichert. Schwankungen sind normal, dein Weg zählt, nicht ein einzelner Tag.";
+  syncFelder(); run(); zeigeWeg(t + extra);
+});
+$("c_del").addEventListener("click", () => { try { localStorage.removeItem(SPEICHER); } catch (e) {} MESS = []; PLAN = ""; zeigeWeg("Gespeicherte Messungen gelöscht."); });
 
 // ---------- Rechenkern ----------
 const ip = (tab, x) => { if (x <= tab[0][0]) return tab[0][1]; for (let i = 1; i < tab.length; i++) if (x <= tab[i][0]) { const [x0, y0] = tab[i - 1], [x1, y1] = tab[i]; return y0 + (y1 - y0) * (x - x0) / (x1 - x0); } return tab[tab.length - 1][1]; };
@@ -765,14 +1108,15 @@ function run() {
   if (r.yll <= -0.1) txt = `Menschen mit deinen Werten leben im Durchschnitt sogar <b>${jahre(r.yll)} länger</b> als der Durchschnitt ohne Risiken, vor allem dank viel Bewegung. Lebenserwartung rund <b>${fmt(r.x + r.e1)} Jahre</b>.`;
   else if (r.yll < 0.1) txt = `Mit diesen Werten liegst du im <b>gesunden Bereich</b>. Statistisch verlierst du keine Lebenszeit. Deine Lebenserwartung liegt bei rund <b>${fmt(r.x + r.e1)} Jahren</b>, wie im Durchschnitt aller Menschen ohne diese Risiken.`;
   else {
-    txt = `Menschen mit deinen Werten leben im Durchschnitt <b>${jahre(r.yll)} kürzer</b> (Spanne ${fmt(lo.yll, 1)} bis ${fmt(hi.yll, 1)}). Statt rund ${fmt(r.x + r.e0)} Jahren werden sie im Schnitt rund ${fmt(r.x + r.e1)} Jahre alt.`;
+    txt = "";
     const schritte = [];
     if (ziel.bauch < V.bauch) schritte.push(`den Bauchumfang auf ${fmt(ziel.bauch)} cm bringt`);
     if (ziel.hba1c < r.h) schritte.push(`den Langzeitzucker auf ${fmt(ziel.hba1c, 1)} % senkt`);
     if (V.rauch === "ja" && V.zig > 0) schritte.push("heute mit dem Rauchen aufhört");
     if (ziel.glaeser < V.glaeser) schritte.push("höchstens 8 Gläser Alkohol in der Woche trinkt");
     if (!bewOk(V)) schritte.push(V.bewEinheit === "schritte" ? "jeden Tag 7.500 Schritte geht" : "sich 150 Minuten in der Woche bewegt");
-    if (gewinn >= 0.1 && schritte.length) txt += ` Wer ${schritte.length > 1 ? schritte.slice(0, -1).join(", ") + " und " + schritte[schritte.length - 1] : schritte[0]}, gewinnt statistisch rund <b>${jahre(gewinn)}</b> zurück.`;
+    if (gewinn >= 0.1 && schritte.length) txt += `<b>Hier liegt dein Gewinn:</b> Wer ${schritte.length > 1 ? schritte.slice(0, -1).join(", ") + " und " + schritte[schritte.length - 1] : schritte[0]}, gewinnt statistisch rund <b>${jahre(gewinn)}</b> Lebenszeit. Schon ein Teil davon zählt. `;
+    txt += `<span class="note" style="display:block;margin-top:6px">Zum Vergleich: Menschen mit genau deinen heutigen Werten leben im Durchschnitt ${jahre(r.yll)} kürzer (Spanne ${fmt(lo.yll, 1)} bis ${fmt(hi.yll, 1)}). Das ist ein Gruppenwert aus Studien, keine Vorhersage für dich.</span>`;
   }
   $("verdict").innerHTML = txt;
   $("tiles").innerHTML = [
@@ -817,28 +1161,32 @@ function run() {
     dot: [r.h, meG.yll, `Du: ${jahre(meG.yll)}`] });
   $("s_glaeser").textContent = `${fmt(alkG(V))} g Alkohol in der Woche. 1 Glas = 0,3 l Bier, 0,125 l Wein oder 4 cl Schnaps, rund 12 g`;
   rechenweg(r, lo, hi);
+  zeigeCheck();
   zeigeBonus();
+  speichern();
   lg($("lg_g"), [["--risk", "Jahre weniger (mittlere Schätzung)"], ["--band", "Spanne der Studien", "sq"], ["--z1", "normal", "sq"], ["--z2", "Vorstufe", "sq"], ["--z3", "Diabetes", "sq"]]);
   zucker();
 }
 
 // ---------- Gesundheitsbonus (Vorschlag, Kapitel 5): bis 640 € im Jahr ----------
 // 3 × 160 € (= Prämie 40 € im Monat) aus der Gesundheitsabgabe, dazu 2 × 80 € für rauchfrei und wenig Alkohol aus höherer Tabak- und Alkoholsteuer.
-// Ziel erreicht, wenn der Wert gesund ist ODER sich im letzten Jahr deutlich verbessert hat.
-const BONUS = { teil: 160, klein: 80, hbGesund: 5.7, hbBesser: 0.5, wGesund: 0.5, bauchBesser: 3, glWenig: 8 };
+// Belohnt wird vor allem Mitmachen und persönlicher Fortschritt, nicht ein Normalwert: Zwei der drei großen Teile bekommt jeder, der mitmacht.
+// Wer schon gesunde Werte hat und sie hält, bekommt den Fortschritts-Teil genauso.
+const BONUS = { teil: 160, klein: 80, hbGesund: 5.7, hbBesser: 0.3, wGesund: 0.5, bauchBesser: 2, glWenig: 8 };
 const BONUS_MAX = 3 * BONUS.teil + 2 * BONUS.klein;
 function bonus(p) {
   const w = p.bauch / p.groesse, z = [];
-  const hbG = !p.dm && p.hba1c < BONUS.hbGesund, hbB = p.hbVor > 0 && p.hbVor - p.hba1c >= BONUS.hbBesser - 1e-9;
-  z.push({ n: "Langzeitzucker", ok: hbG || hbB,
-    warum: hbG ? `gesund (${fmt(p.hba1c, 1)} % liegt unter 5,7 %)` : hbB ? `Fortschritt: ${fmt(p.hbVor - p.hba1c, 1)} Prozentpunkte weniger als vor einem Jahr` :
-      `noch nicht: unter 5,7 % oder mindestens 0,5 Prozentpunkte weniger als vor einem Jahr${p.hbVor ? "" : " (Wert vor einem Jahr eintragen)"}` });
-  const wG = w < BONUS.wGesund, wB = p.bauchVor > 0 && p.bauchVor - p.bauch >= BONUS.bauchBesser - 1e-9;
-  z.push({ n: "Bauchumfang", ok: wG || wB,
-    warum: wG ? `gesund (unter der halben Körpergröße, ${fmt(p.groesse / 2)} cm)` : wB ? `Fortschritt: ${fmt(p.bauchVor - p.bauch)} cm weniger als vor einem Jahr` :
-      `noch nicht: unter ${fmt(p.groesse / 2)} cm oder mindestens 3 cm weniger als vor einem Jahr${p.bauchVor ? "" : " (Wert vor einem Jahr eintragen)"}` });
-  const bw = bewOk(p), fehlt3 = [!p.vorsorge && "Vorsorge", !bw && (p.bewEinheit === "schritte" ? "7.500 Schritte am Tag" : "150 Minuten Bewegung")].filter(Boolean);
-  z.push({ n: "Vorsorge und Bewegung", ok: !fehlt3.length, wert: BONUS.teil, warum: !fehlt3.length ? "Ziel erreicht" : `noch nicht: es fehlt ${fehlt3.join(" und ")}` });
+  z.push({ n: "Mitmachen beim Check-up", ok: p.vorsorge, warum: p.vorsorge ? "Bauch und Langzeitzucker einmal im Jahr in der Praxis messen lassen: erledigt" : "noch nicht: einmal im Jahr zum Check-up und dort Bauch und Langzeitzucker messen lassen (Haken bei „Vorsorge“)" });
+  const bw = bewOk(p);
+  z.push({ n: "Bewegung oder Programm", ok: bw || p.programm,
+    warum: bw ? `Ziel erreicht: ${p.bewEinheit === "schritte" ? "7.500 Schritte am Tag" : "150 Minuten Bewegung in der Woche"}` : p.programm ? "Du machst bei einem Kurs oder Programm mit" :
+      `noch nicht: ${p.bewEinheit === "schritte" ? "7.500 Schritte am Tag" : "150 Minuten Bewegung in der Woche"} oder bei einem Kurs oder Programm mitmachen` });
+  const wB = p.bauchVor > 0 && p.bauchVor - p.bauch >= BONUS.bauchBesser - 1e-9, hbB = p.hbVor > 0 && p.hbVor - p.hba1c >= BONUS.hbBesser - 1e-9;
+  const halten = w < BONUS.wGesund && !p.dm && p.hba1c < BONUS.hbGesund;
+  z.push({ n: "Fortschritt bei Bauch oder Zucker", ok: wB || hbB || halten,
+    warum: wB ? `${fmt(p.bauchVor - p.bauch)} cm weniger Bauch als beim Start` : hbB ? `Langzeitzucker ${fmt(p.hbVor - p.hba1c, 1)} Prozentpunkte besser als vor einem Jahr` :
+      halten ? "Bauch und Zucker im grünen Bereich gehalten. Halten zählt wie Fortschritt" :
+      `noch nicht: 2 cm weniger Bauch oder 0,3 Prozentpunkte weniger Langzeitzucker als vor einem Jahr${p.bauchVor ? "" : " (Startwert oben eintragen)"}` });
   const nr = p.rauch !== "ja" || !(p.zig > 0);
   z.push({ n: "Rauchfrei", ok: nr, wert: BONUS.klein, warum: nr ? (p.rauch === "frueher" ? "Ziel erreicht: Du hast aufgehört. Nachweis per Urintest beim Check-up" : "Ziel erreicht. Nachweis per Urintest beim Check-up") : "noch nicht: Wer aufhört, bekommt ihn im nächsten Jahr genauso" });
   const glG = p.glaeser <= BONUS.glWenig, glB = p.glVor > 0 && p.glaeser <= p.glVor / 2;
@@ -851,8 +1199,9 @@ function bonus(p) {
 function zeigeBonus() {
   const b = bonus(V), fehlt = BONUS_MAX - b.summe;
   $("bonus").innerHTML = `<div class="kopf"><span class="k" style="font-weight:700">Dein Gesundheitsbonus im Jahr</span><span class="v">${fmt(b.summe)} € von ${fmt(BONUS_MAX)} €</span></div>
+    <div class="etappe" style="padding:0;background:none"><div class="bar" role="img" aria-label="${fmt(b.summe)} von ${fmt(BONUS_MAX)} Euro"><i style="width:${b.summe / BONUS_MAX * 100}%"></i></div></div>
     <ul>${b.z.map(x => `<li><span class="${x.ok ? "ja" : "nein"}">${x.ok ? "✓" : "○"}</span><span><b>${x.n}:</b> ${x.warum}</span><b class="e ${x.ok ? "ja" : "nein"}">${x.ok ? fmt(x.wert) + " €" : "0 €"}</b></li>`).join("")}</ul>
-    <p class="note">${fehlt ? `Noch ${fmt(fehlt)} € im Jahr möglich. Wer gesund ist, bekommt den Bonus, und wer krank ist und Fortschritte macht, bekommt ihn genauso.` : "Du bekommst den vollen Bonus."} Die ersten drei Teile, zusammen 480 €, sind genau die Prämie der Krankenkasse im Vorschlag des Buchs (40 € im Monat), bezahlt aus der Gesundheitsabgabe. Die Teile für rauchfrei und wenig Alkohol, zusammen 160 €, zahlt der Bund aus einer höheren Tabak- und Alkoholsteuer (<a href="#q-dgsmp">Vorschlag</a>; <a href="#q-notley">Studie zu Anreizen</a>; <a href="#q-nachweis">Nachweis</a>). Ausgezahlt wird alles vom Bund. Der Messwert bleibt beim Arzt, die Kasse erfährt nur, ob das Ziel erreicht ist. Wer wegen Typ-1-Diabetes oder Veranlagung ein Ziel nicht schaffen kann, bekommt den Teil für die Teilnahme an einem Programm.</p>`;
+    <p class="note">${fehlt ? `Noch ${fmt(fehlt)} € im Jahr möglich.` : "Du bekommst den vollen Bonus."} Belohnt wird vor allem Mitmachen und dein persönlicher Fortschritt, nicht ein Normalwert: Wer krank ist und dranbleibt, bekommt genauso viel wie jemand, der schon gesund ist. Die ersten drei Teile, zusammen 480 €, sind genau die Prämie der Krankenkasse im Vorschlag des Buchs (40 € im Monat), bezahlt aus der Gesundheitsabgabe. Die Teile für rauchfrei und wenig Alkohol, zusammen 160 €, zahlt der Bund aus einer höheren Tabak- und Alkoholsteuer (<a href="#q-dgsmp">Vorschlag</a>; <a href="#q-notley">Studie zu Anreizen</a>; <a href="#q-nachweis">Nachweis</a>). Der Messwert bleibt beim Arzt, die Kasse erfährt nur, ob das Ziel erreicht ist. Heute bindet § 65a Abs. 3 SGB V Kassenboni an nachgewiesene Einsparungen; für einen Bonus in dieser Höhe braucht es deshalb eine neue gesetzliche Grundlage.</p>`;
 }
 
 // ---------- Rechenweg mit den eigenen Zahlen ----------
@@ -925,9 +1274,9 @@ function zucker() {
     endLabels: S.map(s => [s.sum, mrd(s.sum), s.c]) });
   lg($("lg_z"), S.map(s => [s.c, s.n]).concat([["--muted", "davon Krankenkassen", "dash"]]));
   $("tiles_z").innerHTML = [
-    ["Limonaden-Abgabe bis 2070", mrd(S[0].sum), `davon Krankenkassen ${mrd(S[0].sumK)}; ≈ ${eur(S[0].leben)} je Mensch über ein Leben`],
-    ["Abgabe auf allen Zucker bis 2070", mrd(S[1].sum), `davon Krankenkassen ${mrd(S[1].sumK)}; ≈ ${eur(S[1].leben)} je Mensch über ein Leben`],
-    ["Alle essen gesund, bis 2070", mrd(S[2].sum), `davon Krankenkassen ${mrd(S[2].sumK)}; ≈ ${eur(S[2].leben)} je Mensch über ein Leben`],
+    ["Limonaden-Abgabe bis 2070 (grobe Schätzung)", mrd(S[0].sum), `davon Krankenkassen ${mrd(S[0].sumK)}; ≈ ${eur(S[0].leben)} je Mensch über ein Leben`],
+    ["Abgabe auf allen Zucker bis 2070 (grobe Schätzung)", mrd(S[1].sum), `davon Krankenkassen ${mrd(S[1].sumK)}; ≈ ${eur(S[1].leben)} je Mensch über ein Leben`],
+    ["Alle essen gesund, bis 2070 (grobe Schätzung)", mrd(S[2].sum), `davon Krankenkassen ${mrd(S[2].sumK)}; ≈ ${eur(S[2].leben)} je Mensch über ein Leben`],
   ].map(([k, v, s]) => `<div class="tile"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`).join("");
   $("t_z").innerHTML = `<tr><th>Fall</th><th>Ersparnis im Jahr bei voller Wirkung</th><th>davon Krankenkassen</th><th style="text-align:left">Woher die Zahl kommt</th></tr>
     <tr><td>Limonaden-Abgabe in Stufen</td><td>${mrd(S[0].ges)}</td><td>${mrd(S[0].kasse)}</td><td style="white-space:normal;text-align:left">Emmert-Fees u. a. 2023: 16 Mrd. € für die Gesellschaft und 4 Mrd. € für die Kassen in 20 Jahren, rund 29.300 Todesfälle vermieden oder aufgeschoben, 1,9 Mio. Jahre mit Diabetes weniger</td></tr>
@@ -989,6 +1338,24 @@ function allegesund() {
 $("r_g").addEventListener("input", zucker); $("r_r").addEventListener("input", zucker);
 run();
 allegesund();
+// ---------- Bauch-Index (Mozaffarian u. a. 2011, NEJM): kg Gewichtsänderung in 4 Jahren je zusätzlicher Tagesportion ----------
+const BI = [["Pommes frites", "1 Portion", 1.52], ["Kartoffelchips", "1 kleine Tüte, 30 g", 0.77], ["Limonade, Cola, Eistee", "1 Dose, 0,33 l", 0.45], ["Rotes Fleisch", "1 Portion", 0.43],
+  ["Wurst, Schinken, Speck", "1 Scheibe oder Würstchen", 0.42], ["Kartoffeln, gekocht oder Brei", "1 mittelgroße", 0.26], ["Süßigkeiten, Kuchen", "1 Portion", 0.18], ["Weißbrot, helle Nudeln, Reis", "1 Scheibe oder ½ Tasse", 0.18],
+  ["Bier, Wein", "1 Glas", 0.18], ["Fruchtsaft", "1 kleines Glas", 0.14], ["Butter", "1 Teelöffel", 0.14], ["Käse", "1 Scheibe", 0], ["Getränke mit Süßstoff", "1 Dose", 0],
+  ["Gemüse", "1 Portion", -0.10], ["Vollkornbrot, Haferflocken", "1 Scheibe oder ½ Tasse", -0.17], ["Obst", "1 Stück", -0.22], ["Nüsse", "1 Handvoll, 30 g", -0.26], ["Joghurt", "1 Becher", -0.37]];
+function bauchIndex() {
+  const mx = 1.6, kg = v => (v > 0 ? "+" : v < 0 ? "−" : "±") + fmt(Math.abs(v), 1) + " kg";
+  $("bi_liste").innerHTML = BI.map(([n, p, v]) => { const wd = Math.abs(v) / mx * 50;
+    return `<div class="bi-row"><span>${n} <small>${p}</small></span><span class="bb" aria-hidden="true"><i style="${v >= 0 ? `left:50%` : `right:50%`};width:${wd}%;background:var(${v > 0 ? "--risk" : "--good"})"></i></span><span class="w">${kg(v)}</span></div>`; }).join("");
+  const opt = (l, sel) => l.map(([n, , v], i) => `<option value="${BI.indexOf(l[i])}"${n === sel ? " selected" : ""}>${n}</option>`).join("");
+  $("bi_statt").innerHTML = opt(BI.filter(b => b[2] > 0), "Limonade, Cola, Eistee");
+  $("bi_lieber").innerHTML = opt(BI.filter(b => b[2] <= 0), "Getränke mit Süßstoff");
+  $("bi_lieber").insertAdjacentHTML("afterbegin", `<option value="-1">Wasser, Tee, Kaffee ohne Zucker</option>`); $("bi_lieber").value = "-1";
+  const tausch = () => { const a = BI[+$("bi_statt").value], bIdx = +$("bi_lieber").value, b = bIdx < 0 ? ["Wasser, Tee oder Kaffee ohne Zucker", "", 0] : BI[bIdx], d = a[2] - b[2];
+    $("bi_txt").innerHTML = `Menschen, die so tauschten, nahmen in vier Jahren im Schnitt rund <b>${fmt(d, 1)} kg weniger</b> zu. Das ist eine Tendenz aus Beobachtungsstudien, kein Versprechen, aber ein Tausch, der sich lohnt und schmeckt.`; };
+  $("bi_statt").onchange = tausch; $("bi_lieber").onchange = tausch; tausch();
+}
+bauchIndex();
 </script>
 <script src="../tools-buchlinks.js"></script>
 <script src="../info.js"></script>
@@ -1001,9 +1368,9 @@ Info.felder({
   hba1c: ["Der Langzeitzucker zeigt, wie hoch dein Blutzucker in den letzten 2 bis 3 Monaten im Schnitt war. Zucker im Blut bleibt am roten Blutfarbstoff haften; der HbA1c misst, wie viel davon „verzuckert“ ist.<br><b>Unter 5,7 %</b> normal · <b>5,7 bis 6,4 %</b> Vorstufe · <b>ab 6,5 %</b> Diabetes. Im Laborbefund steht er in % oder in mmol/mol (39 mmol/mol = 5,7 %)."],
   i_dm: ["Wer Medikamente nimmt, hat oft einen guten Wert, obwohl der Diabetes da ist. Setze dann den Haken: Der Rechner rechnet mit dem Risiko eines Diabetes und deinem Wert unter Behandlung."],
   r_g: ["Wie viel weniger Zucker die Menschen im Schnitt essen, wenn auf jeden zugesetzten Zucker eine Abgabe kommt. Heute sind es rund 90 g am Tag. Die Limonaden-Abgabe allein spart 2,3 g. Mit 12 g ist etwa ein Achtel weniger gemeint. Der Rechner rechnet das Limonaden-Ergebnis im gleichen Verhältnis hoch.", ...K5],
-  bauchVor: ["Für den Gesundheitsbonus: Wer seinen Bauchumfang in einem Jahr um mindestens 3 cm verringert, bekommt den Bauch-Teil des Bonus, auch wenn er noch nicht im gesunden Bereich ist.", ...K5],
+  bauchVor: ["Für den Gesundheitsbonus: Wer seinen Bauchumfang gegenüber dem Start um mindestens 2 cm verringert, bekommt den Fortschritts-Teil des Bonus, egal wo er gestartet ist. Den Startwert kannst du auch oben im Bauch-Check eintragen.", ...K5],
   glVor: ["Für den Gesundheitsbonus: Wer seinen Alkohol in einem Jahr mindestens halbiert, bekommt den Alkohol-Teil des Bonus, auch wenn es noch mehr als 8 Gläser in der Woche sind. Nachgewiesen wird das mit dem Bluttest PEth, der den Alkohol der letzten 2 bis 4 Wochen zeigt. Er ist viel genauer als die Leberwerte.", ...K5],
-  hbVor: ["Für den Gesundheitsbonus: Wer seinen Langzeitzucker in einem Jahr um mindestens 0,5 Prozentpunkte senkt (z. B. von 7,5 auf 7,0 %), bekommt den Zucker-Teil des Bonus, auch mit Diabetes.", ...K5],
+  hbVor: ["Für den Gesundheitsbonus: Wer seinen Langzeitzucker in einem Jahr um mindestens 0,3 Prozentpunkte senkt (z. B. von 7,5 auf 7,2 %), bekommt den Fortschritts-Teil des Bonus, auch mit Diabetes.", ...K5],
   zig: ["Schon wenige Zigaretten schaden: 1 bis 10 am Tag fast verdoppeln das Sterberisiko, 20 am Tag verdreifachen es. Raucher verlieren im Schnitt rund 10 Lebensjahre. Bei früheren Rauchern: wie viele es damals am Tag waren."],
   aufh: ["Aufhören lohnt sich in jedem Alter: Wer vor 35 aufhört, hat fast kein erhöhtes Risiko mehr; mit 45 bis 54 gewinnt man noch rund 6 Jahre, mit 55 bis 64 rund 4."],
   glaeser: ["Zähl alle Getränke einer normalen Woche zusammen. 1 Glas = 0,3 l Bier, 0,125 l Wein oder 4 cl Schnaps, jeweils rund 12 g reiner Alkohol. Bis 100 g in der Woche (gut 8 Gläser) fand die große Studie keine kürzere Lebenserwartung, darüber schon: bei mehr als 350 g rund 4 bis 5 Jahre."],
@@ -1021,7 +1388,7 @@ Info.texte(".main", {
   "Wirtschaft: Krankheitstage": ["Wer krank ist, fehlt bei der Arbeit oder geht früher in Rente. Dann fehlt seine Arbeit, und es fehlen Steuern und Beiträge. Gerechnet bis zum Alter 67."],
   "Wirtschaft: Arbeitsjahre": ["Wer vor 67 stirbt, kann in den fehlenden Jahren nicht mehr arbeiten. Der Rechner setzt dafür 45.000 € Wirtschaftsleistung je Jahr an, gewichtet mit der Wahrscheinlichkeit, dass es dazu kommt."],
   "Gesellschaft zusammen": ["Krankenkasse und Wirtschaft zusammen: das, was uns allen fehlt."],
-  "Dein Gesundheitsbonus": ["Vorschlag aus dem Buch: Die Abgabe auf Zucker fließt als Bonus an die Versicherten zurück, bis zu 640 € im Jahr. Drei Teile zu je 160 € (Langzeitzucker, Bauchumfang, Vorsorge und Bewegung) ergeben 480 €, so viel wie die ganze Prämie der Krankenkasse (40 € im Monat); sie kommen aus der Gesundheitsabgabe. Dazu kommen zwei Teile zu je 80 € für rauchfrei und wenig Alkohol, bezahlt aus einer höheren Tabak- und Alkoholsteuer. Der Bund zahlt alles aus, nicht aus dem allgemeinen Haushalt. Jeden Teil bekommt, wer gesund ist oder sich im letzten Jahr deutlich verbessert hat. Die genaue Aufteilung ist ein Vorschlag.", ...K5],
+  "Dein Gesundheitsbonus": ["Vorschlag aus dem Buch: Die Abgabe auf Zucker fließt als Bonus an die Versicherten zurück, bis zu 640 € im Jahr. Drei Teile zu je 160 € (Check-up, Bewegung oder Programm, Fortschritt bei Bauch oder Zucker) ergeben 480 €, so viel wie die ganze Prämie der Krankenkasse (40 € im Monat); sie kommen aus der Gesundheitsabgabe. Dazu kommen zwei Teile zu je 80 € für rauchfrei und wenig Alkohol, bezahlt aus einer höheren Tabak- und Alkoholsteuer. Der Bund zahlt alles aus, nicht aus dem allgemeinen Haushalt. Belohnt wird Mitmachen und persönlicher Fortschritt; wer schon gesund ist, bekommt den Fortschritts-Teil fürs Halten. Die genaue Aufteilung ist ein Vorschlag.", ...K5],
   "Rauchen": ["Ob du rauchst, früher geraucht hast oder nie. Bei „Früher“ zählt, wie viel du damals geraucht hast und mit welchem Alter du aufgehört hast."],
   "Lebensstil": ["Neben Bauch und Zucker haben drei Dinge großen Einfluss auf die Lebenserwartung, für die es sehr große Studien gibt: Rauchen, Alkohol und Bewegung. Die Vorsorge zählt für den Bonus."],
   "Woher die Jahre kommen": ["Wie viele Jahre jeder Punkt für sich allein kostet (−) oder bringt (+). Zusammen ist es weniger als die Summe, weil man nur einmal sterben kann und sich die Risiken überschneiden."],
