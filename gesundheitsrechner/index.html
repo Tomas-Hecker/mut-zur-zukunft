@@ -173,6 +173,19 @@ details.grp > summary { font-size: 14.5px }
 .teil-knoepfe { display: flex; flex-wrap: wrap; gap: 8px }
 .teil-knoepfe .btn { text-decoration: none; display: inline-block }
 .btn.alt { background: var(--field); color: var(--fg); border: 1px solid var(--line) }
+.gemeinsam { display: grid; gap: 6px }
+.gemeinsam .k { margin: 4px 0 0; font-weight: 700; font-size: 14.5px }
+.einladung { margin: 6px 0 0; border-left: 4px solid var(--ok); background: var(--z1); border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: 15.5px }
+.dabei { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 4px }
+.st-row.mini { padding: 3px; gap: 6px } .st-row.mini output { font-size: 22px; min-width: 2.2em } .st-row.mini .st-b { width: 38px; height: 38px; font-size: 20px }
+.schneeball { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 10px }
+.sb-runden { display: grid; gap: 6px }
+.sb-r { display: grid; grid-template-columns: 5.2em minmax(0, 1fr) 4.2em; gap: 10px; align-items: center; font-size: 14px }
+.sb-r .p { display: flex; flex-wrap: wrap; gap: 3px }
+.sb-r .p i { width: 10px; height: 10px; border-radius: 50%; background: var(--ok) }
+.sb-r .p i.du { background: var(--mid) }
+.sb-r .p em { font-style: normal; font-size: 12.5px; color: var(--muted); margin-left: 4px }
+.sb-r b { text-align: right; font-variant-numeric: tabular-nums }
 .zucker-check { border-top: 1px solid var(--line); padding-top: 18px }
 /* Persönliche Tafel: Bauch × Langzeitzucker, Farben wie in der Broschüre */
 .tafel-box { border-top: 1px solid var(--line); padding-top: 18px; display: grid; gap: 12px }
@@ -481,8 +494,15 @@ h1,h2,h3{break-after:avoid}
     </div>
     <div class="teilen">
       <h3>Nimm jemanden mit</h3>
-      <p class="note">Zu zweit fällt jeder Schritt leichter: Wer mit Freunden abnimmt, hält sein Gewicht viel öfter, 66 % statt 24 % (<a href="#q-wing">Wing und Jeffery 1999</a>). Bei Diabetes senkt Begleitung durch andere Betroffene den Langzeitzucker um rund 0,6 Punkte (<a href="#q-qi">Qi 2015</a>). Schick den Rechner oder die Broschüre an Freunde oder Familie. Geteilt wird nur der Link, nie deine Werte.</p>
-      <div class="seg" role="group" aria-label="Was teilen?" id="s_was"><button type="button" data-was="rechner" aria-pressed="true">Rechner</button><button type="button" data-was="broschuere" aria-pressed="false">Broschüre</button></div>
+      <p class="note">Zu zweit fällt jeder Schritt leichter: Wer mit Freunden abnimmt, hält sein Gewicht viel öfter, 66 % statt 24 % (<a href="#q-wing">Wing und Jeffery 1999</a>). Bei Diabetes senkt Begleitung durch andere Betroffene den Langzeitzucker um rund 0,6 Punkte (<a href="#q-qi">Qi 2015</a>). Lade jemanden ein, Freunde, Familie, Nachbarn oder Kollegen. Geteilt wird nur die Einladung mit dem Link, nie deine Werte.</p>
+      <div class="gemeinsam">
+        <p class="k">Was wollt ihr zusammen machen?</p>
+        <div class="chips" id="m_akt"></div>
+        <p class="k">Wie oft?</p>
+        <div class="chips" id="m_oft"></div>
+        <blockquote class="einladung" id="m_text"></blockquote>
+      </div>
+      <div class="seg" role="group" aria-label="Was teilen?" id="s_was"><button type="button" data-was="einladung" aria-pressed="true">Einladung</button><button type="button" data-was="rechner" aria-pressed="false">Rechner</button><button type="button" data-was="broschuere" aria-pressed="false">Broschüre</button></div>
       <div class="teil-knoepfe">
         <button type="button" class="btn" id="s_share" hidden>Teilen …</button>
         <a class="btn alt" id="s_wa" target="_blank" rel="noopener">WhatsApp</a>
@@ -490,8 +510,20 @@ h1,h2,h3{break-after:avoid}
         <button type="button" class="btn alt" id="s_copy">Link kopieren</button>
       </div>
       <p class="note" id="s_ok" role="status"></p>
+      <div class="dabei">
+        <span>Bei mir sind schon dabei:</span>
+        <div class="st-row mini"><button type="button" class="st-b" id="m_minus" aria-label="eine Person weniger">−</button><output id="m_zahl" aria-live="polite">0</output><button type="button" class="st-b" id="m_plus" aria-label="eine Person mehr">+</button></div>
+        <span class="note" id="m_dabeitxt"></span>
+      </div>
     </div>
-    <p class="hinweis">Die Studien zeigen Zusammenhänge in großen Gruppen, keinen Beweis für jeden Einzelnen. <a href="#q-singh">Singh 2023</a>, <a href="#q-mujcic">Mujcic und Oswald 2016</a>, <a href="#q-stenholm">Stenholm 2017</a>, <a href="#q-chida">Chida und Steptoe 2008</a>, <a href="#q-wing">Wing und Jeffery 1999</a>, <a href="#q-qi">Qi 2015</a>.</p>
+    <div class="schneeball">
+      <h3>Die Gesundheitskette: Einer fängt an. Alle gewinnen.</h3>
+      <p class="note">Gewohnheiten stecken an: Hört ein Freund auf zu rauchen, sinkt die eigene Wahrscheinlichkeit zu rauchen um 36 % (<a href="#q-christakis">Christakis und Fowler 2008</a>). Gehgruppen senken Blutdruck, BMI und Niedergeschlagenheit, und drei von vier bleiben dabei (<a href="#q-hanson">Hanson und Jones 2015</a>). Du nimmst jemanden mit, und jede Person nimmt wieder jemanden mit. Wie viele nimmt jede Person mit?</p>
+      <div class="seg" role="group" aria-label="Personen pro Runde" id="m_je"><button type="button" data-je="1">1</button><button type="button" data-je="2" aria-pressed="true">2</button><button type="button" data-je="3">3</button></div>
+      <div class="sb-runden" id="m_runden"></div>
+      <p class="gw-sub" id="m_summe"></p>
+    </div>
+    <p class="hinweis">Die Studien zeigen Zusammenhänge in großen Gruppen, keinen Beweis für jeden Einzelnen. <a href="#q-singh">Singh 2023</a>, <a href="#q-mujcic">Mujcic und Oswald 2016</a>, <a href="#q-stenholm">Stenholm 2017</a>, <a href="#q-chida">Chida und Steptoe 2008</a>, <a href="#q-wing">Wing und Jeffery 1999</a>, <a href="#q-qi">Qi 2015</a>, <a href="#q-christakis">Christakis und Fowler 2008</a>, <a href="#q-hanson">Hanson und Jones 2015</a>.</p>
   </section>
 
   <div class="eyebrow" id="genauer" style="margin-top:8px">Genauer rechnen</div>
@@ -738,6 +770,18 @@ h1,h2,h3{break-after:avoid}
         <dl><dt>Was wurde untersucht?</dt><dd>12.385 Erwachsene in Australien, über mehrere Jahre befragt: Ändert sich die Lebenszufriedenheit, wenn Menschen mehr Obst und Gemüse essen?</dd><dt>Was kam heraus?</dt><dd>Wer bis zu 8 Portionen mehr am Tag aß, gewann innerhalb von 24 Monaten bis zu 0,24 Punkte Lebenszufriedenheit. Das ist etwa so viel wie der Schritt von Arbeitslosigkeit zurück in Arbeit.</dd><dt>Wofür der Rechner das nutzt</dt><dd>Station 2 der Aufwärtsspirale, nur als Hinweis.</dd></dl>
         <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract), Langzeitbefragung HILDA. <a href="https://pubmed.ncbi.nlm.nih.gov/?term=Mujcic+Oswald+Evolution+of+well-being+and+happiness+after+increases+in+consumption+of+fruit+and+vegetables" target="_blank" rel="noopener">Zur Studie ›</a></div>
       </article>
+      <article class="studie" id="q-christakis">
+        <h3>Gesunde Gewohnheiten stecken an</h3>
+        <div class="wer">Christakis N. A., Fowler J. H. (2008), <i>New England Journal of Medicine</i> 358:2249–2258</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>12.067 Menschen aus der Framingham-Studie über 32 Jahre: Wie breitet sich das Aufhören mit dem Rauchen in Familien und Freundeskreisen aus?</dd><dt>Was kam heraus?</dt><dd>Hörte ein Freund auf, sank die eigene Wahrscheinlichkeit zu rauchen um 36 %, beim Ehepartner um 67 %, bei Geschwistern um 25 %.</dd><dt>Wofür der Rechner das nutzt</dt><dd>„Die Gesundheitskette“, nur als Hinweis.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract). <a href="https://doi.org/10.1056/NEJMsa0706154" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
+      <article class="studie" id="q-hanson">
+        <h3>Gehgruppen wirken, und die Leute bleiben dabei</h3>
+        <div class="wer">Hanson S., Jones A. (2015), <i>British Journal of Sports Medicine</i> 49:710–715</div>
+        <dl><dt>Was wurde untersucht?</dt><dd>Zusammenfassung von 42 Studien mit 1.843 Teilnehmenden in Gehgruppen im Freien.</dd><dt>Was kam heraus?</dt><dd>Der Blutdruck sank um 3,7 zu 3,1 mmHg, der BMI um 0,7, und Depressionswerte gingen deutlich zurück (Effekt −0,67). Im Mittel blieben 75 % dabei.</dd><dt>Wofür der Rechner das nutzt</dt><dd>„Die Gesundheitskette“, nur als Hinweis.</dd></dl>
+        <div class="fund"><b>Fundstelle:</b> Zusammenfassung (Abstract). <a href="https://pubmed.ncbi.nlm.nih.gov/?term=Hanson+Jones+2015+walking+groups+meta-analysis" target="_blank" rel="noopener">Zur Studie ›</a></div>
+      </article>
       <article class="studie" id="q-wing">
         <h3>Mit Freunden abnehmen wirkt länger</h3>
         <div class="wer">Wing R. R., Jeffery R. W. (1999), <i>Journal of Consulting and Clinical Psychology</i> 67:132–138</div>
@@ -966,6 +1010,7 @@ const schreib = d => { try { localStorage.setItem(SPEICHER, JSON.stringify(d)); 
 const GESP = lies();
 let MESS = GESP && Array.isArray(GESP.mess) ? GESP.mess.filter(m => m && m.b > 0 && /^\d{4}-\d\d-\d\d$/.test(m.d)) : [], PLAN = GESP && typeof GESP.plan === "string" ? GESP.plan : "";
 let WARUM = GESP && Array.isArray(GESP.warum) ? GESP.warum.filter(x => typeof x === "string") : [];
+let MIT = GESP && Number.isInteger(GESP.mit) && GESP.mit > 0 ? Math.min(999, GESP.mit) : 0;
 if (GESP && GESP.v) MERK.forEach(k => { if (k in GESP.v && typeof GESP.v[k] === typeof V[k]) V[k] = GESP.v[k]; });
 const FELD = [["alter", "Alter", "Jahre", 1, 18, 95], ["groesse", "Körpergröße", "cm", 1, 120, 220], ["bauch", "Bauchumfang", "cm", 1, 50, 200]];
 FELD.forEach(([k, l, u, st, mi, ma]) => {
@@ -1253,6 +1298,7 @@ function zeigeGlueck() {
   $("g_warum").querySelectorAll("button").forEach(b => b.onclick = () => { const w = WARUM_OPT[+b.dataset.w]; WARUM = WARUM.includes(w) ? WARUM.filter(x => x !== w) : [...WARUM, w]; speichern(); zeigeGlueck(); });
   const liste = WARUM.length > 1 ? WARUM.slice(0, -1).join(", ") + " und " + WARUM[WARUM.length - 1] : WARUM[0];
   $("g_warumtxt").innerHTML = WARUM.length ? `Mein Warum: Mehr gesunde Jahre für ${liste.replace(/^Zeit/, "Zeit").replace(/^Lange/, "lange").replace(/^Unabhängig/, "unabhängig")}.` : "";
+  zeigeMit();
 }
 
 // ---------- Teilen: nur der Link, keine persönlichen Werte ----------
@@ -1261,9 +1307,15 @@ const TEILEN = {
     text: "Schau mal, der Bauch-Check zeigt, was jeder Zentimeter und jeder Zehntelpunkt beim Zucker bringt. Kostenlos, deine Werte bleiben auf deinem Gerät:" },
   broschuere: { url: "https://tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner/broschuere-kleine-schritte-grosse-wirkung.pdf", titel: "Kleine Schritte, große Wirkung",
     text: "Eine kurze Broschüre mit kleinen Schritten für einen gesünderen Bauch und Zucker:" } };
-let TEIL_WAS = "rechner";
+let TEIL_WAS = "einladung";
+const AKT = [["Gehtreff", "eine Runde spazieren zu gehen, 20 Minuten"], ["Kochrunde", "zusammen gesund zu kochen, reihum bei einem von uns"], ["Sport zusammen", "zusammen Sport zu machen"], ["Rad fahren", "eine Runde Rad zu fahren"], ["Mittagsrunde", "in der Mittagspause eine Runde zu gehen"]];
+const OFT = ["einmal pro Woche", "zweimal pro Woche"];
+let M_AKT = 0, M_OFT = 0;
+const einladungText = () => `Hast du Lust, ${OFT[M_OFT]} mit mir ${AKT[M_AKT][1]}? Lass uns 4 Wochen zusammen durchziehen: Wir messen heute beide den Bauch und in 4 Wochen wieder. Der Bauch-Check zeigt, was jeder Zentimeter bringt, und deine Werte bleiben auf deinem Gerät. Und wenn es dir gefällt, nimmst du selbst jemanden mit:`;
+const teilInhalt = () => TEIL_WAS === "einladung" ? { ...TEILEN.rechner, titel: "Machst du mit?", text: einladungText() } : TEILEN[TEIL_WAS];
 function zeigeTeilen(ok) {
-  const t = TEILEN[TEIL_WAS];
+  const t = teilInhalt();
+  $("m_text").textContent = einladungText() + " " + TEILEN.rechner.url;
   $("s_was").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.was === TEIL_WAS));
   $("s_wa").href = "https://wa.me/?text=" + encodeURIComponent(t.text + " " + t.url);
   $("s_mail").href = "mailto:?subject=" + encodeURIComponent(t.titel) + "&body=" + encodeURIComponent(t.text + "\n" + t.url);
@@ -1271,16 +1323,44 @@ function zeigeTeilen(ok) {
   $("s_ok").textContent = ok || "";
 }
 $("s_was").querySelectorAll("button").forEach(b => b.onclick = () => { TEIL_WAS = b.dataset.was; zeigeTeilen(); });
-$("s_share").addEventListener("click", async () => { const t = TEILEN[TEIL_WAS]; try { await navigator.share({ title: t.titel, text: t.text, url: t.url }); zeigeTeilen("Danke fürs Weitersagen!"); } catch (e) {} });
-$("s_copy").addEventListener("click", async () => { const t = TEILEN[TEIL_WAS];
-  try { await navigator.clipboard.writeText(t.url); zeigeTeilen("Link kopiert. Jetzt einfach in eine Nachricht einfügen."); }
+$("s_share").addEventListener("click", async () => { const t = teilInhalt(); try { await navigator.share({ title: t.titel, text: t.text, url: t.url }); zeigeTeilen("Danke fürs Weitersagen!"); } catch (e) {} });
+$("s_copy").addEventListener("click", async () => { const t = teilInhalt();
+  try { await navigator.clipboard.writeText(TEIL_WAS === "einladung" ? t.text + " " + t.url : t.url); zeigeTeilen(TEIL_WAS === "einladung" ? "Einladung kopiert. Jetzt einfach in eine Nachricht einfügen." : "Link kopiert. Jetzt einfach in eine Nachricht einfügen."); }
   catch (e) { zeigeTeilen("Kopieren ging nicht. Der Link lautet: " + t.url); } });
 zeigeTeilen();
+
+// Mitmachen: Aktivität wählen, Zähler, Schneeball
+function zeigeMit() {
+  $("m_akt").innerHTML = AKT.map(([t], i) => `<button type="button" data-a="${i}" aria-pressed="${i === M_AKT}">${t}</button>`).join("");
+  $("m_oft").innerHTML = OFT.map((t, i) => `<button type="button" data-o="${i}" aria-pressed="${i === M_OFT}">${t}</button>`).join("");
+  $("m_akt").querySelectorAll("button").forEach(b => b.onclick = () => { M_AKT = +b.dataset.a; TEIL_WAS = "einladung"; zeigeTeilen(); zeigeMit(); });
+  $("m_oft").querySelectorAll("button").forEach(b => b.onclick = () => { M_OFT = +b.dataset.o; TEIL_WAS = "einladung"; zeigeTeilen(); zeigeMit(); });
+  $("m_zahl").textContent = MIT;
+  $("m_dabeitxt").textContent = MIT === 0 ? "Tippe auf +, wenn jemand zusagt." : MIT === 1 ? "Super, der Schneeball rollt!" : `Du hast ${MIT} Menschen mitgenommen. Stark!`;
+  zeigeSchneeball();
+}
+let M_JE = 2;
+const SB_PERSON = { ...V, ...NEUTRAL, sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, dm: false };
+function zeigeSchneeball() {
+  $("m_je").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.je === M_JE));
+  let n = 1, summe = 1, h = `<div class="sb-r"><span>Runde 1</span><span class="p"><i class="du"></i></span><b>du</b></div>`;
+  for (let r = 2; r <= 5; r++) {
+    n *= M_JE; summe += n; const zeig = Math.min(n, 60);
+    h += `<div class="sb-r"><span>Runde ${r}</span><span class="p">${"<i></i>".repeat(zeig)}${n > zeig ? `<em>+ ${fmt(n - zeig)}</em>` : ""}</span><b>${fmt(n)}</b></div>`;
+  }
+  $("m_runden").innerHTML = h;
+  const g = v => { const a = rechne(SB_PERSON, v), b = rechne({ ...SB_PERSON, bauch: 95 }, v); return a.ges - b.ges; };
+  const lo = g("lo") * summe, hi = g("hi") * summe, f = v => v >= 1e6 ? fmt(v / 1e6, 1) + " Mio. €" : v >= 1e5 ? fmt(Math.round(v / 1e4) * 1e4) + " €" : euroR(v);
+  $("m_summe").innerHTML = `Nach 5 Runden sind <b>${fmt(summe)} Menschen</b> dabei. Wenn jede und jeder nur 3 cm Bauch verliert, spart das der Gesellschaft grob <b>${lo === hi ? f(hi) : f(lo).replace(/ (Mio\. )?€$/, "") + " bis " + f(hi)}</b> (grobe Schätzung für einen Durchschnittsmann mit 50 Jahren, 1,78 m und 98 cm). ${M_JE > 1 ? "Und auch wenn nur jede zweite Einladung klappt, wächst der Schneeball weiter." : "Schon eine Person pro Runde macht aus dir fünf."}`;
+}
+$("m_je").querySelectorAll("button").forEach(b => b.onclick = () => { M_JE = +b.dataset.je; zeigeSchneeball(); });
+$("m_plus").addEventListener("click", () => { MIT = Math.min(999, MIT + 1); speichern(); zeigeMit(); });
+$("m_minus").addEventListener("click", () => { MIT = Math.max(0, MIT - 1); speichern(); zeigeMit(); });
 
 // ---------- Mein Weg: Messungen nur im eigenen Browser ----------
 const heute = () => new Date().toISOString().slice(0, 10);
 const datumT = d => d.split("-").reverse().slice(0, 2).join(".");
-function speichern() { if (!MESS.length && !PLAN && !WARUM.length) return; schreib({ mess: MESS, plan: PLAN, warum: WARUM, v: Object.fromEntries(MERK.map(k => [k, V[k]])) }); }
+function speichern() { if (!MESS.length && !PLAN && !WARUM.length && !MIT) return; schreib({ mess: MESS, plan: PLAN, warum: WARUM, mit: MIT, v: Object.fromEntries(MERK.map(k => [k, V[k]])) }); }
 function abzeichen() {
   const basis = MESS.length ? Math.max(MESS[0].b, V.bauchVor || 0) : V.bauchVor || 0, weg = basis ? basis - V.bauch : 0;
   return [["1.", "Erste Messung", MESS.length >= 1], ["3×", "Dreimal gemessen", MESS.length >= 3], ["−1", "1 cm weniger", weg >= 1], ["−3", "Erste Etappe", weg >= 3],
@@ -1319,7 +1399,7 @@ $("c_save").addEventListener("click", () => {
     V.bauch === letzte ? "Gehalten. Auch das ist ein Erfolg." : "Gespeichert. Schwankungen sind normal, dein Weg zählt, nicht ein einzelner Tag.";
   syncFelder(); run(); zeigeWeg(t + extra);
 });
-$("c_del").addEventListener("click", () => { try { localStorage.removeItem(SPEICHER); } catch (e) {} MESS = []; PLAN = ""; WARUM = []; zeigeGlueck(); zeigeWeg("Gespeicherte Messungen gelöscht."); });
+$("c_del").addEventListener("click", () => { try { localStorage.removeItem(SPEICHER); } catch (e) {} MESS = []; PLAN = ""; WARUM = []; MIT = 0; zeigeGlueck(); zeigeMit(); zeigeWeg("Gespeicherte Messungen gelöscht."); });
 
 // ---------- Rechenkern ----------
 const ip = (tab, x) => { if (x <= tab[0][0]) return tab[0][1]; for (let i = 1; i < tab.length; i++) if (x <= tab[i][0]) { const [x0, y0] = tab[i - 1], [x1, y1] = tab[i]; return y0 + (y1 - y0) * (x - x0) / (x1 - x0); } return tab[tab.length - 1][1]; };
