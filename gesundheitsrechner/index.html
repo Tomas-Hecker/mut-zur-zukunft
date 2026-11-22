@@ -148,6 +148,12 @@ details.grp > summary { font-size: 14.5px }
 .gauge i { position: absolute; top: -9px; width: 5px; height: 32px; margin-left: -2.5px; background: var(--fg); border: 2px solid var(--panel); border-radius: 3px; transition: left .35s }
 .gauge b { position: absolute; top: -5px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; border: 2px solid var(--fg); background: var(--panel); opacity: .7 }
 @media (prefers-reduced-motion: reduce) { .gauge i { transition: none } }
+/* Zucker-Skala 4,5 bis 10 %: grün bis 5,7, gelb bis 6,5, rot darüber */
+.gauge.hb { background: linear-gradient(90deg, var(--ok) 0 21.8%, var(--mid) 21.8% 36.4%, var(--risk) 36.4%) }
+.gscale.hb { position: relative; height: 1.2em; display: block }
+.gscale.hb span { position: absolute; transform: translateX(-50%) }
+.gscale.hb span:nth-child(1) { left: 0; transform: none } .gscale.hb span:nth-child(2) { left: 21.8% } .gscale.hb span:nth-child(3) { left: 36.4% } .gscale.hb span:nth-child(4) { left: 63.6% } .gscale.hb span:nth-child(5) { left: auto; right: 0; transform: none }
+.zucker-check { border-top: 1px solid var(--line); padding-top: 18px }
 .gscale { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums }
 .etappe { border-radius: 12px; padding: 14px 16px; background: var(--hl); display: grid; gap: 6px }
 .etappe .k { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted) }
@@ -330,7 +336,7 @@ h1,h2,h3{break-after:avoid}
           <div class="st-row"><button type="button" class="st-b" data-st="bauchVor" data-d="-1" aria-label="Startwert 1 cm weniger">−</button><output id="o_cs" aria-labelledby="l_cs"></output><button type="button" class="st-b" data-st="bauchVor" data-d="1" aria-label="Startwert 1 cm mehr">+</button></div>
         </div>
         <details class="howto"><summary>So misst du richtig</summary><p class="note">Im Stehen, nach dem Ausatmen, Maßband waagerecht in der Mitte zwischen unterster Rippe und Hüftknochen (meist knapp über dem Bauchnabel). Am besten immer morgens, vor dem Frühstück, einmal im Monat. Faustregel: Der Bauch sollte weniger als die Hälfte der Körpergröße messen.</p></details>
-        <p class="note">Alter, Geschlecht, Langzeitzucker und Lebensstil kannst du <a href="#genauer">weiter unten</a> ergänzen. Dann wird die Schätzung genauer.</p>
+        <p class="note">Alter, Geschlecht und Lebensstil kannst du <a href="#genauer">weiter unten</a> ergänzen. Dann wird die Schätzung genauer.</p>
       </div>
       <div class="grp check-aus">
         <h2>2. Deine Ampel</h2>
@@ -344,6 +350,31 @@ h1,h2,h3{break-after:avoid}
       </div>
     </div>
 
+    <div class="check-grid zucker-check">
+      <div class="grp check-ein">
+        <div class="stepper">
+          <span class="lbl" id="l_ch">Langzeitzucker (HbA1c)</span>
+          <div class="st-row"><button type="button" class="st-b" data-st="hba1c" data-d="-0.1" aria-label="Langzeitzucker 0,1 Prozentpunkte weniger">−</button><output id="o_ch" aria-labelledby="l_ch"></output><button type="button" class="st-b" data-st="hba1c" data-d="0.1" aria-label="Langzeitzucker 0,1 Prozentpunkte mehr">+</button></div>
+          <input type="range" id="r_ch" min="4.5" max="12" step="0.1" aria-label="Langzeitzucker in Prozent">
+        </div>
+        <div class="stepper">
+          <span class="lbl" id="l_chs">Langzeitzucker beim Start <small>(vor einem Jahr; freiwillig)</small></span>
+          <div class="st-row"><button type="button" class="st-b" data-st="hbVor" data-d="-0.1" aria-label="Startwert Zucker 0,1 weniger">−</button><output id="o_chs" aria-labelledby="l_chs"></output><button type="button" class="st-b" data-st="hbVor" data-d="0.1" aria-label="Startwert Zucker 0,1 mehr">+</button></div>
+        </div>
+        <label class="chk"><input type="checkbox" id="c_dm"> Bei mir ist Diabetes schon festgestellt</label>
+        <details class="howto"><summary>Wo finde ich den Wert?</summary><p class="note">Im Laborbefund vom Check-up, als HbA1c in % oder in mmol/mol (39 mmol/mol = 5,7 %). Er zeigt deinen Blutzucker der letzten 2 bis 3 Monate. Kein Wert zur Hand? Frag beim nächsten Check-up danach, er gehört bei Bauch über der halben Körpergröße dazu.</p></details>
+      </div>
+      <div class="grp check-aus">
+        <div class="ampelbox">
+          <div class="ab-kopf"><span class="k">Langzeitzucker</span><span class="v" id="c_hb"></span><span class="tag" id="c_htag"></span></div>
+          <div class="gauge hb" aria-hidden="true"><i id="c_hneedle"></i><b id="c_hstartmark" hidden></b></div>
+          <div class="gscale hb"><span>4,5 %</span><span>5,7</span><span>6,5</span><span>8</span><span>10 %</span></div>
+          <p id="c_hampeltxt"></p>
+        </div>
+        <div class="etappe" id="c_hetappe"></div>
+      </div>
+    </div>
+
     <div class="gewinn" aria-live="polite">
       <div class="gw-kopf">
         <h2 id="c_gw_h">3. Dein Gewinn</h2>
@@ -351,6 +382,7 @@ h1,h2,h3{break-after:avoid}
       </div>
       <p class="gw-sub" id="c_gw_sub"></p>
       <div class="gw-tiles" id="c_gw_tiles"></div>
+      <p class="gw-sub" id="c_gw_zucker" hidden></p>
       <h3>Dein Risiko sinkt</h3>
       <ul class="risiken" id="c_risiken"></ul>
       <p class="hinweis">Gut zu wissen: Das sind Schätzbereiche aus großen Bevölkerungsstudien. Sie zeigen, wie viel seltener Menschen mit kleinerem Bauch im Durchschnitt erkranken, keine Garantie für dich. Jeder Zentimeter zählt trotzdem. <a href="#q-risiko">Woher die Zahlen kommen</a></p>
@@ -800,7 +832,7 @@ const bewOk = p => p.bewEinheit === "schritte" ? p.schritte >= SCHRITTE.ziel : p
 // ---------- Eingaben ----------
 const V = { sex: "m", alter: 50, groesse: 178, bauch: 98, hba1c: 5.6, einheit: "pct", dm: false, bauchVor: 0, hbVor: 0, glVor: 0, rauch: "nie", zig: 15, aufh: 40, glaeser: 3, bewegung: 150, bewEinheit: "min", schritte: 7800, vorsorge: false, programm: false };
 // Gespeicherte Messungen (nur wenn man selbst auf „Messung speichern“ getippt hat; bleibt im eigenen Browser)
-const SPEICHER = "mzz-bauch", MERK = ["sex", "alter", "groesse", "bauch", "bauchVor", "hba1c", "dm"];
+const SPEICHER = "mzz-bauch", MERK = ["sex", "alter", "groesse", "bauch", "bauchVor", "hba1c", "hbVor", "dm"];
 const lies = () => { try { return JSON.parse(localStorage.getItem(SPEICHER)) || null; } catch (e) { return null; } };
 const schreib = d => { try { localStorage.setItem(SPEICHER, JSON.stringify(d)); return true; } catch (e) { return false; } };
 const GESP = lies();
@@ -869,13 +901,19 @@ const euroR = v => fmt(rundE(Math.max(0, v))) + " €";
 function syncFelder() {
   const set = (id, v) => { const el = $(id); if (el && document.activeElement !== el) el.value = v || (id === "i_bauchVor" ? "" : v); };
   set("i_groesse", V.groesse); set("i_bauch", V.bauch); set("i_bauchVor", V.bauchVor);
+  if (document.activeElement !== $("i_hba1c")) zeigeHb();
+  if (document.activeElement !== $("i_hbVor")) zeigeHbVor();
+  $("c_dm").checked = V.dm;
 }
 document.querySelectorAll("[data-st]").forEach(b => b.addEventListener("click", () => {
-  const k = b.dataset.st, d = +b.dataset.d, lim = { groesse: [120, 220], bauch: [50, 200], bauchVor: [50, 200] }[k];
+  const k = b.dataset.st, d = +b.dataset.d, lim = { groesse: [120, 220], bauch: [50, 200], bauchVor: [50, 200], hba1c: [4, 14], hbVor: [4, 14] }[k];
   if (k === "bauchVor" && !V.bauchVor) V.bauchVor = V.bauch;
-  V[k] = Math.min(lim[1], Math.max(lim[0], V[k] + d)); syncFelder(); run();
+  if (k === "hbVor" && !V.hbVor) V.hbVor = V.hba1c;
+  V[k] = Math.round(Math.min(lim[1], Math.max(lim[0], V[k] + d)) * 10) / 10; syncFelder(); run();
 }));
 $("r_cb").addEventListener("input", e => { V.bauch = +e.target.value; syncFelder(); run(); });
+$("r_ch").addEventListener("input", e => { V.hba1c = +e.target.value; syncFelder(); run(); });
+$("c_dm").addEventListener("change", e => { V.dm = e.target.checked; $("i_dm").checked = V.dm; run(); });
 
 function gewinnZwischen(von, nach) {
   const res = {};
@@ -932,7 +970,40 @@ function zeigeCheck() {
   const maxR = Math.max(...RISIKO.map(r => senkung(r.hi, d)), 0.01);
   $("c_risiken").innerHTML = RISIKO.map(r => { const a = senkung(r.lo, d), z = senkung(r.hi, d);
     return `<li><span>${r.n} <a href="#${r.q}">${r.qt}</a></span><span class="rb" aria-hidden="true"><i class="lo" style="left:0;width:${z / maxR * 100}%"></i><i style="left:0;width:${a / maxR * 100}%"></i></span><b>− ${spanne(a * 100, z * 100, v => fmt(v) + " %")}</b></li>`; }).join("");
+  zeigeZucker();
   zeigeWeg();
+}
+// Langzeitzucker: gleiche Logik wie beim Bauch. Ziel unter 5,7 %; bei Diabetes (oder ab 6,5 %) unter 7,0 % wie im Rechner oben.
+const HB_ETAPPE = 0.3;  // so viel zählt auch für den Bonus als Fortschritt
+const f1p = v => fmt(v, 1) + " %";
+function zeigeZucker() {
+  const h = V.hba1c, dm = V.dm || h >= 6.5, ziel = dm ? 7.0 : 5.7, s = V.hbVor, [kh, ch] = katH(h, V.dm);
+  $("o_ch").innerHTML = `${fmt(h, 1)}<small>% · ${fmt(mmol(h))} mmol/mol</small>`;
+  $("o_chs").innerHTML = s ? `${fmt(s, 1)}<small>%</small>` : `<small>noch leer, + oder − tippen</small>`;
+  if (document.activeElement !== $("r_ch")) $("r_ch").value = h;
+  $("c_hb").textContent = f1p(h); $("c_htag").textContent = kh; $("c_htag").className = "tag " + ch;
+  const pos = v => Math.min(100, Math.max(0, (v - 4.5) / 5.5 * 100)) + "%";
+  $("c_hneedle").style.left = pos(h);
+  $("c_hstartmark").hidden = !s || s === h; if (s) $("c_hstartmark").style.left = pos(s);
+  const fehlt = Math.round((h - ziel + 0.1) * 10) / 10;
+  $("c_hampeltxt").innerHTML = h < ziel ? (dm ? `Gut eingestellt: unter 7 %. Dein Ziel ist, das zu halten. Dein persönliches Ziel legst du mit deiner Ärztin oder deinem Arzt fest.` : `Prima: Dein Langzeitzucker ist <b>normal</b>. Dein Ziel ist, das zu halten.`)
+    : dm ? `${V.dm ? "" : "Ab 6,5 % spricht man von Diabetes. Bitte lass das ärztlich abklären. "}Ein gutes Ziel ist meist unter 7 %. Bis dahin sind es noch <b>${fmt(fehlt, 1)} Prozentpunkte</b>. Jeder Punkt weniger senkt das Sterberisiko um rund ein Achtel (<a href="#q-zhang">Zhang 2012</a>).`
+    : `Grün heißt: unter 5,7 %. Bis dahin sind es noch <b>${fmt(fehlt, 1)} Prozentpunkte</b>. In der Vorstufe lässt sich viel zurückdrehen: Bewegung und ein kleinerer Bauch wirken direkt.`;
+  const start = Math.max(s || h, h), weg = Math.round((start - h) * 10) / 10, zielT = dm ? "7,0 %" : "5,7 %";
+  if (h < ziel) $("c_hetappe").innerHTML = `<span class="k">Dein Ziel</span><span class="v">Unter ${zielT} bleiben</span><span class="note">${weg > 0 ? `Seit dem Start ${fmt(weg, 1)} Punkte weniger. ` : ""}Einmal im Jahr beim Check-up messen lassen reicht${dm ? ", bei Diabetes meist alle 3 Monate" : ""}.</span>`;
+  else {
+    const n = Math.floor(weg / HB_ETAPPE + 1e-9), naechste = Math.max(Math.round((ziel - 0.1) * 10) / 10, Math.round((start - HB_ETAPPE * (n + 1)) * 10) / 10);
+    const anteil = Math.min(100, weg / Math.max(0.1, start - ziel + 0.1) * 100);
+    $("c_hetappe").innerHTML = `<span class="k">Nächstes Etappenziel</span><span class="v">${f1p(naechste)}</span><span>noch ${fmt(Math.round((h - naechste) * 10) / 10, 1)} Punkte${n ? `, ${n} ${n > 1 ? "Etappen" : "Etappe"} schon geschafft` : ""}</span>
+      <div class="bar" role="img" aria-label="Weg bis zum Ziel: ${Math.round(anteil)} Prozent"><i style="width:${anteil}%"></i></div><span class="note">Weg vom Start (${f1p(start)}) bis zum Ziel (unter ${zielT})</span>`;
+  }
+  // Gewinn, wenn der Zucker um 0,5 Punkte sinkt (höchstens bis zum Ziel)
+  const nach = Math.max(Math.round((ziel - 0.1) * 10) / 10, Math.round((h - 0.5) * 10) / 10), el = $("c_gw_zucker");
+  if (h < ziel || nach >= h) { el.hidden = true; return; }
+  const G = {}; ["lo", "mid", "hi"].forEach(v => { const a = rechne(V, v), b = rechne({ ...V, hba1c: nach }, v); G[v] = { j: a.yll - b.yll, k: a.kasse - b.kasse }; });
+  const J = [G.lo.j, G.mid.j, G.hi.j], K = [G.lo.k, G.hi.k];
+  el.hidden = false;
+  el.innerHTML = `<b>Und beim Zucker:</b> Sinkt dein Langzeitzucker von ${f1p(h)} auf ${f1p(nach)}, gewinnst du statistisch <b>+ ${spanne(Math.max(0, Math.min(...J)), Math.max(...J), v => fmt(v, 1) + " Jahre")}</b>${Math.max(...K) >= 250 ? ` und sparst <b>${spanne(K[0], K[1], euroR)}</b> Krankheitskosten über das Leben` : ""}. Schätzbereich aus den Studien im Rechner (<a href="#q-zhong">Zhong</a>, <a href="#q-huang">Huang</a>, <a href="#q-erfc">ERFC</a>, <a href="#q-zhang">Zhang</a>).`;
 }
 
 // ---------- Mein Weg: Messungen nur im eigenen Browser ----------
@@ -969,7 +1040,7 @@ function zeigeWeg(toast) {
 $("c_save").addEventListener("click", () => {
   const vorher = abzeichen().filter(a => a[2]).length, letzte = MESS.length ? MESS[MESS.length - 1].b : null;
   if (!V.bauchVor) V.bauchVor = MESS.length ? MESS[0].b : V.bauch;
-  const m = { d: heute(), b: V.bauch, g: V.groesse };
+  const m = { d: heute(), b: V.bauch, g: V.groesse, h: V.hba1c };
   if (MESS.length && MESS[MESS.length - 1].d === m.d) MESS[MESS.length - 1] = m; else MESS.push(m);
   speichern();
   const neu = abzeichen().filter(a => a[2]), extra = neu.length > vorher ? ` Neues Abzeichen: ${neu[neu.length - 1][1]}!` : "";
