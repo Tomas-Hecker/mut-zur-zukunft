@@ -183,6 +183,14 @@ def main():
             if m: a['href'] = f'../broschuere/#p{m.group(1)}'
             elif a['href'].startswith(basis) and '.pdf' not in a['href']: a['href'] = '../' + a['href'][len(basis):]
         toc = sorted(dict(((t[0], t[1]), t) for t in toc).values())
+    if key == 'broschuere':
+        # Zeilen „Mehr dazu: Ratgeber S. N“ führen online zur Lesefassung des Ratgebers
+        for d in soup.select('div.mehr'):
+            m = re.search(r'Ratgeber (?:ab )?S\. (\d+)', d.get_text())
+            if not m: continue
+            a = soup.new_tag('a', attrs={'href': f'../ratgeber/#p{m.group(1)}', 'style': 'color:inherit'})
+            for c in list(d.contents): a.append(c.extract())
+            d.append(a)
     # Externe Links in neuem Tab
     for a in soup.find_all('a', href=True):
         if a['href'].startswith('http'):
