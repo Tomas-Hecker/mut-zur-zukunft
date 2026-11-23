@@ -185,28 +185,49 @@
 .heft table.track td{border-bottom:0.3mm solid #ece4d6;height:9.5mm;padding:0 3mm}
 .heft .scale{display:flex;border-radius:3mm;overflow:hidden;height:11mm;font-size:8.2pt;font-weight:600;color:#fff;margin:2mm 0 1.5mm}
 .heft .scale div{display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.15}
+.heft .chbar{display:flex;gap:1.2mm;align-items:center;font-size:7pt;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.heft .chbar i{display:block;width:7mm;height:1.3mm;border-radius:1mm;background:#E3DACB}
+.heft .chbar i.on{height:2mm}
+.heft .wish{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-top:5mm}
+.heft .wish div{background:#fff;border-radius:4mm;padding:3.5mm 3.5mm 3.5mm 10mm;position:relative;font-size:9.4pt;line-height:1.3;box-shadow:0 1mm 3mm rgba(23,64,47,.07)}
+.heft .wish div:before{content:"";position:absolute;left:3.5mm;top:3.8mm;width:4mm;height:4mm;border:.4mm solid var(--leaf);border-radius:1mm}
+.heft .quiz{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin-top:6mm}
+.heft .quiz .card{padding:5mm 5.5mm;display:flex;flex-direction:column}
+.heft .quiz .q{font-family:Fraunces,serif;font-size:13pt;font-weight:700;line-height:1.2;margin:0 0 3mm}
+.heft .quiz .opt{display:flex;flex-direction:column;gap:1.5mm;font-size:9.2pt}
+.heft .quiz .opt span{border:.3mm solid #D9CFBF;border-radius:3mm;padding:1.6mm 3mm}
+.heft .quiz .ans{margin-top:auto;padding-top:3mm;font-size:8pt;color:var(--muted)}
+.heft .road{display:grid;grid-template-columns:repeat(5,1fr);gap:2.5mm;margin-top:3mm}
+.heft .road div{border-radius:3.5mm;padding:3mm;font-size:8pt;line-height:1.3;color:#fff}
+.heft .road b{display:block;font-size:9.5pt;margin-bottom:.6mm}
+.heft .cover .promise b{font-size:10.5pt!important;white-space:nowrap}
+.heft .step{background:#fff;border-radius:4mm;border-left:2.2mm solid var(--c);padding:3.5mm 5mm;box-shadow:0 1mm 3mm rgba(23,64,47,.07)}
+.heft .step b{display:block;font-size:7.5pt;letter-spacing:.16em;text-transform:uppercase;color:var(--c);margin-bottom:1mm}
+.heft .step p{margin:0;font-size:9.4pt;line-height:1.45}
 </style>
 </head>
 <body class="buch heftseite">
 <header class="top" id="top"><div class="wrap"><a href="../../" aria-label="Zur Startseite"><svg class="logo" viewBox="0 0 360 100" role="img" aria-label="Mut zur Zukunft"><g transform="translate(4,4) scale(0.92)"><circle cx="50" cy="50" r="44" fill="none" stroke="#f2b33d" stroke-width="1.6"/><line x1="27.5" y1="51.0" x2="21.4" y2="47.5" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="37.0" y1="41.5" x2="33.5" y2="35.4" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="63.0" y1="41.5" x2="66.5" y2="35.4" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><line x1="72.5" y1="51.0" x2="78.6" y2="47.5" stroke="#f2b33d" stroke-width="2.4" stroke-linecap="round"/><path d="M30,64 A20,20 0 0 1 70,64 Z" fill="#f2b33d"/><path d="M50,64 L50,33" stroke="#fbf8f1" stroke-width="3.2" stroke-linecap="round"/><path d="M50,47 C41,46 33,39 31,28 C41,29 48,36 50,47 Z" fill="#9fd8b0"/><path d="M50,40 C57,37 65,30 68,19 C58,20 51,28 50,40 Z" fill="#9fd8b0"/><line x1="17" y1="64" x2="83" y2="64" stroke="#fbf8f1" stroke-width="2.4" stroke-linecap="round"/><line x1="28" y1="71" x2="72" y2="71" stroke="#fbf8f1" stroke-width="1.6" stroke-linecap="round" opacity="0.6"/><line x1="38" y1="77" x2="62" y2="77" stroke="#fbf8f1" stroke-width="1.2" stroke-linecap="round" opacity="0.35"/></g><text x="110" y="50" font-family="system-ui, sans-serif" font-weight="800" font-size="25" letter-spacing="1" fill="#fbf8f1">MUT ZUR</text><text x="110" y="80" font-family="system-ui, sans-serif" font-weight="800" font-size="30" letter-spacing="1.5" fill="#f2b33d">ZUKUNFT</text></svg></a><nav aria-label="Hauptmenü"><a href="../../">Start</a><a href="../../buch/">Das Buch</a><a href="../">Gesundheitsrechner</a><a href="../../steuerrechner/">Steuerrechner</a><a href="../../ueber-mich.html">Über mich</a></nav></div></header>
 <div class="bbar"><button type="button" class="tocbtn" aria-expanded="false" aria-controls="seite">Inhalt</button><span class="bbar-t">Kleine Schritte. Große Wirkung.</span></div>
-<div class="blayout" id="seite"><aside class="bside"><button type="button" class="sideclose">Schließen</button><nav class="btoc" aria-label="Inhalt"><a class="btoc-home" href="#top">Kleine Schritte. Große Wirkung.</a><ol><li><a href="#p1"><span class="no">1</span><span>Titel</span></a></li><li><a href="#p2"><span class="no">2</span><span>Die gute Nachricht zuerst</span></a></li><li><a href="#p3"><span class="no">3</span><span>Verstehen, was passiert</span></a></li><li><a href="#p4"><span class="no">4</span><span>Die Teller-Regel</span></a></li><li><a href="#p5"><span class="no">5</span><span>Clever tauschen</span></a></li><li><a href="#p6"><span class="no">6</span><span>Satt werden, ohne zu zählen</span></a></li><li><a href="#p7"><span class="no">7</span><span>Der Bauch-Index</span></a></li><li><a href="#p8"><span class="no">8</span><span>Der Index für den Alltag</span></a></li><li><a href="#p9"><span class="no">9</span><span>Bewegung</span></a></li><li><a href="#p10"><span class="no">10</span><span>Ihr Startplan</span></a></li><li><a href="#p11"><span class="no">11</span><span>Lebensfreude als Motor</span></a></li><li><a href="#p12"><span class="no">12</span><span>Gemeinsam geht es leichter</span></a></li><li><a href="#p13"><span class="no">13</span><span>Die Gesundheitskette</span></a></li><li><a href="#p14"><span class="no">14</span><span>Ein Tag voller Genuss</span></a></li><li><a href="#p15"><span class="no">15</span><span>Fortschritt sichtbar machen</span></a></li><li><a href="#p16"><span class="no">16</span><span>Bauch und Langzeitzucker zusammen</span></a></li><li><a href="#p17"><span class="no">17</span><span>Zum Nachlesen</span></a></li><li><a href="#p18"><span class="no">18</span><span>Rückseite: Sie sind nicht allein</span></a></li></ol></nav>
+<div class="blayout" id="seite"><aside class="bside"><button type="button" class="sideclose">Schließen</button><nav class="btoc" aria-label="Inhalt"><a class="btoc-home" href="#top">Kleine Schritte. Große Wirkung.</a><ol><li><a href="#p1"><span class="no">1</span><span>Titel</span></a></li><li><a href="#p2"><span class="no">2</span><span>Bevor es losgeht</span></a></li><li><a href="#p3"><span class="no">3</span><span>Kleines Quiz</span></a></li><li><a href="#p4"><span class="no">4</span><span>Lebensfreude als Motor</span></a></li><li><a href="#p5"><span class="no">5</span><span>Die gute Nachricht zuerst</span></a></li><li><a href="#p6"><span class="no">6</span><span>Verstehen, was passiert</span></a></li><li><a href="#p7"><span class="no">7</span><span>Der Bauch-Index</span></a></li><li><a href="#p8"><span class="no">8</span><span>Die Teller-Regel</span></a></li><li><a href="#p9"><span class="no">9</span><span>Clever tauschen</span></a></li><li><a href="#p10"><span class="no">10</span><span>Satt werden, ohne zu zählen</span></a></li><li><a href="#p11"><span class="no">11</span><span>Der Index für den Alltag</span></a></li><li><a href="#p12"><span class="no">12</span><span>Ein Tag voller Genuss</span></a></li><li><a href="#p13"><span class="no">13</span><span>Bewegung</span></a></li><li><a href="#p14"><span class="no">14</span><span>Ihr Startplan</span></a></li><li><a href="#p15"><span class="no">15</span><span>Fortschritt sichtbar machen</span></a></li><li><a href="#p16"><span class="no">16</span><span>Bauch und Langzeitzucker zusammen</span></a></li><li><a href="#p17"><span class="no">17</span><span>Gemeinsam geht es leichter</span></a></li><li><a href="#p18"><span class="no">18</span><span>Die Gesundheitskette</span></a></li><li><a href="#p19"><span class="no">19</span><span>Zum Nachlesen</span></a></li><li><a href="#p20"><span class="no">20</span><span>Rückseite: Sie sind nicht allein</span></a></li></ol></nav>
 <div class="heft-side"><a href="../broschuere-kleine-schritte-grosse-wirkung.pdf" download>Als PDF herunterladen</a><a href="../ratgeber/">Lebensmittel-Ratgeber „Erkennen statt zählen“ online lesen</a><a href="../">Zum Gesundheitsrechner</a></div></aside>
-<main class="bmain"><div class="bhero"><div class="bwrap"><div><p class="eyebrow">Broschüre online lesen</p><h1>Kleine Schritte. Große Wirkung.</h1><p class="blead">Für Fettleber, Vorstufe Diabetes und Typ-2-Diabetes: Teller-Regel, Tauschideen, Bauch-Index, Bewegung, 4-Wochen-Plan, Rezepte und die Gesundheitskette.</p><div class="btns"><a class="btn" href="#p1">Lesen</a><a class="btn ghost" href="../broschuere-kleine-schritte-grosse-wirkung.pdf" download>PDF herunterladen (18 Seiten, 4.6 MB)</a><a class="btn ghost" href="../">Zum Gesundheitsrechner</a></div></div></div></div>
+<main class="bmain"><div class="bhero"><div class="bwrap"><div><p class="eyebrow">Broschüre online lesen</p><h1>Kleine Schritte. Große Wirkung.</h1><p class="blead">Für Fettleber, Vorstufe Diabetes und Typ-2-Diabetes: Teller-Regel, Tauschideen, Bauch-Index, Bewegung, 4-Wochen-Plan, Rezepte und die Gesundheitskette.</p><div class="btns"><a class="btn" href="#p1">Lesen</a><a class="btn ghost" href="../broschuere-kleine-schritte-grosse-wirkung.pdf" download>PDF herunterladen (20 Seiten, 5.2 MB)</a><a class="btn ghost" href="../">Zum Gesundheitsrechner</a></div></div></div></div>
 <p class="heft-hinweis">Die Seiten sehen aus wie im gedruckten Heft. Am Handy kannst du sie mit zwei Fingern größer ziehen. Über „Inhalt“ springst du zu jedem Kapitel.</p>
 <div class="heft heft-broschuere">
 <section aria-label="Seite 1" class="page cover" id="p1">
 <div class="hero"><img alt="Zwei Menschen kochen gemeinsam fröhlich mit frischem Gemüse" decoding="async" loading="lazy" src="bilder/cover_hero_ki.webp"/></div>
-<div class="brand"><span>Ihr Neustart für Leber &amp; Blutzucker</span></div>
+<div class="brand"><span>Gesund und glücklich werden</span></div>
 <div class="title">
-<div class="kicker" style="color:var(--sun)">Fettleber · Typ-2-Diabetes · Neue Lebensfreude</div>
+<div class="kicker" style="color:var(--sun)">Fettleber · Typ-2-Diabetes · Mehr Lebensfreude</div>
 <h1>Kleine Schritte.<br/><em>Große Wirkung.</em></h1>
-<p class="sub">Wie Sie mit gutem Essen, Freude an Bewegung<br/>und etwas Geduld Ihre Leber entlasten<br/>und Ihren Blutzucker spürbar verbessern können.</p>
+<p class="sub">Was Sie glücklich macht,<br/>tut auch Leber und Blutzucker gut.<br/>Hier erfahren Sie, warum das so ist,<br/>und wie Sie Schritt für Schritt dorthin kommen.</p>
 </div>
-<div class="promise">
-<div><b>Verstehen</b>Was in Leber und Blut passiert, und warum Sie viel bewirken können.</div>
-<div><b>Genießen</b>Teller-Regel, clevere Tauschideen und einfache Rezepte.</div>
-<div><b>Dranbleiben</b>Ein 4-Wochen-Plan, der Fortschritte sichtbar macht.</div>
+<div class="promise" style="grid-template-columns:repeat(5,1fr);gap:4mm">
+<div><b style="color:#F59A80">1 Neugier</b>Was wünschen Sie sich?</div>
+<div><b style="color:#9CC3E6">2 Verstehen</b>Was im Körper passiert</div>
+<div><b style="color:var(--lime)">3 Genießen</b>Teller, Tauschen, Rezepte</div>
+<div><b style="color:var(--sun)">4 Dranbleiben</b>Bewegung und 4-Wochen-Plan</div>
+<div><b style="color:#8FD3B4">5 Gemeinsam</b>Andere mitnehmen</div>
 </div>
 <div class="badges">
 <span class="badge">4-Wochen-Startplan</span>
@@ -214,7 +235,82 @@
 <span class="badge">Rezepte</span>
 <span class="badge">Ohne Verbote</span>
 </div>
-</section><section aria-label="Seite 2" class="page" id="p2">
+</section><section aria-label="Seite 2" class="page" id="p2"><span class="heft-anker" id="wuensche"></span>
+<div class="inner">
+<div class="kicker">Bevor es losgeht</div>
+<h2>Was wünschen Sie sich<br/><em>für die nächsten Jahre?</em></h2>
+<div style="display:grid;grid-template-columns:1fr 62mm;gap:6mm;align-items:center">
+<p class="lead" style="margin:0">Bevor es um Leber und Blutzucker geht,<br/>eine einfache Frage.<br/>Was möchten Sie in zehn Jahren noch erleben?<br/>Kreuzen Sie an, was Ihnen wichtig ist.</p>
+<div style="height:42mm;border-radius:5mm;overflow:hidden"><img decoding="async" loading="lazy" src="bilder/x_rad_ki.webp" style="width:100%;height:100%;object-fit:cover;object-position:40% 30%;display:block"/></div>
+</div>
+<div class="wish">
+<div>Mit den Enkeln toben und wandern</div><div>Treppen steigen ohne Pause</div><div>Noch einmal ans Meer reisen</div><div>Im Garten werkeln</div>
+<div>Morgens ausgeschlafen aufwachen</div><div>Mit weniger Tabletten auskommen</div><div>Tanzen gehen</div><div>Mit Freunden Rad fahren</div>
+</div>
+<div class="card" style="margin-top:5mm;display:grid;grid-template-columns:72mm 1fr;gap:6mm;align-items:center;background:var(--mint)">
+<div><h3 style="font-size:13pt;margin-bottom:1mm">Mein Warum</h3><p style="margin:0;font-size:8.8pt;line-height:1.45">Schreiben Sie Ihren wichtigsten Wunsch auf.<br/>Hängen Sie ihn an den Kühlschrank.</p></div>
+<div class="hp-lines hp-dark"><i></i><i></i></div>
+</div>
+<div class="band" style="margin-top:6mm">
+<h3 style="margin-bottom:1mm">Genau darum geht es in dieser Broschüre.</h3>
+<p style="margin:0;color:#E7F1E5;font-size:9.6pt">Alles, was Sie angekreuzt haben, braucht vor allem eines: einen Körper, der mitmacht.<br/>Leber, Bauch und Blutzucker sind dabei Ihre wichtigsten Helfer.<br/>Kleine Schritte reichen, um sie zu stärken.</p>
+<div class="road">
+<div style="background:var(--coral)"><b>1 Neugier</b>Was Sie glücklich macht · S. 2</div>
+<div style="background:#3E7CB1"><b>2 Verstehen</b>Was im Körper passiert · S. 5</div>
+<div style="background:var(--leaf)"><b>3 Genießen</b>Teller und Rezepte · S. 8</div>
+<div style="background:#C9951C"><b>4 Dranbleiben</b>Bewegung und Plan · S. 13</div>
+<div style="background:#3E9876"><b>5 Gemeinsam</b>Andere mitnehmen · S. 17</div>
+</div>
+</div>
+</div>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="on" style="background:var(--coral)"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:var(--coral)">Kapitel 1 · Neugier</span></span><span>2</span></div>
+</section><section aria-label="Seite 3" class="page" id="p3"><span class="heft-anker" id="quiz"></span>
+<div class="inner">
+<div class="kicker">Kleines Quiz</div>
+<h2>Wussten Sie schon?<br/><em>Vier Fragen, vier Überraschungen.</em></h2>
+<p class="lead">Raten Sie ruhig. Die Antworten stehen unten auf der Seite.<br/>Mehr dazu finden Sie auf den angegebenen Seiten.</p>
+<div class="quiz">
+<div class="card" style="border-top:2mm solid #3E7CB1"><p class="q">Wie viel Gewicht muss man verlieren, damit sich eine Fettleber bessert?</p><div class="opt"><span>A  25 Prozent</span><span>B  15 Prozent</span><span>C  oft schon 5 Prozent</span></div></div>
+<div class="card" style="border-top:2mm solid #3E7CB1"><p class="q">Kann man Typ-2-Diabetes wieder loswerden?</p><div class="opt"><span>A  Nein, nie</span><span>B  Fast die Hälfte schaffte es in einer Studie</span><span>C  Nur mit Operation</span></div></div>
+<div class="card" style="border-top:2mm solid var(--leaf)"><p class="q">Was macht nach zwei Jahren ähnlich viel zufriedener wie ein neuer Job nach Arbeitslosigkeit?</p><div class="opt"><span>A  Ein neues Auto</span><span>B  Deutlich mehr Obst und Gemüse</span><span>C  Ein Lottogewinn von 1.000 Euro</span></div></div>
+<div class="card" style="border-top:2mm solid #4FA987"><p class="q">Wer hält sein neues Gewicht besser: allein oder mit Freunden?</p><div class="opt"><span>A  Allein, weil man sich besser konzentriert</span><span>B  Mit Freunden, fast dreimal so oft</span><span>C  Das macht keinen Unterschied</span></div></div>
+</div>
+<div class="card" style="margin-top:6mm;background:var(--sand);box-shadow:none">
+<h3 style="font-size:12pt;margin-bottom:2mm">Die Antworten</h3>
+<div class="grid2" style="gap:3mm 8mm;font-size:8.8pt;line-height:1.4">
+<div><b>1 C.</b> 5 % weniger Gewicht senkt das Leberfett oft schon deutlich.<sup class="ref">[1]</sup> Mehr auf Seite 5.</div>
+<div><b>2 B.</b> 46 % waren nach einem Jahr in Remission, mit kurzer Diabetes-Dauer und ärztlicher Begleitung.<sup class="ref">[3]</sup> Seite 5.</div>
+<div><b>3 B.</b> Wer deutlich mehr Obst und Gemüse aß, war nach zwei Jahren ähnlich viel zufriedener.<sup class="ref">[18]</sup> Seite 4.</div>
+<div><b>4 B.</b> 66 statt 24 % hielten ihr Gewicht, wenn sie mit Freunden kamen.<sup class="ref">[20]</sup> Seite 17.</div>
+</div>
+</div>
+<p class="small" style="margin-top:5mm">Und die schönste Überraschung: Gesundheit und Glück hängen zusammen.<br/>Wie, zeigt die nächste Seite.</p>
+</div>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="on" style="background:var(--coral)"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:var(--coral)">Kapitel 1 · Neugier</span></span><span>3</span></div>
+</section><section aria-label="Seite 4" class="page" id="p4"><span class="heft-anker" id="gluecklich"></span>
+<div class="inner">
+<div class="kicker">Lebensfreude als Motor</div>
+<h2>Gesund und glücklich.<br/><em>Das eine stärkt das andere.</em></h2>
+<p class="lead" style="margin-bottom:4mm">Sie müssen nicht erst gesund werden, um glücklich zu sein.<br/>Beides wächst miteinander: Jeder kleine Schritt hebt die Stimmung, und gute Stimmung macht den nächsten Schritt leichter.</p>
+<div class="card" style="padding:5mm 6mm 4mm">
+<h3 style="font-size:12.5pt;margin-bottom:1mm">Ihre Glücksspirale</h3>
+<svg style="width:100%;height:68mm;display:block" viewbox="0 0 620 300"><rect fill="#B9D96B" height="60" rx="12" width="112" x="10" y="230"></rect><text fill="#17402F" font-family="Fraunces" font-size="15" font-weight="700" text-anchor="middle" x="66" y="252">1</text><text fill="#17402F" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="66" y="270">Ein kleiner</text><text fill="#17402F" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="66" y="285">Schritt</text><rect fill="#8CC37A" height="100" rx="12" width="112" x="132" y="190"></rect><text fill="#17402F" font-family="Fraunces" font-size="15" font-weight="700" text-anchor="middle" x="188" y="212">2</text><text fill="#17402F" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="188" y="230">Bessere</text><text fill="#17402F" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="188" y="245">Stimmung</text><rect fill="#5BAE78" height="140" rx="12" width="112" x="254" y="150"></rect><text fill="#fff" font-family="Fraunces" font-size="15" font-weight="700" text-anchor="middle" x="310" y="172">3</text><text fill="#fff" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="310" y="190">Mehr</text><text fill="#fff" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="310" y="205">Energie</text><rect fill="#2F7D52" height="180" rx="12" width="112" x="376" y="110"></rect><text fill="#fff" font-family="Fraunces" font-size="15" font-weight="700" text-anchor="middle" x="432" y="132">4</text><text fill="#fff" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="432" y="150">Der nächste</text><text fill="#fff" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="432" y="165">Schritt</text><rect fill="#17402F" height="220" rx="12" width="112" x="498" y="70"></rect><text fill="#fff" font-family="Fraunces" font-size="15" font-weight="700" text-anchor="middle" x="554" y="92">5</text><text fill="#fff" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="554" y="110">Mehr gute</text><text fill="#fff" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="554" y="125">Jahre</text><circle cx="566" cy="40" fill="#F5C044" r="22"></circle><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="596.0" x2="604.0" y1="40.0" y2="40.0"></line><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="587.2" x2="592.9" y1="61.2" y2="66.9"></line><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="566.0" x2="566.0" y1="70.0" y2="78.0"></line><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="544.8" x2="539.1" y1="61.2" y2="66.9"></line><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="536.0" x2="528.0" y1="40.0" y2="40.0"></line><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="544.8" x2="539.1" y1="18.8" y2="13.1"></line><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="566.0" x2="566.0" y1="10.0" y2="2.0"></line><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="587.2" x2="592.9" y1="18.8" y2="13.1"></line><path d="M60 212 C 170 160, 320 120, 470 72" fill="none" stroke="#EE6F4F" stroke-dasharray="2 9" stroke-linecap="round" stroke-width="4"></path><path d="M460 64 L477 70 L466 84" fill="none" stroke="#EE6F4F" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"></path></svg>
+<div class="hp-steps"><div><b>Ein kleiner Schritt</b><span>10 Minuten gehen, ein Apfel statt Kuchen</span></div><div><b>Bessere Stimmung</b><span>Bewegung und gutes Essen heben die Laune</span></div><div><b>Mehr Energie</b><span>Sie schlafen besser und fühlen sich wacher</span></div><div><b>Der nächste Schritt</b><span>fällt leichter, weil er sich gut anfühlt</span></div><div><b>Mehr gute Jahre</b><span>gesündere Werte, mehr Zeit für das, was zählt</span></div></div>
+</div>
+<div class="hp-facts">
+<div class="card"><div class="hp-n">−18 %</div><b>Zufriedene leben länger</b><p>Wer zufrieden und zuversichtlich ist, hat ein um 18 % geringeres Sterberisiko. Das zeigen 35 Langzeitstudien mit anfangs gesunden Menschen.</p><span>[15]</span></div>
+<div class="card"><div class="hp-n">+7 Jahre</div><b>Mehr gute Jahre</b><p>Zwischen 50 und 75 verbringen Normalgewichtige rund 7 Jahre mehr bei guter Gesundheit als Menschen mit starkem Übergewicht (BMI ab 35).</p><span>über 70.000 Menschen [16]</span></div>
+<div class="card"><div class="hp-n" style="color:var(--leaf);font-size:13.5pt">Bewegung</div><b>hebt die Stimmung</b><p>Bewegung lindert Niedergeschlagenheit, Angst und Stress deutlich. Jede Form zählt, auch Spazierengehen.</p><span>97 Übersichtsarbeiten [17]</span></div>
+<div class="card"><div class="hp-n" style="color:var(--coral);font-size:13.5pt">Obst &amp; Gemüse</div><b>machen zufriedener</b><p>Wer deutlich mehr davon isst, ist nach zwei Jahren so viel zufriedener wie nach dem Schritt von Arbeitslosigkeit in Arbeit.</p><span>[18]</span></div>
+</div>
+<div class="band" style="margin-top:5mm;display:grid;grid-template-columns:14mm 1fr;gap:5mm;align-items:center;padding:5mm 7mm">
+<div style="font-size:26pt;line-height:1">✍️</div>
+<div><h3 style="font-size:12.5pt;margin-bottom:1mm">Heute Abend: drei gute Dinge</h3><p style="margin:0;color:#E7F1E5;font-size:8.8pt;line-height:1.45">Schreiben Sie vor dem Schlafengehen drei Dinge auf, die heute gut waren, und warum.<br/>Wer das eine Woche lang tat, war in einer Studie noch ein halbes Jahr später glücklicher<sup class="ref">[19]</sup>.</p></div>
+</div>
+<p class="small" style="margin:3mm 0 0">Die Studien zeigen Zusammenhänge in großen Gruppen, keine Garantie für den Einzelnen. Alle Quellen finden Sie im Verzeichnis auf Seite 19.</p>
+</div>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="on" style="background:var(--coral)"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:var(--coral)">Kapitel 1 · Neugier</span></span><span>4</span></div>
+</section><section aria-label="Seite 5" class="page" id="p5"><span class="heft-anker" id="gute-nachricht"></span>
 <div class="inner">
 <div class="kicker">Die gute Nachricht zuerst</div>
 <h2>Ihr Körper will gesund werden.<br/><em>Helfen Sie ihm dabei.</em></h2>
@@ -242,8 +338,8 @@
 <svg style="width:30mm" viewbox="0 0 120 120"><circle cx="60" cy="60" fill="#2F7D52" r="52"></circle><path d="M25 80 L48 58 L64 70 L95 36" fill="none" stroke="#B9D96B" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"></path><path d="M80 34 H97 V51" fill="none" stroke="#B9D96B" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"></path></svg>
 </div>
 </div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>2</span></div>
-</section><section aria-label="Seite 3" class="page" id="p3">
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="" style="background:var(--coral)"></i><i class="on" style="background:#3E7CB1"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:#3E7CB1">Kapitel 2 · Verstehen</span></span><span>5</span></div>
+</section><section aria-label="Seite 6" class="page" id="p6">
 <div class="inner">
 <div class="kicker">Verstehen, was passiert</div>
 <h2>Die Spirale<br/><em>dreht sich in beide Richtungen.</em></h2>
@@ -280,8 +376,49 @@
 </div>
 </div>
 </div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>3</span></div>
-</section><section aria-label="Seite 4" class="page" id="p4" style="background:var(--sand)"><span class="heft-anker" id="teller-regel"></span>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="" style="background:var(--coral)"></i><i class="on" style="background:#3E7CB1"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:#3E7CB1">Kapitel 2 · Verstehen</span></span><span>6</span></div>
+</section><section aria-label="Seite 7" class="page" id="p7"><span class="heft-anker" id="bauch-index"></span>
+<div class="inner">
+<div class="kicker">Der Bauch-Index</div>
+<h2>Was über Jahre<br/><em>den Bauch bewegt</em></h2>
+<p class="lead" style="font-size:11pt">Gewichtsveränderung in vier Jahren, wenn jemand täglich <b>eine Portion mehr</b> von einem Lebensmittel aß.<br/>Zum Vergleich: Im Durchschnitt nahmen die Teilnehmenden in vier Jahren rund 1,5 kg zu.</p>
+<div class="lvl" style="margin:3mm 0 2mm">
+<div class="l1"><b>Hilft deutlich</b></div><div class="l2"><b>Hilft</b></div><div class="l3"><b>Neutral</b></div><div class="l4"><b>Belastet</b></div><div class="l5"><b>Belastet stark</b></div>
+</div>
+<svg style="width:100%;height:136mm;margin-top:1mm" viewbox="0 0 620 560">
+<g font-family="Inter" font-size="12.5">
+<line stroke="#cbbfa9" stroke-width="1.2" x1="380" x2="380" y1="0" y2="548"></line>
+<text fill="#5B6B62" font-size="10" text-anchor="middle" x="380" y="558">0</text>
+<!-- rows: y step 30 -->
+<g id="rows"></g>
+</g>
+<!-- generated rows -->
+<g fill="#1C2A23" font-family="Inter" font-size="12.5">
+<text x="0" y="22">Pommes frites</text><text fill="#5B6B62" font-size="9.5" x="0" y="34">1 Portion</text><rect fill="#D9532F" height="18" rx="9" width="228" x="380" y="9"></rect><text fill="#fff" font-size="11" font-weight="700" text-anchor="end" x="604" y="22">+1,5 kg</text>
+<text x="0" y="52">Kartoffelchips</text><text fill="#5B6B62" font-size="9.5" x="0" y="64">1 kleine Tüte (30 g)</text><rect fill="#D9532F" height="18" rx="9" width="116" x="380" y="39"></rect><text fill="#C2401E" font-weight="700" x="502" y="52">+0,8 kg</text>
+<text x="0" y="82">Limonade, Cola, Eistee</text><text fill="#5B6B62" font-size="9.5" x="0" y="94">1 Dose (0,33 l)</text><rect fill="#D9532F" height="18" rx="9" width="68" x="380" y="69"></rect><text fill="#C2401E" font-weight="700" x="454" y="82">+0,5 kg</text>
+<text x="0" y="112">Rotes Fleisch</text><text fill="#5B6B62" font-size="9.5" x="0" y="124">1 Portion (100–170 g)</text><rect fill="#D9532F" height="18" rx="9" width="65" x="380" y="99"></rect><text fill="#C2401E" font-weight="700" x="451" y="112">+0,4 kg</text>
+<text x="0" y="142">Wurst, Schinken, Speck</text><text fill="#5B6B62" font-size="9.5" x="0" y="154">1 Scheibe oder Würstchen</text><rect fill="#D9532F" height="18" rx="9" width="63" x="380" y="129"></rect><text fill="#C2401E" font-weight="700" x="449" y="142">+0,4 kg</text>
+<text x="0" y="172">Kartoffeln, gekocht/Brei</text><text fill="#5B6B62" font-size="9.5" x="0" y="184">1 mittelgroße</text><rect fill="#E8A23A" height="18" rx="9" width="39" x="380" y="159"></rect><text fill="#B7700B" font-weight="700" x="425" y="172">+0,3 kg</text>
+<text x="0" y="202">Bier, Wein (Alkohol)</text><text fill="#5B6B62" font-size="9.5" x="0" y="214">1 Glas</text><rect fill="#E8A23A" height="18" rx="9" width="28" x="380" y="189"></rect><text fill="#B7700B" font-weight="700" x="414" y="202">+0,2 kg</text>
+<text x="0" y="232">Süßigkeiten, Kuchen</text><text fill="#5B6B62" font-size="9.5" x="0" y="244">1 Portion</text><rect fill="#E8A23A" height="18" rx="9" width="28" x="380" y="219"></rect><text fill="#B7700B" font-weight="700" x="414" y="232">+0,2 kg</text>
+<text x="0" y="262">Weißbrot, helle Nudeln, Reis</text><text fill="#5B6B62" font-size="9.5" x="0" y="274">1 Scheibe / ½ Tasse</text><rect fill="#E8A23A" height="18" rx="9" width="27" x="380" y="249"></rect><text fill="#B7700B" font-weight="700" x="413" y="262">+0,2 kg</text>
+<text x="0" y="292">Fruchtsaft</text><text fill="#5B6B62" font-size="9.5" x="0" y="304">1 kleines Glas</text><rect fill="#E8A23A" height="18" rx="9" width="21" x="380" y="279"></rect><text fill="#B7700B" font-weight="700" x="407" y="292">+0,1 kg</text>
+<text x="0" y="322">Butter</text><text fill="#5B6B62" font-size="9.5" x="0" y="334">1 Teelöffel</text><rect fill="#E8A23A" height="18" rx="9" width="21" x="380" y="309"></rect><text fill="#B7700B" font-weight="700" x="407" y="322">+0,1 kg</text>
+<text x="0" y="352">Käse</text><text fill="#5B6B62" font-size="9.5" x="0" y="364">1 Scheibe</text><rect fill="#B8B3A6" height="18" rx="1.5" width="3" x="379" y="339"></rect><text fill="#7d776a" font-weight="700" x="388" y="352">± 0</text>
+<text x="0" y="382">Getränke mit Süßstoff</text><text fill="#5B6B62" font-size="9.5" x="0" y="394">1 Dose</text><rect fill="#B8B3A6" height="18" rx="3" width="6" x="374" y="369"></rect><text fill="#7d776a" font-weight="700" x="388" y="382">± 0</text>
+<text x="0" y="412">Gemüse</text><text fill="#5B6B62" font-size="9.5" x="0" y="424">1 Portion</text><rect fill="#5BAE78" height="18" rx="7" width="15" x="365" y="399"></rect><text fill="#3E9361" font-weight="700" text-anchor="end" x="359" y="412">−0,1 kg</text>
+<text x="0" y="442">Vollkornprodukte</text><text fill="#5B6B62" font-size="9.5" x="0" y="454">1 Scheibe / ½ Tasse</text><rect fill="#5BAE78" height="18" rx="9" width="26" x="354" y="429"></rect><text fill="#3E9361" font-weight="700" text-anchor="end" x="348" y="442">−0,2 kg</text>
+<text x="0" y="472">Obst</text><text fill="#5B6B62" font-size="9.5" x="0" y="484">1 Stück</text><rect fill="#5BAE78" height="18" rx="9" width="33" x="347" y="459"></rect><text fill="#3E9361" font-weight="700" text-anchor="end" x="341" y="472">−0,2 kg</text>
+<text x="0" y="502">Nüsse</text><text fill="#5B6B62" font-size="9.5" x="0" y="514">1 Handvoll (30 g)</text><rect fill="#1F6E46" height="18" rx="9" width="39" x="341" y="489"></rect><text fill="#1F6E46" font-weight="700" text-anchor="end" x="335" y="502">−0,3 kg</text>
+<text x="0" y="532">Joghurt</text><text fill="#5B6B62" font-size="9.5" x="0" y="544">1 Becher (ca. 225 g)</text><rect fill="#1F6E46" height="18" rx="9" width="56" x="324" y="519"></rect><text fill="#1F6E46" font-weight="700" text-anchor="end" x="318" y="532">−0,4 kg</text>
+</g>
+</svg>
+<p class="small" style="margin-top:3mm">Quelle<sup class="ref">[6]</sup>: drei US-Langzeitstudien mit 120.877 Frauen und Männern aus Gesundheitsberufen, 1986–2006. Beobachtete, statistisch bereinigte Zusammenhänge je zusätzlicher Tagesportion; Werte gerundet. Sie zeigen Tendenzen, keine Garantie für den Einzelnen.</p>
+<div class="step" style="--c:#3E7CB1;margin-top:3mm"><b>Ihr kleiner Schritt</b><p>Messen Sie heute Ihren Bauchumfang auf Höhe des Bauchnabels.<br/>Tragen Sie ihn auf Seite 15 ein.</p></div>
+</div>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="" style="background:var(--coral)"></i><i class="on" style="background:#3E7CB1"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:#3E7CB1">Kapitel 2 · Verstehen</span></span><span>7</span></div>
+</section><section aria-label="Seite 8" class="page" id="p8" style="background:var(--sand)"><span class="heft-anker" id="teller-regel"></span>
 <div class="inner">
 <div class="kicker">Die Teller-Regel</div>
 <h2>Ein Teller, der<br/><em>satt und glücklich</em> macht.</h2>
@@ -310,8 +447,8 @@
 </div>
 <p class="small" style="margin-top:6mm"><b>Auch das zählt:</b> Guter Schlaf (sieben bis acht Stunden) erleichtert gesunde Entscheidungen und verbessert die Insulinwirkung. Lautes Schnarchen mit Atemaussetzern sollten Sie ärztlich abklären lassen. Alkohol belastet die Leber zusätzlich. Bei Fettleber lohnt es sich besonders, so wenig wie möglich zu trinken. Sprechen Sie mit Ihrer Ärztin oder Ihrem Arzt darüber, was für Sie passt.</p>
 </div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>4</span></div>
-</section><section aria-label="Seite 5" class="page" id="p5"><span class="heft-anker" id="tauschen"></span>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="" style="background:var(--coral)"></i><i class="" style="background:#3E7CB1"></i><i class="on" style="background:var(--leaf)"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:var(--leaf)">Kapitel 3 · Genießen</span></span><span>8</span></div>
+</section><section aria-label="Seite 9" class="page" id="p9"><span class="heft-anker" id="tauschen"></span>
 <div class="inner" style="padding-bottom:10mm">
 <div class="kicker">Clever tauschen</div>
 <h2>Genuss bleibt.<br/><em>Der Zucker geht.</em></h2>
@@ -351,8 +488,8 @@
 </div>
 <p class="small" style="margin-top:3mm">Zuckerangaben sind gerundete Durchschnittswerte; einzelne Produkte weichen ab. Ein Blick auf die Nährwerttabelle („davon Zucker“) lohnt sich. Getränke mit Süßstoff sind beim Umstieg eine Brücke; auf Dauer ist Wasser die beste Wahl.</p>
 </div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>5</span></div>
-</section><section aria-label="Seite 6" class="page" id="p6" style="background:var(--sand)"><span class="heft-anker" id="satt"></span>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="" style="background:var(--coral)"></i><i class="" style="background:#3E7CB1"></i><i class="on" style="background:var(--leaf)"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:var(--leaf)">Kapitel 3 · Genießen</span></span><span>9</span></div>
+</section><section aria-label="Seite 10" class="page" id="p10" style="background:var(--sand)"><span class="heft-anker" id="satt"></span>
 <div class="inner">
 <div class="kicker">Satt werden, ohne zu zählen</div>
 <h2>Gleich satt.<br/><em>Ganz anders für den Bauch.</em></h2>
@@ -367,51 +504,11 @@
 <p class="small" style="margin-top:3mm">„0,4 × Banane“ heißt: Für dasselbe Sättigungsgefühl nehmen Sie nur 0,4-mal so viele Kalorien auf wie mit Bananen. Grün unter 0,9, Gelb bis 1,2, Rot darüber. <b>Satt ist nicht gleich gesund:</b> Gummibärchen liegen wie die Banane bei 1,0 und Nüsse bei 1,4, obwohl Nüsse beim Gewicht helfen. Dafür gibt es den Bauch-Index. Die Sättigungswerte sind grobe Richtwerte aus einer kleinen Studie, gemessen zwei Stunden nach dem Essen<sup class="ref">[5]</sup>. <b>Getränke wie Cola</b> wurden nicht gemessen: Sie machen kaum satt, ihre Energie kommt praktisch obendrauf.</p>
 <div class="band" style="margin-top:6mm;display:grid;grid-template-columns:1fr 1fr;gap:8mm">
 <div><h3>Satt für den Tag</h3><p style="margin:0;color:#E7F1E5;font-size:9.4pt">Die Sättigung zeigt, was Sie heute gut durch den Tag bringt, ohne Hunger und ohne Kalorienzählen.</p></div>
-<div><h3>Schlank über die Jahre</h3><p style="margin:0;color:#E7F1E5;font-size:9.4pt">Der Bauch-Index auf den nächsten Seiten zeigt, welche Lebensmittel über Jahre mit weniger oder mehr Bauch zusammenhängen.</p></div>
+<div><h3>Schlank über die Jahre</h3><p style="margin:0;color:#E7F1E5;font-size:9.4pt">Der Bauch-Index auf Seite 7 zeigt, welche Lebensmittel über Jahre mit weniger oder mehr Bauch zusammenhängen.</p></div>
 </div>
 </div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>6</span></div>
-</section><section aria-label="Seite 7" class="page" id="p7"><span class="heft-anker" id="bauch-index"></span>
-<div class="inner">
-<div class="kicker">Der Bauch-Index</div>
-<h2>Was über Jahre<br/><em>den Bauch bewegt</em></h2>
-<p class="lead" style="font-size:11pt">Gewichtsveränderung in vier Jahren, wenn jemand täglich <b>eine Portion mehr</b> von einem Lebensmittel aß.<br/>Zum Vergleich: Im Durchschnitt nahmen die Teilnehmenden in vier Jahren rund 1,5 kg zu.</p>
-<div class="lvl" style="margin:3mm 0 2mm">
-<div class="l1"><b>Hilft deutlich</b></div><div class="l2"><b>Hilft</b></div><div class="l3"><b>Neutral</b></div><div class="l4"><b>Belastet</b></div><div class="l5"><b>Belastet stark</b></div>
-</div>
-<svg style="width:100%;margin-top:1mm" viewbox="0 0 620 560">
-<g font-family="Inter" font-size="12.5">
-<line stroke="#cbbfa9" stroke-width="1.2" x1="380" x2="380" y1="0" y2="548"></line>
-<text fill="#5B6B62" font-size="10" text-anchor="middle" x="380" y="558">0</text>
-<!-- rows: y step 30 -->
-<g id="rows"></g>
-</g>
-<!-- generated rows -->
-<g fill="#1C2A23" font-family="Inter" font-size="12.5">
-<text x="0" y="22">Pommes frites</text><text fill="#5B6B62" font-size="9.5" x="0" y="34">1 Portion</text><rect fill="#D9532F" height="18" rx="9" width="228" x="380" y="9"></rect><text fill="#fff" font-size="11" font-weight="700" text-anchor="end" x="604" y="22">+1,5 kg</text>
-<text x="0" y="52">Kartoffelchips</text><text fill="#5B6B62" font-size="9.5" x="0" y="64">1 kleine Tüte (30 g)</text><rect fill="#D9532F" height="18" rx="9" width="116" x="380" y="39"></rect><text fill="#C2401E" font-weight="700" x="502" y="52">+0,8 kg</text>
-<text x="0" y="82">Limonade, Cola, Eistee</text><text fill="#5B6B62" font-size="9.5" x="0" y="94">1 Dose (0,33 l)</text><rect fill="#D9532F" height="18" rx="9" width="68" x="380" y="69"></rect><text fill="#C2401E" font-weight="700" x="454" y="82">+0,5 kg</text>
-<text x="0" y="112">Rotes Fleisch</text><text fill="#5B6B62" font-size="9.5" x="0" y="124">1 Portion (100–170 g)</text><rect fill="#D9532F" height="18" rx="9" width="65" x="380" y="99"></rect><text fill="#C2401E" font-weight="700" x="451" y="112">+0,4 kg</text>
-<text x="0" y="142">Wurst, Schinken, Speck</text><text fill="#5B6B62" font-size="9.5" x="0" y="154">1 Scheibe oder Würstchen</text><rect fill="#D9532F" height="18" rx="9" width="63" x="380" y="129"></rect><text fill="#C2401E" font-weight="700" x="449" y="142">+0,4 kg</text>
-<text x="0" y="172">Kartoffeln, gekocht/Brei</text><text fill="#5B6B62" font-size="9.5" x="0" y="184">1 mittelgroße</text><rect fill="#E8A23A" height="18" rx="9" width="39" x="380" y="159"></rect><text fill="#B7700B" font-weight="700" x="425" y="172">+0,3 kg</text>
-<text x="0" y="202">Bier, Wein (Alkohol)</text><text fill="#5B6B62" font-size="9.5" x="0" y="214">1 Glas</text><rect fill="#E8A23A" height="18" rx="9" width="28" x="380" y="189"></rect><text fill="#B7700B" font-weight="700" x="414" y="202">+0,2 kg</text>
-<text x="0" y="232">Süßigkeiten, Kuchen</text><text fill="#5B6B62" font-size="9.5" x="0" y="244">1 Portion</text><rect fill="#E8A23A" height="18" rx="9" width="28" x="380" y="219"></rect><text fill="#B7700B" font-weight="700" x="414" y="232">+0,2 kg</text>
-<text x="0" y="262">Weißbrot, helle Nudeln, Reis</text><text fill="#5B6B62" font-size="9.5" x="0" y="274">1 Scheibe / ½ Tasse</text><rect fill="#E8A23A" height="18" rx="9" width="27" x="380" y="249"></rect><text fill="#B7700B" font-weight="700" x="413" y="262">+0,2 kg</text>
-<text x="0" y="292">Fruchtsaft</text><text fill="#5B6B62" font-size="9.5" x="0" y="304">1 kleines Glas</text><rect fill="#E8A23A" height="18" rx="9" width="21" x="380" y="279"></rect><text fill="#B7700B" font-weight="700" x="407" y="292">+0,1 kg</text>
-<text x="0" y="322">Butter</text><text fill="#5B6B62" font-size="9.5" x="0" y="334">1 Teelöffel</text><rect fill="#E8A23A" height="18" rx="9" width="21" x="380" y="309"></rect><text fill="#B7700B" font-weight="700" x="407" y="322">+0,1 kg</text>
-<text x="0" y="352">Käse</text><text fill="#5B6B62" font-size="9.5" x="0" y="364">1 Scheibe</text><rect fill="#B8B3A6" height="18" rx="1.5" width="3" x="379" y="339"></rect><text fill="#7d776a" font-weight="700" x="388" y="352">± 0</text>
-<text x="0" y="382">Getränke mit Süßstoff</text><text fill="#5B6B62" font-size="9.5" x="0" y="394">1 Dose</text><rect fill="#B8B3A6" height="18" rx="3" width="6" x="374" y="369"></rect><text fill="#7d776a" font-weight="700" x="388" y="382">± 0</text>
-<text x="0" y="412">Gemüse</text><text fill="#5B6B62" font-size="9.5" x="0" y="424">1 Portion</text><rect fill="#5BAE78" height="18" rx="7" width="15" x="365" y="399"></rect><text fill="#3E9361" font-weight="700" text-anchor="end" x="359" y="412">−0,1 kg</text>
-<text x="0" y="442">Vollkornprodukte</text><text fill="#5B6B62" font-size="9.5" x="0" y="454">1 Scheibe / ½ Tasse</text><rect fill="#5BAE78" height="18" rx="9" width="26" x="354" y="429"></rect><text fill="#3E9361" font-weight="700" text-anchor="end" x="348" y="442">−0,2 kg</text>
-<text x="0" y="472">Obst</text><text fill="#5B6B62" font-size="9.5" x="0" y="484">1 Stück</text><rect fill="#5BAE78" height="18" rx="9" width="33" x="347" y="459"></rect><text fill="#3E9361" font-weight="700" text-anchor="end" x="341" y="472">−0,2 kg</text>
-<text x="0" y="502">Nüsse</text><text fill="#5B6B62" font-size="9.5" x="0" y="514">1 Handvoll (30 g)</text><rect fill="#1F6E46" height="18" rx="9" width="39" x="341" y="489"></rect><text fill="#1F6E46" font-weight="700" text-anchor="end" x="335" y="502">−0,3 kg</text>
-<text x="0" y="532">Joghurt</text><text fill="#5B6B62" font-size="9.5" x="0" y="544">1 Becher (ca. 225 g)</text><rect fill="#1F6E46" height="18" rx="9" width="56" x="324" y="519"></rect><text fill="#1F6E46" font-weight="700" text-anchor="end" x="318" y="532">−0,4 kg</text>
-</g>
-</svg>
-<p class="small" style="margin-top:3mm">Quelle<sup class="ref">[6]</sup>: drei US-Langzeitstudien mit 120.877 Frauen und Männern aus Gesundheitsberufen, 1986–2006. Beobachtete, statistisch bereinigte Zusammenhänge je zusätzlicher Tagesportion; Werte gerundet. Sie zeigen Tendenzen, keine Garantie für den Einzelnen.</p>
-</div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>7</span></div>
-</section><section aria-label="Seite 8" class="page" id="p8" style="background:var(--sand)"><span class="heft-anker" id="einkaufszettel"></span>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="" style="background:var(--coral)"></i><i class="" style="background:#3E7CB1"></i><i class="on" style="background:var(--leaf)"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:var(--leaf)">Kapitel 3 · Genießen</span></span><span>10</span></div>
+</section><section aria-label="Seite 11" class="page" id="p11" style="background:var(--sand)"><span class="heft-anker" id="einkaufszettel"></span>
 <div class="inner" style="padding-top:17mm">
 <div class="kicker">Der Index für den Alltag</div>
 <h2 style="margin-bottom:4mm">Ihr Einkaufszettel<br/><em>nach Bauch-Index</em></h2>
@@ -431,8 +528,41 @@
 </div>
 <p class="small" style="margin-top:3mm">Grundlage: <b>M</b> Langzeitstudien zu einzelnen Lebensmitteln [6] · <b>B</b> Obst und Gemüse, über 130.000 Personen [7] · <b>S</b> eiweißreiche Lebensmittel, über 120.000 Personen [8] · <b>P</b> PREDIMED-Studie [9] · <b>K</b> Studien zu Hülsenfrüchten [10]. Ohne Buchstabe: Einordnung nach Ernährungsleitlinien.</p>
 </div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>8</span></div>
-</section><section aria-label="Seite 9" class="page" id="p9"><span class="heft-anker" id="bewegung"></span>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="" style="background:var(--coral)"></i><i class="" style="background:#3E7CB1"></i><i class="on" style="background:var(--leaf)"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:var(--leaf)">Kapitel 3 · Genießen</span></span><span>11</span></div>
+</section><section aria-label="Seite 12" class="page" id="p12"><span class="heft-anker" id="rezepte"></span>
+<div class="inner">
+<div class="kicker">Ein Tag voller Genuss</div>
+<h2>So schmeckt<br/><em>gesund.</em></h2>
+<p class="lead" style="margin-bottom:3mm">Drei einfache Gerichte für einen ganzen Tag, alltagstauglich, sättigend und ohne Spezialzutaten. Mengen für eine Person.</p>
+<div class="recipe" style="margin-bottom:3mm">
+<div class="pic"><img decoding="async" loading="lazy" src="bilder/r_f7.webp" style="object-position:50% 50%"/></div>
+<div class="txt"><div class="meta">Frühstück · 5 Minuten</div><h3>Skyr-Bowl mit Beeren und Walnüssen</h3>
+<p>Skyr in eine Schale geben, Haferflocken und Beeren darauf verteilen, mit gehackten Walnüssen und etwas Zimt bestreuen.</p>
+<div class="ing">200 g Skyr oder Magerquark · 30 g Haferflocken · 100 g Beeren (auch TK) · 10 g Walnüsse · Zimt</div></div>
+</div>
+<div class="recipe" style="margin-bottom:3mm">
+<div class="pic"><img decoding="async" loading="lazy" src="bilder/r_a4.webp" style="object-position:50% 50%"/></div>
+<div class="txt"><div class="meta">Mittagessen · 20 Minuten</div><h3>Rote-Linsen-Gemüse-Pfanne mit Feta</h3>
+<p>Zwiebel und Gemüse in Olivenöl anbraten, gespülte Linsen und Tomaten zugeben, 12 Minuten köcheln lassen. Mit Kreuzkümmel, Zitrone und Feta abschmecken.</p>
+<div class="ing">60 g rote Linsen · 250 g Gemüse (Paprika, Zucchini, Karotte) · ½ Dose Tomaten · 1 Zwiebel · 30 g Feta · 1 TL Olivenöl</div></div>
+</div>
+<div class="recipe" style="margin-bottom:3mm">
+<div class="pic"><img decoding="async" loading="lazy" src="bilder/r_m2.webp" style="object-position:20% 75%"/></div>
+<div class="txt"><div class="meta">Abendessen · 30 Minuten</div><h3>Ofengemüse mit Kichererbsen und Joghurt-Dip</h3>
+<p>Gemüse und Kichererbsen mit Öl und Paprikapulver mischen, bei 200 °C etwa 25 Minuten backen. Joghurt mit Knoblauch, Kräutern und Salz verrühren.</p>
+<div class="ing">300 g Gemüse (Brokkoli, Möhre, Paprika) · 120 g Kichererbsen (Dose) · 1 TL Rapsöl · 150 g Naturjoghurt · Kräuter</div></div>
+</div>
+<div class="band" style="padding:6mm 8mm;display:flex;gap:6mm;align-items:center">
+<img decoding="async" loading="lazy" src="bilder/aepfel.webp" style="width:18mm;height:18mm;border-radius:50%;object-fit:cover;flex:none;border:0.8mm solid #fff"/>
+<div><h3 style="margin-bottom:1mm">Kleine Snacks, wenn der Hunger kommt</h3><p style="margin:0;color:#E7F1E5;font-size:9.5pt">Ein Apfel mit einem Teelöffel Mandelmus · Gemüsesticks mit Hummus · eine kleine Handvoll Nüsse · ein Naturjoghurt.</p></div>
+</div>
+<div class="grid2" style="margin-top:5mm">
+<div class="card"><div class="kicker" style="margin-bottom:1mm">Tipp aus der Forschung</div><h3 style="font-size:12pt">Die Reihenfolge macht's</h3><p style="font-size:9pt;margin:0">Erst Gemüse und Eiweiß, dann Brot, Reis oder Kartoffeln: So steigt der Blutzucker nach dem Essen sanfter an.</p></div>
+<div class="card"><div class="kicker" style="margin-bottom:1mm">Clever vorbereitet</div><h3 style="font-size:12pt">Einmal kochen, zweimal essen</h3><p style="font-size:9pt;margin:0">Linsenpfanne und Ofengemüse schmecken auch am nächsten Tag, ideal für die Mittagspause.</p></div>
+</div>
+</div>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="" style="background:var(--coral)"></i><i class="" style="background:#3E7CB1"></i><i class="on" style="background:var(--leaf)"></i><i class="" style="background:#E3DACB"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:var(--leaf)">Kapitel 3 · Genießen</span></span><span>12</span></div>
+</section><section aria-label="Seite 13" class="page" id="p13"><span class="heft-anker" id="bewegung"></span>
 <div class="inner">
 <div class="kicker">Bewegung</div>
 <h2>Jeder Schritt<br/><em>ist Medizin.</em></h2>
@@ -472,8 +602,8 @@
 </div>
 </div>
 </div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>9</span></div>
-</section><section aria-label="Seite 10" class="page" id="p10" style="background:var(--sand)"><span class="heft-anker" id="startplan"></span>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="" style="background:var(--coral)"></i><i class="" style="background:#3E7CB1"></i><i class="" style="background:var(--leaf)"></i><i class="on" style="background:var(--sun)"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:var(--sun)">Kapitel 4 · Dranbleiben</span></span><span>13</span></div>
+</section><section aria-label="Seite 14" class="page" id="p14" style="background:var(--sand)"><span class="heft-anker" id="startplan"></span>
 <div class="inner">
 <div class="kicker">Ihr Startplan</div>
 <h2>Vier Wochen.<br/><em>Vier neue Gewohnheiten.</em></h2>
@@ -505,145 +635,7 @@
 </div>
 </div>
 </div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>10</span></div>
-</section><section aria-label="Seite 11" class="page" id="p11"><span class="heft-anker" id="gluecklich"></span>
-<div class="inner">
-<div class="kicker">Lebensfreude als Motor</div>
-<h2>Gesund und glücklich.<br/><em>Das eine stärkt das andere.</em></h2>
-<p class="lead" style="margin-bottom:4mm">Sie müssen nicht erst gesund werden, um glücklich zu sein.<br/>Beides wächst miteinander: Jeder kleine Schritt hebt die Stimmung, und gute Stimmung macht den nächsten Schritt leichter.</p>
-<div class="card" style="padding:5mm 6mm 4mm">
-<h3 style="font-size:12.5pt;margin-bottom:1mm">Ihre Glücksspirale</h3>
-<svg style="width:100%;height:68mm;display:block" viewbox="0 0 620 300"><rect fill="#B9D96B" height="60" rx="12" width="112" x="10" y="230"></rect><text fill="#17402F" font-family="Fraunces" font-size="15" font-weight="700" text-anchor="middle" x="66" y="252">1</text><text fill="#17402F" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="66" y="270">Ein kleiner</text><text fill="#17402F" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="66" y="285">Schritt</text><rect fill="#8CC37A" height="100" rx="12" width="112" x="132" y="190"></rect><text fill="#17402F" font-family="Fraunces" font-size="15" font-weight="700" text-anchor="middle" x="188" y="212">2</text><text fill="#17402F" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="188" y="230">Bessere</text><text fill="#17402F" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="188" y="245">Stimmung</text><rect fill="#5BAE78" height="140" rx="12" width="112" x="254" y="150"></rect><text fill="#fff" font-family="Fraunces" font-size="15" font-weight="700" text-anchor="middle" x="310" y="172">3</text><text fill="#fff" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="310" y="190">Mehr</text><text fill="#fff" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="310" y="205">Energie</text><rect fill="#2F7D52" height="180" rx="12" width="112" x="376" y="110"></rect><text fill="#fff" font-family="Fraunces" font-size="15" font-weight="700" text-anchor="middle" x="432" y="132">4</text><text fill="#fff" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="432" y="150">Der nächste</text><text fill="#fff" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="432" y="165">Schritt</text><rect fill="#17402F" height="220" rx="12" width="112" x="498" y="70"></rect><text fill="#fff" font-family="Fraunces" font-size="15" font-weight="700" text-anchor="middle" x="554" y="92">5</text><text fill="#fff" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="554" y="110">Mehr gute</text><text fill="#fff" font-family="Inter" font-size="12" font-weight="700" text-anchor="middle" x="554" y="125">Jahre</text><circle cx="566" cy="40" fill="#F5C044" r="22"></circle><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="596.0" x2="604.0" y1="40.0" y2="40.0"></line><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="587.2" x2="592.9" y1="61.2" y2="66.9"></line><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="566.0" x2="566.0" y1="70.0" y2="78.0"></line><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="544.8" x2="539.1" y1="61.2" y2="66.9"></line><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="536.0" x2="528.0" y1="40.0" y2="40.0"></line><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="544.8" x2="539.1" y1="18.8" y2="13.1"></line><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="566.0" x2="566.0" y1="10.0" y2="2.0"></line><line stroke="#F5C044" stroke-linecap="round" stroke-width="4" x1="587.2" x2="592.9" y1="18.8" y2="13.1"></line><path d="M60 212 C 170 160, 320 120, 470 72" fill="none" stroke="#EE6F4F" stroke-dasharray="2 9" stroke-linecap="round" stroke-width="4"></path><path d="M460 64 L477 70 L466 84" fill="none" stroke="#EE6F4F" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"></path></svg>
-<div class="hp-steps"><div><b>Ein kleiner Schritt</b><span>10 Minuten gehen, ein Apfel statt Kuchen</span></div><div><b>Bessere Stimmung</b><span>Bewegung und gutes Essen heben die Laune</span></div><div><b>Mehr Energie</b><span>Sie schlafen besser und fühlen sich wacher</span></div><div><b>Der nächste Schritt</b><span>fällt leichter, weil er sich gut anfühlt</span></div><div><b>Mehr gute Jahre</b><span>gesündere Werte, mehr Zeit für das, was zählt</span></div></div>
-</div>
-<div class="hp-facts">
-<div class="card"><div class="hp-n">−18 %</div><b>Zufriedene leben länger</b><p>Wer zufrieden und zuversichtlich ist, hat ein um 18 % geringeres Sterberisiko. Das zeigen 35 Langzeitstudien mit anfangs gesunden Menschen.</p><span>[15]</span></div>
-<div class="card"><div class="hp-n">+7 Jahre</div><b>Mehr gute Jahre</b><p>Zwischen 50 und 75 verbringen Normalgewichtige rund 7 Jahre mehr bei guter Gesundheit als Menschen mit starkem Übergewicht (BMI ab 35).</p><span>über 70.000 Menschen [16]</span></div>
-<div class="card"><div class="hp-n" style="color:var(--leaf);font-size:13.5pt">Bewegung</div><b>hebt die Stimmung</b><p>Bewegung lindert Niedergeschlagenheit, Angst und Stress deutlich. Jede Form zählt, auch Spazierengehen.</p><span>97 Übersichtsarbeiten [17]</span></div>
-<div class="card"><div class="hp-n" style="color:var(--coral);font-size:13.5pt">Obst &amp; Gemüse</div><b>machen zufriedener</b><p>Wer deutlich mehr davon isst, ist nach zwei Jahren so viel zufriedener wie nach dem Schritt von Arbeitslosigkeit in Arbeit.</p><span>[18]</span></div>
-</div>
-<div class="band" style="margin-top:5mm;display:grid;grid-template-columns:14mm 1fr;gap:5mm;align-items:center;padding:5mm 7mm">
-<div style="font-size:26pt;line-height:1">✍️</div>
-<div><h3 style="font-size:12.5pt;margin-bottom:1mm">Heute Abend: drei gute Dinge</h3><p style="margin:0;color:#E7F1E5;font-size:8.8pt;line-height:1.45">Schreiben Sie vor dem Schlafengehen drei Dinge auf, die heute gut waren, und warum.<br/>Wer das eine Woche lang tat, war in einer Studie noch ein halbes Jahr später glücklicher<sup class="ref">[19]</sup>.</p></div>
-</div>
-<p class="small" style="margin:3mm 0 0">Die Studien zeigen Zusammenhänge in großen Gruppen, keine Garantie für den Einzelnen. Alle Quellen finden Sie im Verzeichnis auf Seite 17.</p>
-</div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>11</span></div>
-</section><section aria-label="Seite 12" class="page" id="p12" style="background:var(--sand)"><span class="heft-anker" id="gemeinsam"></span>
-<div class="inner">
-<div class="kicker">Gemeinsam geht es leichter</div>
-<h2>Nehmen Sie jemanden mit.<br/><em>Glück wächst, wenn man es teilt.</em></h2>
-<p class="lead" style="margin-bottom:5mm">Wer sich um andere kümmert, tut auch sich selbst gut.<br/>Und wer nicht allein losgeht, bleibt viel leichter dran.</p>
-<div class="tg-facts">
-<div class="card">
-<b class="tg-t">Mit Freunden halten Sie durch</b>
-<div class="tg-bar"><span>Allein</span><s><i style="width:24%;background:#B8B3A6"></i></s><em>24 %</em></div>
-<div class="tg-bar"><span>Mit Freunden</span><s><i style="width:66%;background:var(--leaf)"></i></s><em>66 %</em></div>
-<p>So viele hielten ihr neues Gewicht noch ein halbes Jahr nach dem Kurs. Wer mit Freunden kam, blieb auch fast immer bis zum Ende dabei (95 statt 76 %).</p>
-<span class="src">166 Teilnehmende [20]</span>
-</div>
-<div class="card">
-<b class="tg-t">Begleitung senkt den Zucker</b>
-<div class="tg-big">−0,57</div><div class="tg-unit">Prozentpunkte HbA1c</div>
-<p>So stark sank der Langzeitzucker im Mittel, wenn Menschen mit Typ-2-Diabetes von anderen Betroffenen begleitet wurden.</p>
-<span class="src">13 Studien, 2.352 Menschen [21]</span>
-</div>
-<div class="card">
-<b class="tg-t">Helfen hält gesund</b>
-<div class="tg-big">−24 %</div><div class="tg-unit">Sterberisiko</div>
-<p>Ältere Menschen, die sich ehrenamtlich engagieren, leben länger, auch wenn man Gesundheit und Einkommen berücksichtigt.</p>
-<span class="src">Zusammenhang aus Langzeitstudien [22]</span>
-</div>
-</div>
-<div style="margin-top:5mm;display:grid;grid-template-columns:1fr 64mm;gap:4mm;height:54mm">
-<div style="border-radius:5mm;overflow:hidden"><img decoding="async" loading="lazy" src="bilder/x_wandern_ki.webp" style="width:100%;height:100%;object-fit:cover;object-position:50% 22%;display:block"/></div>
-<div class="card" style="background:var(--mint);padding:4.5mm 5mm;display:flex;flex-direction:column;justify-content:center">
-<h3 style="font-size:13pt;margin-bottom:1mm">Ich nehme mit:</h3>
-<div style="border-bottom:0.3mm solid var(--leaf);height:8mm"></div>
-<div style="border-bottom:0.3mm solid var(--leaf);height:8mm"></div>
-<p style="margin:2.5mm 0 0;font-size:8.2pt">Zwei Namen genügen für den Anfang.<br/>Auf der nächsten Seite wird daraus Ihre Gesundheitskette.</p>
-</div>
-</div>
-<div class="band" style="margin-top:5mm;display:grid;grid-template-columns:1fr 30mm;gap:6mm;align-items:center;padding:5mm 7mm">
-<div><h3 style="font-size:13pt;margin-bottom:1mm">Teilen Sie diese Broschüre</h3><p style="margin:0;color:#E7F1E5;font-size:8.8pt;line-height:1.45">Schicken Sie den Link an jemanden, dem Sie Gutes wünschen.<br/>Dort gibt es diese Broschüre und den Gesundheitsrechner, beides kostenfrei.</p><p style="margin:2mm 0 0;color:var(--lime);font-size:8.2pt">tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner</p></div>
-<div class="qr" style="padding:2mm"><img decoding="async" loading="lazy" src="bilder/qr.svg" style="width:24mm;height:24mm;display:block"/></div>
-</div>
-<div class="card" style="margin-top:4mm;background:#fff;display:grid;grid-template-columns:1fr 1fr;gap:7mm;padding:5mm 7mm">
-<div><h3 style="font-size:13pt;margin-bottom:1mm">Mein Warum</h3><p style="margin:0;color:var(--ink);font-size:8.8pt;line-height:1.45">Wofür möchten Sie Ihre gewonnenen gesunden Jahre nutzen?<br/>Schreiben Sie es auf und hängen Sie es an den Kühlschrank.</p><p style="margin:2mm 0 0;color:var(--leaf);font-size:8.2pt">Zum Beispiel: mit den Enkeln wandern · noch einmal ans Meer · im Garten werkeln · tanzen gehen</p></div>
-<div class="hp-lines hp-dark"><i></i><i></i><i></i></div>
-</div>
-</div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>12</span></div>
-</section><section aria-label="Seite 13" class="page" id="p13"><span class="heft-anker" id="gesundheitskette"></span>
-<div class="inner">
-<div class="kicker">Die Gesundheitskette</div>
-<h2>Einer fängt an.<br/><em>Alle gewinnen.</em></h2>
-<p class="lead" style="margin-bottom:4mm">Gesunde Gewohnheiten stecken an, genau wie Lachen.<br/>Wenn jede und jeder zwei Menschen mitnimmt, wird aus einem kleinen Anfang eine Bewegung.</p>
-<div class="card" style="padding:5mm 6mm 4mm;display:grid;grid-template-columns:1fr 44mm;gap:5mm;align-items:center">
-<div><svg style="width:100%;height:40mm;display:block" viewbox="0 0 620 190"><line stroke="#CFC6B4" stroke-width="2" x1="310.0" x2="155.0" y1="20" y2="60"></line><line stroke="#CFC6B4" stroke-width="2" x1="310.0" x2="465.0" y1="20" y2="60"></line><line stroke="#CFC6B4" stroke-width="2" x1="155.0" x2="77.5" y1="60" y2="100"></line><line stroke="#CFC6B4" stroke-width="2" x1="155.0" x2="232.5" y1="60" y2="100"></line><line stroke="#CFC6B4" stroke-width="2" x1="465.0" x2="387.5" y1="60" y2="100"></line><line stroke="#CFC6B4" stroke-width="2" x1="465.0" x2="542.5" y1="60" y2="100"></line><line stroke="#CFC6B4" stroke-width="2" x1="77.5" x2="38.8" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="77.5" x2="116.2" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="232.5" x2="193.8" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="232.5" x2="271.2" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="387.5" x2="348.8" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="387.5" x2="426.2" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="542.5" x2="503.8" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="542.5" x2="581.2" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="38.8" x2="19.4" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="38.8" x2="58.1" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="116.2" x2="96.9" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="116.2" x2="135.6" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="193.8" x2="174.4" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="193.8" x2="213.1" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="271.2" x2="251.9" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="271.2" x2="290.6" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="348.8" x2="329.4" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="348.8" x2="368.1" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="426.2" x2="406.9" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="426.2" x2="445.6" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="503.8" x2="484.4" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="503.8" x2="523.1" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="581.2" x2="561.9" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="581.2" x2="600.6" y1="140" y2="180"></line><circle cx="310.0" cy="20" fill="#EE6F4F" r="14" stroke="#fff" stroke-width="2"></circle><circle cx="155.0" cy="60" fill="#F5C044" r="12" stroke="#fff" stroke-width="2"></circle><circle cx="465.0" cy="60" fill="#F5C044" r="12" stroke="#fff" stroke-width="2"></circle><circle cx="77.5" cy="100" fill="#B9D96B" r="10" stroke="#fff" stroke-width="2"></circle><circle cx="232.5" cy="100" fill="#B9D96B" r="10" stroke="#fff" stroke-width="2"></circle><circle cx="387.5" cy="100" fill="#B9D96B" r="10" stroke="#fff" stroke-width="2"></circle><circle cx="542.5" cy="100" fill="#B9D96B" r="10" stroke="#fff" stroke-width="2"></circle><circle cx="38.8" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="116.2" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="193.8" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="271.2" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="348.8" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="426.2" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="503.8" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="581.2" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="19.4" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="58.1" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="96.9" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="135.6" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="174.4" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="213.1" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="251.9" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="290.6" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="329.4" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="368.1" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="406.9" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="445.6" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="484.4" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="523.1" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="561.9" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="600.6" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><text fill="#17402F" font-family="Inter" font-size="12" font-weight="700" x="332.0" y="25">Sie</text></svg></div>
-<div class="ch-count">
-<div><b>3</b><span>Menschen nach der 1. Runde</span></div>
-<div><b>31</b><span>nach 5 Runden</span></div>
-<div><b>über 2.000</b><span>nach 10 Runden</span></div><div style="font-size:7.2pt;color:var(--leaf);line-height:1.35">Auch wenn nur jede zweite Einladung klappt, wächst der Schneeball.</div>
-</div>
-</div>
-<div class="ch-ev">
-<div class="card"><b>Gewohnheiten breiten sich aus</b><p>Hört ein Freund mit dem Rauchen auf, sinkt die eigene Chance zu rauchen um 36 %, beim Ehepartner sogar um 67 %. Gesundes Verhalten wandert durch Freundeskreise.</p><span>12.067 Menschen über 32 Jahre [23]</span></div>
-<div class="card"><b>Gehgruppen wirken</b><p>Gemeinsames Gehen senkte in 42 Studien Blutdruck, Gewicht und Niedergeschlagenheit. Und drei von vier Teilnehmenden blieben dabei.</p><span>1.843 Teilnehmende [24]</span></div>
-</div>
-<h3 style="margin-top:4mm">Vier Formen für Ihre Kette</h3>
-<div class="tg-ideas">
-<div><span>🚶</span><b>Gehtreff</b>Zweimal pro Woche 30 Minuten, gern als Mittagsrunde. Beim dritten Mal bringt jede Person jemanden mit.</div>
-<div><span>🥗</span><b>Kochrunde</b>Alle zwei Wochen reihum ein Rezept aus diesem Heft. Wer Gast war, lädt beim nächsten Mal ein.</div>
-<div><span>🤝</span><b>Bewegungspate</b>Sie begleiten einen Menschen vier Wochen lang. Danach begleitet er oder sie selbst jemanden.</div>
-<div><span>🏃</span><b>Bestehende Treffs</b>Lauftreff, Sportverein, Seniorensport oder Kurs der Krankenkasse: einfach zu zweit hingehen.</div>
-</div>
-<div class="ch-card">
-<div class="ch-cut">✂ Zum Ausschneiden und Verschenken</div>
-<div class="ch-in">
-<div><div class="ch-t">Ich lade dich ein!</div>
-<div class="ch-l"><span>Wozu:</span><i></i></div>
-<div class="ch-l"><span>Wann:</span><i></i></div>
-<div class="ch-l"><span>Treffpunkt:</span><i></i></div>
-<div class="ch-f">Gemeinsam gehen, kochen, gesund werden. Und wenn es dir gefällt: Nimm selbst zwei Menschen mit.</div></div>
-<div style="text-align:center"><img decoding="async" loading="lazy" src="bilder/qr.svg" style="width:22mm;height:22mm;display:block;margin:0 auto"/><div style="font-size:6.4pt;color:var(--muted);margin-top:1mm">Broschüre und Gesundheitsrechner</div></div>
-</div>
-</div>
-</div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>13</span></div>
-</section><section aria-label="Seite 14" class="page" id="p14"><span class="heft-anker" id="rezepte"></span>
-<div class="inner">
-<div class="kicker">Ein Tag voller Genuss</div>
-<h2>So schmeckt<br/><em>gesund.</em></h2>
-<p class="lead" style="margin-bottom:3mm">Drei einfache Gerichte für einen ganzen Tag, alltagstauglich, sättigend und ohne Spezialzutaten. Mengen für eine Person.</p>
-<div class="recipe" style="margin-bottom:3mm">
-<div class="pic"><img decoding="async" loading="lazy" src="bilder/r_f7.webp" style="object-position:50% 50%"/></div>
-<div class="txt"><div class="meta">Frühstück · 5 Minuten</div><h3>Skyr-Bowl mit Beeren und Walnüssen</h3>
-<p>Skyr in eine Schale geben, Haferflocken und Beeren darauf verteilen, mit gehackten Walnüssen und etwas Zimt bestreuen.</p>
-<div class="ing">200 g Skyr oder Magerquark · 30 g Haferflocken · 100 g Beeren (auch TK) · 10 g Walnüsse · Zimt</div></div>
-</div>
-<div class="recipe" style="margin-bottom:3mm">
-<div class="pic"><img decoding="async" loading="lazy" src="bilder/r_a4.webp" style="object-position:50% 50%"/></div>
-<div class="txt"><div class="meta">Mittagessen · 20 Minuten</div><h3>Rote-Linsen-Gemüse-Pfanne mit Feta</h3>
-<p>Zwiebel und Gemüse in Olivenöl anbraten, gespülte Linsen und Tomaten zugeben, 12 Minuten köcheln lassen. Mit Kreuzkümmel, Zitrone und Feta abschmecken.</p>
-<div class="ing">60 g rote Linsen · 250 g Gemüse (Paprika, Zucchini, Karotte) · ½ Dose Tomaten · 1 Zwiebel · 30 g Feta · 1 TL Olivenöl</div></div>
-</div>
-<div class="recipe" style="margin-bottom:3mm">
-<div class="pic"><img decoding="async" loading="lazy" src="bilder/r_m2.webp" style="object-position:20% 75%"/></div>
-<div class="txt"><div class="meta">Abendessen · 30 Minuten</div><h3>Ofengemüse mit Kichererbsen und Joghurt-Dip</h3>
-<p>Gemüse und Kichererbsen mit Öl und Paprikapulver mischen, bei 200 °C etwa 25 Minuten backen. Joghurt mit Knoblauch, Kräutern und Salz verrühren.</p>
-<div class="ing">300 g Gemüse (Brokkoli, Möhre, Paprika) · 120 g Kichererbsen (Dose) · 1 TL Rapsöl · 150 g Naturjoghurt · Kräuter</div></div>
-</div>
-<div class="band" style="padding:6mm 8mm;display:flex;gap:6mm;align-items:center">
-<img decoding="async" loading="lazy" src="bilder/aepfel.webp" style="width:18mm;height:18mm;border-radius:50%;object-fit:cover;flex:none;border:0.8mm solid #fff"/>
-<div><h3 style="margin-bottom:1mm">Kleine Snacks, wenn der Hunger kommt</h3><p style="margin:0;color:#E7F1E5;font-size:9.5pt">Ein Apfel mit einem Teelöffel Mandelmus · Gemüsesticks mit Hummus · eine kleine Handvoll Nüsse · ein Naturjoghurt.</p></div>
-</div>
-<div class="grid2" style="margin-top:5mm">
-<div class="card"><div class="kicker" style="margin-bottom:1mm">Tipp aus der Forschung</div><h3 style="font-size:12pt">Die Reihenfolge macht's</h3><p style="font-size:9pt;margin:0">Erst Gemüse und Eiweiß, dann Brot, Reis oder Kartoffeln: So steigt der Blutzucker nach dem Essen sanfter an.</p></div>
-<div class="card"><div class="kicker" style="margin-bottom:1mm">Clever vorbereitet</div><h3 style="font-size:12pt">Einmal kochen, zweimal essen</h3><p style="font-size:9pt;margin:0">Linsenpfanne und Ofengemüse schmecken auch am nächsten Tag, ideal für die Mittagspause.</p></div>
-</div>
-</div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>14</span></div>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="" style="background:var(--coral)"></i><i class="" style="background:#3E7CB1"></i><i class="" style="background:var(--leaf)"></i><i class="on" style="background:var(--sun)"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:var(--sun)">Kapitel 4 · Dranbleiben</span></span><span>14</span></div>
 </section><section aria-label="Seite 15" class="page" id="p15"><span class="heft-anker" id="fortschritt"></span>
 <div class="inner">
 <div class="kicker">Fortschritt sichtbar machen</div>
@@ -682,7 +674,7 @@
 <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 </table>
 </div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>15</span></div>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="" style="background:var(--coral)"></i><i class="" style="background:#3E7CB1"></i><i class="" style="background:var(--leaf)"></i><i class="on" style="background:var(--sun)"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:var(--sun)">Kapitel 4 · Dranbleiben</span></span><span>15</span></div>
 </section><section aria-label="Seite 16" class="page" id="p16" style="background:var(--sand)"><span class="heft-anker" id="tafel"></span>
 <div class="inner">
 <div class="kicker">Bauch und Langzeitzucker zusammen</div>
@@ -715,18 +707,97 @@
 <div class="qr" style="padding:2mm"><img decoding="async" loading="lazy" src="bilder/qr.svg" style="width:24mm;height:24mm;display:block"/></div>
 </div>
 </div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>16</span></div>
-</section><section aria-label="Seite 17" class="page" id="p17"><span class="heft-anker" id="quellen"></span>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="" style="background:var(--coral)"></i><i class="" style="background:#3E7CB1"></i><i class="" style="background:var(--leaf)"></i><i class="on" style="background:var(--sun)"></i><i class="" style="background:#E3DACB"></i><span style="margin-left:1.5mm;color:var(--sun)">Kapitel 4 · Dranbleiben</span></span><span>16</span></div>
+</section><section aria-label="Seite 17" class="page" id="p17" style="background:var(--sand)"><span class="heft-anker" id="gemeinsam"></span>
+<div class="inner">
+<div class="kicker">Gemeinsam geht es leichter</div>
+<h2>Nehmen Sie jemanden mit.<br/><em>Glück wächst, wenn man es teilt.</em></h2>
+<p class="lead" style="margin-bottom:5mm">Wer sich um andere kümmert, tut auch sich selbst gut.<br/>Und wer nicht allein losgeht, bleibt viel leichter dran.</p>
+<div class="tg-facts">
+<div class="card">
+<b class="tg-t">Mit Freunden halten Sie durch</b>
+<div class="tg-bar"><span>Allein</span><s><i style="width:24%;background:#B8B3A6"></i></s><em>24 %</em></div>
+<div class="tg-bar"><span>Mit Freunden</span><s><i style="width:66%;background:var(--leaf)"></i></s><em>66 %</em></div>
+<p>So viele hielten ihr neues Gewicht noch ein halbes Jahr nach dem Kurs. Wer mit Freunden kam, blieb auch fast immer bis zum Ende dabei (95 statt 76 %).</p>
+<span class="src">166 Teilnehmende [20]</span>
+</div>
+<div class="card">
+<b class="tg-t">Begleitung senkt den Zucker</b>
+<div class="tg-big">−0,57</div><div class="tg-unit">Prozentpunkte HbA1c</div>
+<p>So stark sank der Langzeitzucker im Mittel, wenn Menschen mit Typ-2-Diabetes von anderen Betroffenen begleitet wurden.</p>
+<span class="src">13 Studien, 2.352 Menschen [21]</span>
+</div>
+<div class="card">
+<b class="tg-t">Helfen hält gesund</b>
+<div class="tg-big">−24 %</div><div class="tg-unit">Sterberisiko</div>
+<p>Ältere Menschen, die sich ehrenamtlich engagieren, leben länger, auch wenn man Gesundheit und Einkommen berücksichtigt.</p>
+<span class="src">Zusammenhang aus Langzeitstudien [22]</span>
+</div>
+</div>
+<div style="margin-top:5mm;display:grid;grid-template-columns:1fr 64mm;gap:4mm;height:54mm">
+<div style="border-radius:5mm;overflow:hidden"><img decoding="async" loading="lazy" src="bilder/x_wandern_ki.webp" style="width:100%;height:100%;object-fit:cover;object-position:50% 22%;display:block"/></div>
+<div class="card" style="background:var(--mint);padding:4.5mm 5mm;display:flex;flex-direction:column;justify-content:center">
+<h3 style="font-size:13pt;margin-bottom:1mm">Ich nehme mit:</h3>
+<div style="border-bottom:0.3mm solid var(--leaf);height:8mm"></div>
+<div style="border-bottom:0.3mm solid var(--leaf);height:8mm"></div>
+<p style="margin:2.5mm 0 0;font-size:8.2pt">Zwei Namen genügen für den Anfang.<br/>Auf der nächsten Seite wird daraus Ihre Gesundheitskette.</p>
+</div>
+</div>
+<div class="band" style="margin-top:5mm;display:grid;grid-template-columns:1fr 30mm;gap:6mm;align-items:center;padding:5mm 7mm">
+<div><h3 style="font-size:13pt;margin-bottom:1mm">Teilen Sie diese Broschüre</h3><p style="margin:0;color:#E7F1E5;font-size:8.8pt;line-height:1.45">Schicken Sie den Link an jemanden, dem Sie Gutes wünschen.<br/>Dort gibt es diese Broschüre und den Gesundheitsrechner, beides kostenfrei.</p><p style="margin:2mm 0 0;color:var(--lime);font-size:8.2pt">tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner</p></div>
+<div class="qr" style="padding:2mm"><img decoding="async" loading="lazy" src="bilder/qr.svg" style="width:24mm;height:24mm;display:block"/></div>
+</div>
+<div class="step" style="--c:#4FA987;margin-top:4mm"><b>Ihr kleiner Schritt</b><p>Rufen Sie heute eine Person an und verabreden Sie sich für diese Woche zu einem Spaziergang.<br/>Ihr Warum von Seite 2 ist ein guter Grund dafür.</p></div>
+</div>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="" style="background:var(--coral)"></i><i class="" style="background:#3E7CB1"></i><i class="" style="background:var(--leaf)"></i><i class="" style="background:var(--sun)"></i><i class="on" style="background:#4FA987"></i><span style="margin-left:1.5mm;color:#4FA987">Kapitel 5 · Gemeinsam</span></span><span>17</span></div>
+</section><section aria-label="Seite 18" class="page" id="p18"><span class="heft-anker" id="gesundheitskette"></span>
+<div class="inner">
+<div class="kicker">Die Gesundheitskette</div>
+<h2>Einer fängt an.<br/><em>Alle gewinnen.</em></h2>
+<p class="lead" style="margin-bottom:4mm">Gesunde Gewohnheiten stecken an, genau wie Lachen.<br/>Wenn jede und jeder zwei Menschen mitnimmt, wird aus einem kleinen Anfang eine Bewegung.</p>
+<div class="card" style="padding:5mm 6mm 4mm;display:grid;grid-template-columns:1fr 44mm;gap:5mm;align-items:center">
+<div><svg style="width:100%;height:40mm;display:block" viewbox="0 0 620 190"><line stroke="#CFC6B4" stroke-width="2" x1="310.0" x2="155.0" y1="20" y2="60"></line><line stroke="#CFC6B4" stroke-width="2" x1="310.0" x2="465.0" y1="20" y2="60"></line><line stroke="#CFC6B4" stroke-width="2" x1="155.0" x2="77.5" y1="60" y2="100"></line><line stroke="#CFC6B4" stroke-width="2" x1="155.0" x2="232.5" y1="60" y2="100"></line><line stroke="#CFC6B4" stroke-width="2" x1="465.0" x2="387.5" y1="60" y2="100"></line><line stroke="#CFC6B4" stroke-width="2" x1="465.0" x2="542.5" y1="60" y2="100"></line><line stroke="#CFC6B4" stroke-width="2" x1="77.5" x2="38.8" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="77.5" x2="116.2" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="232.5" x2="193.8" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="232.5" x2="271.2" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="387.5" x2="348.8" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="387.5" x2="426.2" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="542.5" x2="503.8" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="542.5" x2="581.2" y1="100" y2="140"></line><line stroke="#CFC6B4" stroke-width="2" x1="38.8" x2="19.4" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="38.8" x2="58.1" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="116.2" x2="96.9" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="116.2" x2="135.6" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="193.8" x2="174.4" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="193.8" x2="213.1" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="271.2" x2="251.9" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="271.2" x2="290.6" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="348.8" x2="329.4" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="348.8" x2="368.1" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="426.2" x2="406.9" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="426.2" x2="445.6" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="503.8" x2="484.4" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="503.8" x2="523.1" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="581.2" x2="561.9" y1="140" y2="180"></line><line stroke="#CFC6B4" stroke-width="2" x1="581.2" x2="600.6" y1="140" y2="180"></line><circle cx="310.0" cy="20" fill="#EE6F4F" r="14" stroke="#fff" stroke-width="2"></circle><circle cx="155.0" cy="60" fill="#F5C044" r="12" stroke="#fff" stroke-width="2"></circle><circle cx="465.0" cy="60" fill="#F5C044" r="12" stroke="#fff" stroke-width="2"></circle><circle cx="77.5" cy="100" fill="#B9D96B" r="10" stroke="#fff" stroke-width="2"></circle><circle cx="232.5" cy="100" fill="#B9D96B" r="10" stroke="#fff" stroke-width="2"></circle><circle cx="387.5" cy="100" fill="#B9D96B" r="10" stroke="#fff" stroke-width="2"></circle><circle cx="542.5" cy="100" fill="#B9D96B" r="10" stroke="#fff" stroke-width="2"></circle><circle cx="38.8" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="116.2" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="193.8" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="271.2" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="348.8" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="426.2" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="503.8" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="581.2" cy="140" fill="#5BAE78" r="8.5" stroke="#fff" stroke-width="2"></circle><circle cx="19.4" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="58.1" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="96.9" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="135.6" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="174.4" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="213.1" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="251.9" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="290.6" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="329.4" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="368.1" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="406.9" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="445.6" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="484.4" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="523.1" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="561.9" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><circle cx="600.6" cy="180" fill="#2F7D52" r="7" stroke="#fff" stroke-width="2"></circle><text fill="#17402F" font-family="Inter" font-size="12" font-weight="700" x="332.0" y="25">Sie</text></svg></div>
+<div class="ch-count">
+<div><b>3</b><span>Menschen nach der 1. Runde</span></div>
+<div><b>31</b><span>nach 5 Runden</span></div>
+<div><b>über 2.000</b><span>nach 10 Runden</span></div><div style="font-size:7.2pt;color:var(--leaf);line-height:1.35">Auch wenn nur jede zweite Einladung klappt, wächst der Schneeball.</div>
+</div>
+</div>
+<div class="ch-ev">
+<div class="card"><b>Gewohnheiten breiten sich aus</b><p>Hört ein Freund mit dem Rauchen auf, sinkt die eigene Chance zu rauchen um 36 %, beim Ehepartner sogar um 67 %. Gesundes Verhalten wandert durch Freundeskreise.</p><span>12.067 Menschen über 32 Jahre [23]</span></div>
+<div class="card"><b>Gehgruppen wirken</b><p>Gemeinsames Gehen senkte in 42 Studien Blutdruck, Gewicht und Niedergeschlagenheit. Und drei von vier Teilnehmenden blieben dabei.</p><span>1.843 Teilnehmende [24]</span></div>
+</div>
+<h3 style="margin-top:4mm">Vier Formen für Ihre Kette</h3>
+<div class="tg-ideas">
+<div><span>🚶</span><b>Gehtreff</b>Zweimal pro Woche 30 Minuten, gern als Mittagsrunde. Beim dritten Mal bringt jede Person jemanden mit.</div>
+<div><span>🥗</span><b>Kochrunde</b>Alle zwei Wochen reihum ein Rezept aus diesem Heft. Wer Gast war, lädt beim nächsten Mal ein.</div>
+<div><span>🤝</span><b>Bewegungspate</b>Sie begleiten einen Menschen vier Wochen lang. Danach begleitet er oder sie selbst jemanden.</div>
+<div><span>🏃</span><b>Bestehende Treffs</b>Lauftreff, Sportverein, Seniorensport oder Kurs der Krankenkasse: einfach zu zweit hingehen.</div>
+</div>
+<div class="ch-card">
+<div class="ch-cut">✂ Zum Ausschneiden und Verschenken</div>
+<div class="ch-in">
+<div><div class="ch-t">Ich lade dich ein!</div>
+<div class="ch-l"><span>Wozu:</span><i></i></div>
+<div class="ch-l"><span>Wann:</span><i></i></div>
+<div class="ch-l"><span>Treffpunkt:</span><i></i></div>
+<div class="ch-f">Gemeinsam gehen, kochen, gesund werden. Und wenn es dir gefällt: Nimm selbst zwei Menschen mit.</div></div>
+<div style="text-align:center"><img decoding="async" loading="lazy" src="bilder/qr.svg" style="width:22mm;height:22mm;display:block;margin:0 auto"/><div style="font-size:6.4pt;color:var(--muted);margin-top:1mm">Broschüre und Gesundheitsrechner</div></div>
+</div>
+</div>
+</div>
+<div class="foot" style="align-items:center"><span><b>Kleine Schritte. Große Wirkung.</b></span><span class="chbar"><i class="" style="background:var(--coral)"></i><i class="" style="background:#3E7CB1"></i><i class="" style="background:var(--leaf)"></i><i class="" style="background:var(--sun)"></i><i class="on" style="background:#4FA987"></i><span style="margin-left:1.5mm;color:#4FA987">Kapitel 5 · Gemeinsam</span></span><span>18</span></div>
+</section><section aria-label="Seite 19" class="page" id="p19"><span class="heft-anker" id="quellen"></span>
 <div class="inner">
 <div class="kicker">Zum Nachlesen</div>
 <h2 style="font-size:24pt">Quellen<br/><em>und Bildnachweis</em></h2>
 <ol class="refs"><li>EASL-EASD-EASO Clinical Practice Guidelines on the management of metabolic dysfunction-associated steatotic liver disease (MASLD). J Hepatol 2024; 81:492–542.</li><li>Vilar-Gomez E u. a. Weight loss through lifestyle modification significantly reduces features of nonalcoholic steatohepatitis. Gastroenterology 2015; 149:367–378.</li><li>Lean MEJ u. a. Primary care-led weight management for remission of type 2 diabetes (DiRECT). Lancet 2018; 391:541–551.</li><li>Stratton IM u. a. Association of glycaemia with macrovascular and microvascular complications of type 2 diabetes (UKPDS 35). BMJ 2000; 321:405–412.</li><li>Holt SH u. a. A satiety index of common foods. Eur J Clin Nutr 1995; 49:675–690.</li><li>Mozaffarian D u. a. Changes in diet and lifestyle and long-term weight gain in women and men. N Engl J Med 2011; 364:2392–2404.</li><li>Bertoia ML u. a. Changes in intake of fruits and vegetables and weight change in United States men and women. PLoS Med 2015; 12:e1001878.</li><li>Smith JD u. a. Changes in intake of protein foods, carbohydrate amount and quality, and long-term weight change. Am J Clin Nutr 2015; 101:1216–1224.</li><li>Estruch R u. a. Effect of a high-fat Mediterranean diet on bodyweight and waist circumference (PREDIMED). Lancet Diabetes Endocrinol 2016; 4:666–676.</li><li>Kim SJ u. a. Effects of dietary pulse consumption on body weight: a systematic review and meta-analysis. Am J Clin Nutr 2016; 103:1213–1223.</li><li>Ding D u. a. Daily steps and health outcomes in adults: a systematic review and dose-response meta-analysis. Lancet Public Health 2025.</li><li>Paluch AE u. a. Daily steps and all-cause mortality: a meta-analysis of 15 international cohorts. Lancet Public Health 2022; 7:e219–e228.</li><li>Nationale VersorgungsLeitlinie Typ-2-Diabetes, Version 3.0, 2023.</li><li>Gesundheitsrechner „Mut zur Zukunft“, Rechenmodell und Studien: tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner (u. a. Jayedi u. a. BMJ 2020; Ashwell u. a. 2014; Ulrich u. a. BMJ Open 2016).</li><li>Chida Y, Steptoe A. Positive psychological well-being and mortality: a quantitative review of prospective observational studies. Psychosom Med 2008; 70:741–756.</li><li>Stenholm S u. a. Body mass index as a predictor of healthy and disease-free life expectancy between ages 50 and 75. Int J Obes 2017; 41:769–775.</li><li>Singh B u. a. Effectiveness of physical activity interventions for improving depression, anxiety and distress: an overview of systematic reviews. Br J Sports Med 2023; 57:1203–1209.</li><li>Mujcic R, Oswald AJ. Evolution of well-being and happiness after increases in consumption of fruit and vegetables. Am J Public Health 2016; 106:1504–1510.</li><li>Seligman MEP u. a. Positive psychology progress: empirical validation of interventions. Am Psychol 2005; 60:410–421.</li><li>Wing RR, Jeffery RW. Benefits of recruiting participants with friends and increasing social support for weight loss and maintenance. J Consult Clin Psychol 1999; 67:132–138.</li><li>Qi L u. a. Effectiveness of peer support for improving glycaemic control in patients with type 2 diabetes: a meta-analysis of randomized controlled trials. BMC Public Health 2015; 15:471.</li><li>Okun MA, Yeung EW, Brown S. Volunteering by older adults and risk of mortality: a meta-analysis. Psychol Aging 2013; 28:564–577.</li><li>Christakis NA, Fowler JH. The collective dynamics of smoking in a large social network. N Engl J Med 2008; 358:2249–2258.</li><li>Hanson S, Jones A. Is there evidence that walking groups have health benefits? A systematic review and meta-analysis. Br J Sports Med 2015; 49:710–715.</li><li>NICE (National Institute for Health and Care Excellence). Empfehlung zum Taille-zu-Größe-Verhältnis, Leitlinie zu Übergewicht, Aktualisierung 2022.</li></ol>
 <h3 style="font-size:11pt;margin-top:4mm">Bildnachweis</h3>
-<ul class="pics"><li><b>Titelbild:</b> KI-Bild (ChatGPT), Tomas Hecker, keine realen Personen</li><li><b>Teller (S. 4):</b> KI-Bild (ChatGPT), Tomas Hecker</li><li><b>Croissant:</b> Petr Kratochvil, CC0, Wikimedia Commons</li><li><b>Schokoriegel:</b> Evan-Amos, CC0, Wikimedia Commons</li><li><b>Toast:</b> unbekannt, Public domain, Wikimedia Commons</li><li><b>Linsen:</b> Rainer Zenz at German Wikipedia, Public domain, Wikimedia Commons</li><li><b>Äpfel:</b> Eunice Ameh, CC0, Wikimedia Commons</li><li><b>Haferbrei:</b> Renee Comet (Photographer), Public domain, Wikimedia Commons</li><li><b>Frühstück (Rezept):</b> Peter Hershey peterhershey, CC0, Wikimedia Commons</li><li><b>Mittagessen (Rezept):</b> Mx. Granger, CC0, Wikimedia Commons</li><li><b>Abendessen (Rezept):</b> Daderot, CC0, Wikimedia Commons</li><li><b>Pellkartoffeln:</b> Daderot, CC0, Wikimedia Commons</li><li><b>Bananen:</b> Wilfredor, CC0, Wikimedia Commons</li><li><b>Wandergruppe im Herbstwald (S. 12):</b> KI-Bild (ChatGPT), Tomas Hecker, keine realen Personen</li></ul>
+<ul class="pics"><li><b>Titelbild:</b> KI-Bild (ChatGPT), Tomas Hecker, keine realen Personen</li><li><b>Teller (S. 8):</b> KI-Bild (ChatGPT), Tomas Hecker</li><li><b>Radtour (S. 2):</b> KI-Bild (ChatGPT), Tomas Hecker, keine realen Personen</li><li><b>Croissant:</b> Petr Kratochvil, CC0, Wikimedia Commons</li><li><b>Schokoriegel:</b> Evan-Amos, CC0, Wikimedia Commons</li><li><b>Toast:</b> unbekannt, Public domain, Wikimedia Commons</li><li><b>Linsen:</b> Rainer Zenz at German Wikipedia, Public domain, Wikimedia Commons</li><li><b>Äpfel:</b> Eunice Ameh, CC0, Wikimedia Commons</li><li><b>Haferbrei:</b> Renee Comet (Photographer), Public domain, Wikimedia Commons</li><li><b>Frühstück (Rezept):</b> Peter Hershey peterhershey, CC0, Wikimedia Commons</li><li><b>Mittagessen (Rezept):</b> Mx. Granger, CC0, Wikimedia Commons</li><li><b>Abendessen (Rezept):</b> Daderot, CC0, Wikimedia Commons</li><li><b>Pellkartoffeln:</b> Daderot, CC0, Wikimedia Commons</li><li><b>Bananen:</b> Wilfredor, CC0, Wikimedia Commons</li><li><b>Wandergruppe im Herbstwald (S. 17):</b> KI-Bild (ChatGPT), Tomas Hecker, keine realen Personen</li></ul>
 <p class="small" style="margin-top:2mm">Rezeptfotos zeigen ähnliche Gerichte, nicht genau das Rezept. Alle Studien mit Erklärung und Link finden Sie auch im Gesundheitsrechner.</p>
 </div>
-<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>17</span></div>
-</section><section aria-label="Seite 18" class="page cover" id="p18" style="background:var(--forest)"><span class="heft-anker" id="unterstuetzung"></span>
+<div class="foot"><span><b>Kleine Schritte. Große Wirkung.</b></span><span>19</span></div>
+</section><section aria-label="Seite 20" class="page cover" id="p20" style="background:var(--forest)"><span class="heft-anker" id="unterstuetzung"></span>
 <div class="blob1" style="top:auto;bottom:-90mm;right:-50mm"></div>
 <div class="inner" style="position:relative">
 <div class="kicker" style="color:var(--sun)">Sie sind nicht allein</div>
@@ -759,7 +830,7 @@
 <div style="display:grid;grid-template-columns:30mm 1fr;gap:5mm;align-items:center">
 <div class="qr"><img decoding="async" loading="lazy" src="bilder/qr.svg" style="width:24mm;height:24mm;display:block"/></div>
 <div><b style="color:#fff;font-size:10pt">Alle Studien und Ihr persönlicher Gesundheitsrechner</b><br/><span style="color:#d6e8d6;font-size:8.5pt">tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner</span><br/>
-      Alle Quellen und Bildnachweise: Verzeichnis auf Seite 17.<br/>
+      Alle Quellen und Bildnachweise: Verzeichnis auf Seite 19.<br/>
 
       Diese Broschüre informiert und motiviert; sie ersetzt keine ärztliche Beratung. Ändern Sie Medikamente nie ohne Rücksprache. Stand: November 2026.</div></div>
 </div>

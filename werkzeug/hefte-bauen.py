@@ -39,10 +39,12 @@ DOCS = {
 }
 # Feste Sprungziele (unabhängig von Seitenzahlen): Seite, deren Titel so beginnt -> id
 ANKER = {
-    'ratgeber': [('Der Bauch-Index', 'bauch-index'), ('Was macht so satt wie 2 Bananen', 'bananen'),
+    'ratgeber': [('Gesund und glücklich', 'gluecklich'), ('So funktioniert der Ratgeber', 'legende'), ('Das Tellerprinzip', 'teller'), ('Gemeinsam kochen', 'gemeinsam'),
+                 ('Der Bauch-Index', 'bauch-index'), ('Was macht so satt wie 2 Bananen', 'bananen'),
                  ('Eine Woche nach dem Teller', 'rezepte'), ('Tauschliste', 'tauschliste'),
                  ('Woher die Angaben stammen', 'quellen'), ('Register', 'register'), ('Bildnachweis', 'bildnachweis')],
-    'broschuere': [('Die Teller-Regel', 'teller-regel'), ('Clever tauschen', 'tauschen'),
+    'broschuere': [('Bevor es losgeht', 'wuensche'), ('Kleines Quiz', 'quiz'), ('Die gute Nachricht', 'gute-nachricht'),
+                   ('Die Teller-Regel', 'teller-regel'), ('Clever tauschen', 'tauschen'),
                    ('Satt werden, ohne zu zählen', 'satt'), ('Der Bauch-Index', 'bauch-index'),
                    ('Der Index für den Alltag', 'einkaufszettel'), ('Bewegung', 'bewegung'),
                    ('Ihr Startplan', 'startplan'), ('Lebensfreude als Motor', 'gluecklich'),
@@ -170,7 +172,16 @@ def main():
         for a in soup.select('a.toc-row'):
             n = int(a['href'][2:]); name = a.find('span').get_text(' ', strip=True)
             toc.append((n, name, ''))
-        toc.insert(0, (1, 'Titel', '')); toc.insert(1, (2, 'Zum Start', '')); toc.insert(2, (3, 'Das Tellerprinzip', '')); toc.insert(3, (4, 'So funktioniert der Ratgeber', ''))
+        toc.append((1, 'Titel', ''))
+        for i, p in enumerate(pages, 1):
+            k = p.select_one('.kicker'); kt = k.get_text(' ', strip=True) if k else ''
+            if kt in ('Zum Start', 'So funktioniert der Ratgeber'): toc.append((i, kt, ''))
+        # Wegweiser im Heft: statt aufs PDF auf die Online-Fassung der Broschüre und den Rechner zeigen
+        basis = 'https://tomas-hecker.github.io/mut-zur-zukunft/gesundheitsrechner/'
+        for a in soup.find_all('a', href=True):
+            m = re.match(re.escape(basis) + r'broschuere-kleine-schritte-grosse-wirkung\.pdf#page=(\d+)$', a['href'])
+            if m: a['href'] = f'../broschuere/#p{m.group(1)}'
+            elif a['href'].startswith(basis) and '.pdf' not in a['href']: a['href'] = '../' + a['href'][len(basis):]
         toc = sorted(dict(((t[0], t[1]), t) for t in toc).values())
     # Externe Links in neuem Tab
     for a in soup.find_all('a', href=True):
