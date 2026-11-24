@@ -48,11 +48,11 @@ rep('if (r === "reform" && e.ev) t.push(["Kilometerabgabe für das E-Auto (ab 20
     '    else if (r === "reform" && e.auto) t.push(["Kilometerabgabe für den Verbrenner, Mehrbetrag über seiner Energiesteuer und Aufschlag von 4 ct je kWh (ab 2030, Übergang bis 2038)", -ka.v]);\n'
     '    if (r === "reform" && e.auto && (e.ev ? ka.gutEv : ka.gutV) > 0) t.push(["Gutschrift für den Arbeitsweg: dort nie teurer als heute", e.ev ? ka.gutEv : ka.gutV]);')
 # 4. Staatshaushalt wie die Kette (pfad_lauf.py: kern19 + Ertragspfad): Stufe und Ausweichen wie bei zwei Dritteln, Paket als Pfad
-pf = json.load(open('/mnt/project-files/rechenmodell-mikrosim/eauto-erstattung-2026-11-24/kette-ertragspfad-paket-ohne-lkw-stufe66-erstattung2030.json'))
+pf = json.load(open('/mnt/project-files/rechenmodell-mikrosim/verkehr-2026-11-24/kette-ertragspfad-paket-ohne-lkw-stufe66.json'))
 pf = {k: round(v, 3) for k, v in pf.items() if int(k) <= 2071}
 rep('function s4Zwei(k) { return A.S4Mikro > 0 && k <= A.Stufe4Jahre ? mikro("p9", k) * (A.Satz4 - 1.5) / 0.5 : 0; }',
     '''// Verkehrspaket 24.11.2026: der Staatshaushalt rechnet wie die Kette (kern19 + Ertragspfad): Stufe und Ausweichen wie bei zwei Dritteln,
-// die 66 % (netto mit weniger Ausweichen rund 3,5 Mrd. €) stecken zusammen mit Aufschlag (ohne Lkw über 3,5 t), Gutschrift für den Arbeitsweg und dem Ende der E-Auto-Erstattung nach 2030 (2031 +1,47, 2032 +0,73 Mrd. €, in die Tilgung) im Pfad VK_PFAD (Mrd. €, + = mehr Ertrag)
+// die 66 % (netto mit weniger Ausweichen rund 3,5 Mrd. €) stecken zusammen mit Aufschlag (ohne Lkw über 3,5 t) und Gutschrift für den Arbeitsweg im Pfad VK_PFAD (Mrd. €, + = mehr Ertrag)
 function s4Zwei(k) { return A.S4Mikro > 0 && k <= A.Stufe4Jahre ? mikro("p9", k) * ((A.Satz4Saldo ?? A.Satz4) - 1.5) / 0.5 : 0; }
 const VK_PFAD = ''' + json.dumps(pf, separators=(',', ':')) + ''';
 function verkehrJ(k) { if (!A.VkPaket) return 0; const j = A.Prognose.ReformStart - 1 + k; return VK_PFAD[j] ?? VK_PFAD[Math.min(2071, Math.max(2028, j))]; }''')
