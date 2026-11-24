@@ -31,6 +31,17 @@ while i < len(secs):
         chapters.append(dict(slug=slug, no=no, kicker=kicker, title=title,
                              lead=lead.decode_contents() if lead else '', body=body))
         i += 2; continue
+    if 'chapter' in cls and s.get('id') in ('anhaenge', 'woerterbuch', 'quellenverzeichnis'):
+        # Satz ab 22.11.2026: Einleitung zu den Anhängen, Wörterbuch und Quellen mit h2 statt h1, je eine eigene Seite
+        h2 = s.find('h2'); title = h2.get_text(' ', strip=True)
+        for r in s.find_all(class_='runner'): r.decompose()
+        sp = soup.new_tag('span', attrs={'id': h2.get('id')}) if h2.get('id') else None
+        if sp: h2.replace_with(sp)
+        else: h2.decompose()
+        slug, kicker = {'anhaenge': ('anhaenge', 'Anhänge'), 'woerterbuch': ('woerterbuch', 'Zum Nachschlagen'),
+                        'quellenverzeichnis': ('quellen', 'Anhang')}[s['id']]
+        chapters.append(dict(slug=slug, no='', kicker=kicker, title=title, lead='', body=s))
+        i += 1; continue
     if 'chapter' in cls and s.find('h1') is None:
         i += 1; continue   # eigenes Inhaltsverzeichnis (Version 23)
     if 'chapter' in cls:
@@ -71,6 +82,7 @@ for ch in chapters:
         anr = h.find(class_='anr')
         sg = h.find(class_='sorge')
         hid = anr.get_text(strip=True).lower() if anr else slugify(''.join(x.get_text(' ') if hasattr(x, 'get_text') else str(x) for x in h.contents if x is not sg) if sg else h.get_text(' ', strip=True))
+        if not anr and h.get('id') and h['id'] not in used: hid = h['id']   # ids aus dem Satz unverändert übernehmen
         base, k = hid, 2
         while hid in used: hid = f'{base}-{k}'; k += 1
         used.add(hid); h['id'] = hid
@@ -80,6 +92,10 @@ for ch in chapters:
             tt = ''.join(x.get_text(' ', strip=True) if hasattr(x, 'get_text') else str(x) for x in h.contents if x is not sg).strip() if sg else h.get_text(' ', strip=True)
             ch['heads'].append((hid, tt, anr.get_text(strip=True) if anr else ''))
 
+# Anhänge, die (noch) nicht in der Satzdatei stehen: Hinweisseiten im Zielordner (werkzeug/anhang-platzhalter.py) mit den Kürzeln anh-A1 …
+for _f in sorted(__import__('glob').glob(os.path.join(OUT, 'anhang-*.html'))):
+    for _k in re.findall(r' id="anh-([A-D][0-9]+)"', open(_f, encoding='utf-8').read()):
+        appendix_ids.setdefault(_k, os.path.basename(_f) + '#anh-' + _k)
 slugs = {c['slug'] for c in chapters}
 # Druckseiten (", S. 98") gibt es online nicht
 for ch in chapters:
@@ -217,6 +233,7 @@ def page(title, desc, body, cur='', extra_head=''):
 <footer><div class="wrap"><span>© 2026 Tomas Hecker · Mut zur Zukunft · Alle Angaben ohne Gewähr</span><nav aria-label="Rechtliches"><a href="Wir-koennen-uns-die-Zukunft-leisten.pdf" download>Buch als PDF</a><a href="../impressum.html#haftung">Haftungsausschluss</a><a href="../impressum.html">Impressum</a><a href="../datenschutz.html">Datenschutz</a></nav></div></footer>
 <script src="buch.js" defer></script>
 <script src="../satz.js" defer></script>
+<script src="../teilen.js" defer></script>
 </body>
 </html>
 '''
@@ -262,13 +279,30 @@ for c in chapters:
     subs = ''.join(f'<li><a href="{c["slug"]}.html#{i}">{f"<b>{a}</b> " if a else ""}{html.escape(t[len(a):].strip() if a else t)}</a></li>' for i, t, a in c['heads'])
     lis.append(f'''<li class="kap"><details{" open" if c["no"] in ("7", "9") else ""}><summary><a href="{c["slug"]}.html"><span class="no">{c["no"]}</span><span class="tt">{html.escape(c["title"])}</span></a></summary>{f'<ol class="sub">{subs}</ol>' if subs else ''}</details></li>''')
 uebersicht = f'''<div class="bhero big"><div class="bwrap"><div><p class="eyebrow">Das Buch online lesen</p><h1>Wir können uns die Zukunft leisten</h1><p class="blead">Wie die meisten mehr Geld behalten, der Staat schuldenfrei wird und Deutschland aufblüht. Das ganze Buch, Kapitel für Kapitel, mit allen Grafiken. Tippe auf ein Kapitel, um es zu lesen, oder auf den Pfeil, um seine Abschnitte zu sehen.</p>
-<div class="btns"><a class="btn" href="vorwort.html">Mit dem Vorwort beginnen</a><a class="btn ghost" href="Wir-koennen-uns-die-Zukunft-leisten.pdf" download>Als PDF herunterladen</a><a class="btn ghost" href="Wir-koennen-uns-die-Zukunft-leisten-Kurzfassung.pdf" download>Kurzheft, 20 Seiten</a></div></div></div></div>
+<div class="btns"><a class="btn" href="vorwort.html">Mit dem Vorwort beginnen</a><a class="btn ghost" href="Wir-koennen-uns-die-Zukunft-leisten.pdf" download>Buch als PDF</a><button type="button" class="btn ghost" data-teilen data-url="./" data-titel="Wir können uns die Zukunft leisten" data-text="Das Buch „Wir können uns die Zukunft leisten“, kostenlos online lesen:" aria-haspopup="menu" aria-expanded="false">Buch teilen</button><a class="btn ghost" href="../lesen/kurzheft.html">Kurzheft lesen</a><a class="btn ghost" href="../lesen/flyer.html">Flyer lesen</a><a class="btn ghost" href="../lesen/vortrag.html">Vortrag ansehen</a></div></div></div></div>
 <main class="wrap uebersicht">{SEARCHBOX}<h2>Inhalt</h2><ol class="ktoc">{''.join(lis)}</ol>
-<aside class="rechner"><div><strong>Selbst nachrechnen</strong><p>Was das Steuersystem aus Kapitel 7 für deinen Haushalt bedeutet, zeigt der Steuerrechner.</p></div><div class="rbtns"><a class="rbtn" href="../steuerrechner/">Zum Steuerrechner</a></div></aside></main>'''
+<aside class="rechner"><div><strong>Selbst nachrechnen</strong><p>Was das Steuersystem aus Kapitel 4 für deinen Haushalt bedeutet, zeigt der Steuerrechner.</p></div><div class="rbtns"><a class="rbtn" href="../steuerrechner/">Zum Steuerrechner</a></div></aside>
+<aside class="rechner"><div><strong>Vertiefungen</strong><p>Was im Buch nur kurz steht, findest du ausführlich auf eigenen Seiten, mit allen Beispielen, Studien und Rechnungen.</p></div><div class="rbtns"><a class="rbtn" href="../vertiefung/">Zu den Vertiefungen</a></div></aside></main>'''
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8').write(page('Das Buch online lesen · Wir können uns die Zukunft leisten', '„Wir können uns die Zukunft leisten“ von Tomas Hecker: das ganze Buch online lesen, mit Inhaltsverzeichnis, Suche und Verweisen zum Nachrechnen.', uebersicht))
 
 suche = f'''<main class="wrap uebersicht"><h1 class="sh">Im Buch suchen</h1>{SEARCHBOX}<p id="treffer-info" class="small"></p><ol id="treffer" class="treffer"></ol><p><a href="./">Zum Inhaltsverzeichnis</a></p></main>'''
 open(os.path.join(OUT, 'suche.html'), 'w', encoding='utf-8').write(page('Im Buch suchen · Wir können uns die Zukunft leisten', 'Volltextsuche im Buch „Wir können uns die Zukunft leisten“.', suche, extra_head='<script src="suche-index.js" defer></script>\n'))
+# ---------- Alte und feste Anker für Links von außen (werkzeug/buch-anker-v41.json), vor dem Sammeln der Buchstellen ----------
+_AP = os.environ.get('BUCH_ANKER', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'buch-anker-v41.json'))
+if os.path.exists(_AP):
+    _fehlt = []
+    for _nm, _m in json.load(open(_AP, encoding='utf-8')).items():
+        if _nm.startswith('_') or not os.path.exists(os.path.join(OUT, _nm)): continue
+        _p = os.path.join(OUT, _nm); _s = open(_p, encoding='utf-8').read()
+        _s = re.sub(r'<span class="fa" id="[^"]*"></span>', '', _s)
+        for _alt, _ziel in _m.items():
+            if f' id="{_alt}"' in _s: continue
+            _mm = re.search(r'(<h[234] id="%s"[^>]*>)' % re.escape(_ziel), _s)
+            if not _mm: _fehlt.append(f'{_nm}#{_alt} -> {_ziel}'); continue
+            _s = _s[:_mm.end(1)] + f'<span class="fa" id="{_alt}"></span>' + _s[_mm.end(1):]
+        open(_p, 'w', encoding='utf-8').write(_s)
+    if _fehlt: sys.exit('Anker ohne Überschrift: ' + ', '.join(_fehlt))
+
 # ---------- Feste Buchstellen: stelle.html#anh-C2, #kap-7 oder jede id aus der Satzdatei ----------
 import json as _json, glob as _glob
 stellen = {}
@@ -281,6 +315,10 @@ for f in sorted(_glob.glob(os.path.join(OUT, '*.html'))):
     if nm in ('index.html', 'suche.html', 'stelle.html'): continue
     for i in re.findall(r' id="([^"]+)"', open(f, encoding='utf-8').read()):
         if i not in ('top', 'seite', 'q', 'treffer', 'treffer-info') and i not in stellen: stellen[i] = f'{nm}#{i}'
+# alte Namen aus dem Register des Rechners (buch-anker-v41.json, "_stellen": alt -> neue id)
+if os.path.exists(_AP):
+    for _alt, _neu in json.load(open(_AP, encoding='utf-8')).get('_stellen', {}).items():
+        if _alt not in stellen and _neu in stellen: stellen[_alt] = stellen[_neu]
 stelle = ('<main class="wrap uebersicht"><h1 class="sh">Buchstelle</h1><p id="st">Die Buchstelle wird geöffnet …</p><p><a href="./">Zum Inhaltsverzeichnis</a></p></main>'
   '<script>(function(){var S=' + _json.dumps(stellen, ensure_ascii=False) + ';var k=decodeURIComponent((location.hash||"").slice(1));'
   'if(S[k]){location.replace(S[k]);}else{document.getElementById("st").textContent=k?"Diese Buchstelle gibt es nicht: "+k:"Keine Buchstelle angegeben.";}})();</script>')

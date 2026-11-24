@@ -1,5 +1,6 @@
 from PIL import Image, ImageDraw
-D='/mnt/project-files/rechenmodell-mikrosim/steuerlast/'
+import os
+D=os.environ.get('QUELLE','/mnt/project-files/rechenmodell-mikrosim/v0.3/steuerlast/')   # Buch Version 41: .../version-41/steuerlast/
 O='/home/user/mut-zur-zukunft/bilder/steuerlast/'
 plan={
  'steuerlast-feld-einkommen-vermoegen':[(8,100),(200,1440)],
@@ -10,6 +11,8 @@ plan={
  'vermoegen-sparen':[(8,100),(200,1240)],
 }
 for f,segs in plan.items():
+    if not os.path.exists(D+f+'.png'):
+        print(f,'fehlt in der Quelle, bleibt wie es ist'); continue
     im=Image.open(D+f+'.png').convert('RGB')
     if f=='steuerlast-nach-einkommen':
         ImageDraw.Draw(im).rectangle([1080,36,1680,120],fill=(255,255,255))
