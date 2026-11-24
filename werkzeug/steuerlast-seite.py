@@ -37,7 +37,7 @@ N = dict(
  qh=k(J['aufbau'][0]['sparquote_heute']), qr=k(J['aufbau'][0]['sparquote_reform']),
  sq=k(J['aufbau'][0]['sparquote_reform']), vm=k(J['aufbau'][0]['vermoegen_mittel'], 0), vp=k(J['vermoegen'][0]['quote_heute'] - J['vermoegen'][0]['quote_reform']),
 )
-S4 = '65 %' if V41 else '60 %'   # Verkehrspaket 24.11.2026: 65 % statt zwei Drittel
+S4 = '66 %' if V41 else '60 %'   # Verkehrspaket 24.11.2026: 66 % statt zwei Drittel
 if V41:
     # Zählung wie im Buch (werte-v41.json): Erwachsene und Menschen mit der Entlastung der Bildungsregel, Spanne aus der genaueren Rechnung
     W = json.load(open(B41 + 'werte-v41.json'))
