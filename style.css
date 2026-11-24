@@ -5,9 +5,9 @@
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:17px;line-height:1.6;margin:0}
 .wrap{max-width:1040px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left,0px))}
-h1,h2,h3{font-family:var(--font-display);line-height:1.2;text-wrap:balance;margin:0 0 .5em}
+h1,h2,h3{font-family:var(--font-display);line-height:1.2;text-wrap:balance;margin:0 0 .5em} h1,h2,h3,h4,h5,figcaption,caption{text-wrap:balance;hyphens:manual}
 h2{font-size:clamp(1.6rem,3.2vw,2.1rem)} h3{font-size:1.15rem}
-p{margin:0 0 1em} a{color:inherit;text-underline-offset:3px}
+p{margin:0 0 1em} p,li,dd,td{text-wrap:pretty;hyphens:manual} a{color:inherit;text-underline-offset:3px}
 .eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:.6em}
 .lead{color:var(--muted);font-size:1.1rem;max-width:62ch}
 header.top{background:var(--brand);color:var(--brand-fg)}
@@ -32,6 +32,7 @@ header.top nav a:hover,header.top nav a[aria-current]{border-color:var(--accent-
 .btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
 .btn{display:inline-block;padding:12px 20px;border-radius:999px;font-weight:700;text-decoration:none;background:var(--accent-fill);color:#12372a}
 .btn.ghost{background:transparent;color:var(--brand-fg);border:1.5px solid #6f9a86}
+button.btn{font:inherit;font-weight:700;line-height:inherit;cursor:pointer}
 section.block{padding:56px 0;border-bottom:1px solid var(--line)}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}

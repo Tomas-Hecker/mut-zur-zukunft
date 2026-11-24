@@ -1,0 +1,109 @@
+{
+ "_hinweis": "Feste und alte Anker für Links von außen (Rechner, Homepage, Rechenmodell), Buch Version 41 in einfacher Sprache. Datei -> alter Anker -> neue Überschrift (id). buch-bauen.py setzt sie als leeres <span class=\"fa\" id> in die Überschrift, bevor die Buchstellen gesammelt werden. Fehlt die Überschrift, bricht der Bau ab.",
+ "auf-einen-blick.html": {
+  "sorgen": "sechs-weitere-sorgen-kurz-beantwortet"
+ },
+ "kapitel-1.html": {
+  "lohn-heute": "von-100-bleiben-jonas-41",
+  "warum-es-ohne-reform-nicht-geht": "ohne-reform-steuert-der-staat-in-die-pleite",
+  "und-wenn-wir-nichts-tun": "ohne-reform-steuert-der-staat-in-die-pleite"
+ },
+ "kapitel-2.html": {
+  "arbeit": "wer-arbeitet-hat-mehr-im-portemonnaie",
+  "rente": "wer-in-rente-ist-behaelt-seine-rente"
+ },
+ "kapitel-4.html": {
+  "grundgedanke": "es-zaehlt-nicht-woher-dein-geld-kommt-sondern-was-du-damit-m",
+  "steuersatz": "die-ersten-1-200-im-monat-bleiben-frei",
+  "so-hoch-ist-die-steuer": "die-ersten-1-200-im-monat-bleiben-frei",
+  "erbe": "beim-erbe-wird-abgerechnet",
+  "der-staatsanteil-bleibt-im-betrieb-erben-als-treuhaender": "die-erben-verwalten-den-anteil-der-gemeinschaft-selbst",
+  "firmen": "was-im-betrieb-arbeitet-bleibt-ganz-frei",
+  "wer-zahlt-wie-viel": "wer-heute-wie-viel-zahlt-und-wer-kuenftig-mehr-zahlt",
+  "sparen": "sparen-kann-jeder-auch-mit-kleinem-lohn",
+  "gruendungszuschuss-von-50-auf-das-stammkapital": "gruenden-wird-leichter-der-staat-legt-die-haelfte-dazu",
+  "was-zaehlt-als-investiert-was-als-privat": "was-arbeitet-bleibt-frei"
+ },
+ "kapitel-5.html": {
+  "1-existenzminimum-in-der-bildung-lernen-darf-nicht-arm-mache": "baustein-1-wer-lernt-hat-mindestens-1-200-im-monat",
+  "buergerjob": "baustein-2-wer-arbeiten-kann-bekommt-arbeit",
+  "2-ein-recht-auf-arbeit-oder-bildung-der-buergerjob": "baustein-2-wer-arbeiten-kann-bekommt-arbeit",
+  "3-ein-berufscoach-fuer-alle": "baustein-3-ein-berufscoach-fuer-jeden",
+  "arbeit-im-rentenalter": "baustein-4-wer-im-alter-arbeitet-dem-wird-die-rente-nie-geku",
+  "4-arbeit-im-rentenalter-die-rente-wird-nie-gekuerzt": "baustein-4-wer-im-alter-arbeitet-dem-wird-die-rente-nie-geku",
+  "5-rente-und-pflege-aus-der-steuer-keine-beitraege-mehr-vom-l": "baustein-5-rente-und-pflege-aus-der-steuer-keine-beitraege-m",
+  "mehrwertsteuer": "baustein-6-grundbedarf-ohne-mehrwertsteuer-sonst-50",
+  "6-eine-neue-mehrwertsteuer-grundbedarf-frei-alles-andere-50": "baustein-6-grundbedarf-ohne-mehrwertsteuer-sonst-50",
+  "7-gesundheitsabgabe-und-gesundheitsbonus": "baustein-7-wer-gesund-lebt-bekommt-geld-zurueck",
+  "8-der-buergerfonds-alle-werden-miteigentuemer": "baustein-8-der-buergerfonds-macht-alle-zu-miteigentuemern",
+  "9-verwaltung-4-0-gesetze-die-eine-ki-ausfuehren-kann": "baustein-9-gesetze-so-klar-dass-eine-software-sie-ausfuehrt",
+  "10-grundschutz-aus-der-steuer-krankenkasse-arbeitslosengeld": "baustein-10-grundschutz-aus-der-steuer-bei-krankheit-arbeits",
+  "11-rente-folgt-der-lebenserwartung": "baustein-11-die-rente-folgt-der-lebenserwartung-mit-stufen-s",
+  "ein-besseres-elterngeld-vier-monate-fuer-jeden": "ein-besseres-elterngeld-vier-eigene-monate-fuer-jeden",
+  "co2": "klimaschutz-der-sich-fuer-alle-rechnet",
+  "schadstoffe-statt-arbeit-besteuern": "schadstoffe-besteuern-statt-arbeit",
+  "waermepumpe": "klimaschutz-der-sich-fuer-alle-rechnet",
+  "waermepumpe-mit-zinslosem-kredit-miete-mit-inflationsgrenze": "klimaschutz-der-sich-fuer-alle-rechnet",
+  "strom": "strom-aus-sonne-und-wind-guenstig-wenn-die-regeln-stimmen",
+  "mehr-wettbewerb-strom-teilen-preise-sehen": "strom-aus-sonne-und-wind-guenstig-wenn-die-regeln-stimmen"
+ },
+ "kapitel-6.html": {
+  "ergebnis": "die-rechnung-auf-einen-blick",
+  "haushalte": "was-sich-fuer-zehn-haushalte-aendert",
+  "was-sich-fuer-die-haushalte-aendert": "was-sich-fuer-zehn-haushalte-aendert",
+  "wer-gewinnt-wer-zahlt-mehr": "wer-weniger-hat-und-warum",
+  "leisten": "koennen-wir-uns-das-leisten",
+  "nichts-tun": "ohne-zukunftsplan-reicht-es-nicht",
+  "szenarien": "wie-viel-wachstum-ist-moeglich",
+  "drei-szenarien-fuer-die-naechsten-20-jahre": "wie-viel-wachstum-ist-moeglich",
+  "zukunftsplan": "der-zukunftsplan-so-sinken-die-schulden",
+  "belastbar": "haelt-die-rechnung",
+  "schuldenfrei-ist-erst-der-anfang-ertraege-statt-steuern": "der-ueberschuss-geht-an-alle-zurueck-ertraege-statt-steuern"
+ },
+ "kapitel-9.html": {
+  "wie-stark-waechst-die-produktivitaet-bis-2035": "bis-2035-kann-eine-arbeitsstunde-6-bis-15-mehr-schaffen"
+ },
+ "kapitel-10.html": {
+  "strom-zu-hause": "klimaschutz-zu-hause-spart-geld-auch-zur-miete"
+ },
+ "kapitel-11.html": {
+  "million": "die-erste-million-heute-kaum-zu-schaffen-im-vorschlag-schon"
+ },
+ "_stellen": {
+  "ann-HRFlErw": "ann-HRFlErst",
+  "ann-HRFlKind": "ann-HRFlWeitere",
+  "ann-WachsC4KI": "ann-WachsC4",
+  "anh-A2": "wer-heute-wie-viel-zahlt-und-wer-kuenftig-mehr-zahlt",
+  "anh-A3": "von-100-bleiben-jonas-41",
+  "anh-A4": "anh-A9",
+  "anh-A5": "anh-A8",
+  "anh-A7": "anh-A9",
+  "warum-die-350-mrd-vorsichtig-gerechnet-sind": "anh-A9",
+  "anh-B1": "anh-B",
+  "anh-B3": "anh-B6",
+  "das-elterngeld-die-rechnung": "anh-B12",
+  "anh-C1": "anh-C10",
+  "anh-C2": "anh-C10",
+  "anh-C4": "anh-C14",
+  "anh-C5": "anh-C13",
+  "anh-C7": "anh-C16",
+  "anh-C8": "haelt-die-rechnung",
+  "anh-C9": "anh-C14",
+  "nachgerechnet-was-die-neue-mehrwertsteuer-fuer-einen-facharb": "anh-C3",
+  "was-kostet-unsere-sicherheit": "anh-C16",
+  "zukunftsinvestitionen-wann-kredit-vernuenftig-ist": "anh-C17",
+  "elektroauto-mit-zinslosem-darlehen": "klimaschutz-der-sich-fuer-alle-rechnet",
+  "waermepumpe-mit-zinslosem-kredit": "waermepumpe",
+  "die-rechnung": "co2",
+  "welche-waren-in-welcher-stufe": "co2",
+  "heizen-und-verkehr-aufschlag-bis-zum-preispfad": "co2",
+  "was-das-eu-recht-erlaubt": "co2",
+  "ann-KleinAn": "anh-C10",
+  "ann-KleinKG": "anh-C10",
+  "ann-KleinEU": "anh-C10",
+  "ann-KleinGrESt": "anh-C10"
+ },
+ "anhang-d.html": {
+  "was-die-pruefung-ergeben-hat": "warum-die-regeln-vor-gericht-halten"
+ }
+}

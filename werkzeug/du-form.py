@@ -5,7 +5,6 @@ E = {
   ('Sonne auf dem Balkon, Ihr Stromverbrauch zu jeder Tageszeit und, wenn Sie wollen,', 'Sonne auf dem Balkon, dein Stromverbrauch zu jeder Tageszeit und, wenn du willst,'),
   ('wie viel Strom Sie selbst nutzen, wie viel Sie sparen', 'wie viel Strom du selbst nutzt, wie viel du sparst'),
   ('Rechnen Sie im Zweifel mit etwas weniger Ersparnis.', 'Rechne im Zweifel mit etwas weniger Ersparnis.'),
-  ('Fragen Sie nach, ob das Programm noch läuft.', 'Frag nach, ob das Programm noch läuft.'),
   ('`Ihr Balkonkraftwerk liefert', '`Dein Balkonkraftwerk liefert'),
   ('Davon nutzen Sie <b>', 'Davon nutzt du <b>'),
   ('höchstens 800 W einspeisen, Ihr Wechselrichter hat', 'höchstens 800 W einspeisen, dein Wechselrichter hat'),
