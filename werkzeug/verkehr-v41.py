@@ -58,5 +58,10 @@ const VK_PFAD = ''' + json.dumps(pf, separators=(',', ':')) + ''';
 function verkehrJ(k) { if (!A.VkPaket) return 0; const j = A.Prognose.ReformStart - 1 + k; return VK_PFAD[j] ?? VK_PFAD[Math.min(2071, Math.max(2028, j))]; }''')
 rep('Object.assign(ANNAHMEN, { Satz4: 0.66 / 0.34 });', 'Object.assign(ANNAHMEN, { Satz4: 0.66 / 0.34, Satz4Saldo: 2.0, VkPaket: 1 });')
 rep('+ coachStufenJ(y) + kleinJ(y);', '+ coachStufenJ(y) + kleinJ(y) + verkehrJ(y);   // Verkehrspaket 24.11.2026')
+# 5. Sätze der Kilometerabgabe ab 2041 mit dem Gesundheitsaufschlag (Mikrosimulation GES=1)
+import re
+ks = json.load(open('/mnt/project-files/rechenmodell-mikrosim/eauto-erstattung-2026-11-24/kilometerabgabe-saetze-2030-2050.json'))['saetze']
+alt = re.search(r'const KM_SATZ = \{[^}]*\};', s).group(0)
+s = s.replace(alt, 'const KM_SATZ = { ' + ', '.join(f'{y}: {ks[str(y)]["summe_bisher"]:.2f}' for y in range(2030, 2047)) + ' };   // ab 2041 mit dem Gesundheitsaufschlag (Mikrosimulation GES=1, 24.11.2026)')
 open(P, 'w', encoding='utf-8').write(s)
 print('ok')
