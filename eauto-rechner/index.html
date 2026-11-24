@@ -439,7 +439,7 @@ function rechne(v) {
   return { lebKm, iEnergie, eEnergie, ePreisMix, jahre, teile, iTCO: jahre.at(-1).i, eTCO: jahre.at(-1).e, be, befreitBis, rest: [-T.rest[0], -T.rest[1]] };
 }
 // Vorschlag aus dem Buch (Entwurf): Auto, Sprit, Wallbox 50 % MwSt, Strom 5 % ohne Stromsteuer und Umlagen, Werkstatt 5 %,
-// MwSt auf die ersten 10.000 € eines neuen E-Autos zurück (bis 5.000 €), CO₂-Preispfad 100 € 2028 bis 300 € 2040, zinsloses Darlehen (hier ohne Zinsen ohnehin)
+// MwSt auf die ersten 10.000 € eines neuen E-Autos zurück (bis 5.000 €, nur für Käufe bis Ende 2030), CO₂-Preispfad 100 € 2028 bis 300 € 2040, zinsloses Darlehen (hier ohne Zinsen ohnehin)
 const CO2R = [[2026, 60], [2027, 65], [2028, 100], [2030, 150], [2035, 200], [2040, 300]];
 const co2Reform = j => { const p = CO2R; if (j <= p[0][0]) return p[0][1]; for (let i = 1; i < p.length; i++) if (j <= p[i][0]) { const [a, pa] = p[i - 1], [b, pb] = p[i]; return pa + (pb - pa) * (j - a) / (b - a); } return p.at(-1)[1]; };
 // Kilometerabgabe (Vorschlag aus dem Buch, Straßenfonds Fassung B, Paket A, Buch Version 40, staat-v40.json satz_ct_kwh), nur die Zahlen in KMA tauschen.
@@ -458,7 +458,7 @@ function kmAbgabe(v, j, art) {   // € im Jahr j, art "e" oder "i"
 }
 function reformV(v) {
   const f = 1.5 / 1.19, st = x => Math.max(0, (x / 1.19 - 0.0205 - 0.0295) * 1.05), d = 1.05 / 1.19;
-  return { ...v, reform: true, iPreis: v.iPreis * f, ePreis: Math.max(0, v.ePreis * f - 5000), eWallbox: v.eWallbox * f,
+  return { ...v, reform: true, iPreis: v.iPreis * f, ePreis: v.kaufjahr <= 2030 ? Math.max(0, v.ePreis * f - 5000) : v.ePreis * f, eWallbox: v.eWallbox * f,
     iSprit: v.iSprit * f, eHaus: st(v.eHaus), eOff: st(v.eOff), eFirmaPreis: st(v.eFirmaPreis || 0), iWart: v.iWart * d, eWart: v.eWart * d };
 }
 // Dienstwagen: geldwerter Vorteil nach § 6 Abs. 1 Nr. 4 und § 8 Abs. 2 EStG
@@ -641,7 +641,7 @@ function run() {
   } else if ($("kmaBox")) $("kmaBox").innerHTML = "";
   if (window.ZumSteuerrechner && !dienst) { const rr = rechne({ ...reformV(V), ohneKma: true });   // ohne Kilometerabgabe: der Steuerrechner führt sie als eigene Zeile
     ZumSteuerrechner.zeige($("zumSteuer"), { quelle: "E-Auto-Rechner", was: "E-Auto statt Verbrenner", heute: diff / V.jahre, reform: (rr.iTCO - rr.eTCO) / V.jahre,
-      reformText: "Auto und Sprit 50 % Mehrwertsteuer, Mehrwertsteuer auf die ersten 10.000 € des E-Autos zurück, Strom 5 % ohne Umlagen, CO₂-Preispfad des Buchs, zinsloses Darlehen. Die Kilometerabgabe steht im Steuerrechner als eigene Zeile." }); }
+      reformText: "Auto und Sprit 50 % Mehrwertsteuer, " + (V.kaufjahr <= 2030 ? "Mehrwertsteuer auf die ersten 10.000 € des E-Autos zurück (nur bei Kauf bis Ende 2030), " : "keine Erstattung beim E-Auto mehr (gilt nur bei Kauf bis Ende 2030), ") + " Strom 5 % ohne Umlagen, CO₂-Preispfad des Buchs, zinsloses Darlehen. Die Kilometerabgabe steht im Steuerrechner als eigene Zeile." }); }
   else if ($("zumSteuer")) $("zumSteuer").innerHTML = "";
   const tile = (k, v, s, c) => `<div class="tile"><span class="k">${c ? `<i style="background:var(--${c})"></i>` : ""}${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
   $("tiles").innerHTML = tile("Verbrenner gesamt", eur(r.iTCO), `${fmt(r.iTCO / r.lebKm * 100, 1)} € je 100 km`, "ice")
@@ -691,6 +691,7 @@ Methode.an($("verdict"), () => { const v = V, weg = Math.max(0, 100 - v.eAnteil 
     `<b>THG-Prämie:</b> ${eur(v.thg)} im Jahr bis ${v.thgBis}.`]],
   ["Mit der Reform (Vorschlag aus dem Buch)", [
     `Auto und Sprit 50 % Mehrwertsteuer, Strom 5 % ohne Stromsteuer und Umlagen, CO₂-Preis 150 € je Tonne 2030 und 300 € ab 2040.`,
+    `<b>Neues E-Auto:</b> Bei einem Kauf bis Ende 2030 gibt es die Mehrwertsteuer auf die ersten 10.000 € zurück, bis zu 5.000 €. ${v.kaufjahr <= 2030 ? "Bei deinem Kaufjahr ist sie eingerechnet." : "Bei deinem Kaufjahr gibt es sie nicht mehr."}`,
     `<b>Kilometerabgabe ab 2030</b> für alle Pkw, nach dem Verbrauch laut Hersteller: ${fmt(kmaSatz(2030) * 100, 1)} ct je kWh 2030, ${fmt(kmaSatz(2040) * 100, 1)} ct 2040, ${fmt(kmaSatz(2050) * 100, 1)} ct 2050. Beim Verbrenner wird die Energiesteuer angerechnet.`,
     `<b>Übergang:</b> Autos mit Erstzulassung vor 2028 zahlen 2030 erst 25 %, jedes Jahr 10 Punkte mehr, ab 2038 voll.`,
     v.iKraft === "diesel" && `<b>Diesel:</b> Ab 2028 gilt die Energiesteuer von Benzin (Ende des Dieselprivilegs), rund 28 Cent je Liter mehr mit Mehrwertsteuer. Das ist bei der Abgabe eingerechnet.`,
