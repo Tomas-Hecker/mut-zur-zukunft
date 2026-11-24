@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Verkehrspaket (Freigabe Tomas 24.11.2026) im Steuerrechner, Haushaltsteil:
-zweite Stufe 65 % statt zwei Drittel, Aufschlag 4 ct je kWh auf die Kilometerabgabe ab 2030,
+zweite Stufe 66 % statt zwei Drittel, Aufschlag 4 ct je kWh auf die Kilometerabgabe ab 2030,
 Arbeitsweg nie teurer als heute (Gutschrift bis 7,44 ct je kWh). Läuft nach prozente-ganz.py; zweiter Lauf ändert nichts."""
 import sys
 P = 'steuerrechner/index.html'
@@ -14,11 +14,11 @@ def rep(a, b, n=1):
 # 1. Stufe über 5.000 €: 65 % (Aufschlag 0,65/0,35)
 rep('Object.assign(ANNAHMEN, {"Satz4": 2.0, ', 'Object.assign(ANNAHMEN, {"Satz4": 2.0, ')
 i = s.index('Object.assign(ANNAHMEN, {"Satz4": 2.0, '); j = s.index('\n', i)
-s = s[:j + 1] + ('// Verkehrspaket 24.11.2026: die Stufe über 5.000 € im Monat sinkt von zwei Dritteln auf 65 % (Aufschlag 0,65/0,35 auf den Einkauf)\n'
-                 'Object.assign(ANNAHMEN, { Satz4: 0.65 / 0.35 });\n') + s[j + 1:]
+s = s[:j + 1] + ('// Verkehrspaket 24.11.2026: die Stufe über 5.000 € im Monat sinkt von zwei Dritteln auf 66 % (Aufschlag 0,66/0,34 auf den Einkauf; gewählt 10:16 UTC, weil Lkw über 3,5 t den Aufschlag nicht zahlen)\n'
+                 'Object.assign(ANNAHMEN, { Satz4: 0.66 / 0.34 });\n') + s[j + 1:]
 rep('Nur für den Teil der Ausgaben über 5.000 € im Monat je Erwachsenem gehen von 100 € zwei Drittel an die Steuer.',
-    'Nur für den Teil der Ausgaben über 5.000 € im Monat je Erwachsenem gehen von 100 € 65 € an die Steuer.')
-rep('sind das 50 %, auf den Teil über 5.000 € im Monat zwei Drittel, nie mehr.', 'sind das 50 %, auf den Teil über 5.000 € im Monat 65 %, nie mehr.')
+    'Nur für den Teil der Ausgaben über 5.000 € im Monat je Erwachsenem gehen von 100 € 66 € an die Steuer.')
+rep('sind das 50 %, auf den Teil über 5.000 € im Monat zwei Drittel, nie mehr.', 'sind das 50 %, auf den Teil über 5.000 € im Monat 66 %, nie mehr.')
 rep('${A.Satz4 === 2 ? "zwei Drittel" : pct(A.Satz4 / (1 + A.Satz4), 0)} statt 60 %', '${A.Satz4 === 2 ? "zwei Drittel" : pct(A.Satz4 / (1 + A.Satz4), 0)} statt 60 %')
 # 2. Eingabe: davon zur Arbeit
 rep('<div class="field"><label for="e_km">Kilometer im Jahr</label><input id="e_km" type="number" min="0" step="500" value="13500"></div>',
@@ -48,15 +48,15 @@ rep('if (r === "reform" && e.ev) t.push(["Kilometerabgabe für das E-Auto (ab 20
     '    else if (r === "reform" && e.auto) t.push(["Kilometerabgabe für den Verbrenner, Mehrbetrag über seiner Energiesteuer und Aufschlag von 4 ct je kWh (ab 2030, Übergang bis 2038)", -ka.v]);\n'
     '    if (r === "reform" && e.auto && (e.ev ? ka.gutEv : ka.gutV) > 0) t.push(["Gutschrift für den Arbeitsweg: dort nie teurer als heute", e.ev ? ka.gutEv : ka.gutV]);')
 # 4. Staatshaushalt wie die Kette (pfad_lauf.py: kern19 + Ertragspfad): Stufe und Ausweichen wie bei zwei Dritteln, Paket als Pfad
-pf = json.load(open('/mnt/project-files/rechenmodell-mikrosim/verkehr-2026-11-24/kette-ertragspfad-paket.json'))
+pf = json.load(open('/mnt/project-files/rechenmodell-mikrosim/verkehr-2026-11-24/kette-ertragspfad-paket-ohne-lkw-stufe66.json'))
 pf = {k: round(v, 3) for k, v in pf.items() if int(k) <= 2071}
 rep('function s4Zwei(k) { return A.S4Mikro > 0 && k <= A.Stufe4Jahre ? mikro("p9", k) * (A.Satz4 - 1.5) / 0.5 : 0; }',
     '''// Verkehrspaket 24.11.2026: der Staatshaushalt rechnet wie die Kette (kern19 + Ertragspfad): Stufe und Ausweichen wie bei zwei Dritteln,
-// die 65 % (netto mit weniger Ausweichen rund 8,6 Mrd. €) stecken zusammen mit Aufschlag und Gutschrift für den Arbeitsweg im Pfad VK_PFAD (Mrd. €, + = mehr Ertrag)
+// die 66 % (netto mit weniger Ausweichen rund 3,5 Mrd. €) stecken zusammen mit Aufschlag (ohne Lkw über 3,5 t) und Gutschrift für den Arbeitsweg im Pfad VK_PFAD (Mrd. €, + = mehr Ertrag)
 function s4Zwei(k) { return A.S4Mikro > 0 && k <= A.Stufe4Jahre ? mikro("p9", k) * ((A.Satz4Saldo ?? A.Satz4) - 1.5) / 0.5 : 0; }
 const VK_PFAD = ''' + json.dumps(pf, separators=(',', ':')) + ''';
 function verkehrJ(k) { if (!A.VkPaket) return 0; const j = A.Prognose.ReformStart - 1 + k; return VK_PFAD[j] ?? VK_PFAD[Math.min(2071, Math.max(2028, j))]; }''')
-rep('Object.assign(ANNAHMEN, { Satz4: 0.65 / 0.35 });', 'Object.assign(ANNAHMEN, { Satz4: 0.65 / 0.35, Satz4Saldo: 2.0, VkPaket: 1 });')
+rep('Object.assign(ANNAHMEN, { Satz4: 0.66 / 0.34 });', 'Object.assign(ANNAHMEN, { Satz4: 0.66 / 0.34, Satz4Saldo: 2.0, VkPaket: 1 });')
 rep('+ coachStufenJ(y) + kleinJ(y);', '+ coachStufenJ(y) + kleinJ(y) + verkehrJ(y);   // Verkehrspaket 24.11.2026')
 open(P, 'w', encoding='utf-8').write(s)
 print('ok')
