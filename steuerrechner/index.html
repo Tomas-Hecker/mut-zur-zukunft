@@ -2331,7 +2331,7 @@ function energieLesen() {
 }
 // Kilometerabgabe mit der Reform (Paket A, Buch Version 40, Entwurf): Satz in ct je kWh laut Hersteller, real 2025, ab 2030; danach gleich.
 // Verbrenner zahlt den Mehrbetrag über seiner Energiesteuer; Autos vor 2028 zahlen 2030 25 % davon, je Jahr 10 Punkte mehr.
-const KM_SATZ = { 2030: 21.62, 2031: 19.59, 2032: 18.70, 2033: 18.19, 2034: 18.37, 2035: 18.70, 2036: 19.16, 2037: 19.69, 2038: 20.49, 2039: 21.59, 2040: 22.73, 2041: 23.98, 2042: 25.25, 2043: 26.54, 2044: 27.79, 2045: 28.85, 2046: 29.70 };
+const KM_SATZ = { 2030: 21.62, 2031: 18.47, 2032: 18.21, 2033: 18.19, 2034: 18.37, 2035: 18.70, 2036: 19.16, 2037: 19.69, 2038: 20.49, 2039: 21.59, 2040: 22.73, 2041: 24.39, 2042: 26.06, 2043: 27.87, 2044: 29.65, 2045: 31.22, 2046: 32.38 };  // Rechenmodell 24.11.2026: ohne den 4-ct-Aufschlag (KM_AUF), 2031/32 niedriger, weil die E-Auto-Erstattung nach 2030 endet, ab 2041 mit Gesundheitsaufschlag
 const KM_EV_KWH = 0.18, KM_V_L = 0.07, KM_KWH_L = 8.86, KM_EST = 0.6545;   // E-Auto 18 kWh/100 km, Benziner 7 l/100 km, Energiesteuer Benzin je Liter
 // Verkehrspaket 24.11.2026: ab 2030 Aufschlag KM_AUF ct je kWh für alle Autos; auf dem Arbeitsweg kostet die Abgabe je kWh höchstens KM_DECKEL ct
 // (heute die Steuer auf Benzin, 65,45 ct je Liter / 8,8 kWh), Gutschrift auf der Jahresrechnung nach der Meldung des Arbeitgebers
