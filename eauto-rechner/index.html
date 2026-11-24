@@ -458,7 +458,7 @@ function kmAbgabe(v, j, art) {   // € im Jahr j, art "e" oder "i"
 }
 function reformV(v) {
   const f = 1.5 / 1.19, st = x => Math.max(0, (x / 1.19 - 0.0205 - 0.0295) * 1.05), d = 1.05 / 1.19;
-  return { ...v, reform: true, iPreis: v.iPreis * f, ePreis: v.kaufjahr <= 2030 ? Math.max(0, v.ePreis * f - 5000) : v.ePreis * f, eWallbox: v.eWallbox * f,
+  return { ...v, reform: true, iPreis: v.iPreis * f, ePreis: Math.max(0, v.ePreis * f - (v.kaufjahr <= 2030 ? 5000 : 0)), eWallbox: v.eWallbox * f,
     iSprit: v.iSprit * f, eHaus: st(v.eHaus), eOff: st(v.eOff), eFirmaPreis: st(v.eFirmaPreis || 0), iWart: v.iWart * d, eWart: v.eWart * d };
 }
 // Dienstwagen: geldwerter Vorteil nach § 6 Abs. 1 Nr. 4 und § 8 Abs. 2 EStG
@@ -641,7 +641,7 @@ function run() {
   } else if ($("kmaBox")) $("kmaBox").innerHTML = "";
   if (window.ZumSteuerrechner && !dienst) { const rr = rechne({ ...reformV(V), ohneKma: true });   // ohne Kilometerabgabe: der Steuerrechner führt sie als eigene Zeile
     ZumSteuerrechner.zeige($("zumSteuer"), { quelle: "E-Auto-Rechner", was: "E-Auto statt Verbrenner", heute: diff / V.jahre, reform: (rr.iTCO - rr.eTCO) / V.jahre,
-      reformText: "Auto und Sprit 50 % Mehrwertsteuer, " + (V.kaufjahr <= 2030 ? "Mehrwertsteuer auf die ersten 10.000 € des E-Autos zurück (nur bei Kauf bis Ende 2030), " : "keine Erstattung beim E-Auto mehr (gilt nur bei Kauf bis Ende 2030), ") + " Strom 5 % ohne Umlagen, CO₂-Preispfad des Buchs, zinsloses Darlehen. Die Kilometerabgabe steht im Steuerrechner als eigene Zeile." }); }
+      reformText: "Auto und Sprit 50 % Mehrwertsteuer, " + (V.kaufjahr <= 2030 ? "Mehrwertsteuer auf die ersten 10.000 € des E-Autos zurück (nur bei Kauf bis Ende 2030), " : "keine Erstattung beim E-Auto mehr (gilt nur bei Kauf bis Ende 2030), ") + "Strom 5 % ohne Umlagen, CO₂-Preispfad des Buchs, zinsloses Darlehen. Die Kilometerabgabe steht im Steuerrechner als eigene Zeile." }); }
   else if ($("zumSteuer")) $("zumSteuer").innerHTML = "";
   const tile = (k, v, s, c) => `<div class="tile"><span class="k">${c ? `<i style="background:var(--${c})"></i>` : ""}${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
   $("tiles").innerHTML = tile("Verbrenner gesamt", eur(r.iTCO), `${fmt(r.iTCO / r.lebKm * 100, 1)} € je 100 km`, "ice")
