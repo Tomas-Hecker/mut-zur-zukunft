@@ -57,13 +57,14 @@
     kinderlos: e("Wer keine Kinder hat, zahlt heute einen höheren Pflegebeitrag."),
     allein: e("Alleinerziehende bekommen heute einen Steuerfreibetrag."),
     rentner: e("Ob die Person im Rentenalter ist. Dann fallen heute keine Beiträge zur Rente an, und im Vorschlag ist Verdienst bis 1.000 € im Monat frei.", "alt"),
+    arbkm: e("Alle Kilometer zur Arbeit und zurück im Jahr, mit Auto, Rad, Bus oder Bahn. Mit der Reform zählen 19 ct je km nicht als Ausgaben, das ist dasselbe wie heute die Entfernungspauschale von 38 ct je km einfacher Strecke. Heute rechnet der Rechner dafür die Entfernungspauschale statt des Pauschbetrags für Werbungskosten.", "satz"),
     bs: e("Wer beim Start schon Rente bekommt, zahlt auf die Rente nie mehr als heute. Das nennt das Buch Bestandsschutz.", "rente"),
     h_Grenze1: e("Bis zu dieser Summe im Jahr bleiben Ausgaben je Erwachsenem ganz frei von der neuen Ausgabensteuer. Darüber steigt sie in Stufen.", "satz"),
     h_Satz3: e("Der Satz auf alle Ausgaben über der letzten Stufe, gerechnet wie die Mehrwertsteuer im Preis.", "satz"),
     h_SVFB: e("Bis zu diesem Lohn zahlt man im Vorschlag keine Beiträge zu Pflege und Rente.", "rente"),
   });
   Info.texte("#haushalt", {
-    "Weitere Angaben": e("Hier kannst du Selbständigkeit, eine eigene Firma, Rente, Kapitalerträge und Vermögen eintragen. Für die meisten Haushalte reicht der obere Teil."),
+    "Weitere Angaben": e("Hier kannst du die Fahrten zur Arbeit, Selbständigkeit, eine eigene Firma, Rente, Kapitalerträge und Vermögen eintragen. Für die meisten Haushalte reicht der obere Teil."),
     "Heute": e("Was dein Haushalt nach heutigem Recht im Jahr an Steuern und Abgaben zahlt."),
     "Vorschlag": e("Was dein Haushalt mit der Reform aus dem Buch zahlen würde. Der Balken zeigt die echten Beträge: Prämie der Krankenkasse, Mehrwertsteuer und Ausgabensteuer. Der schraffierte Teil am Ende ist, was du dafür zurückbekommst: höhere Grundsicherung oder Rente, den ausgezahlten Arbeitgeberanteil und den Ausgleich. Unterm Strich bleibt die Zahl links.", "idee"),
     "Differenz": e("Vorschlag minus heute. Ein Minus heißt: du zahlst weniger und hast mehr."),
