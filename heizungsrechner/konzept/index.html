@@ -1,0 +1,1099 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../schriften/schriften.css">
+<title>Wärmepumpen-Konzept</title>
+<meta name="description" content="Raumweise Heizlast, Heizkörper-Check, nötige Vorlauftemperatur, Kostenschätzung und Wirtschaftlichkeit für die Wärmepumpe. Alles bleibt im Browser.">
+<style>
+:root {
+  --bg: #f4f6f5; --panel: #ffffff; --fg: #17201e; --muted: #5a6763; --line: #d9dfdc; --grid: #e6ebe9; --field: #f8faf9;
+  --wp: #00907f; --gas: #4f68b8; --good: #1d7a46; --warn: #b97a06; --bad: #b3401e; --hl: #e7f3f1;
+  --ok-fill: #d9efe6; --warn-fill: #fbe9c4; --bad-fill: #f6d3c6; --off-fill: #e9ecea;
+  --display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1415; --panel: #171e1f; --fg: #e7eceb; --muted: #9aa8a4; --line: #2b3536; --grid: #222b2c; --field: #1d2526;
+  --wp: #1aa896; --gas: #6f88e0; --good: #5cc98a; --warn: #f2b33d; --bad: #ef8a66; --hl: #183230;
+  --ok-fill: #17372c; --warn-fill: #3d3216; --bad-fill: #45251b; --off-fill: #252c2d; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1415; --panel: #171e1f; --fg: #e7eceb; --muted: #9aa8a4; --line: #2b3536; --grid: #222b2c; --field: #1d2526;
+  --wp: #1aa896; --gas: #6f88e0; --good: #5cc98a; --warn: #f2b33d; --bad: #ef8a66; --hl: #183230;
+  --ok-fill: #17372c; --warn-fill: #3d3216; --bad-fill: #45251b; --off-fill: #252c2d; color-scheme: dark }
+* { box-sizing: border-box }
+html { scroll-padding-top: 120px }
+body { background: var(--bg); color: var(--fg); font: 16px/1.5 var(--body); margin: 0; padding: 0 max(16px, env(safe-area-inset-left, 0px)) 64px }
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 22px }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15 }
+h1 { font-size: clamp(27px, 4vw, 40px); font-weight: 800 }
+h2 { font-size: 21px; font-weight: 700; display: flex; gap: 10px; align-items: baseline }
+h2 .nr { font: 800 13px/1 var(--body); background: var(--wp); color: #fff; border-radius: 99px; padding: 5px 9px }
+h3 { font-size: 15.5px; font-weight: 700 }
+p { margin: 0; max-width: 75ch }
+a { color: inherit; text-underline-offset: 3px }
+small, .muted { color: var(--muted) }
+.top { display: flex; gap: 10px 20px; flex-wrap: wrap; align-items: center; padding: 14px 0; font-size: 15px }
+.top a { font-weight: 600 }
+.lead { color: var(--muted); font-size: 17px }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 16px; min-width: 0 }
+.panel > *, .wrap > * { min-width: 0 }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px 14px }
+.f { display: grid; gap: 3px; align-content: start; min-width: 0 }
+.f > label, .f > span { font-size: 13.5px; color: var(--muted) }
+.f input, .f select, .inp { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 7px; background: var(--field); color: var(--fg); font: 600 15px var(--body); padding: 6px 8px; font-variant-numeric: tabular-nums }
+.f input::placeholder { color: var(--muted); font-weight: 400 }
+.f small { font-size: 12.5px; line-height: 1.35 }
+.uzeile { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr) 90px; gap: 8px; align-items: center }
+.uzeile > span { font-size: 14px }
+.uzeile select { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 7px; background: var(--field); color: var(--fg); font: 400 14px var(--body); padding: 6px 8px }
+.uzeile .paar { display: flex; gap: 6px } .uzeile .paar input { width: 50% }
+@media (max-width: 640px) { .uzeile { grid-template-columns: minmax(0, 1fr) 80px } .uzeile select { grid-column: 1 / -1; order: 3 } }
+button, .btn { font: 600 14.5px var(--body); border: 1px solid var(--line); background: var(--field); color: var(--fg); border-radius: 7px; padding: 7px 12px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px }
+button.prim, .btn.prim { background: var(--wp); border-color: var(--wp); color: #fff }
+button[aria-pressed="true"] { background: var(--hl); border-color: var(--wp); color: var(--fg) }
+button.klein { padding: 3px 8px; font-size: 13px }
+button.weg { color: var(--bad) }
+button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--wp); outline-offset: 2px }
+.leiste { display: flex; gap: 8px; flex-wrap: wrap; align-items: center }
+.sticky { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 8px 0; border-bottom: 1px solid var(--line) }
+.steps { display: flex; gap: 6px 14px; flex-wrap: wrap; font-size: 14px; margin-bottom: 6px }
+.steps a { text-decoration: none; color: var(--muted); font-weight: 600 }
+.steps a:hover { color: var(--fg) }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; min-width: 0 }
+.tile b { display: block; font: 800 19px/1.2 var(--display); font-variant-numeric: tabular-nums }
+.tile span { font-size: 12.5px; color: var(--muted) }
+.hinweis { background: var(--hl); border-radius: 8px; padding: 12px 14px; font-size: 15px }
+.warnung { background: var(--warn-fill); border-radius: 8px; padding: 10px 14px; font-size: 15px }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums }
+th, td { padding: 5px 7px; border-bottom: 1px solid var(--grid); text-align: left; vertical-align: top }
+th { font-weight: 700; color: var(--muted); font-size: 12.5px }
+td.z, th.z { text-align: right; white-space: nowrap }
+tr.sum td { font-weight: 700; border-top: 2px solid var(--line) }
+tr.akt td { background: var(--hl) }
+.tw { overflow-x: auto; -webkit-overflow-scrolling: touch }
+.ok { color: var(--good) } .warn { color: var(--warn) } .bad { color: var(--bad) }
+.pill { display: inline-block; border-radius: 99px; padding: 0 8px; font-size: 12.5px; font-weight: 700 }
+.pill.ok { background: var(--ok-fill) } .pill.warn { background: var(--warn-fill) } .pill.bad { background: var(--bad-fill) } .pill.off { background: var(--off-fill); color: var(--muted) }
+/* Grundriss */
+.planbox { border: 1px solid var(--line); border-radius: 8px; background: var(--field); overflow: hidden; position: relative }
+#plan { width: 100%; height: clamp(300px, 62vh, 640px); display: block; touch-action: none; user-select: none; -webkit-user-select: none }
+#plan .raum rect.k { stroke: var(--fg); stroke-width: .04 }
+#plan .raum.sel rect.k { stroke: var(--wp); stroke-width: .1 }
+#plan .raum text { font: 600 .32px var(--body); fill: var(--fg); pointer-events: none }
+#plan .raum text.s { font-weight: 400; font-size: .26px }
+#plan.mode-sel .raum { cursor: move }
+#plan.mode-draw, #plan.mode-mass { cursor: crosshair }
+#plan .griff { fill: var(--wp); cursor: nwse-resize }
+.geschosse { display: flex; gap: 6px; flex-wrap: wrap; align-items: center }
+.massbox { display: none; gap: 8px; align-items: center; flex-wrap: wrap; padding: 8px 10px; background: var(--warn-fill); border-radius: 8px }
+.massbox.an { display: flex }
+details.raumk { border: 1px solid var(--line); border-radius: 8px; background: var(--panel) }
+details.raumk > summary { padding: 8px 12px; cursor: pointer; display: flex; gap: 6px 12px; flex-wrap: wrap; align-items: center; list-style: none }
+details.raumk > summary::-webkit-details-marker { display: none }
+details.raumk > summary::before { content: "▸"; color: var(--muted) }
+details.raumk[open] > summary::before { content: "▾" }
+details.raumk[open] { border-color: var(--wp) }
+details.raumk .body { padding: 4px 12px 12px; display: grid; gap: 12px }
+.hkz { display: grid; grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr)) auto; gap: 6px; align-items: end }
+@media (max-width: 640px) { .hkz { grid-template-columns: 1fr 1fr } .hkz > :first-child { grid-column: 1 / -1 } }
+.liste { display: grid; gap: 8px }
+.zwei { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px }
+@media (max-width: 860px) { .zwei { grid-template-columns: minmax(0, 1fr) } }
+input[type="checkbox"] { accent-color: var(--wp); width: 17px; height: 17px; vertical-align: -3px }
+label.check { display: flex; gap: 8px; align-items: flex-start; font-size: 14.5px; color: var(--fg) }
+/* Bericht */
+#bericht { background: #fff; color: #17201e; border: 1px solid var(--line); border-radius: 8px; padding: 24px; display: grid; gap: 14px; font-size: 14px }
+#bericht > * { min-width: 0 }
+@media screen { #bericht table { display: block; overflow-x: auto } }
+#bericht h2 { font-size: 22px } #bericht h3 { font-size: 15.5px; margin-top: 8px; border-bottom: 2px solid #00907f; padding-bottom: 3px }
+#bericht table { font-size: 12.5px } #bericht th { color: #5a6763 } #bericht td, #bericht th { border-color: #e1e6e4 }
+#bericht .muted, #bericht small { color: #5a6763 }
+#bericht .tiles .tile { background: #f4f6f5; border-color: #d9dfdc } #bericht .tile span { color: #5a6763 }
+#bericht .zwei > div { min-width: 0 }
+#bericht svg { width: 100%; max-height: 110mm; height: auto; border: 1px solid #d9dfdc; border-radius: 6px }
+#bericht .planz text { font-family: system-ui, sans-serif }
+.nurdruck { display: none }
+@media print {
+  @page { size: A4; margin: 14mm 12mm }
+  body { background: #fff; padding: 0 }
+  .wrap > :not(#s-konzept), .sticky, .top, #s-konzept > :not(#bericht) { display: none !important }
+  #s-konzept { border: 0; padding: 0; background: #fff }
+  #bericht { border: 0; padding: 0; display: block }
+  #bericht > * + * { margin-top: 10px }
+  #bericht .zwei { grid-template-columns: 1fr 1fr }
+  #bericht h3 { break-after: avoid; margin-top: 14px } #bericht tr, #bericht svg, .tiles { break-inside: avoid }
+  #bericht .tiles { grid-template-columns: repeat(6, 1fr) }
+  .nurdruck { display: block }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a href="../../">Mut zur Zukunft</a><a href="../">Heizungsrechner</a><span class="muted">Wärmepumpen-Konzept (Entwurf)</span></div>
+  <header style="display:grid;gap:10px">
+    <h1>Wärmepumpe planen: Raum für Raum</h1>
+    <p class="lead">Räume als Rechtecke auf den Grundriss zeichnen oder eintippen, Heizkörper angeben. Der Rechner bestimmt die Heizlast je Raum, die nötige Vorlauftemperatur, welche Heizkörper getauscht werden sollten, was das kostet und ob es sich rechnet. Am Ende steht ein Konzept zum Ausdrucken, für das Gespräch mit dem Energieberater und für Angebote.</p>
+    <p class="muted" style="font-size:14px">Alles bleibt in deinem Browser. Nichts wird hochgeladen, auch der Grundriss nicht. Speichern kannst du als Datei oder, wenn du es einschaltest, auf diesem Gerät.</p>
+  </header>
+
+  <div class="sticky">
+    <nav class="steps" aria-label="Schritte"><a href="#s-haus">1 Haus</a><a href="#s-plan">2 Grundriss und Räume</a><a href="#s-hk">3 Heizkörper und Vorlauf</a><a href="#s-kosten">4 Wärmepumpe und Kosten</a><a href="#s-wirt">5 Wirtschaftlichkeit</a><a href="#s-konzept">6 Konzept</a></nav>
+    <div class="tiles" id="kopf"></div>
+  </div>
+
+  <!-- 1 Haus -->
+  <section class="panel" id="s-haus" aria-labelledby="h-haus">
+    <h2 id="h-haus"><span class="nr">1</span>Haus</h2>
+    <div class="leiste"><button type="button" id="b_beispiel">Beispielhaus laden (1968)</button><button type="button" id="b_neu">Leer beginnen</button></div>
+    <div class="grid" id="haus"></div>
+    <div class="grid" id="haus2"></div>
+    <div>
+      <h3 style="margin-bottom:8px">Bauteile: U-Werte</h3>
+      <p class="muted" style="font-size:14px;margin-bottom:10px">Der Rechner schätzt die U-Werte aus dem Baujahr. Weißt du es genauer, wähle einen Aufbau oder trag den Wert ein. Je kleiner, desto besser gedämmt (W je m² und Kelvin).</p>
+      <div class="liste" id="uwerte"></div>
+    </div>
+  </section>
+
+  <!-- 2 Grundriss -->
+  <section class="panel" id="s-plan" aria-labelledby="h-plan">
+    <h2 id="h-plan"><span class="nr">2</span>Grundriss und Räume</h2>
+    <p class="muted" style="font-size:14.5px">Je Geschoss: Plan als Bild hochladen (PNG oder JPG, ein PDF vorher als Bild speichern), Maßstab setzen, dann Räume aufziehen. Ohne Plan geht es auch: Räume eintippen und im Raster anordnen. Wände zwischen Räumen erkennt der Rechner, wenn die Rechtecke aneinanderstoßen; was frei liegt, zählt als Außenwand. Das Geschoss darunter siehst du gestrichelt.</p>
+    <div class="geschosse" id="geschosse"></div>
+    <div class="grid" id="gfelder"></div>
+    <div class="leiste">
+      <span class="muted" style="font-size:14px">Modus:</span>
+      <button type="button" data-mode="sel" aria-pressed="true">Auswählen und verschieben</button>
+      <button type="button" data-mode="draw">Raum zeichnen</button>
+      <button type="button" data-mode="mass">Maßstab setzen</button>
+      <span style="flex:1"></span>
+      <button type="button" id="b_raum">+ Raum eintippen</button>
+      <label class="btn" for="f_plan">Plan hochladen</label><input type="file" id="f_plan" accept="image/*" hidden>
+      <button type="button" id="b_planweg">Plan entfernen</button>
+    </div>
+    <div class="massbox" id="massbox"><span id="masstxt">Klicke zwei Punkte im Plan an, deren Abstand du kennst (z. B. eine bemaßte Wand).</span><span id="massein" hidden><input class="inp" id="i_mass" type="number" step="0.01" min="0.1" style="width:110px" placeholder="Meter"> <button type="button" class="prim" id="b_mass">Übernehmen</button></span><button type="button" id="b_massab">Abbrechen</button></div>
+    <div class="planbox"><svg id="plan" class="mode-sel" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Grundriss des gewählten Geschosses"></svg></div>
+    <div class="liste" id="raeume"></div>
+  </section>
+
+  <!-- 3 Heizkörper -->
+  <section class="panel" id="s-hk" aria-labelledby="h-hk">
+    <h2 id="h-hk"><span class="nr">3</span>Heizkörper und Vorlauftemperatur</h2>
+    <div class="grid" id="hzfelder"></div>
+    <div id="hkfazit"></div>
+    <div>
+      <h3 style="margin-bottom:6px">Welcher Vorlauf lohnt sich?</h3>
+      <p class="muted" style="font-size:14px;margin-bottom:8px">Je niedriger die Vorlauftemperatur, desto effizienter die Wärmepumpe, aber desto mehr Heizkörper müssen größer werden. Klick auf eine Zeile, um diesen Vorlauf zu wählen.</p>
+      <div class="tw"><table id="vltab"></table></div>
+    </div>
+    <div>
+      <h3 style="margin-bottom:6px">Räume im Überblick</h3>
+      <div class="tw"><table id="raumtab"></table></div>
+    </div>
+  </section>
+
+  <!-- 4 Kosten -->
+  <section class="panel" id="s-kosten" aria-labelledby="h-kosten">
+    <h2 id="h-kosten"><span class="nr">4</span>Wärmepumpe und Kosten</h2>
+    <div id="wpfazit"></div>
+    <div class="grid" id="kfelder"></div>
+    <p class="muted" style="font-size:14px">Die Einheitspreise stammen überwiegend aus der Kostenberechnung eines Wärmepumpenprojekts in Hessen (Referenzprojekt, Preisstand 10/2026, netto mit Montage). Positionen, die vom Umfang abhängen, sind auf die Größe deines Hauses umgerechnet und als Schätzung markiert. Jede Menge und jeden Preis kannst du ändern, etwa mit Zahlen aus einem Angebot.</p>
+    <div class="tw"><table id="ktab"></table></div>
+  </section>
+
+  <!-- 5 Wirtschaftlichkeit -->
+  <section class="panel" id="s-wirt" aria-labelledby="h-wirt">
+    <h2 id="h-wirt"><span class="nr">5</span>Wirtschaftlichkeit</h2>
+    <div class="grid" id="wfelder"></div>
+    <div id="wfazit"></div>
+    <div class="tw"><table id="wtab"></table></div>
+  </section>
+
+  <!-- 6 Konzept -->
+  <section class="panel" id="s-konzept" aria-labelledby="h-konzept">
+    <h2 id="h-konzept"><span class="nr">6</span>Konzept</h2>
+    <div class="leiste">
+      <button type="button" class="prim" onclick="print()">Drucken oder als PDF speichern</button>
+      <button type="button" id="b_export">Als Datei speichern</button>
+      <label class="btn" for="f_import">Datei laden</label><input type="file" id="f_import" accept=".json,application/json" hidden>
+      <label class="check" style="margin-left:6px"><input type="checkbox" id="c_merken"> Angaben auf diesem Gerät merken</label>
+    </div>
+    <p class="muted" style="font-size:14px" id="merktxt">Die Datei enthält alle Angaben samt Grundriss. Du kannst sie später wieder laden oder dem Energieberater geben.</p>
+    <div id="bericht"></div>
+  </section>
+</div>
+
+<script src="../../wetter/ort.js"></script>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const fmt = (v, d = 0) => (+v).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const eur = v => fmt(Math.round(v / 10) * 10) + " €";
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const uid = () => Math.random().toString(36).slice(2, 9);
+const num = (v, d) => (v === "" || v == null || isNaN(+v)) ? d : +v;
+const r2 = v => Math.round(v * 100) / 100;
+
+/* ---------------- Grundwerte ---------------- */
+const BJ = [[1918, "bis 1918"], [1948, "1919 bis 1948"], [1957, "1949 bis 1957"], [1968, "1958 bis 1968"], [1978, "1969 bis 1978"], [1983, "1979 bis 1983"], [1994, "1984 bis 1994"], [2001, "1995 bis 2001"], [2009, "2002 bis 2009"], [2024, "ab 2010"]];
+// U-Werte nach Baujahr wie im Heizungsrechner: Außenwand, Dach bzw. oberste Geschossdecke, Fenster, Kellerdecke bzw. Boden
+const D_U = { 1918: [1.7, 1.4, 2.8, 1.2], 1948: [1.7, 1.4, 2.8, 1.2], 1957: [1.4, 1.4, 2.8, 1.5], 1968: [1.2, 0.9, 2.8, 1.0], 1978: [1.0, 0.6, 2.8, 1.0],
+  1983: [0.8, 0.5, 2.8, 0.8], 1994: [0.6, 0.4, 2.7, 0.6], 2001: [0.5, 0.3, 1.6, 0.5], 2009: [0.35, 0.25, 1.4, 0.4], 2024: [0.25, 0.18, 1.1, 0.3] };
+const UTEIL = {
+  aw: { t: "Außenwand", i: 0, pre: [["Vollziegel oder Naturstein, ungedämmt", 1.5], ["Bruchstein, rund 50 cm", 1.7], ["Fachwerk, ungedämmt", 1.6], ["Hohlblock oder Bims (1950 bis 1970)", 1.2], ["Leichtziegel oder Porenbeton (1980 bis 1995)", 0.6], ["mit 8 cm Dämmung", 0.35], ["mit 14 cm Dämmung oder mehr", 0.22], ["Neubau ab 2010", 0.25]] },
+  fen: { t: "Fenster (Standard im Haus)", i: 2, pre: [["Einfachglas", 5.0], ["Kasten- oder Verbundfenster", 2.5], ["2-fach Isolierglas (vor 1995)", 2.8], ["2-fach Wärmeschutzglas (1995 bis 2010)", 1.6], ["2-fach Wärmeschutzglas (ab 2010)", 1.3], ["3-fach Wärmeschutzglas", 0.9], ["3-fach Passivhausfenster", 0.7]] },
+  dach: { t: "Dach oder oberste Geschossdecke", i: 1, pre: [["ungedämmt", 1.0], ["4 bis 6 cm Dämmung (1970er)", 0.6], ["10 bis 14 cm Dämmung", 0.32], ["20 cm Dämmung oder mehr", 0.18]] },
+  kel: { t: "Kellerdecke oder Boden", i: 3, pre: [["Betondecke, ungedämmt", 1.2], ["Holzbalkendecke, ungedämmt", 0.8], ["mit 6 cm Dämmung", 0.45], ["mit 10 cm Dämmung oder mehr", 0.3]] },
+};
+const FENSTER = UTEIL.fen.pre;
+// Nutzung: Raumtemperatur nach DIN/TS 12831-1 (vereinfacht), Mindest-Luftwechsel je Stunde
+const TYPEN = {
+  wohnen: { t: "Wohnen, Essen", ti: 20, n: 0.5 }, schlafen: { t: "Schlafen", ti: 20, n: 0.5 }, kind: { t: "Kinderzimmer", ti: 20, n: 0.5 },
+  kueche: { t: "Küche", ti: 20, n: 0.7 }, bad: { t: "Bad, Dusche", ti: 24, n: 1.0 }, wc: { t: "WC", ti: 20, n: 1.0 }, buero: { t: "Arbeiten, Gast", ti: 20, n: 0.5 },
+  flur: { t: "Flur, Diele", ti: 15, n: 0.5 }, treppe: { t: "Treppenhaus (beheizt)", ti: 15, n: 0.5 },
+  unb: { t: "unbeheizt (Keller, Abstellraum, Garage)", ti: 8, n: 0, unb: true },
+};
+const DICHT = { undicht: ["undicht (alte Fenster und Türen)", 0.7], mittel: ["normal", 0.5], dicht: ["dicht (neue Fenster, Blower-Door geprüft)", 0.4] };
+const OBEN = { dachraum: ["oberste Geschossdecke, Dachboden unbeheizt", 0.9, 1], schraege: ["Dachschrägen, beheizt bis unters Dach", 1, 1.15], flach: ["Flachdach", 1, 1] };
+const UNTEN = { keller: ["Kellerdecke, Keller unbeheizt", 0.5], erdreich: ["Bodenplatte auf dem Erdreich", 0.45], luft: ["über Außenluft (Durchfahrt)", 1] };
+const ZUSCHLAG_DECKE = 0.3;   // Deckendicke: Außenwandhöhe = lichte Höhe + 0,3 m
+
+/* Heizkörper: Normleistung bei 75/65/20 °C je Meter Baulänge bei 600 mm Bauhöhe (Mittel aus Herstellerangaben, EN 442) */
+const QN600 = { 10: 620, 11: 920, 21: 1220, 22: 1520, 33: 2160 };
+const HKTYP = { 10: "Flachheizkörper Typ 10", 11: "Typ 11", 21: "Typ 21", 22: "Typ 22", 33: "Typ 33", glied: "Glieder- oder Röhrenheizkörper", q: "Leistung bekannt", fbh: "Fußbodenheizung", geb: "Heizkörper mit Gebläse" };
+// Preis montiert, netto: Grundbetrag + je m² Ansichtsfläche (angepasst an die Ansätze im Referenzprojekt, Pos. L1 8.1 bis 8.8f)
+const HKP = { 10: [120, 220], 11: [130, 260], 21: [140, 330], 22: [150, 390], 33: [170, 480], geb: [900, 650] };
+
+/* Kennfeld der Wärmepumpe aus dem Energie-Rechner: Jahresarbeitszahl je Wärme im Jahr (kWh) und Vorlauftemperatur */
+const KF = {"W":[5000,7500,10000,12500,15000,20000,25000,30000],"VL":[35,40,45,50,55,60,65,70,75],"jF":[[3.168,3.1,3.036,2.975,2.918,2.864,2.812,2.763,2.716],[3.236,3.14,3.051,2.968,2.89,2.818,2.75,2.687,2.627],[3.267,3.156,3.054,2.959,2.872,2.791,2.716,2.645,2.579],[3.284,3.164,3.053,2.952,2.859,2.773,2.693,2.619,2.55],[3.294,3.168,3.053,2.947,2.85,2.761,2.678,2.601,2.53],[3.307,3.172,3.05,2.939,2.837,2.744,2.658,2.578,2.504],[3.314,3.174,3.049,2.934,2.83,2.734,2.646,2.564,2.489],[3.318,3.176,3.047,2.93,2.824,2.727,2.637,2.555,2.478]],"jD":[[3.04,2.974,2.911,2.852,2.797,2.745,2.695,2.649,2.604],[3.142,3.048,2.962,2.881,2.806,2.737,2.671,2.61,2.552],[3.193,3.085,2.985,2.893,2.808,2.729,2.656,2.588,2.524],[3.224,3.106,2.998,2.899,2.808,2.724,2.645,2.574,2.506],[3.243,3.119,3.006,2.902,2.807,2.719,2.638,2.563,2.493],[3.268,3.135,3.015,2.905,2.805,2.713,2.628,2.55,2.477],[3.282,3.144,3.02,2.907,2.803,2.709,2.622,2.541,2.467],[3.291,3.15,3.023,2.907,2.802,2.706,2.617,2.536,2.46]],"pD":[[0.2274,0.2281,0.2287,0.2293,0.2299,0.2305,0.231,0.2316,0.2321],[0.2456,0.2464,0.2472,0.2479,0.2486,0.2492,0.2498,0.2504,0.251],[0.2558,0.2566,0.2573,0.258,0.2586,0.2592,0.2597,0.2603,0.2607],[0.2622,0.2629,0.2635,0.2641,0.2647,0.2652,0.2656,0.2662,0.2666],[0.2666,0.2673,0.2678,0.2683,0.2688,0.2693,0.2697,0.2701,0.2705],[0.2723,0.2728,0.2732,0.2736,0.274,0.2744,0.2747,0.2751,0.2753],[0.2758,0.2762,0.2765,0.2769,0.2772,0.2775,0.2777,0.278,0.2782],[0.2781,0.2785,0.2788,0.279,0.2793,0.2795,0.2798,0.28,0.2802]]};
+function kf(tab, w, vl) {
+  const ix = (a, x) => { x = Math.max(a[0], Math.min(a.at(-1), x)); let i = 0; while (i < a.length - 2 && x > a[i + 1]) i++; return [i, (x - a[i]) / (a[i + 1] - a[i])]; };
+  const [i, fi] = ix(KF.W, w), [j, fj] = ix(KF.VL, vl), t = KF[tab];
+  return (t[i][j] * (1 - fj) + t[i][j + 1] * fj) * (1 - fi) + (t[i + 1][j] * (1 - fj) + t[i + 1][j + 1] * fj) * fi;
+}
+// Vorschlag aus dem Buch (wie im Heizungsrechner): Strom 5 % ohne Stromsteuer und Umlagen, Gas und Öl 50 % Mehrwertsteuer, Dienstleistungen 5 %, Sanierung ohne Mehrwertsteuer
+const RF = { stromSt: 0.0205, umlagen: 0.0295, strom: 1.05 / 1.19, fossil: 1.5 / 1.19, dienst: 1.05 / 1.19 };
+const reformStrom = s => Math.max(0, (s / 1.19 - RF.stromSt - RF.umlagen) * 1.05);
+
+/* ---------------- Zustand ---------------- */
+function leer() {
+  const g = { id: uid(), name: "Erdgeschoss", h: 2.5 };
+  return {
+    v: 1, name: "", plz: "", te: -12, bj: 1968, we: 1, personen: 3, dicht: "mittel", oben: "dachraum", unten: "keller",
+    u: { aw: null, fen: null, dach: null, kel: null }, iw: 1.8, id: 1.3, wb: null,
+    geschosse: [g], raeume: [], akt: g.id,
+    hz: { vl: 55, sig: 7, sperr: 0, reserve: 0 },
+    anl: { ausl: "ber", traeger: "gas", ww: true, zirk: true, lAussen: 3, lGraben: 0, lInnen: 6, zs: true, sockel: false },
+    alt: { verbrauch: "", preis: 0.115, grund: 180, wart: 300, nutz: 90, neu: 12000 },
+    wp: { strom: 0.27, grund: 120, wart: 200 },
+    fin: { zins: 3.5, jahre: 20, steigF: 3, steigS: 1.5, selbst: true, tausch: true, eink: false },
+    kOv: {},
+  };
+}
+function beispiel() {
+  const S = leer(); const eg = S.geschosse[0]; const og = { id: uid(), name: "Obergeschoss", h: 2.5 };
+  S.geschosse.push(og); S.name = "Beispiel: Einfamilienhaus 1968"; S.u.fen = 1.6;
+  S.alt.verbrauch = 28000;
+  const R = (g, name, typ, x, y, w, l, fen, hk, extra) => S.raeume.push({ id: uid(), g: g.id, name, typ, ti: TYPEN[typ].ti, x, y, w, l, fen, hk, ...extra });
+  const H = (typ, h, l) => ({ typ: String(typ), h, l });
+  R(eg, "Wohnen", "wohnen", 0, 0, 6, 5, 7.5, [H(22, 600, 1400), H(21, 600, 1400)]);
+  R(eg, "Küche", "kueche", 6, 0, 4, 3.5, 2.0, [H(22, 600, 1000)]);
+  R(eg, "Diele", "flur", 6, 3.5, 4, 2, 2.0, [H(11, 600, 600)]);
+  R(eg, "Treppe", "flur", 6, 5.5, 2, 2.5, 0, []);
+  R(eg, "WC", "wc", 8, 5.5, 2, 2.5, 0.5, [H(22, 600, 600)]);
+  R(eg, "Arbeiten", "buero", 0, 5, 6, 3, 3.0, [H(22, 600, 1400)]);
+  R(og, "Schlafen", "schlafen", 0, 0, 5, 4.5, 3.0, [H(22, 600, 1200)]);
+  R(og, "Kind 1", "kind", 5, 0, 5, 4.5, 3.0, [H(22, 600, 1600)]);
+  R(og, "Kind 2", "kind", 0, 4.5, 4, 3.5, 2.4, [H(22, 600, 1200)]);
+  R(og, "Flur", "flur", 4, 4.5, 2, 3.5, 0, []);
+  R(og, "Bad", "bad", 6, 4.5, 4, 3.5, 1.2, [{ typ: "glied", h: 900, l: 800, t: 220 }]);
+  S.akt = eg.id; return S;
+}
+let S = leer();
+const G = () => S.geschosse.find(g => g.id === S.akt) || S.geschosse[0];
+const lvl = id => S.geschosse.findIndex(g => g.id === id);
+const uStd = k => D_U[S.bj] ? D_U[S.bj][UTEIL[k].i] : 1;
+const U = k => S.u[k] == null || S.u[k] === "" ? uStd(k) : +S.u[k];
+const wbStd = () => S.bj <= 1994 ? 0.10 : S.bj <= 2009 ? 0.05 : 0.03;
+const WB = () => S.wb == null || S.wb === "" ? wbStd() : +S.wb;
+
+/* ---------------- Geometrie ---------------- */
+const TOL = 0.45;   // Abstand, bis zu dem zwei Rechtecke als Nachbarn gelten (Wanddicke)
+function ueberlapp(a1, a2, b1, b2) { const s = Math.max(a1, b1), e = Math.min(a2, b2); return e > s + 1e-6 ? [s, e] : null; }
+function vereint(list) { list.sort((a, b) => a[0] - b[0]); let t = 0, s = null, e = null; for (const [a, b] of list) { if (s === null || a > e) { if (s !== null) t += e - s; s = a; e = b; } else e = Math.max(e, b); } if (s !== null) t += e - s; return t; }
+function nachbarn(r, gleiche) {
+  const x1 = r.x, x2 = r.x + r.w, y1 = r.y, y2 = r.y + r.l;
+  const kanten = [["y", y1, x1, x2, -1], ["y", y2, x1, x2, 1], ["x", x1, y1, y2, -1], ["x", x2, y1, y2, 1]];
+  let frei = 0; const nb = new Map();
+  for (const [ax, pos, a, b, dir] of kanten) {
+    const bedeckt = [];
+    for (const o of gleiche) {
+      if (o === r) continue;
+      const opp = ax === "y" ? (dir < 0 ? o.y + o.l : o.y) : (dir < 0 ? o.x + o.w : o.x);
+      if (Math.abs(opp - pos) > TOL) continue;
+      const I = ax === "y" ? ueberlapp(a, b, o.x, o.x + o.w) : ueberlapp(a, b, o.y, o.y + o.l);
+      if (!I) continue;
+      bedeckt.push(I); nb.set(o, (nb.get(o) || 0) + I[1] - I[0]);
+    }
+    frei += Math.max(0, (b - a) - vereint(bedeckt));
+  }
+  return { frei, nb };
+}
+function flaeche(r, liste) { const out = []; for (const o of liste) { const ix = ueberlapp(r.x, r.x + r.w, o.x, o.x + o.w), iy = ueberlapp(r.y, r.y + r.l, o.y, o.y + o.l); if (ix && iy) out.push([o, (ix[1] - ix[0]) * (iy[1] - iy[0])]); } return out; }
+
+/* ---------------- Heizlast je Raum (vereinfacht nach DIN EN 12831-1) ---------------- */
+function heizlast() {
+  const te = +S.te, n_inf = DICHT[S.dicht][1], [, fO, aO] = OBEN[S.oben], [, fU] = UNTEN[S.unten];
+  const proG = S.geschosse.map(g => S.raeume.filter(r => r.g === g.id));
+  const L = new Map(); let sum = 0, Hges = 0, Ages = 0, ext = 0, lueft = 0;
+  for (const r of S.raeume) {
+    const T = TYPEN[r.typ] || TYPEN.wohnen, ti = num(r.ti, T.ti), A = r.w * r.l, li = lvl(r.g), g = S.geschosse[li];
+    const h = num(r.h, g.h), dT = ti - te;
+    const nb = nachbarn(r, proG[li]);
+    const auto = { aw: r2(nb.frei), fen: nb.frei > 0.3 ? Math.round(A * 0.15 * 10) / 10 : 0 };
+    const Lext = num(r.aw, auto.aw), Afen = Math.min(num(r.fen, auto.fen), Lext * h), Uf = num(r.fenU, U("fen"));
+    const Aaw = Math.max(0, Lext * (h + ZUSCHLAG_DECKE) - Afen);
+    const oben = li < proG.length - 1 ? flaeche(r, proG[li + 1]) : [], unten = li > 0 ? flaeche(r, proG[li - 1]) : [];
+    const sumA = l => l.reduce((s, [, a]) => s + a, 0);
+    const Aob = r.decke === "dach" ? A : r.decke === "innen" ? 0 : Math.max(0, A - sumA(oben));
+    const Aun = r.boden === "unten" ? A : r.boden === "innen" ? 0 : Math.max(0, A - sumA(unten));
+    const e = { aw: U("aw") * Aaw * dT, fen: Uf * Afen * dT, dach: U("dach") * Aob * aO * fO * dT, boden: U("kel") * Aun * fU * dT };
+    e.wb = WB() * (Aaw + Afen + Aob * aO * fO + Aun * fU) * dT;
+    // Wärme zu Nachbarräumen: beheizt (Innenwand, Innendecke) oder unbeheizt (dann wie Kellerdecke bzw. Dach)
+    let innen = 0, zuUnb = 0;
+    const tj = o => num(o.ti, (TYPEN[o.typ] || TYPEN.wohnen).ti), unb = o => (TYPEN[o.typ] || {}).unb;
+    for (const [o, len] of nb.nb) { const q = S.iw * len * h * (ti - tj(o)); if (unb(o)) zuUnb += q; else innen += q; }
+    if (r.decke !== "dach" && r.decke !== "innen") for (const [o, a] of oben) { const q = (unb(o) ? U("dach") : S.id) * a * (ti - tj(o)); if (unb(o)) zuUnb += q; else innen += q; }
+    if (r.boden !== "unten" && r.boden !== "innen") for (const [o, a] of unten) { const q = (unb(o) ? U("kel") : S.id) * a * (ti - tj(o)); if (unb(o)) zuUnb += q; else innen += q; }
+    const n = Math.max(T.n, n_inf), V = A * h, phiV = T.unb ? 0 : 0.34 * n * V * dT;
+    const phiE = e.aw + e.fen + e.dach + e.boden + e.wb;
+    const phi = T.unb ? 0 : Math.max(0, phiE + zuUnb + innen + phiV) * (1 + num(S.hz.reserve, 0) / 100);
+    L.set(r.id, { r, ti, A, h, V, Lext, Afen, Aaw, Aob, Aun, e, innen, zuUnb, phiV, phi, auto, unb: !!T.unb, dT });
+    if (!T.unb) { sum += phi; Ages += A; ext += phiE + zuUnb; lueft += phiV; Hges += (phiE + zuUnb + phiV) / dT; }
+  }
+  // Gebäudeheizlast: ohne Wärmeströme zwischen beheizten Räumen (sie heben sich auf)
+  const geb = (ext + lueft) * (1 + num(S.hz.reserve, 0) / 100);
+  return { L, sumRaum: sum, geb, Ages, Hges, ext, lueft };
+}
+
+/* ---------------- Heizkörper ---------------- */
+function qN(hk) {
+  const h = num(hk.h, 600), l = num(hk.l, 1000);
+  if (QN600[hk.typ]) return QN600[hk.typ] * Math.pow(h / 600, 0.87) * l / 1000;
+  if (hk.typ === "glied") return Math.round(l / 50) * 0.72 * Math.pow(h / 1000, 0.9) * num(hk.t, 160);
+  if (hk.typ === "q") return num(hk.q, 0);
+  if (hk.typ === "geb") return 2.2 * QN600[33] * Math.pow(h / 600, 0.87) * l / 1000;
+  return 0;
+}
+function dtln(tv, tr, ti) { const a = tv - ti, b = Math.max(0.2, tr - ti); if (a <= 0.2) return 0; if (Math.abs(a - b) < 0.01) return a; return (a - b) / Math.log(a / b); }
+function qHK(hk, tv, tr, ti) {
+  const d = dtln(tv, tr, ti);
+  if (hk.typ === "fbh") return Math.min(100, 5.0 * d) * num(hk.a, 0);   // Fußbodenheizung: rund 5 W je m² und Kelvin, höchstens 100 W/m²
+  if (hk.typ === "geb") return qN(hk) * d / 49.83;                       // mit Gebläse: Leistung fällt kaum mit der Temperatur
+  return qN(hk) * Math.pow(d / 49.83, hk.typ === "glied" ? 1.3 : 1.3);
+}
+const qRaum = (hks, tv, sig, ti) => hks.reduce((s, hk) => s + qHK(hk, tv, tv - sig, ti), 0);
+function vlNoetig(hks, phi, ti, sig) {
+  if (!hks.length || phi <= 0) return null;
+  if (qRaum(hks, 95, sig, ti) < phi) return 96;
+  let lo = ti + 1, hi = 95;
+  for (let k = 0; k < 40; k++) { const m = (lo + hi) / 2; if (qRaum(hks, m, sig, ti) >= phi) hi = m; else lo = m; }
+  return hi;
+}
+const preisHK = hk => { const p = HKP[hk.typ] || HKP[33]; return p[0] + p[1] * num(hk.h, 600) * num(hk.l, 1000) / 1e6; };
+const HK_EXTRA = 275, HK_NEU_ANB = 300, VENTIL = 75;   // Demontage 70 + Thermostatventil 95 + Anschluss 110 (L1 2.5, 8.16, 8.18); neue Anbindung (Schätzung); Ventileinsatz (L1 8.17)
+function kandidaten(h, maxL, tv, sig, ti) {
+  const out = [];
+  for (const typ of ["22", "33"]) for (let l = 400; l <= Math.max(400, maxL) + 1; l += 100) { const k = { typ, h, l }; out.push({ ...k, q: qHK(k, tv, tv - sig, ti), p: preisHK(k) }); }
+  return out;
+}
+function raumPruefen(x, tv, sig) {
+  const r = x.r, hks = r.hk || [], ti = x.ti, phi = x.phi;
+  const vlB = vlNoetig(hks, phi, ti, sig);
+  const have = qRaum(hks, tv, sig, ti);
+  const res = { x, phi, have, vlB, tausch: [], neu: [], status: "ok", vlNach: vlB };
+  if (x.unb || phi <= 0) { res.status = "off"; return res; }
+  if (!hks.length && ti <= 16) { res.ohneHK = true; return res; }   // Flur, Treppe: wird über die Nachbarräume warm
+  if (have >= phi) return res;
+  const q = hk => qHK(hk, tv, tv - sig, ti);
+  const tauschbar = hks.map(hk => ({ hk, q: q(hk) })).filter(o => o.hk.typ !== "fbh" && !o.hk.fest).sort((a, b) => a.q - b.q);
+  const maxLvon = hk => num(r.maxL, Math.min(3000, Math.max(1200, num(hk.l, 1000) + 400)));
+  const slots = tauschbar.map(o => ({ o, c: kandidaten(num(o.hk.h, 600), maxLvon(o.hk), tv, sig, ti) }));
+  if (!hks.length) {   // kein Heizkörper: so viele neue, wie nötig (höchstens 4)
+    const c = kandidaten(600, num(r.maxL, 1600), tv, sig, ti), m = Math.max(...c.map(k => k.q));
+    for (let i = 0; i < Math.min(4, Math.max(1, Math.ceil(phi / m))); i++) slots.push({ o: null, c });
+  }
+  const waehle = R => {   // R Slots ersetzen: jeweils der günstigste Heizkörper, der zusammen mit den anderen reicht
+    const keep = have - R.reduce((s, sl) => s + (sl.o ? sl.o.q : 0), 0);
+    let rest = phi - keep; const max = R.map(sl => Math.max(...sl.c.map(c => c.q)));
+    if (max.reduce((a, b) => a + b, 0) < rest) return null;
+    const out = [];
+    R.forEach((sl, i) => {
+      const spaeter = max.slice(i + 1).reduce((a, b) => a + b, 0), need = Math.max(0, rest - spaeter);
+      const ok = sl.c.filter(c => c.q >= need).sort((a, b) => a.p - b.p)[0] || sl.c.reduce((a, b) => b.q > a.q ? b : a);
+      out.push({ alt: sl.o ? sl.o.hk : null, neu: ok }); rest -= ok.q;
+    });
+    return out;
+  };
+  let wahl = null;
+  for (let k = 1; k <= slots.length && !wahl; k++) wahl = waehle(slots.slice(0, k));
+  if (!wahl && slots.length) {   // auch mit allen getauscht zu wenig: größter Platz bekommt einen Heizkörper mit Gebläse
+    const sl = slots.at(-1), h = sl.o ? num(sl.o.hk.h, 600) : 600, l = Math.min(1600, Math.max(800, sl.o ? num(sl.o.hk.l, 1000) : 1200));
+    const g = { typ: "geb", h, l }; const gq = q(g);
+    const andere = slots.slice(0, -1).map(s => ({ alt: s.o ? s.o.hk : null, neu: s.c.reduce((a, b) => b.q > a.q ? b : a) }));
+    const summe = have - slots.reduce((s, sl2) => s + (sl2.o ? sl2.o.q : 0), 0) + andere.reduce((s, a) => s + a.neu.q, 0) + gq;
+    wahl = [...andere, { alt: sl.o ? sl.o.hk : null, neu: { ...g, q: gq, p: preisHK(g) } }];
+    if (summe < phi) res.status = "bad";
+  }
+  if (!wahl) { res.status = "bad"; return res; }
+  res.tausch = wahl.filter(w => w.alt); res.neu = wahl.filter(w => !w.alt);
+  if (res.status !== "bad") res.status = "warn";
+  const nachher = hks.filter(hk => !wahl.some(w => w.alt === hk)).concat(wahl.map(w => w.neu));
+  res.vlNach = vlNoetig(nachher, phi, ti, sig);
+  return res;
+}
+function auswerten(HL, tv) {
+  const sig = num(S.hz.sig, 7), rs = [];
+  for (const x of HL.L.values()) rs.push(raumPruefen(x, tv, sig));
+  let n = 0, nNeu = 0, k = 0, vlB = 0, vlN = 0, bad = 0, ohne = 0, bleib = 0;
+  for (const z of rs) {
+    if (z.status === "off") continue;
+    n += z.tausch.length; nNeu += z.neu.length; bad += z.status === "bad" ? 1 : 0;
+    k += z.tausch.reduce((s, t) => s + t.neu.p + HK_EXTRA, 0) + z.neu.reduce((s, t) => s + t.neu.p + HK_EXTRA + HK_NEU_ANB, 0);
+    if (z.vlB != null) vlB = Math.max(vlB, z.vlB); else if (!z.ohneHK) ohne++;
+    vlN = Math.max(vlN, z.vlNach ?? tv);
+    bleib += (z.x.r.hk || []).filter(hk => hk.typ !== "fbh" && !z.tausch.some(t => t.alt === hk)).length;
+  }
+  const vl = Math.min(tv, Math.max(vlN, 30));
+  return { rs, n, nNeu, k, vlB, vl, bad, ohne, bleib };
+}
+
+/* ---------------- Wärme im Jahr, Wärmepumpe ---------------- */
+let ORT = null;   // aus der Postleitzahl: Gradtagzahl und Faktor für die Jahresarbeitszahl
+function waerme(HL, vl) {
+  const Gt = ORT ? ORT.gt : 3400, jf = ORT ? ORT.jf : 1;
+  const qBer = HL.Hges * Gt * 24 / 1000 * 0.9;   // 0,9: Nachtabsenkung und nicht ständig beheizte Räume
+  const qWW = num(S.personen, 0) * 700, qWWsp = qWW * 1.25;   // Nutzwärme Warmwasser 700 kWh je Person, 25 % Speicher- und Leitungsverluste
+  const vb = num(S.alt.verbrauch, 0), eta = num(S.alt.nutz, 90) / 100;
+  const qMess = vb > 0 ? Math.max(0, vb * eta - (S.anl.ww ? qWWsp * 1.15 : 0)) : 0;
+  const qH = vb > 0 ? qMess : qBer;
+  const jaz = kf("jF", qH + qWWsp, vl) * jf, jazWW = kf("jF", qH + qWWsp, 55) * jf * 0.92;
+  const strom = qH / jaz + qWWsp / jazWW;
+  const phiMess = vb > 0 ? qMess * 1000 / (Gt * 24 * 0.9) * (20 - S.te) : null;   // Heizlast aus dem Verbrauch, zum Abgleich
+  return { Gt, jf, qBer, qMess, qH, qWW: qWWsp, jaz, jazWW, jazGes: (qH + qWWsp) / strom, strom, phiMess, quelle: vb > 0 ? "Verbrauch" : "Berechnung" };
+}
+const STUFEN = [4, 5, 6, 7, 8, 10, 12, 14, 16];
+function wpLeistung(HL, W) {
+  const ww = num(S.personen, 0) * 0.2, sperr = num(S.hz.sperr, 0);
+  const verb = HL.kal !== 1, basis = HL.geb;
+  const p = (basis / 1000 + ww) * 24 / (24 - Math.min(12, sperr));
+  let anz = 1, stufe = STUFEN.find(s => s >= p);
+  if (!stufe) { anz = Math.ceil(p / 16); stufe = STUFEN.find(s => s * anz >= p) || 16; }
+  return { p, ww, anz, stufe, kw: anz * stufe, basis, verb };
+}
+
+/* ---------------- Kosten ---------------- */
+// Q: Quelle. "R" = Referenzprojekt (Kostenberechnung LPh 5, 10/2026, netto mit Montage) mit Positionsnummer; "S" = Schätzung, aus dem Referenzprojekt umgerechnet
+function kosten(HL, A, P) {
+  const a = S.anl, gross = P.kw > 16, nHK = A.n + A.nNeu, alle = nHK + A.bleib, oel = a.traeger === "oel";
+  const pos = [];
+  const add = (key, gr, t, m, e, ep, q) => { const ov = S.kOv[key] || {}; const mm = ov.m ?? m, pp = ov.ep ?? ep; pos.push({ key, gr, t, m: mm, e, ep: pp, q, aus: !!ov.aus, sum: ov.aus ? 0 : mm * pp, geaendert: ov.m != null || ov.ep != null }); };
+  const G1 = "Wärmepumpe und Aufstellung", G2 = "Heizzentrale und Leitungen", G3 = "Trinkwarmwasser", G4 = "Heizkörper", G5 = "Rückbau", G6 = "Inbetriebnahme und Abgleich", G7 = "Elektro und Netzbetreiber";
+  add("wp", G1, `Luft-Wasser-Wärmepumpe ${P.stufe} kW${P.anz > 1 ? " (Kaskade)" : ""} mit Regelung, geliefert und montiert`, P.anz, "St", Math.round((5500 + 820 * P.stufe) / 10) * 10, "R L1 3.1: 16.150 € je 13 kW; je kW umgerechnet");
+  add("regel", G1, "Regelung einrichten, Lastmanagement, Steuerung nach § 14a EnWG", 1, "psch", 850, "R L1 3.2");
+  add("fund", G1, "Fundament frostfrei, Kondensatablauf mit Kiespackung, Frostschutzventile, Anschluss-Set", P.anz, "St", 2150, "R L1 4.2, 3.7 bis 3.9, 4.3");
+  add("dr", G1, "Verbindungsleitung Wärmepumpe – Haus, vorgedämmtes Doppelrohr bzw. gedämmtes Rohr außen", num(a.lAussen, 3), "m", 150, "R L1 7.5");
+  if (num(a.lGraben, 0) > 0) { add("graben", G1, "Graben für die Leitung, Sandbett, Warnband", num(a.lGraben, 0), "m", 220, "R L1 4.7"); add("durchf", G1, "Gasdichte Hauseinführung unter Erdgleiche", 1, "St", 880, "R L1 7.9"); }
+  add("kb", G1, "Kernbohrung durch die Außenwand, mit Abdichtung", 2 * P.anz, "St", 260, "R L1 7.7");
+  add("rohr", G2, "Rohrleitungen im Haus mit Dämmung (Kupfer bzw. Stahl)", num(a.lInnen, 6), "m", gross ? 137 : 100, gross ? "R L1 5.9 + 5.10" : "S nach R L1 7.1 + 7.2");
+  add("puffer", G2, gross ? "Pufferspeicher ≥ 400 l" : "Reihen- oder Trennpuffer rund 100 l", 1, "St", gross ? 2100 : 900, gross ? "R L1 5.1" : "S");
+  add("mag", G2, "Ausdehnungsgefäß, Schlamm- und Magnetitabscheider, Sicherheitsventil", 1, "psch", gross ? 920 : 650, gross ? "R L1 5.3, 5.4, 5.6" : "S nach R L1 5.3 bis 5.6");
+  add("vert", G2, "Anschluss an den vorhandenen Verteiler, Absperrungen", 1, "psch", 900, "R L1 5.7");
+  if (gross) add("pumpe", G2, "Heizkreispumpe hinter dem Puffer", 1, "St", 1900, "R L1 5.5");
+  if (S.anl.ww) {
+    const gr = num(S.personen, 3) > 5;
+    add("sp", G3, `Speicher-Wassererwärmer ${gr ? 400 : 300} l mit großer Heizfläche für Wärmepumpen`, 1, "St", gr ? 2800 : 2200, gr ? "S nach R L1 6.1a" : "R L1 6.1a");
+    add("lade", G3, "Ladeleitungen zum Speicher, gedämmt", 4, "m", 85, "R L1 6.1b");
+    add("tw", G3, "Sicherheitsgruppe, Anschluss an das Trinkwassernetz, Inbetriebnahme 60 °C", 1, "psch", 690, "R L1 6.3, 6.9");
+    if (a.zirk) add("zirk", G3, "Zirkulationspumpe mit Zeitschaltuhr", 1, "St", 650, "R L1 6.8");
+  }
+  for (const z of A.rs) for (const t of [...z.tausch, ...z.neu]) {
+    const n = t.neu, nm = n.typ === "geb" ? "Heizkörper mit Gebläse" : `Flachheizkörper Typ ${n.typ}`;
+    add("hk_" + z.x.r.id + "_" + (t.alt ? (z.x.r.hk || []).indexOf(t.alt) : "n"), G4, `${esc(z.x.r.name)}: ${nm} ${n.h} × ${n.l} mm${t.alt ? "" : " (neu, mit Anbindung)"}`, 1, "St", Math.round(n.p / 10) * 10 + HK_EXTRA + (t.alt ? 0 : HK_NEU_ANB), n.typ === "geb" ? "R L1 8.9, dazu L1 2.5, 8.16, 8.18" : "R L1 8.1 bis 8.8f, dazu L1 2.5, 8.16, 8.18");
+  }
+  if (A.bleib > 0) add("ventil", G4, "Ventileinsatz und Thermostatkopf an bleibenden Heizkörpern tauschen", A.bleib, "St", VENTIL, "R L1 8.17");
+  add("dem", G5, oel ? "Ölkessel mit Regelung und Abgasleitung demontieren, entsorgen, Schornsteinfeger" : "Gaskessel mit Regelung und Abgasleitung demontieren, Gasleitung trennen, Schornsteinfeger", 1, "psch", 1030, "R L1 2.1 bis 2.6");
+  if (S.anl.ww) add("altsp", G5, "Alten Warmwasserspeicher demontieren, entsorgen", 1, "psch", 250, "R L1 2.2");
+  if (oel) add("tank", G5, "Öltank reinigen, demontieren, entsorgen", 1, "psch", 2000, "S");
+  if (a.sockel) add("sockel", G5, "Alten Kesselsockel abbrechen, Boden schließen", 1, "psch", 350, "R L1 2.7");
+  add("baust", G6, "Baustelle einrichten, Bestand aufnehmen, Werk- und Montageplanung", 1, "psch", gross ? 2850 : 1200, gross ? "R L1 1.1 bis 1.4" : "S nach R L1 1.1 bis 1.4");
+  add("spuel", G6, "Netz spülen, füllen nach VDI 2035, Druckprobe", 1, "psch", 700 + 45 * alle, "S nach R L1 9.1 bis 9.3 (35 Heizkörper: 2.350 €)");
+  add("abgl", G6, "Hydraulischer Abgleich Verfahren B mit Nachweis für die Förderung", 1, "psch", 300 + 32 * alle, "S nach R L1 9.4 (35 Ventile: 1.400 €)");
+  add("ibn", G6, "Inbetriebnahme, Heizkurve, Einweisung, Dokumentation, Nachweise", 1, "psch", gross ? 2630 : 1300, gross ? "R L1 9.5, 10.1 bis 10.4" : "S nach R L1 9.5, 10.1 bis 10.4");
+  add("el", G7, "Stromkreis Wärmepumpe: Leitung, Trennschalter, Steuerung nach TAB und § 14a", 1, "psch", 1100, "R L3 2.3, 3.7, 3.8, 4.1");
+  if (a.zs) add("zs", G7, "Zählerplatz für die Wärmepumpe herrichten bzw. Zählerschrank umbauen", 1, "psch", 1200, "R L3 2.1, 2.2");
+  add("netz", G7, "Netzbetreiber: Anmeldung, Zählersetzung" + (oel ? "" : ", Gaszähler ausbauen"), 1, "psch", oel ? 300 : 670, oel ? "S" : "S; Gas: R KG 223 (373 €)");
+  const netto = pos.reduce((s, p) => s + p.sum, 0);
+  const zuschlag = netto * 0.10, mwst = (netto + zuschlag) * 0.19;
+  const grp = {}; for (const p of pos) grp[p.gr] = (grp[p.gr] || 0) + p.sum;
+  return { pos, netto, zuschlag, mwst, brutto: netto + zuschlag + mwst, grp, hk: (grp[G4] || 0) };
+}
+
+const quelle = q => q.replace(/^S$/, "Schätzung").replace(/^S /, "Schätzung ").replace(/\bR (?=L\d|KG)/g, "Referenzprojekt ");
+
+/* ---------------- Wirtschaftlichkeit ---------------- */
+function foerderung(brutto) {
+  const f = S.fin, selbst = !!f.selbst;
+  const satz = Math.min(0.30 + (selbst && f.tausch ? 0.16 : 0) + (selbst && f.eink ? 0.30 : 0), 0.70);
+  const we = Math.max(1, Math.round(num(S.we, 1))), max = 28000 + 15000 * Math.max(0, Math.min(we, 6) - 1) + 8000 * Math.max(0, we - 6);
+  return { satz, max, betrag: satz * Math.min(brutto, max) };
+}
+const annu = (P, z, N) => P <= 0 ? 0 : z <= 0 ? P / N : P * z / (1 - Math.pow(1 + z, -N));
+const mittel = (g, N) => g === 0 ? 1 : (Math.pow(1 + g, N) - 1) / (g * N);   // mittlerer Preisfaktor über N Jahre
+function wirtschaft(W, K) {
+  const f = S.fin, N = Math.max(1, Math.round(num(f.jahre, 20))), z = num(f.zins, 3.5) / 100, gF = num(f.steigF, 3) / 100, gS = num(f.steigS, 1.5) / 100;
+  const oel = S.anl.traeger === "oel", eta = num(S.alt.nutz, 90) / 100;
+  const qGes = W.qH + W.qWW;
+  const brennstoff = qGes / eta * (oel ? 1.15 : 1);   // neuer Kessel: Endenergie (Öl: Preis je Liter ÷ 10 kWh); 15 % mehr Verluste bei Öl-Warmwasser vernachlässigt → einfacher Aufschlag
+  const fall = (reform) => {
+    const fosP = (oel ? num(S.alt.preis, 1) / 10 : num(S.alt.preis, 0.115)) * (reform ? RF.fossil : 1);
+    const sP = reform ? reformStrom(num(S.wp.strom, 0.27)) : num(S.wp.strom, 0.27);
+    const foe = reform ? { satz: 0, betrag: 0, max: 0 } : foerderung(K.brutto);
+    const invWp = reform ? (K.netto + K.zuschlag) : K.brutto - foe.betrag;
+    const kWp = reform ? invWp / N : annu(invWp, z, N);   // Reform: zinsloser Kredit, ohne Mehrwertsteuer
+    const kGas = annu(num(S.alt.neu, 12000), z, N);
+    const wp = { inv: invWp, kap: kWp, energie: W.strom * sP * mittel(gS, N), grund: num(S.wp.grund, 120) * (reform ? RF.strom : 1), wart: num(S.wp.wart, 200) * (reform ? RF.dienst : 1), preis: sP };
+    const fo = { inv: num(S.alt.neu, 12000), kap: kGas, energie: brennstoff * fosP * mittel(gF, N), grund: oel ? 0 : num(S.alt.grund, 180) * (reform ? RF.fossil : 1), wart: num(S.alt.wart, 300) * (reform ? RF.dienst : 1), preis: fosP };
+    for (const o of [wp, fo]) o.jahr = o.kap + o.energie + o.grund + o.wart;
+    const e1 = (fo.energie / mittel(gF, N) + fo.grund + fo.wart) - (wp.energie / mittel(gS, N) + wp.grund + wp.wart);
+    return { wp, fo, foe, diff: fo.jahr - wp.jahr, e1, amort: e1 > 0 ? Math.max(0, wp.inv - fo.inv) / e1 : null, sP, fosP };
+  };
+  return { heute: fall(false), reform: fall(true), N, brennstoff, oel };
+}
+
+/* ---------------- Rechnen und Darstellen ---------------- */
+let R = null;
+function rechne() {
+  const HL = heizlast(), tv = num(S.hz.vl, 55);
+  // Auf Wunsch an den Verbrauch angleichen: alle Räume im selben Verhältnis
+  HL.kal = 1; HL.gebNorm = HL.geb;
+  const W0 = waerme(HL, 55);
+  if (S.anl.ausl === "verb" && W0.phiMess > 0 && HL.geb > 0) { const k = W0.phiMess / HL.geb; HL.kal = k; HL.geb *= k; HL.sumRaum *= k; for (const x of HL.L.values()) x.phi *= k; }
+  const A = auswerten(HL, tv), W = waerme(HL, A.vl), P = wpLeistung(HL, W), K = kosten(HL, A, P), E = wirtschaft(W, K);
+  const tab = [35, 40, 45, 50, 55, 60, 65, 70].map(t => { const a = auswerten(HL, t), w = waerme(HL, a.vl); return { t, a, w, sk: w.strom * num(S.wp.strom, 0.27) }; });
+  return { HL, A, P, W, K, E, tab, tv };
+}
+const vlTxt = v => v == null ? "–" : v > 95 ? "über 95 °C" : fmt(Math.ceil(v)) + " °C";
+
+function kopf() {
+  const { HL, A, P, K, E } = R;
+  const t = [
+    [fmt(HL.geb / 1000, 1) + " kW", `Heizlast bei ${fmt(S.te)} °C` + (HL.Ages ? ` · ${fmt(HL.geb / HL.Ages)} W/m²` : "") + (HL.kal !== 1 ? " · angeglichen" : "")],
+    [vlTxt(A.vlB || null), "Vorlauf mit heutigen Heizkörpern"],
+    [A.n + A.nNeu + "", `Heizkörper tauschen für ${fmt(R.tv)} °C`],
+    [P.anz > 1 ? `${P.anz} × ${P.stufe} kW` : P.stufe + " kW", "Wärmepumpe"],
+    [eur(K.brutto), "Kosten brutto, ohne Förderung"],
+    [(E.heute.diff >= 0 ? "" : "−") + eur(Math.abs(E.heute.diff)), "Vorteil im Jahr gegen neue " + (E.oel ? "Ölheizung" : "Gasheizung")],
+  ];
+  $("kopf").innerHTML = t.map(([b, s]) => `<div class="tile"><b>${b}</b><span>${s}</span></div>`).join("");
+}
+
+/* ---------- Haus ---------- */
+const FELD = (id, lbl, ctl, sub = "") => `<div class="f"><label for="${id}">${lbl}</label>${ctl}${sub ? `<small id="${id}_s">${sub}</small>` : ""}</div>`;
+const INP = (id, v, step = "any", ph = "") => `<input id="${id}" type="number" inputmode="decimal" step="${step}" value="${esc(v)}" placeholder="${esc(ph)}">`;
+const SEL = (id, opts, v) => `<select id="${id}">${opts.map(([k, t]) => `<option value="${k}"${String(k) === String(v) ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
+function hausAufbauen() {
+  $("haus").innerHTML = [
+    FELD("h_name", "Bezeichnung", `<input id="h_name" type="text" value="${esc(S.name)}" placeholder="z. B. Musterstraße 1">`),
+    FELD("h_plz", "Postleitzahl", `<input id="h_plz" type="text" inputmode="numeric" maxlength="5" value="${esc(S.plz)}" placeholder="für Klima">`, "Wetter des Orts für Wärmebedarf und Jahresarbeitszahl"),
+    FELD("h_te", "Normaußentemperatur", INP("h_te", S.te, "0.1"), "°C; in Deutschland meist −10 bis −16, Höhenlagen kälter. Der Energieberater kennt den Wert für deinen Ort."),
+    FELD("h_bj", "Baujahr", SEL("h_bj", BJ, S.bj), "daraus die U-Werte, wenn du sie nicht kennst"),
+    FELD("h_we", "Wohnungen", INP("h_we", S.we, "1"), "für die Förderung"),
+    FELD("h_pers", "Personen", INP("h_pers", S.personen, "1"), "für Warmwasser"),
+  ].join("");
+  $("haus2").innerHTML = [
+    FELD("h_oben", "Nach oben", SEL("h_oben", Object.entries(OBEN).map(([k, v]) => [k, v[0]]), S.oben)),
+    FELD("h_unten", "Nach unten", SEL("h_unten", Object.entries(UNTEN).map(([k, v]) => [k, v[0]]), S.unten), "gilt, wo kein beheizter Raum darunter liegt"),
+    FELD("h_dicht", "Luftdichtheit", SEL("h_dicht", Object.entries(DICHT).map(([k, v]) => [k, v[0]]), S.dicht)),
+    FELD("h_reserve", "Zuschlag auf die Heizlast", INP("h_reserve", S.hz.reserve, "1"), "%; für Wiederaufheizen nach Absenkung, sonst 0"),
+  ].join("");
+  $("uwerte").innerHTML = Object.entries(UTEIL).map(([k, d]) => `<div class="uzeile"><span>${d.t}</span>${SEL("u_" + k + "_p", [["", "nach Baujahr"], ...d.pre.map(([t, v]) => [v, `${t}: ${fmt(v, 2)}`]), ["x", "eigener Wert"]], "")}<input class="inp" id="u_${k}" type="number" step="0.01" min="0.05" aria-label="U-Wert ${d.t}"></div>`).join("")
+    + `<div class="uzeile"><span>Innenwand / Innendecke</span><small class="muted">zwischen Räumen mit verschiedener Temperatur</small><span class="paar"><input class="inp" id="u_iw" type="number" step="0.1" value="${S.iw}" aria-label="U-Wert Innenwand"><input class="inp" id="u_id" type="number" step="0.1" value="${S.id}" aria-label="U-Wert Innendecke"></span></div>`
+    + `<div class="uzeile"><span>Wärmebrücken-Zuschlag</span><small class="muted" id="u_wb_s"></small><input class="inp" id="u_wb" type="number" step="0.01" aria-label="Wärmebrückenzuschlag"></div>`;
+  uFelder(); hausBinden();
+}
+function uFelder() {
+  for (const k of Object.keys(UTEIL)) {
+    const el = $("u_" + k), sel = $("u_" + k + "_p");
+    if (document.activeElement !== el) el.value = U(k);
+    el.style.fontWeight = S.u[k] == null || S.u[k] === "" ? "400" : "700";
+    if (document.activeElement !== sel) { const pre = UTEIL[k].pre.find(([, v]) => v === +S.u[k]); sel.value = S.u[k] == null || S.u[k] === "" ? "" : pre ? String(pre[1]) : "x"; }
+  }
+  if (document.activeElement !== $("u_wb")) $("u_wb").value = WB();
+  $("u_wb_s").textContent = `W/(m²K) auf alle Außenflächen; geschätzt ${fmt(wbStd(), 2)}`;
+}
+function hausBinden() {
+  const on = (id, f) => $(id).addEventListener("input", e => { f(e.target.value); if (id === "h_bj") uFelder(); aktualisieren(); });
+  on("h_name", v => S.name = v); on("h_te", v => S.te = num(v, -12)); on("h_bj", v => S.bj = +v); on("h_we", v => S.we = num(v, 1)); on("h_pers", v => S.personen = num(v, 0));
+  on("h_oben", v => S.oben = v); on("h_unten", v => S.unten = v); on("h_dicht", v => S.dicht = v); on("h_reserve", v => S.hz.reserve = num(v, 0));
+  $("h_plz").addEventListener("input", e => { S.plz = e.target.value.trim(); ortLaden(); speichernSpaeter(); });
+  for (const k of Object.keys(UTEIL)) {
+    $("u_" + k + "_p").addEventListener("change", e => { const v = e.target.value; if (v === "") S.u[k] = null; else if (v !== "x") S.u[k] = +v; uFelder(); aktualisieren(); if (v === "x") $("u_" + k).focus(); });
+    $("u_" + k).addEventListener("input", e => { S.u[k] = e.target.value === "" ? null : +e.target.value; aktualisieren(); });
+    $("u_" + k).addEventListener("change", () => uFelder());
+  }
+  $("u_iw").addEventListener("input", e => { S.iw = num(e.target.value, 1.8); aktualisieren(); });
+  $("u_id").addEventListener("input", e => { S.id = num(e.target.value, 1.3); aktualisieren(); });
+  $("u_wb").addEventListener("input", e => { S.wb = e.target.value === "" ? null : +e.target.value; aktualisieren(); });
+}
+let ortNr = 0;
+async function ortLaden() {
+  const plz = S.plz, nr = ++ortNr; const s = $("h_plz_s");
+  if (!/^\d{5}$/.test(plz) || !window.Ort) { ORT = null; if (s) s.textContent = /^\d{5}$/.test(plz) ? "Wetterdaten nicht verfügbar; gerechnet mit Mittelwerten" : "Wetter des Orts für Wärmebedarf und Jahresarbeitszahl"; aktualisieren(); return; }
+  try {
+    const api = window.Ort;
+    const w = await api.wetter(plz); if (nr !== ortNr) return;
+    if (!w) { ORT = null; s.textContent = "Postleitzahl unbekannt; gerechnet mit Mittelwerten"; aktualisieren(); return; }
+    let gt = 0; for (let d = 0; d < 365; d++) { let m = 0; for (let h = 0; h < 24; h++) m += w.t[d * 24 + h]; m /= 24; if (m < 15) gt += 20 - m; }
+    ORT = { gt, jf: w.jf || 1, n: w.n };
+    s.textContent = `${w.n}: Gradtagzahl ${fmt(gt)} Kd, Faktor Jahresarbeitszahl ${fmt(ORT.jf, 2)}`;
+  } catch (e) { ORT = null; if (s) s.textContent = "Wetterdaten nicht geladen; gerechnet mit Mittelwerten"; }
+  aktualisieren();
+}
+
+/* ---------- Grundriss ---------- */
+let modus = "sel", auswahl = null, drag = null, massP = [];
+function geschosseZeigen() {
+  $("geschosse").innerHTML = [...S.geschosse].map((g, i) => ({ g, i })).reverse().map(({ g }) => `<button type="button" data-g="${g.id}" aria-pressed="${g.id === S.akt}">${esc(g.name)}</button>`).join("")
+    + `<button type="button" id="b_gauf" class="klein">+ Geschoss oben</button><button type="button" id="b_gab" class="klein">+ Geschoss unten</button>`;
+  const g = G();
+  $("gfelder").innerHTML = FELD("g_name", "Name des Geschosses", `<input id="g_name" type="text" value="${esc(g.name)}">`)
+    + FELD("g_h", "Lichte Raumhöhe", INP("g_h", g.h, "0.01"), "m; gilt für alle Räume, wenn nicht einzeln anders")
+    + `<div class="f"><span>&nbsp;</span><button type="button" class="weg" id="b_gweg"${S.geschosse.length < 2 ? " disabled" : ""}>Geschoss löschen</button></div>`;
+  $("g_name").oninput = e => { g.name = e.target.value; $("geschosse").querySelector(`[data-g="${g.id}"]`).textContent = g.name; aktualisieren(); };
+  $("g_h").oninput = e => { g.h = num(e.target.value, 2.5); aktualisieren(); };
+  $("b_gweg").onclick = () => { if (!confirmLeise(`Geschoss „${g.name}“ mit allen Räumen löschen?`)) return; S.raeume = S.raeume.filter(r => r.g !== g.id); S.geschosse = S.geschosse.filter(x => x !== g); S.akt = S.geschosse[0].id; alles(); };
+  $("b_gauf").onclick = () => { const n = { id: uid(), name: S.geschosse.length === 1 ? "Obergeschoss" : `${S.geschosse.length}. Geschoss`, h: g.h }; S.geschosse.push(n); S.akt = n.id; alles(); };
+  $("b_gab").onclick = () => { const n = { id: uid(), name: "Keller", h: 2.2 }; S.geschosse.unshift(n); S.akt = n.id; alles(); };
+}
+// Löschen ohne Browser-Dialog: zweiter Klick innerhalb von 4 Sekunden bestätigt
+const bestaetigt = new Map();
+function confirmLeise(txt) { const t = bestaetigt.get(txt); if (t && Date.now() - t < 4000) { bestaetigt.delete(txt); return true; } bestaetigt.set(txt, Date.now()); hinweisKurz(txt + " Zum Bestätigen noch einmal klicken."); return false; }
+function hinweisKurz(t) { let el = $("toast"); if (!el) { el = document.createElement("div"); el.id = "toast"; el.setAttribute("role", "status"); el.style.cssText = "position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:9px 14px;border-radius:8px;font-size:14.5px;z-index:20;max-width:90vw"; document.body.append(el); } el.textContent = t; el.hidden = false; clearTimeout(el._t); el._t = setTimeout(() => el.hidden = true, 3800); }
+
+const svgNS = "http://www.w3.org/2000/svg";
+function ausdehnung(g, mitUnten = true) {
+  let W = 10, H = 8; const li = lvl(g.id);
+  const rs = S.raeume.filter(r => r.g === g.id || (mitUnten && li > 0 && r.g === S.geschosse[li - 1].id));
+  for (const r of rs) { W = Math.max(W, r.x + r.w); H = Math.max(H, r.y + r.l); }
+  if (g.img) { W = Math.max(W, g.img.w / g.img.pxm); H = Math.max(H, g.img.h / g.img.pxm); }
+  return [Math.ceil(W) + 1, Math.ceil(H) + 1];
+}
+function farbe(st) { return { ok: "var(--ok-fill)", warn: "var(--warn-fill)", bad: "var(--bad-fill)", off: "var(--off-fill)" }[st] || "var(--off-fill)"; }
+function planSVG(g, opt = {}) {   // auch für den Bericht (opt.druck)
+  const [W, H] = ausdehnung(g), li = lvl(g.id), st = new Map(R ? R.A.rs.map(z => [z.x.r.id, z]) : []);
+  const c = opt.druck ? { line: "#17201e", grid: "#e6ebe9", ok: "#d9efe6", warn: "#fbe9c4", bad: "#f6d3c6", off: "#e9ecea", txt: "#17201e" } : null;
+  let s = `<svg xmlns="${svgNS}" viewBox="-0.5 -0.5 ${W + 0.5} ${H + 0.5}"${opt.druck ? ` class="planz"` : ""}>`;
+  if (!opt.druck) s += `<rect x="-0.5" y="-0.5" width="${W + 0.5}" height="${H + 0.5}" fill="transparent" class="bg"/>`;
+  if (g.img) s += `<image href="${g.img.src}" x="0" y="0" width="${g.img.w / g.img.pxm}" height="${g.img.h / g.img.pxm}" preserveAspectRatio="none" opacity="${opt.druck ? 0.35 : 0.55}" pointer-events="none"/>`;
+  for (let x = 0; x <= W; x++) s += `<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="${c ? c.grid : "var(--grid)"}" stroke-width="${x % 5 ? 0.015 : 0.035}" pointer-events="none"/>`;
+  for (let y = 0; y <= H; y++) s += `<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="${c ? c.grid : "var(--grid)"}" stroke-width="${y % 5 ? 0.015 : 0.035}" pointer-events="none"/>`;
+  if (li > 0) for (const r of S.raeume.filter(r => r.g === S.geschosse[li - 1].id)) s += `<rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.l}" fill="none" stroke="${c ? "#8a958f" : "var(--muted)"}" stroke-width="0.03" stroke-dasharray="0.15 0.1" pointer-events="none"/>`;
+  for (const r of S.raeume.filter(r => r.g === g.id)) {
+    const z = st.get(r.id), sta = z ? z.status : "off", x = R && R.HL.L.get(r.id);
+    const fill = c ? c[sta] : farbe(sta), fs = Math.max(0.2, Math.min(0.34, r.w / 8, r.l / 3));
+    s += `<g class="raum${auswahl === r.id && !opt.druck ? " sel" : ""}" data-r="${r.id}"><rect class="k" x="${r.x}" y="${r.y}" width="${r.w}" height="${r.l}" fill="${fill}" fill-opacity="${g.img ? 0.75 : 1}"${c ? ` stroke="${c.line}" stroke-width="0.04"` : ""}/>`;
+    s += `<text x="${r.x + 0.15}" y="${r.y + 0.15 + fs}" style="font-size:${fs}px"${c ? ` fill="${c.txt}" font-weight="600"` : ""}>${esc(r.name)}</text>`;
+    s += `<text class="s" x="${r.x + 0.15}" y="${r.y + 0.25 + fs * 1.9}" style="font-size:${fs * 0.8}px"${c ? ` fill="${c.txt}"` : ""}>${fmt(r.w * r.l, 1)} m²${x && !x.unb ? " · " + fmt(x.phi) + " W" : ""}</text>`;
+    if (auswahl === r.id && !opt.druck) s += `<rect class="griff" data-griff="${r.id}" x="${r.x + r.w - 0.3}" y="${r.y + r.l - 0.3}" width="0.42" height="0.42" rx="0.06"/>`;
+    s += `</g>`;
+  }
+  if (!opt.druck && massP.length) s += massP.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="0.12" fill="var(--bad)"/>`).join("") + (massP.length === 2 ? `<line x1="${massP[0][0]}" y1="${massP[0][1]}" x2="${massP[1][0]}" y2="${massP[1][1]}" stroke="var(--bad)" stroke-width="0.06"/>` : "");
+  if (opt.druck) s += `<text x="0" y="${H + 0.2}" font-size="0.3" fill="#5a6763">Raster 1 m · grün: Heizkörper reichen · gelb: tauschen · rot: reicht nicht · grau: unbeheizt</text>`;
+  return s + "</svg>";
+}
+function planZeichnen() {
+  const g = G(), svg = $("plan");
+  const tmp = document.createElement("div"); tmp.innerHTML = planSVG(g);
+  const neu = tmp.firstChild; svg.setAttribute("viewBox", neu.getAttribute("viewBox")); svg.innerHTML = neu.innerHTML;
+  if (drag && drag.tmp) { const r = drag.tmp; svg.insertAdjacentHTML("beforeend", `<rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.l}" fill="var(--hl)" stroke="var(--wp)" stroke-width="0.06" stroke-dasharray="0.2 0.1"/>`); }
+}
+function punkt(e) { const svg = $("plan"), p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; const q = p.matrixTransform(svg.getScreenCTM().inverse()); return [q.x, q.y]; }
+const rund = v => Math.round(v / 0.05) * 0.05;
+function fang(v, achse, ich) {   // an Kanten anderer Räume (gleiches Geschoss und darunter) einrasten
+  const g = G(), li = lvl(g.id), ids = [g.id, li > 0 ? S.geschosse[li - 1].id : null];
+  let best = rund(v), d = 0.25;
+  for (const o of S.raeume) { if (o.id === ich || !ids.includes(o.g)) continue; for (const k of achse === "x" ? [o.x, o.x + o.w] : [o.y, o.y + o.l]) if (Math.abs(k - v) < d) { d = Math.abs(k - v); best = k; } }
+  return r2(best);
+}
+function planBinden() {
+  const svg = $("plan");
+  svg.addEventListener("pointerdown", e => {
+    const [x, y] = punkt(e);
+    if (modus === "mass") { massP.push([x, y]); if (massP.length > 2) massP = [[x, y]]; if (massP.length === 2) { $("massein").hidden = false; $("masstxt").textContent = "Wie lang ist die Strecke in Wirklichkeit?"; $("i_mass").focus(); } planZeichnen(); return; }
+    if (modus === "draw") { drag = { art: "neu", x0: fang(x, "x"), y0: fang(y, "y"), tmp: { x: fang(x, "x"), y: fang(y, "y"), w: 0, l: 0 } }; svg.setPointerCapture(e.pointerId); return; }
+    const gr = e.target.closest("[data-griff]"), rg = e.target.closest(".raum");
+    if (gr) { const r = S.raeume.find(r => r.id === gr.dataset.griff); drag = { art: "groesse", r }; svg.setPointerCapture(e.pointerId); return; }
+    if (rg) { const r = S.raeume.find(r => r.id === rg.dataset.r); if (auswahl !== r.id) { auswahl = r.id; raeumeZeigen(); } drag = { art: "schieben", r, dx: x - r.x, dy: y - r.y, bewegt: false }; svg.setPointerCapture(e.pointerId); planZeichnen(); return; }
+    if (auswahl) { auswahl = null; raeumeZeigen(); planZeichnen(); }
+  });
+  svg.addEventListener("pointermove", e => {
+    if (!drag) return; const [x, y] = punkt(e);
+    if (drag.art === "neu") { const x1 = fang(x, "x"), y1 = fang(y, "y"); drag.tmp = { x: Math.min(drag.x0, x1), y: Math.min(drag.y0, y1), w: Math.abs(x1 - drag.x0), l: Math.abs(y1 - drag.y0) }; planZeichnen(); return; }
+    const r = drag.r;
+    if (drag.art === "schieben") { const nx = Math.max(0, x - drag.dx), ny = Math.max(0, y - drag.dy); const fx = fang(nx, "x", r.id), fx2 = fang(nx + r.w, "x", r.id), fy = fang(ny, "y", r.id), fy2 = fang(ny + r.l, "y", r.id); r.x = Math.abs(fx - nx) <= Math.abs(fx2 - r.w - nx) ? fx : r2(fx2 - r.w); r.y = Math.abs(fy - ny) <= Math.abs(fy2 - r.l - ny) ? fy : r2(fy2 - r.l); drag.bewegt = true; }
+    if (drag.art === "groesse") { r.w = Math.max(0.5, r2(fang(x, "x", r.id) - r.x)); r.l = Math.max(0.5, r2(fang(y, "y", r.id) - r.y)); drag.bewegt = true; }
+    R = rechne(); planZeichnen();
+  });
+  const ende = () => {
+    if (!drag) return; const d = drag; drag = null;
+    if (d.art === "neu") { const t = d.tmp; if (t.w >= 0.5 && t.l >= 0.5) { const r = neuerRaum(t); auswahl = r.id; raeumeZeigen(r.id); } }
+    else if (d.bewegt) raumFelder(d.r);
+    aktualisieren();
+  };
+  svg.addEventListener("pointerup", ende); svg.addEventListener("pointercancel", ende);
+  document.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => modusSetzen(b.dataset.mode));
+  $("b_mass").onclick = () => {
+    const D = num($("i_mass").value, 0), g = G(); if (!(D > 0) || massP.length < 2) return;
+    const d = Math.hypot(massP[1][0] - massP[0][0], massP[1][1] - massP[0][1]); if (d < 0.01) return;
+    const k = D / d;
+    if (g.img) g.img.pxm /= k;
+    for (const r of S.raeume.filter(r => r.g === g.id)) { r.x = r2(r.x * k); r.y = r2(r.y * k); r.w = r2(r.w * k); r.l = r2(r.l * k); }
+    massP = []; modusSetzen("sel"); alles(); hinweisKurz("Maßstab übernommen" + (S.raeume.some(r => r.g === g.id) ? "; Räume dieses Geschosses mitskaliert." : "."));
+  };
+  $("i_mass").addEventListener("keydown", e => { if (e.key === "Enter") $("b_mass").click(); });
+  $("b_massab").onclick = () => { massP = []; modusSetzen("sel"); planZeichnen(); };
+  $("f_plan").onchange = e => {
+    const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+    const rd = new FileReader();
+    rd.onload = () => { const im = new Image(); im.onload = () => {
+      // auf höchstens 1600 px verkleinern, damit Datei und Gerätespeicher klein bleiben
+      const sk = Math.min(1, 1600 / Math.max(im.width, im.height)), cv = document.createElement("canvas"); cv.width = Math.round(im.width * sk); cv.height = Math.round(im.height * sk);
+      cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
+      const g = G(); g.img = { src: cv.toDataURL("image/jpeg", 0.8), w: cv.width, h: cv.height, pxm: cv.width / 15 };
+      alles(); modusSetzen("mass"); hinweisKurz("Plan geladen. Setze jetzt den Maßstab: zwei Punkte mit bekanntem Abstand anklicken.");
+    }; im.src = rd.result; };
+    rd.readAsDataURL(f);
+  };
+  $("b_planweg").onclick = () => { const g = G(); if (!g.img) return; delete g.img; alles(); };
+  $("b_raum").onclick = () => {
+    const g = G(), rs = S.raeume.filter(r => r.g === g.id);
+    const x = rs.length ? Math.max(...rs.map(r => r.x + r.w)) : 0;
+    const r = neuerRaum({ x: r2(x), y: 0, w: 4, l: 4 }); auswahl = r.id; raeumeZeigen(r.id); aktualisieren();
+  };
+}
+function modusSetzen(m) {
+  modus = m; document.querySelectorAll("[data-mode]").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === m));
+  $("plan").setAttribute("class", "mode-" + m); $("massbox").classList.toggle("an", m === "mass");
+  if (m === "mass") { massP = []; $("massein").hidden = true; $("masstxt").textContent = G().img ? "Klicke zwei Punkte im Plan an, deren Abstand du kennst (z. B. eine bemaßte Wand)." : "Ohne Plan rechnet das Raster in Metern. Lade zuerst einen Plan hoch, oder klicke zwei Punkte an, um gezeichnete Räume zu skalieren."; }
+}
+function neuerRaum(t) {
+  const g = G(), n = S.raeume.filter(r => r.g === g.id).length + 1;
+  const r = { id: uid(), g: g.id, name: "Raum " + n, typ: "wohnen", ti: 20, x: r2(t.x), y: r2(t.y), w: r2(t.w), l: r2(t.l), hk: [] };
+  S.raeume.push(r); return r;
+}
+
+/* ---------- Raumkarten ---------- */
+const RFELD = (r, k, lbl, ctl, sub = "") => `<div class="f"><label for="r_${r.id}_${k}">${lbl}</label>${ctl}${sub ? `<small>${sub}</small>` : ""}</div>`;
+const RINP = (r, k, v, step = "any", ph = "") => `<input id="r_${r.id}_${k}" data-r="${r.id}" data-k="${k}" type="number" inputmode="decimal" step="${step}" value="${v == null ? "" : esc(v)}" placeholder="${esc(ph)}">`;
+const RSEL = (r, k, opts, v) => `<select id="r_${r.id}_${k}" data-r="${r.id}" data-k="${k}">${opts.map(([a, t]) => `<option value="${a}"${String(a) === String(v ?? "") ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
+function hkZeile(r, hk, i) {
+  const id = `hk_${r.id}_${i}`, d = (k, v) => `data-r="${r.id}" data-hk="${i}" data-k="${k}"`;
+  const typen = Object.entries(HKTYP).filter(([k]) => k !== "geb").map(([k, t]) => [k, QN600[k] ? (k === "10" ? t : "Flachheizkörper " + t) : t]);
+  const f = (k, lbl, v, ph = "") => `<div class="f"><label for="${id}_${k}">${lbl}</label><input id="${id}_${k}" ${d(k)} type="number" inputmode="decimal" step="any" value="${v ?? ""}" placeholder="${ph}"></div>`;
+  let mid;
+  if (hk.typ === "fbh") mid = f("a", "beheizte Fläche m²", hk.a, fmt(r.w * r.l * 0.85, 1)) + "<div></div><div></div>";
+  else mid = f("h", "Höhe mm", hk.h, "600") + f("l", "Länge mm", hk.l, "1000") + (hk.typ === "glied" ? f("t", "Tiefe mm", hk.t, "160") : hk.typ === "q" ? f("q", "W bei 75/65/20", hk.q) : `<div class="f"><span>Normleistung</span><small id="${id}_qn">${fmt(qN(hk))} W</small></div>`);
+  return `<div class="hkz"><div class="f"><label for="${id}_typ">Heizkörper ${i + 1}</label><select id="${id}_typ" ${d("typ")}>${typen.map(([k, t]) => `<option value="${k}"${k === String(hk.typ) ? " selected" : ""}>${esc(t)}</option>`).join("")}</select></div>${mid}<button type="button" class="klein weg" data-hkweg="${i}" data-r="${r.id}" aria-label="Heizkörper ${i + 1} entfernen">✕</button></div>`;
+}
+function raumKarte(r, offen) {
+  const x = R && R.HL.L.get(r.id) || { auto: {} }, g = S.geschosse[lvl(r.g)];
+  return `<details class="raumk" data-r="${r.id}"${offen ? " open" : ""}><summary id="sum_${r.id}"></summary><div class="body">
+    <div class="grid">
+      ${RFELD(r, "name", "Name", `<input id="r_${r.id}_name" data-r="${r.id}" data-k="name" type="text" value="${esc(r.name)}">`)}
+      ${RFELD(r, "typ", "Nutzung", RSEL(r, "typ", Object.entries(TYPEN).map(([k, v]) => [k, v.t]), r.typ))}
+      ${RFELD(r, "ti", "Raumtemperatur °C", RINP(r, "ti", r.ti, "0.5"))}
+      ${RFELD(r, "w", "Breite m (→)", RINP(r, "w", r.w, "0.05"))}
+      ${RFELD(r, "l", "Tiefe m (↓)", RINP(r, "l", r.l, "0.05"))}
+      ${RFELD(r, "x", "Lage von links m", RINP(r, "x", r.x, "0.05"))}
+      ${RFELD(r, "y", "Lage von oben m", RINP(r, "y", r.y, "0.05"))}
+      ${RFELD(r, "h", "Raumhöhe m", RINP(r, "h", r.h, "0.01", fmt(g.h, 2)))}
+    </div>
+    <div class="grid">
+      ${RFELD(r, "aw", "Außenwand, Länge m", RINP(r, "aw", r.aw, "0.05", fmt(x.auto.aw ?? 0, 2)), "leer: aus dem Grundriss")}
+      ${RFELD(r, "fen", "Fenster und Außentüren m²", RINP(r, "fen", r.fen, "0.1", fmt(x.auto.fen ?? 0, 1)), "leer: 15 % der Fläche")}
+      ${RFELD(r, "fenU", "Fensterart", RSEL(r, "fenU", [["", "wie im Haus"], ...FENSTER.map(([t, v]) => [v, `${t} (${fmt(v, 1)})`])], r.fenU))}
+      ${RFELD(r, "decke", "Decke", RSEL(r, "decke", [["", "aus dem Grundriss"], ["innen", "beheizter Raum darüber"], ["dach", "Dach bzw. oberste Decke"]], r.decke))}
+      ${RFELD(r, "boden", "Boden", RSEL(r, "boden", [["", "aus dem Grundriss"], ["innen", "beheizter Raum darunter"], ["unten", "Keller bzw. Erdreich"]], r.boden))}
+      ${RFELD(r, "maxL", "Platz für Heizkörper bis mm", RINP(r, "maxL", r.maxL, "100", "frei"), "größte Länge für einen neuen Heizkörper; leer: heutige Länge + 40 cm")}
+    </div>
+    ${(TYPEN[r.typ] || {}).unb ? `<p class="muted" style="font-size:14px">Unbeheizter Raum: zählt nur als Nachbar mit ${fmt(num(r.ti, 8))} °C.</p>` : `<div class="liste">${(r.hk || []).map((hk, i) => hkZeile(r, hk, i)).join("")}<div class="leiste"><button type="button" class="klein" data-hkneu="${r.id}">+ Heizkörper</button></div></div>`}
+    <div class="leiste"><span id="det_${r.id}" class="muted" style="font-size:13.5px;flex:1"></span><button type="button" class="klein" data-kopie="${r.id}">Raum kopieren</button><button type="button" class="klein weg" data-weg="${r.id}">Raum löschen</button></div>
+  </div></details>`;
+}
+function raeumeZeigen(offenId) {
+  const g = G(), offen = new Set([...document.querySelectorAll("details.raumk[open]")].map(d => d.dataset.r));
+  if (offenId) offen.add(offenId);
+  const rs = S.raeume.filter(r => r.g === g.id);
+  $("raeume").innerHTML = rs.length ? rs.map(r => raumKarte(r, offen.has(r.id) || auswahl === r.id)).join("") : `<p class="muted">Noch keine Räume in diesem Geschoss. Zeichne einen Raum im Plan oder tippe ihn ein.</p>`;
+  raumSummen();
+  if (offenId) { const d = document.querySelector(`details.raumk[data-r="${offenId}"]`); if (d) d.scrollIntoView({ block: "nearest" }); }
+}
+function raumFelder(r) { for (const k of ["x", "y", "w", "l"]) { const el = $(`r_${r.id}_${k}`); if (el) el.value = r[k]; } }
+function raumSummen() {
+  if (!R) return;
+  for (const z of R.A.rs) {
+    const r = z.x.r, el = $("sum_" + r.id); if (!el) continue;
+    const x = z.x, pill = { ok: ["ok", "Heizkörper reichen"], warn: ["warn", `${z.tausch.length + z.neu.length} tauschen bzw. neu`], bad: ["bad", "reicht nicht"], off: ["off", x.unb ? "unbeheizt" : "keine Heizlast"] }[z.status];
+    el.innerHTML = `<b>${esc(r.name)}</b><span class="muted">${fmt(x.A, 1)} m² · ${fmt(x.ti)} °C</span>${x.unb ? "" : `<span>${fmt(x.phi)} W</span><span class="muted">${x.A ? fmt(x.phi / x.A) : 0} W/m²</span><span class="muted">Vorlauf heute ${vlTxt(z.vlB)}</span>`}<span class="pill ${pill[0]}">${pill[1]}</span>`;
+    const d = $("det_" + r.id);
+    if (d) d.textContent = x.unb ? "" : `Außenwand ${fmt(x.Aaw, 1)} m², Fenster ${fmt(x.Afen, 1)} m², Decke außen ${fmt(x.Aob, 1)} m², Boden außen ${fmt(x.Aun, 1)} m² · Transmission ${fmt(x.e.aw + x.e.fen + x.e.dach + x.e.boden + x.e.wb + x.zuUnb + x.innen)} W, Lüftung ${fmt(x.phiV)} W`;
+    for (const [i, hk] of (r.hk || []).entries()) { const q = $(`hk_${r.id}_${i}_qn`); if (q) q.textContent = fmt(qN(hk)) + " W"; }
+    const aw = $(`r_${r.id}_aw`), fe = $(`r_${r.id}_fen`); if (aw) aw.placeholder = fmt(x.auto.aw, 2); if (fe) fe.placeholder = fmt(x.auto.fen, 1);
+  }
+}
+function raeumeBinden() {
+  const box = $("raeume");
+  box.addEventListener("input", e => {
+    const t = e.target, r = S.raeume.find(r => r.id === t.dataset.r); if (!r) return;
+    const k = t.dataset.k, v = t.value;
+    if (t.dataset.hk != null) { const hk = r.hk[+t.dataset.hk]; if (k === "typ") { hk.typ = v; raeumeZeigen(r.id); } else hk[k] = v === "" ? null : +v; }
+    else if (k === "name") r.name = v;
+    else if (k === "typ") { r.typ = v; r.ti = TYPEN[v].ti; raeumeZeigen(r.id); }
+    else if (["fenU", "decke", "boden"].includes(k)) r[k] = v === "" ? null : (k === "fenU" ? +v : v);
+    else if (["w", "l", "x", "y"].includes(k)) r[k] = Math.max(k === "w" || k === "l" ? 0.3 : 0, num(v, r[k]));
+    else r[k] = v === "" ? null : +v;
+    aktualisieren();
+  });
+  box.addEventListener("click", e => {
+    const t = e.target.closest("button"); if (!t) return;
+    const r = S.raeume.find(r => r.id === t.dataset.r || r.id === t.dataset.hkneu || r.id === t.dataset.weg || r.id === t.dataset.kopie); if (!r) return;
+    if (t.dataset.hkneu) { r.hk = r.hk || []; r.hk.push({ typ: "22", h: 600, l: 1000 }); raeumeZeigen(r.id); }
+    else if (t.dataset.hkweg != null) { r.hk.splice(+t.dataset.hkweg, 1); raeumeZeigen(r.id); }
+    else if (t.dataset.weg) { if (!confirmLeise(`Raum „${r.name}“ löschen?`)) return; S.raeume = S.raeume.filter(o => o !== r); if (auswahl === r.id) auswahl = null; raeumeZeigen(); }
+    else if (t.dataset.kopie) { const n = JSON.parse(JSON.stringify(r)); n.id = uid(); n.name = r.name + " (Kopie)"; n.x = r2(r.x + r.w); S.raeume.push(n); auswahl = n.id; raeumeZeigen(n.id); }
+    aktualisieren();
+  });
+  box.addEventListener("toggle", e => { const d = e.target; if (d.open && d.dataset.r && auswahl !== d.dataset.r) { auswahl = d.dataset.r; planZeichnen(); } }, true);
+  $("geschosse").addEventListener("click", e => { const b = e.target.closest("[data-g]"); if (!b) return; S.akt = b.dataset.g; auswahl = null; massP = []; alles(); });
+}
+
+/* ---------- Heizkörper und Vorlauf ---------- */
+function hzAufbauen() {
+  $("hzfelder").innerHTML = FELD("z_vl", "Ziel-Vorlauftemperatur", SEL("z_vl", [35, 40, 45, 50, 55, 60, 65, 70].map(t => [t, t + " °C"]), S.hz.vl), "am kältesten Tag; Wärmepumpen arbeiten bis 55 °C gut")
+    + FELD("z_sig", "Spreizung", INP("z_sig", S.hz.sig, "0.5"), "K zwischen Vor- und Rücklauf; mit Wärmepumpe 5 bis 8")
+    + FELD("z_ausl", "Heizlast für Heizkörper und Wärmepumpe", SEL("z_ausl", [["ber", "nach Norm berechnet"], ["verb", "an den Verbrauch angeglichen"]], S.anl.ausl), "Die Rechnung nach Norm liegt im Altbau oft 20 bis 40 % über dem, was das Haus wirklich braucht. Angleichen geht, wenn der Verbrauch in Schritt 5 steht.")
+    + FELD("z_sperr", "Sperrzeit des Netzbetreibers", INP("z_sperr", S.hz.sperr, "0.5"), "Stunden am Tag; mit § 14a meist 0");
+  $("z_vl").onchange = e => { S.hz.vl = +e.target.value; aktualisieren(); };
+  $("z_sig").oninput = e => { S.hz.sig = num(e.target.value, 7); aktualisieren(); };
+  $("z_ausl").onchange = e => { S.anl.ausl = e.target.value; aktualisieren(); };
+  $("z_sperr").oninput = e => { S.hz.sperr = num(e.target.value, 0); aktualisieren(); };
+  $("vltab").addEventListener("click", e => { const tr = e.target.closest("tr[data-t]"); if (!tr) return; S.hz.vl = +tr.dataset.t; $("z_vl").value = S.hz.vl; aktualisieren(); });
+}
+function hzZeigen() {
+  const { A, HL, tab, tv, W } = R;
+  if (!HL.Ages) { $("hkfazit").innerHTML = `<p class="hinweis">Lege zuerst Räume an (Schritt 2) oder lade das Beispielhaus.</p>`; $("vltab").innerHTML = ""; $("raumtab").innerHTML = ""; return; }
+  const nT = A.n + A.nNeu;
+  let t = `Mit den heutigen Heizkörpern braucht das Haus am kältesten Tag <b>${vlTxt(A.vlB)}</b> Vorlauf. `;
+  t += nT ? `Für <b>${fmt(tv)} °C</b> sollten <b>${nT} Heizkörper</b> größer werden${A.nNeu ? ` (davon ${A.nNeu} neu)` : ""}, Kosten rund <b>${eur(A.k * 1.19)}</b> brutto mit Montage und Ventilen.` : `Für <b>${fmt(tv)} °C</b> muss kein Heizkörper getauscht werden.`;
+  if (A.bad) t += ` In ${A.bad} ${A.bad === 1 ? "Raum" : "Räumen"} reicht auch das nicht: dort hilft ein zusätzlicher Heizkörper, Dämmung oder ein höherer Vorlauf.`;
+  if (A.ohne) t += ` ${A.ohne} beheizte ${A.ohne === 1 ? "Raum hat" : "Räume haben"} noch keinen Heizkörper eingetragen.`;
+  t += ` Die Wärmepumpe erreicht damit eine Jahresarbeitszahl von etwa <b>${fmt(W.jazGes, 1)}</b>.`;
+  $("hkfazit").innerHTML = `<p class="hinweis">${t}</p>`;
+  const minK = Math.min(...tab.map(r => r.a.k * 1.19 + r.sk * 20));
+  $("vltab").innerHTML = `<thead><tr><th>Vorlauf</th><th class="z">Heizkörper tauschen</th><th class="z">Kosten Heizkörper</th><th class="z">Jahresarbeitszahl</th><th class="z">Strom im Jahr</th><th class="z">Stromkosten im Jahr</th><th class="z">Heizkörper + 20 Jahre Strom</th></tr></thead><tbody>`
+    + tab.map(r => { const s = r.a.k * 1.19 + r.sk * 20; return `<tr data-t="${r.t}" class="${r.t === tv ? "akt" : ""}" style="cursor:pointer"><td>${r.t} °C${r.a.bad ? ` <span class="pill bad">${r.a.bad} reicht nicht</span>` : ""}</td><td class="z">${r.a.n + r.a.nNeu}</td><td class="z">${eur(r.a.k * 1.19)}</td><td class="z">${fmt(r.w.jazGes, 2)}</td><td class="z">${fmt(r.w.strom)} kWh</td><td class="z">${eur(r.sk)}</td><td class="z${Math.abs(s - minK) < 1 ? " ok" : ""}">${eur(s)}${Math.abs(s - minK) < 1 ? " ✓" : ""}</td></tr>`; }).join("")
+    + `</tbody>`;
+  $("raumtab").innerHTML = raumTabelle(A, false);
+}
+function raumTabelle(A, druck) {
+  const hkT = hk => hk.typ === "fbh" ? `FBH ${fmt(num(hk.a, 0), 1)} m²` : hk.typ === "q" ? `${fmt(num(hk.q, 0))} W` : `${hk.typ === "glied" ? "Glieder" : hk.typ === "geb" ? "Gebläse" : "Typ " + hk.typ} ${num(hk.h, 600)}×${num(hk.l, 1000)}`;
+  let s = `<thead><tr><th>Geschoss</th><th>Raum</th><th class="z">Fläche</th><th class="z">°C</th><th class="z">Heizlast</th><th class="z">W/m²</th><th>Heizkörper heute</th><th class="z">Leistung bei ${fmt(R.tv)} °C</th><th class="z">Vorlauf nötig</th><th>Vorschlag</th></tr></thead><tbody>`;
+  let sA = 0, sP = 0;
+  const sortiert = [...A.rs].sort((a, b) => lvl(a.x.r.g) - lvl(b.x.r.g));
+  for (const z of sortiert) {
+    const x = z.x, r = x.r; if (x.unb) continue; sA += x.A; sP += x.phi;
+    const vor = z.ohneHK ? `<span class="muted">ohne Heizkörper</span>` : z.status === "ok" ? `<span class="ok">bleibt</span>` : [...z.tausch.map(t => `${hkT(t.alt)} → ${hkT(t.neu)}`), ...z.neu.map(t => `neu: ${hkT(t.neu)}`)].join("<br>") + (z.status === "bad" ? ` <span class="bad">reicht nicht</span>` : "");
+    s += `<tr><td>${esc(S.geschosse[lvl(r.g)].name)}</td><td>${esc(r.name)}</td><td class="z">${fmt(x.A, 1)} m²</td><td class="z">${fmt(x.ti)}</td><td class="z">${fmt(x.phi)} W</td><td class="z">${x.A ? fmt(x.phi / x.A) : "–"}</td><td>${(r.hk || []).map(hkT).join("<br>") || "–"}</td><td class="z ${z.have >= x.phi ? "ok" : "bad"}">${fmt(z.have)} W</td><td class="z">${vlTxt(z.vlB)}</td><td>${vor}</td></tr>`;
+  }
+  s += `<tr class="sum"><td></td><td>Summe Räume</td><td class="z">${fmt(sA, 1)} m²</td><td></td><td class="z">${fmt(sP)} W</td><td class="z">${sA ? fmt(sP / sA) : ""}</td><td colspan="4" class="muted">Gebäudeheizlast ohne Wärme zwischen beheizten Räumen: ${fmt(R.HL.geb)} W</td></tr></tbody>`;
+  return s;
+}
+
+/* ---------- Wärmepumpe und Kosten ---------- */
+function kAufbauen() {
+  const a = S.anl;
+  $("kfelder").innerHTML = FELD("k_tr", "Heizung heute", SEL("k_tr", [["gas", "Gas"], ["oel", "Öl"]], a.traeger))
+    + FELD("k_la", "Leitung Wärmepumpe – Haus", INP("k_la", a.lAussen, "0.5"), "m außen, je Strang")
+    + FELD("k_lg", "davon im Graben", INP("k_lg", a.lGraben, "0.5"), "m; 0, wenn die Leitung an der Wand ins Haus geht")
+    + FELD("k_li", "Leitungen im Haus", INP("k_li", a.lInnen, "0.5"), "m bis zum Verteiler")
+    + `<div class="f"><span>Ausstattung</span><label class="check"><input type="checkbox" id="k_ww"${a.ww ? " checked" : ""}> Warmwasser über die Wärmepumpe</label><label class="check"><input type="checkbox" id="k_zirk"${a.zirk ? " checked" : ""}> Zirkulation</label><label class="check"><input type="checkbox" id="k_zs"${a.zs ? " checked" : ""}> Zählerschrank umbauen</label><label class="check"><input type="checkbox" id="k_sockel"${a.sockel ? " checked" : ""}> Kesselsockel abbrechen</label></div>`;
+  $("k_tr").onchange = e => { a.traeger = e.target.value; if (a.traeger === "oel" && S.alt.preis < 0.5) { S.alt.preis = 1.0; S.alt.wart = 370; S.alt.neu = 15000; } if (a.traeger === "gas" && S.alt.preis > 0.5) { S.alt.preis = 0.115; S.alt.wart = 300; S.alt.neu = 12000; } wAufbauen(); aktualisieren(); };
+  for (const [id, k] of [["k_la", "lAussen"], ["k_lg", "lGraben"], ["k_li", "lInnen"]]) $(id).oninput = e => { a[k] = num(e.target.value, 0); aktualisieren(); };
+  for (const [id, k] of [["k_ww", "ww"], ["k_zirk", "zirk"], ["k_zs", "zs"], ["k_sockel", "sockel"]]) $(id).onchange = e => { a[k] = e.target.checked; aktualisieren(); };
+  $("ktab").addEventListener("change", e => {
+    const t = e.target, key = t.dataset.key; if (!key) return;
+    const ov = S.kOv[key] = S.kOv[key] || {};
+    if (t.dataset.f === "aus") ov.aus = !t.checked; else ov[t.dataset.f] = t.value === "" ? undefined : +t.value;
+    if (ov.m == null && ov.ep == null && !ov.aus) delete S.kOv[key];
+    aktualisieren();
+  });
+  $("ktab").addEventListener("click", e => { if (e.target.id === "k_reset") { S.kOv = {}; aktualisieren(); } });
+}
+function kZeigen() {
+  const { K, P, HL, W, A } = R;
+  $("wpfazit").innerHTML = HL.Ages ? `<p class="hinweis">${P.verb ? "Heizlast aus dem Verbrauch" : "Heizlast"} ${fmt(P.basis / 1000, 1)} kW${P.ww ? ` + ${fmt(P.ww, 1)} kW für Warmwasser` : ""}${num(S.hz.sperr, 0) ? ` mit ${fmt(S.hz.sperr)} h Sperrzeit` : ""} ergibt <b>${fmt(P.p, 1)} kW</b>. Vorschlag: <b>${P.anz > 1 ? P.anz + " × " : ""}${P.stufe} kW</b>, gemessen bei ${fmt(S.te)} °C Außentemperatur und ${fmt(A.vl)} °C Vorlauf, ohne Heizstab. Größer ist nicht besser: Eine zu große Wärmepumpe taktet und hält weniger lang.${P.verb ? ` Angeglichen an den Verbrauch; nach Norm wären es ${fmt(HL.gebNorm / 1000, 1)} kW.` : W.phiMess ? ` Abgleich: Der Verbrauch deutet auf rund <b>${fmt(W.phiMess / 1000, 1)} kW</b> Heizlast, berechnet sind ${fmt(HL.geb / 1000, 1)} kW${Math.abs(W.phiMess - HL.geb) / HL.geb > 0.25 ? ". Der Unterschied ist groß. Prüfe U-Werte, Fenster und Luftdichtheit, oder gleiche die Heizlast in Schritt 3 an den Verbrauch an" : ", das passt gut"}.` : ""}</p>` : "";
+  let s = `<thead><tr><th style="width:26px"><span class="muted" title="Position einrechnen">✓</span></th><th>Position</th><th class="z">Menge</th><th></th><th class="z">Einheitspreis netto</th><th class="z">Summe netto</th><th>Quelle</th></tr></thead><tbody>`;
+  let gr = "";
+  for (const p of K.pos) {
+    if (p.gr !== gr) { gr = p.gr; s += `<tr><td></td><td colspan="4"><b>${gr}</b></td><td class="z"><b>${eur(K.grp[gr])}</b></td><td></td></tr>`; }
+    s += `<tr${p.aus ? ' style="opacity:.5"' : ""}><td><input type="checkbox" data-key="${p.key}" data-f="aus"${p.aus ? "" : " checked"} aria-label="einrechnen"></td><td>${p.t}</td><td class="z"><input class="inp" style="width:72px;text-align:right" type="number" step="any" data-key="${p.key}" data-f="m" id="km_${p.key}" value="${r2(p.m)}"></td><td>${p.e}</td><td class="z"><input class="inp" style="width:96px;text-align:right" type="number" step="any" data-key="${p.key}" data-f="ep" id="ke_${p.key}" value="${Math.round(p.ep)}"></td><td class="z">${eur(p.sum)}</td><td class="muted" style="font-size:12.5px">${quelle(p.q)}${p.geaendert ? " · <b>geändert</b>" : ""}</td></tr>`;
+  }
+  s += `<tr class="sum"><td></td><td colspan="4">Summe netto</td><td class="z">${eur(K.netto)}</td><td></td></tr>`
+    + `<tr><td></td><td colspan="4">Unvorhergesehenes im Altbau, 10 %</td><td class="z">${eur(K.zuschlag)}</td><td class="muted" style="font-size:12.5px">wie im Referenzprojekt</td></tr>`
+    + `<tr><td></td><td colspan="4">Mehrwertsteuer 19 %</td><td class="z">${eur(K.mwst)}</td><td></td></tr>`
+    + `<tr class="sum"><td></td><td colspan="4">Gesamt brutto, ohne Förderung</td><td class="z">${eur(K.brutto)}</td><td>${Object.keys(S.kOv).length ? `<button type="button" class="klein" id="k_reset">Änderungen zurücksetzen</button>` : ""}</td></tr></tbody>`;
+  $("ktab").innerHTML = s;
+}
+
+/* ---------- Wirtschaftlichkeit ---------- */
+function wAufbauen() {
+  const oel = S.anl.traeger === "oel", al = S.alt, f = S.fin;
+  $("wfelder").innerHTML = FELD("w_vb", oel ? "Ölverbrauch im Jahr in kWh" : "Gasverbrauch im Jahr", INP("w_vb", al.verbrauch, "100", "unbekannt"), oel ? "Liter × 10 = kWh; leer: aus der Heizlast geschätzt" : "kWh laut Abrechnung, mit Warmwasser; leer: aus der Heizlast geschätzt")
+    + FELD("w_nutz", "Nutzungsgrad Kessel", INP("w_nutz", al.nutz, "1"), "%; Brennwert 90 bis 95, älterer Kessel 80 bis 85")
+    + FELD("w_preis", oel ? "Ölpreis €/l" : "Gaspreis €/kWh", INP("w_preis", al.preis, "0.001"), oel ? "mit CO₂-Preis und Steuer" : "Arbeitspreis mit CO₂-Preis und Steuer")
+    + FELD("w_grund", oel ? "Grundkosten Öl" : "Grundpreis Gas", INP("w_grund", oel ? 0 : al.grund, "1"), "€ im Jahr")
+    + FELD("w_wart", "Wartung und Schornsteinfeger", INP("w_wart", al.wart, "10"), "€ im Jahr, Kessel")
+    + FELD("w_neu", oel ? "Neue Ölheizung würde kosten" : "Neue Gasheizung würde kosten", INP("w_neu", al.neu, "500"), "€ brutto mit Einbau, zum Vergleich")
+    + FELD("w_strom", "Strompreis Wärmepumpe", INP("w_strom", S.wp.strom, "0.001"), "€/kWh; Wärmepumpentarif rund 0,27, Haushaltsstrom 0,373 (BDEW 10/2026)")
+    + FELD("w_sgrund", "Grundpreis Wärmepumpenzähler", INP("w_sgrund", S.wp.grund, "1"), "€ im Jahr")
+    + FELD("w_swart", "Wartung Wärmepumpe", INP("w_swart", S.wp.wart, "10"), "€ im Jahr")
+    + FELD("w_zins", "Zins", INP("w_zins", f.zins, "0.1"), "% im Jahr, Kredit oder entgangener Zins")
+    + FELD("w_jahre", "Betrachtung", INP("w_jahre", f.jahre, "1"), "Jahre")
+    + FELD("w_gf", oel ? "Ölpreis steigt" : "Gaspreis steigt", INP("w_gf", f.steigF, "0.5"), "% im Jahr, mit CO₂-Preis")
+    + FELD("w_gs", "Strompreis steigt", INP("w_gs", f.steigS, "0.5"), "% im Jahr")
+    + `<div class="f"><span>Förderung heute (BEG, Stand 21.7.2026)</span><label class="check"><input type="checkbox" id="w_selbst"${f.selbst ? " checked" : ""}> Ich wohne selbst im Haus</label><label class="check"><input type="checkbox" id="w_tausch"${f.tausch ? " checked" : ""}> alte Öl- oder Gasheizung funktioniert noch (Bonus 16 %)</label><label class="check"><input type="checkbox" id="w_eink"${f.eink ? " checked" : ""}> Haushaltseinkommen bis 40.000 € (Bonus 30 %)</label></div>`;
+  const bind = (id, o, k) => $(id).oninput = e => { o[k] = e.target.value === "" ? "" : +e.target.value; aktualisieren(); };
+  bind("w_vb", al, "verbrauch"); bind("w_nutz", al, "nutz"); bind("w_preis", al, "preis"); bind("w_grund", al, "grund"); bind("w_wart", al, "wart"); bind("w_neu", al, "neu");
+  bind("w_strom", S.wp, "strom"); bind("w_sgrund", S.wp, "grund"); bind("w_swart", S.wp, "wart");
+  bind("w_zins", f, "zins"); bind("w_jahre", f, "jahre"); bind("w_gf", f, "steigF"); bind("w_gs", f, "steigS");
+  for (const k of ["selbst", "tausch", "eink"]) $("w_" + k).onchange = e => { f[k] = e.target.checked; aktualisieren(); };
+}
+function wZeigen() {
+  const { E, W } = R, h = E.heute, rf = E.reform, alt = E.oel ? "Öl" : "Gas";
+  const satz = d => d >= 0 ? `<b class="ok">${eur(d)} im Jahr günstiger</b>` : `<b class="bad">${eur(-d)} im Jahr teurer</b>`;
+  $("wfazit").innerHTML = `<p class="hinweis">Gegen eine neue ${alt}heizung ist die Wärmepumpe heute ${satz(h.diff)} (Durchschnitt über ${E.N} Jahre, mit Kredit und Förderung ${eur(h.foe.betrag)}). Mit der Reform aus dem Buch: ${satz(rf.diff)}.${h.wp.inv > h.fo.inv ? (h.amort != null && h.amort <= 30 ? ` Die Mehrkosten von ${eur(h.wp.inv - h.fo.inv)} sind heute nach rund <b>${fmt(h.amort, 0)} Jahren</b> wieder herein.` : ` Die Mehrkosten von ${eur(h.wp.inv - h.fo.inv)} holt die Wärmepumpe heute nicht innerhalb von 30 Jahren herein.`) : ""}</p>`
+    + `<p class="muted" style="font-size:14px">Wärme im Jahr: ${fmt(W.qH)} kWh Heizung (${W.quelle === "Verbrauch" ? "aus deinem Verbrauch" : "berechnet"}${W.quelle === "Verbrauch" ? `, berechnet wären ${fmt(W.qBer)} kWh` : ""}) und ${fmt(W.qWW)} kWh Warmwasser. Gradtagzahl ${fmt(W.Gt)} Kd${ORT ? ` (${esc(ORT.n)})` : " (Mittelwert)"}. Jahresarbeitszahl ${fmt(W.jazGes, 2)}, Strom ${fmt(W.strom)} kWh.</p>`;
+  const row = (t, a, b, c, d, cls = "") => `<tr class="${cls}"><td>${t}</td><td class="z">${a}</td><td class="z">${b}</td><td class="z">${c}</td><td class="z">${d}</td></tr>`;
+  const e2 = v => eur(v);
+  $("wtab").innerHTML = `<thead><tr><th>im Jahr, Durchschnitt über ${E.N} Jahre</th><th class="z">Wärmepumpe heute</th><th class="z">${alt} heute</th><th class="z">Wärmepumpe Reform</th><th class="z">${alt} Reform</th></tr></thead><tbody>`
+    + row("Investition", e2(h.wp.inv + h.foe.betrag), e2(h.fo.inv), e2(rf.wp.inv), e2(rf.fo.inv))
+    + row("Förderung", h.foe.betrag ? "−" + e2(h.foe.betrag) + ` (${fmt(h.foe.satz * 100)} %)` : "–", "–", "– (dafür ohne Mehrwertsteuer und zinslos)", "–")
+    + row("Kredit bzw. Abschreibung", e2(h.wp.kap), e2(h.fo.kap), e2(rf.wp.kap), e2(rf.fo.kap))
+    + row("Energie", e2(h.wp.energie), e2(h.fo.energie), e2(rf.wp.energie), e2(rf.fo.energie))
+    + row("Preis im ersten Jahr", fmt(h.sP * 100, 1) + " ct/kWh", E.oel ? fmt(h.fosP * 1000, 0) + " ct/l" : fmt(h.fosP * 100, 1) + " ct/kWh", fmt(rf.sP * 100, 1) + " ct/kWh", E.oel ? fmt(rf.fosP * 1000, 0) + " ct/l" : fmt(rf.fosP * 100, 1) + " ct/kWh", "muted")
+    + row("Grundpreis und Wartung", e2(h.wp.grund + h.wp.wart), e2(h.fo.grund + h.fo.wart), e2(rf.wp.grund + rf.wp.wart), e2(rf.fo.grund + rf.fo.wart))
+    + row("Summe im Jahr", e2(h.wp.jahr), e2(h.fo.jahr), e2(rf.wp.jahr), e2(rf.fo.jahr), "sum")
+    + `</tbody>`;
+}
+
+/* ---------- Bericht ---------- */
+function bericht() {
+  const { HL, A, P, W, K, E, tv } = R, h = E.heute, rf = E.reform, alt = E.oel ? "Öl" : "Gas";
+  const heute = new Date().toLocaleDateString("de-DE");
+  if (!HL.Ages) { $("bericht").innerHTML = `<p class="muted">Das Konzept erscheint hier, sobald Räume angelegt sind.</p>`; return; }
+  const uz = Object.entries(UTEIL).map(([k, d]) => `<tr><td>${d.t}</td><td class="z">${fmt(U(k), 2)}</td><td class="muted">${S.u[k] == null || S.u[k] === "" ? "geschätzt nach Baujahr" : (d.pre.find(([, v]) => v === +S.u[k]) || ["eigene Angabe"])[0]}</td></tr>`).join("");
+  const fenAbw = S.raeume.filter(r => r.fenU != null && r.fenU !== "").map(r => `${esc(r.name)}: ${fmt(r.fenU, 1)}`).join(", ");
+  const tausch = A.rs.flatMap(z => [...z.tausch, ...z.neu].map(t => ({ z, t })));
+  const pl = S.geschosse.filter(g => S.raeume.some(r => r.g === g.id)).map(g => `<div><b>${esc(g.name)}</b><br>${planSVG(g, { druck: true })}</div>`).join("");
+  $("bericht").innerHTML = `
+  <div><div class="muted" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700">Wärmepumpen-Konzept · Stand ${heute}</div><h2>${esc(S.name || "Mein Haus")}</h2>
+  <p class="muted">Vorplanung mit vereinfachter raumweiser Heizlast nach DIN EN 12831-1. Grundlage für das Gespräch mit Energieberater und Fachbetrieb. Ersetzt nicht die Heizlastberechnung und Auslegung durch den Fachbetrieb.</p></div>
+  <div class="tiles">
+    <div class="tile"><b>${fmt(HL.geb / 1000, 1)} kW</b><span>Heizlast bei ${fmt(S.te)} °C${HL.kal !== 1 ? `, an den Verbrauch angeglichen (Norm: ${fmt(HL.gebNorm / 1000, 1)} kW)` : ""}</span></div>
+    <div class="tile"><b>${fmt(HL.geb / HL.Ages)} W/m²</b><span>${fmt(HL.Ages)} m² beheizt</span></div>
+    <div class="tile"><b>${fmt(A.vl)} °C</b><span>Vorlauf geplant (heute ${vlTxt(A.vlB)})</span></div>
+    <div class="tile"><b>${P.anz > 1 ? P.anz + " × " : ""}${P.stufe} kW</b><span>Wärmepumpe</span></div>
+    <div class="tile"><b>${fmt(W.jazGes, 1)}</b><span>Jahresarbeitszahl (Schätzung)</span></div>
+    <div class="tile"><b>${eur(K.brutto)}</b><span>Kosten brutto, vor Förderung</span></div>
+  </div>
+  <h3>1 Gebäude</h3>
+  <p>Baujahr ${esc(BJ.find(b => b[0] === S.bj)?.[1] || S.bj)} · ${S.geschosse.length} Geschoss${S.geschosse.length > 1 ? "e" : ""} · ${fmt(S.we)} Wohnung${S.we > 1 ? "en" : ""} · ${fmt(S.personen)} Personen${S.plz ? " · PLZ " + esc(S.plz) : ""} · Normaußentemperatur ${fmt(S.te, 1)} °C · nach oben: ${OBEN[S.oben][0]} · nach unten: ${UNTEN[S.unten][0]} · Luftdichtheit: ${DICHT[S.dicht][0]}</p>
+  <table><thead><tr><th>Bauteil</th><th class="z">U-Wert W/(m²K)</th><th>Herkunft</th></tr></thead><tbody>${uz}<tr><td>Innenwand / Innendecke</td><td class="z">${fmt(S.iw, 1)} / ${fmt(S.id, 1)}</td><td class="muted">Annahme</td></tr><tr><td>Wärmebrücken-Zuschlag</td><td class="z">${fmt(WB(), 2)}</td><td class="muted">${S.wb == null || S.wb === "" ? "nach Baujahr" : "eigene Angabe"}</td></tr></tbody></table>
+  ${fenAbw ? `<p class="muted">Abweichende Fenster: ${fenAbw}</p>` : ""}
+  <h3>2 Grundriss</h3><div class="zwei">${pl}</div>
+  <h3>3 Heizlast und Heizkörper je Raum (Vorlauf ${fmt(tv)} °C, Spreizung ${fmt(S.hz.sig)} K)</h3>
+  <table>${raumTabelle(A, true)}</table>
+  <h3>4 Wärmepumpe</h3>
+  <p>${P.verb ? "Auslegung nach dem Verbrauch: " : ""}Heizlast ${fmt(P.basis / 1000, 1)} kW${P.ww ? ` + Warmwasser ${fmt(P.ww, 1)} kW` : ""}${num(S.hz.sperr, 0) ? `, Sperrzeit ${fmt(S.hz.sperr)} h` : ""} → Heizleistung mindestens <b>${fmt(P.p, 1)} kW bei ${fmt(S.te)} °C und ${fmt(A.vl)} °C Vorlauf</b> (Vorschlag ${P.anz > 1 ? P.anz + " × " : ""}${P.stufe} kW). Wärme im Jahr ${fmt(W.qH)} kWh Heizung${W.quelle === "Verbrauch" ? " (aus dem Verbrauch)" : ""} + ${fmt(W.qWW)} kWh Warmwasser; Strom rund ${fmt(W.strom)} kWh, Jahresarbeitszahl ${fmt(W.jazGes, 2)}.${W.phiMess ? ` Heizlast aus dem Verbrauch zum Abgleich: ${fmt(W.phiMess / 1000, 1)} kW.` : ""}</p>
+  <h3>5 Kostenschätzung</h3>
+  <table><thead><tr><th>Position</th><th class="z">Menge</th><th class="z">EP netto</th><th class="z">netto</th></tr></thead><tbody>${K.pos.filter(p => !p.aus).map(p => `<tr><td>${p.t}</td><td class="z">${fmt(p.m, p.m % 1 ? 1 : 0)} ${p.e}</td><td class="z">${eur(p.ep)}</td><td class="z">${eur(p.sum)}</td></tr>`).join("")}
+  <tr class="sum"><td colspan="3">Summe netto</td><td class="z">${eur(K.netto)}</td></tr><tr><td colspan="3">Unvorhergesehenes 10 %</td><td class="z">${eur(K.zuschlag)}</td></tr><tr><td colspan="3">Mehrwertsteuer 19 %</td><td class="z">${eur(K.mwst)}</td></tr><tr class="sum"><td colspan="3">Gesamt brutto</td><td class="z">${eur(K.brutto)}</td></tr></tbody></table>
+  <p class="muted">Einheitspreise mit Montage, Preisstand 10/2026, überwiegend aus der Kostenberechnung eines Referenzprojekts; Genauigkeit rund ± 20 %. Nicht enthalten: Dämmung, Maler- und Putzarbeiten, Planung durch Dritte.</p>
+  <h3>6 Wirtschaftlichkeit (Durchschnitt über ${E.N} Jahre)</h3>
+  <table><thead><tr><th>im Jahr</th><th class="z">Wärmepumpe heute</th><th class="z">${alt} heute</th><th class="z">Wärmepumpe Reform</th><th class="z">${alt} Reform</th></tr></thead><tbody>
+  <tr><td>Investition nach Förderung</td><td class="z">${eur(h.wp.inv)}</td><td class="z">${eur(h.fo.inv)}</td><td class="z">${eur(rf.wp.inv)}</td><td class="z">${eur(rf.fo.inv)}</td></tr>
+  <tr><td>Kapital</td><td class="z">${eur(h.wp.kap)}</td><td class="z">${eur(h.fo.kap)}</td><td class="z">${eur(rf.wp.kap)}</td><td class="z">${eur(rf.fo.kap)}</td></tr>
+  <tr><td>Energie</td><td class="z">${eur(h.wp.energie)}</td><td class="z">${eur(h.fo.energie)}</td><td class="z">${eur(rf.wp.energie)}</td><td class="z">${eur(rf.fo.energie)}</td></tr>
+  <tr><td>Grundpreis, Wartung</td><td class="z">${eur(h.wp.grund + h.wp.wart)}</td><td class="z">${eur(h.fo.grund + h.fo.wart)}</td><td class="z">${eur(rf.wp.grund + rf.wp.wart)}</td><td class="z">${eur(rf.fo.grund + rf.fo.wart)}</td></tr>
+  <tr class="sum"><td>Summe</td><td class="z">${eur(h.wp.jahr)}</td><td class="z">${eur(h.fo.jahr)}</td><td class="z">${eur(rf.wp.jahr)}</td><td class="z">${eur(rf.fo.jahr)}</td></tr></tbody></table>
+  <p class="muted">Heute: Förderung ${fmt(h.foe.satz * 100)} % auf höchstens ${eur(h.foe.max)}, Kredit ${fmt(S.fin.zins, 1)} %, Strom ${fmt(h.sP * 100, 1)} ct/kWh, ${alt} ${E.oel ? fmt(h.fosP * 1000) + " ct/l" : fmt(h.fosP * 100, 1) + " ct/kWh"}; Preissteigerung ${fmt(S.fin.steigF, 1)} % (${alt}) und ${fmt(S.fin.steigS, 1)} % (Strom) im Jahr. Reform (Buch „Mut zur Zukunft“): Strom mit 5 % Mehrwertsteuer ohne Stromsteuer und Umlagen, ${alt} mit 50 %, Sanierung ohne Mehrwertsteuer, zinsloser Kredit, keine Förderung.</p>
+  <h3>7 Was im Angebot stehen sollte</h3>
+  <ul>
+    <li>Luft-Wasser-Wärmepumpe mit mindestens ${fmt(P.p, 1)} kW Heizleistung bei ${fmt(S.te)} °C Außentemperatur und ${fmt(A.vl)} °C Vorlauf (Datenblatt nach EN 14825 beilegen), natürliches Kältemittel, Schallleistung und Abstand zur Grundstücksgrenze.</li>
+    <li>Raumweise Heizlastberechnung nach DIN EN 12831-1 und hydraulischer Abgleich Verfahren B (Voraussetzung für die Förderung).</li>
+    <li>${tausch.length ? `Heizkörpertausch: ${tausch.map(({ z, t }) => `${esc(z.x.r.name)} ${t.neu.typ === "geb" ? "Gebläse-HK" : "Typ " + t.neu.typ} ${t.neu.h}×${t.neu.l}`).join("; ")}; alle neuen und bleibenden Heizkörper mit voreinstellbaren Ventilen.` : "Kein Heizkörpertausch nötig; voreinstellbare Ventile an allen Heizkörpern."}</li>
+    ${S.anl.ww ? `<li>Warmwasserspeicher für Wärmepumpen (${num(S.personen, 3) > 5 ? 400 : 300} l, große Heizfläche), Legionellenschutz${S.anl.zirk ? ", Zirkulation" : ""}.</li>` : ""}
+    <li>Leitung Wärmepumpe – Haus ${fmt(num(S.anl.lAussen, 3), 1)} m${num(S.anl.lGraben, 0) ? ` (davon ${fmt(S.anl.lGraben, 1)} m im Graben)` : ""}, Fundament, Kondensatablauf, Elektroanschluss mit Steuerung nach § 14a EnWG${S.anl.zs ? ", Umbau Zählerplatz" : ""}.</li>
+    <li>Rückbau der ${alt}heizung, Spülen, Füllen nach VDI 2035, Inbetriebnahme, Einweisung, Dokumentation und Nachweise für die Förderung.</li>
+    <li>Einheitspreise je Position, damit die Angebote vergleichbar sind; Garantie und Wartungsangebot.</li>
+  </ul>
+  <h3>8 Annahmen</h3>
+  <p class="muted">Heizlast je Raum: Transmission über Außenwand, Fenster, Dach bzw. oberste Decke (Faktor ${fmt(OBEN[S.oben][1], 1)}), Boden (Faktor ${fmt(UNTEN[S.unten][1], 2)}), Wärmebrücken und Nachbarräume mit anderer Temperatur, dazu Lüftung mit mindestens ${fmt(DICHT[S.dicht][1], 1)} Luftwechseln je Stunde (Bad 1,0, Küche 0,7). Außenwandhöhe = lichte Höhe + ${fmt(ZUSCHLAG_DECKE, 1)} m; Innenmaße. Heizkörperleistung nach EN 442 mit Exponent 1,3; Flachheizkörper-Normleistung aus Mittelwerten der Hersteller. Jahresarbeitszahl aus dem Kennfeld des Energie-Rechners (Simulation mit stündlichem Wetter). Warmwasser 700 kWh je Person und Jahr plus 25 % Verluste.</p>
+  <p class="muted nurdruck">Erstellt mit dem Wärmepumpen-Konzept auf mut-zur-zukunft (Entwurf). Alle Angaben ohne Gewähr.</p>`;
+}
+
+/* ---------- Ablauf ---------- */
+function aktualisieren() {
+  const fid = document.activeElement && document.activeElement.id, sel = fid && document.activeElement.selectionStart;
+  R = rechne();
+  kopf(); planZeichnen(); raumSummen(); hzZeigen(); kZeigen(); wZeigen(); bericht();
+  if (fid && $(fid) && document.activeElement !== $(fid)) { $(fid).focus(); try { if (sel != null) $(fid).setSelectionRange(sel, sel); } catch (e) {} }
+  speichernSpaeter();
+}
+function alles() { R = rechne(); geschosseZeigen(); raeumeZeigen(); aktualisieren(); }
+function laden(neu) {
+  const basis = leer();
+  S = { ...basis, ...neu, hz: { ...basis.hz, ...neu.hz }, anl: { ...basis.anl, ...neu.anl }, alt: { ...basis.alt, ...neu.alt }, wp: { ...basis.wp, ...neu.wp }, fin: { ...basis.fin, ...neu.fin }, u: { ...basis.u, ...neu.u }, kOv: neu.kOv || {} };
+  if (!Array.isArray(S.geschosse) || !S.geschosse.length) S.geschosse = basis.geschosse;
+  if (!Array.isArray(S.raeume)) S.raeume = [];
+  S.raeume = S.raeume.filter(r => S.geschosse.some(g => g.id === r.g) && r.w > 0 && r.l > 0).map(r => ({ ...r, hk: Array.isArray(r.hk) ? r.hk : [] }));
+  if (!S.geschosse.some(g => g.id === S.akt)) S.akt = S.geschosse[0].id;
+  auswahl = null; hausAufbauen(); hzAufbauen(); kAufbauen(); wAufbauen(); ortLaden(); alles();
+}
+// Merken nur nach Einschalten (localStorage); sonst nichts auf dem Gerät
+const KEY = "mzz-wp-konzept";
+let merken = false, speicherT = null;
+function speichernSpaeter() { if (!merken) return; clearTimeout(speicherT); speicherT = setTimeout(() => { try { localStorage.setItem(KEY, JSON.stringify(S)); $("merktxt").textContent = "Gemerkt auf diesem Gerät. Ausschalten löscht die Angaben dort."; } catch (e) { try { const o = JSON.parse(JSON.stringify(S)); o.geschosse.forEach(g => delete g.img); localStorage.setItem(KEY, JSON.stringify(o)); $("merktxt").textContent = "Gemerkt, aber ohne Grundriss-Bilder (zu groß für den Gerätespeicher). Für die Bilder: als Datei speichern."; } catch (e2) { $("merktxt").textContent = "Merken hat nicht geklappt; bitte als Datei speichern."; } } }, 400); }
+$("c_merken").onchange = e => { merken = e.target.checked; if (merken) speichernSpaeter(); else { try { localStorage.removeItem(KEY); } catch (er) {} $("merktxt").textContent = "Nichts mehr auf diesem Gerät gespeichert."; } };
+$("b_export").onclick = () => {
+  const b = new Blob([JSON.stringify(S, null, 1)], { type: "application/json" }), a = document.createElement("a");
+  a.href = URL.createObjectURL(b); a.download = "waermepumpen-konzept" + (S.name ? "-" + S.name.replace(/[^\wäöüÄÖÜß-]+/g, "-").slice(0, 40) : "") + ".json"; document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+};
+$("f_import").onchange = e => { const f = e.target.files[0]; e.target.value = ""; if (!f) return; f.text().then(t => { try { const d = JSON.parse(t); if (!d || d.v !== 1) throw 0; laden(d); hinweisKurz("Datei geladen."); } catch (er) { hinweisKurz("Diese Datei kann ich nicht lesen."); } }); };
+$("b_beispiel").onclick = () => laden(beispiel());
+$("b_neu").onclick = () => { if (S.raeume.length && !confirmLeise("Alle Angaben verwerfen und leer beginnen?")) return; laden(leer()); };
+
+planBinden(); raeumeBinden();
+(function start() {
+  let d = null; try { d = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) {}
+  if (d && d.v === 1) { merken = true; $("c_merken").checked = true; laden(d); } else laden(beispiel());
+})();
+</script>
+</body>
+</html>

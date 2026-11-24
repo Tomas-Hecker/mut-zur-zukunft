@@ -194,7 +194,7 @@ h1,h2,h3{break-after:avoid}
 <div class="wrap">
   <header>
         <h1>Wärmepumpe, Gas oder Öl: Was heizt am günstigsten?</h1>
-    <p class="lead">Haus angeben, Schnellstart wählen: Der Rechner vergleicht Wärmepumpe, Gas und Öl über die ganze Laufzeit, mit Förderung, CO₂-Preis und Dämmung.</p>
+    <p class="lead">Haus angeben, Schnellstart wählen: Der Rechner vergleicht Wärmepumpe, Gas und Öl über die ganze Laufzeit, mit Förderung, CO₂-Preis und Dämmung. <a href="./konzept/">Raum für Raum planen: Heizlast, Heizkörper, Kosten</a></p>
   </header>
 
 <div class="cockpit" id="cockpit">
@@ -289,6 +289,8 @@ h1,h2,h3{break-after:avoid}
             <div class="f"><label for="d_kHk">Größere Heizkörper, falls nötig</label><div class="in"><input id="d_kHk" type="number" step="500" min="0"><span class="u">€</span></div><small>senken den Vorlauf auf 55 °C; heute mit der Wärmepumpe gefördert</small></div>
             <div class="f"><label for="d_foe">Förderung</label><div class="in"><select id="d_foe"><option value="15">15 % (BEG Einzelmaßnahme)</option><option value="20">20 % mit Sanierungsfahrplan (iSFP)</option><option value="0">keine</option></select></div><small>förderfähig bis 30.000 €, mit iSFP 60.000 € je Wohnung und Jahr</small></div>
             <div class="f"><label for="d_wst">Wertsteigerung des Hauses im Jahr</label><div class="in"><input id="d_wst" type="number" step="0.5" min="-3"><span class="u">%</span></div><small>Reform: der Anteil des Staates am Hauswert wächst mit</small></div>
+            <div class="f"><label for="d_leb">Lebensdauer der Dämmung</label><div class="in"><select id="d_leb"><option value="40">40 Jahre (bisher)</option><option value="50">50 Jahre</option><option value="60">60 Jahre</option><option value="70">70 Jahre</option><option value="80">80 Jahre, so lange wie das Haus</option></select></div><small>Fenster 40 Jahre. Restwert und, mit der Reform, Ablösung des Anteils über diese Zeit. Fraunhofer IBP fand Fassadendämmungen nach 36 bis 53 Jahren schadensfrei.</small></div>
+            <div class="f"><label class="check" style="font-size:13.5px"><input type="checkbox" id="d_wertM"> Wertsteigerung nach Energieklasse statt Restwert</label><div class="in"><input id="d_hw" type="number" step="10000" min="0" aria-label="Hauswert heute"><span class="u">€ Hauswert</span></div><div class="in"><input id="d_anr" type="number" step="5" min="0" max="100" aria-label="Anteil des Preisunterschieds"><span class="u">% vom Preisunterschied</span></div><small id="d_wertTxt">Häuser der besseren Klasse werden teurer angeboten (ImmoScout24, 4. Quartal 2025). Die Preise spiegeln auch Lage und Alter, deshalb zählt nur ein Teil.</small></div>
             <div class="f"><label for="d_uw">U-Wert Wand heute</label><div class="in"><input id="d_uw" type="number" step="0.05" min="0.1"><span class="u">W/(m²K)</span></div></div>
             <div class="f"><label for="d_ud">U-Wert Dach oder oberste Decke</label><div class="in"><input id="d_ud" type="number" step="0.05" min="0.1"><span class="u">W/(m²K)</span></div></div>
             <div class="f"><label for="d_uf">U-Wert Fenster</label><div class="in"><input id="d_uf" type="number" step="0.1" min="0.5"><span class="u">W/(m²K)</span></div></div>
@@ -416,10 +418,10 @@ function kredit0(T, v) {   // zinslos, 20 Jahre (30 oder 40 mit nachgewiesener A
   // Ist der Kredit am Ende der Rechnung noch offen, zählt der Rest abzüglich des Restwerts der Anlage (sie läuft so lange wie der Kredit)
   if (N < L) a[N] += Math.max(0, T * (1 - Math.max(0, N - RF.tilgFrei) / t) - T * (1 - N / L)); return a;
 }
-function anteil(B, v) {   // Anteil am Hauswert, über 40 Jahre abgelöst; was nach der Laufzeit noch offen ist, zählt am Ende
+function anteil(B, v, L = RF.abl) {   // Anteil am Hauswert, über L Jahre abgelöst (Regel 40; Dämmung so lange, wie sie hält); was nach der Laufzeit noch offen ist, zählt am Ende
   const N = Math.max(1, Math.round(v.dauer)), w = v.wst / 100, a = new Array(N + 1).fill(0);
-  for (let n = 1; n <= Math.min(N, RF.abl); n++) a[n] = B / RF.abl * Math.pow(1 + w, n);
-  a[N] += Math.max(0, 1 - N / RF.abl) * B * Math.pow(1 + w, N); return a;
+  for (let n = 1; n <= Math.min(N, L); n++) a[n] = B / L * Math.pow(1 + w, n);
+  a[N] += Math.max(0, 1 - N / L) * B * Math.pow(1 + w, N); return a;
 }
 const summe = a => a.reduce((x, y) => x + y, 0);
 // Der Rechtsstand stellt auch den CO₂-Preis um, außer er ist unter „Erweitert“ einzeln gewählt
@@ -473,7 +475,12 @@ const D = { Ziel: { uw: 0.20, ud: 0.14, uf: 0.95, uk: 0.25 }, Preis: { wand: 220
 const StromCO2P = [[2024, 0.363], [2030, 0.25], [2040, 0.10], [2045, 0.05]];
 const stromCO2 = j => { const p = StromCO2P; if (j <= p[0][0]) return p[0][1]; for (let i = 1; i < p.length; i++) if (j <= p[i][0]) { const [a, pa] = p[i - 1], [b, pb] = p[i]; return pa + (pb - pa) * (j - a) / (b - a); } return p.at(-1)[1]; };
 const stromCO2Mittel = v => { let s = 0; for (let n = 0; n < v.dauer; n++) s += stromCO2(v.jahr + n); return s / Math.max(1, v.dauer); };
-const DV = { bj: 1968, fl: 140, g: 2, mWand: true, mDach: true, mFen: true, mKel: true, foe: 15, hk: true };
+const DV = { bj: 1968, fl: 140, g: 2, mWand: true, mDach: true, mFen: true, mKel: true, foe: 15, hk: true, leb: 50, wertM: false, hw: 400000, anr: 50 };
+// Lebensdauer: Fenster 40 Jahre; Dämmung wählbar. Fraunhofer IBP (Mitteilung 581, 2024): WDVS nach 36 bis 53 Jahren schadensfrei; Wohngebäude 80 Jahre Gesamtnutzungsdauer (ImmoWertV, Anlage 1)
+const LEB_FEN = 40;
+// Angebotspreise Einfamilienhäuser je m² nach Energieklasse, 4. Quartal 2025 (ImmoScout24, Medieninformation 3.2.2026); Grenzen nach GEG in kWh je m² und Jahr
+const EKL = [["A+", 30, 4836], ["A", 50, 4836], ["B", 75, 3927], ["C", 100, 3549], ["D", 130, 3227], ["E", 160, 3073], ["F", 200, 2927], ["G", 250, 2768], ["H", Infinity, 2600]];
+const eKlasse = kwhm2 => EKL.find(k => kwhm2 < k[1]);
 const DAUTO = ["vl0", "uw", "ud", "uf", "uk", "kWand", "kDach", "kFen", "kKel", "kHk"], dHand = new Set();
 function dGeo(fl, g) { g = Math.max(1, Math.round(g)); const G = Math.max(30, fl) / (g * 0.8), umf = 4 * Math.sqrt(G) * 1.1, fass = umf * g * 2.9, af = 0.2 * fl; return { G, af, aw: Math.max(0, fass - af), ad: G, ak: G, ah: fass + 2 * G }; }
 const dH = (u, geo, wb, fl) => u.uw * geo.aw + u.uf * geo.af + u.ud * geo.ad * 0.8 + u.uk * geo.ak * 0.6 + wb * geo.ah + 0.34 * D.Luft * fl * D.Hoehe;
@@ -503,11 +510,16 @@ function dRechne(v, m = DV) {
   const kosten = (m.mWand ? DV.kWand : 0) + (m.mDach ? DV.kDach : 0) + (m.mFen ? DV.kFen : 0) + (m.mKel ? DV.kKel : 0);
   // Heizkörper: braucht die Wärmepumpe mehr als 55 °C, werden sie vergrößert; der Vorlauf sinkt dann auf 55 °C
   const hk0 = DV.hk && DV.vl0 > 55 ? DV.kHk : 0, hk1 = DV.hk && vl1 > 55 ? DV.kHk : 0, vlE0 = hk0 ? 55 : DV.vl0, vlE1 = hk1 ? 55 : vl1;
-  const rf = Math.max(0, 1 - v.dauer / D.Lebensdauer) * Math.pow(1 + v.wst / 100, v.dauer);
+  const wf = Math.pow(1 + v.wst / 100, v.dauer), rfL = L => Math.max(0, 1 - v.dauer / L) * wf, rf = rfL(D.Lebensdauer);
   const foe = DV.foe / 100 * Math.min(kosten, DV.foe >= 20 ? 60000 : 30000);
-  const rest = kosten * Math.max(0, 1 - v.dauer / D.Lebensdauer) * Math.pow(1 + v.wst / 100, v.dauer);   // Restwert der Bauteile, in beiden Fällen gleich
+  const kFen = m.mFen ? DV.kFen : 0, kDae = kosten - kFen;
+  const restAb = kDae * rfL(DV.leb) + kFen * rfL(LEB_FEN);   // Restwert der Bauteile: abgeschrieben über ihre Lebensdauer, mit Wertsteigerung
+  // Marktwert: Aufschlag nach Energieklasse (wie mit Gasheizung gerechnet), davon nur der gewählte Teil, weil die Preise auch Lage und Alter spiegeln
+  const k0 = eKlasse(v.waerme / 0.9 / DV.fl), k1 = eKlasse(w1 / 0.9 / DV.fl), aufschlag = Math.max(0, k1[2] / k0[2] - 1) * DV.anr / 100;
+  const restM = DV.hw * aufschlag * wf;
+  const rest = DV.wertM ? restM : restAb;
   const wpKleiner = Math.min(0.4 * v.wpPreis, Math.max(0, kw0 - kw1) * D.WpKw);
-  return { beh, w0: v.waerme, w1, vl0: DV.vl0, vl1, vlE0, vlE1, hk0, hk1, rf, kw0, kw1, kosten, foe, rest, wpKleiner, irgend };
+  return { beh, w0: v.waerme, w1, vl0: DV.vl0, vl1, vlE0, vlE1, hk0, hk1, rf, kw0, kw1, kosten, kFen, kDae, foe, rest, restAb, restM, k0, k1, aufschlag, wpKleiner, irgend };
 }
 // Jahresarbeitszahl und Preis für einen Fall: eigene Angabe als Grundlage, Kennfeld für die Änderung
 function wpFall(v, w, vl) {
@@ -521,7 +533,8 @@ function dFall(d, ref) {
   // Heizkörper: heute Teil der geförderten Wärmepumpe, mit der Reform ein Bauteil (Anteil am Hauswert); Restwert wie die Dämmung
   const r0 = rechne({ ...V, reform: ref, wpJaz: a.jaz, wpStrom: a.preis, wpPreis: V.wpPreis + (ref ? 0 : d.hk0) }), r1 = rechne({ ...V, reform: ref, waerme: d.w1, wpJaz: b.jaz, wpStrom: b.preis, wpPreis: V.wpPreis - d.wpKleiner + (ref ? 0 : d.hk1) });
   const hkZ = h => (ref ? summe(anteil(h / 1.19, V)) : 0) - h * d.rf;
-  const Bn = d.kosten / 1.19 * (RF.mat + (1 - RF.mat) * 1.05), zahl = ref ? summe(anteil(Bn, V)) : summe(bank(d.kosten - d.foe, V));
+  const nf = (RF.mat + (1 - RF.mat) * 1.05) / 1.19, Bn = d.kosten * nf;
+  const zahl = ref ? summe(anteil(d.kDae * nf, V, DV.leb)) + summe(anteil(d.kFen * nf, V, LEB_FEN)) : summe(bank(d.kosten - d.foe, V));
   const dN = zahl - d.rest;
   return { a, b, r0, r1, Bn, zahl, dN, hkZ0: hkZ(d.hk0), hkZ1: hkZ(d.hk1), tot: { wp0: r0.tot.wp + hkZ(d.hk0), wp1: r1.tot.wp + hkZ(d.hk1) + dN, gas0: r0.tot.gas, gas1: r1.tot.gas + dN } };
 }
@@ -572,10 +585,10 @@ function zeigeDaemmung() {
     + row("Dämmung und Fenster", ["", eur(d.kosten), "", eur(d.kosten)])
     + (V.reform ? row("ohne Mehrwertsteuer, Arbeit 5 %", ["", "−" + eur(d.kosten - F0.Bn), "", "−" + eur(d.kosten - F0.Bn)]) + row("Ablösung des Anteils mit Wertsteigerung", ["", "+" + eur(F0.zahl - F0.Bn), "", "+" + eur(F0.zahl - F0.Bn)])
       : row("Förderung", ["", "−" + eur(d.foe), "", "−" + eur(d.foe)]) + (V.zinsK > 0 ? row("Zinsen", ["", "+" + eur(F0.zahl - d.kosten + d.foe), "", "+" + eur(F0.zahl - d.kosten + d.foe)]) : ""))
-    + row(`Restwert nach ${fmt(V.dauer)} Jahren, mit Wertsteigerung`, ["", "−" + eur(d.rest), "", "−" + eur(d.rest)])
+    + row(DV.wertM ? `Mehrwert des Hauses nach ${fmt(V.dauer)} Jahren (Klasse ${d.k0[0]} → ${d.k1[0]})` : `Restwert nach ${fmt(V.dauer)} Jahren, mit Wertsteigerung`, ["", "−" + eur(d.rest), "", "−" + eur(d.rest)])
     + row("Zusammen", ["wp0", "wp1", "gas0", "gas1"].map(k => eur(tot[k])), "sum") + "</tbody>";
   $("d_note").innerHTML = `Die Dämmung senkt den Wärmebedarf; die alten Heizkörper reichen dann mit niedrigerer Vorlauftemperatur. Das hebt die Jahresarbeitszahl. ${V.wpTarif === "dyn" ? `Im dynamischen Tarif kann ein gedämmtes Haus mehr Wärme in billige Stunden verschieben, der Strom kostet dann im Schnitt ${fmt(b.preis * 100, 1)} statt ${fmt(a.preis * 100, 1)} ct.` : "Mit dem dynamischen Tarif (oben bei der Wärmepumpe einstellbar) verschiebt ein gedämmtes Haus mehr Wärme in billige Stunden."} `
-    + `Die kleinere Wärmepumpe kostet geschätzt ${eur(d.wpKleiner)} weniger.${d.hk0 && !d.hk1 ? ` Ohne Dämmung braucht die Wärmepumpe größere Heizkörper für ${eur(d.hk0)}, mit Dämmung nicht; auch das zählt für die Dämmung.` : ""} Dämmung hält rund ${D.Lebensdauer} Jahre; der Rest zählt als Restwert. CO₂ des Stroms: Strommix 2024 mit 363 g je kWh (Umweltbundesamt, Schätzung vom 9.4.2025), danach sinkend auf 250 g 2030 und 100 g 2040 (eigene Annahme nach den Ausbauzielen für Wind und Sonne); gerechnet ist das Mittel über ${fmt(V.dauer)} Jahre, ${fmt(sc * 1000)} g je kWh. Die Jahresarbeitszahl stammt aus deiner Angabe oben, geändert nach dem Stundenmodell des Energie-Rechners (Luft-Wasser-Wärmepumpe, Wetterjahr Idstein). Grobe Schätzung; ein Energieberater rechnet genauer. Wie Mieter und Vermieter mit der Reform aus dem Buch dabei stehen, zeigt der <a href="../steuerrechner/#sanierung">Steuerrechner</a>.`;
+    + `Die kleinere Wärmepumpe kostet geschätzt ${eur(d.wpKleiner)} weniger.${d.hk0 && !d.hk1 ? ` Ohne Dämmung braucht die Wärmepumpe größere Heizkörper für ${eur(d.hk0)}, mit Dämmung nicht; auch das zählt für die Dämmung.` : ""} ${DV.wertM ? `Statt des Restwerts zählt der Mehrwert des Hauses: Energieklasse ${d.k0[0]} → ${d.k1[0]} (wie mit Gasheizung gerechnet), Angebotspreise je m² ${fmt(d.k0[2])} → ${fmt(d.k1[2])} € (ImmoScout24, Einfamilienhäuser, 4. Quartal 2025), davon ${fmt(DV.anr)} % angerechnet: ${fmt(d.aufschlag * 100, 1)} % von ${eur(DV.hw)}. Abgeschrieben wären es ${eur(d.restAb)}.` : `Dämmung hält hier ${fmt(DV.leb)} Jahre, Fenster ${LEB_FEN}; der Rest zählt als Restwert${d.restM > 0 ? ` (nach Energieklasse ${d.k0[0]} → ${d.k1[0]} wäre das Haus rund ${eur(d.restM)} mehr wert; unten bei den Kosten umschaltbar)` : ""}.`}${V.reform ? ` Mit der Reform wird der Anteil für die Dämmung über ${fmt(DV.leb)} Jahre abgelöst, für Fenster über ${LEB_FEN}.` : ""} CO₂ des Stroms: Strommix 2024 mit 363 g je kWh (Umweltbundesamt, Schätzung vom 9.4.2025), danach sinkend auf 250 g 2030 und 100 g 2040 (eigene Annahme nach den Ausbauzielen für Wind und Sonne); gerechnet ist das Mittel über ${fmt(V.dauer)} Jahre, ${fmt(sc * 1000)} g je kWh. Die Jahresarbeitszahl stammt aus deiner Angabe oben, geändert nach dem Stundenmodell des Energie-Rechners (Luft-Wasser-Wärmepumpe, Wetterjahr Idstein). Grobe Schätzung; ein Energieberater rechnet genauer. Wie Mieter und Vermieter mit der Reform aus dem Buch dabei stehen, zeigt der <a href="../steuerrechner/#sanierung">Steuerrechner</a>.`;
   const q = new URLSearchParams({ waerme: Math.round(d.w1), vl: Math.round(d.vl1) }); if (PLZ) q.set("plz", PLZ);
   $("d_link").innerHTML = `Stundengenau mit Solarstrom, Speicher und E-Auto: <a href="../energie-rechner/?${q}">im Energie-Rechner mit dem gedämmten Haus weiterrechnen</a>.`;
 }
@@ -587,6 +600,12 @@ function zeigeDaemmung() {
   ["bj", "fl", "g"].forEach(k => $("d_" + k).addEventListener(k === "bj" ? "change" : "input", e => { DV[k] = +e.target.value || DV[k]; dSchaetze(); run(); }));
   $("d_foe").onchange = e => { DV.foe = +e.target.value; run(); };
   $("d_hk").checked = DV.hk; $("d_hk").onchange = e => { DV.hk = e.target.checked; run(); };
+  const dSync = () => { $("d_leb").value = DV.leb; $("d_wertM").checked = DV.wertM; $("d_hw").value = DV.hw; $("d_anr").value = DV.anr; };
+  dSync(); window.dSync = dSync;
+  $("d_leb").onchange = e => { DV.leb = +e.target.value; run(); };
+  $("d_wertM").onchange = e => { DV.wertM = e.target.checked; run(); };
+  $("d_hw").addEventListener("input", e => { DV.hw = +e.target.value || 0; run(); });
+  $("d_anr").addEventListener("input", e => { DV.anr = Math.min(100, Math.max(0, +e.target.value || 0)); run(); });
   $("d_wst").value = V.wst; $("d_wst").addEventListener("input", e => { V.wst = +e.target.value || 0; run(); });
   DAUTO.forEach(k => $("d_" + k).addEventListener("input", e => { dHand.add(k); e.target.classList.remove("auto"); DV[k] = +e.target.value || 0; run(); }));
   $("d_auto").onclick = () => { dHand.clear(); dSchaetze(); run(); };
@@ -595,7 +614,7 @@ function zeigeDaemmung() {
 
 function run() {
   const a0 = wpFall(V, V.waerme, DV.vl0), rH = rechne({ ...V, reform: false, wpJaz: a0.jaz, wpStrom: a0.preis }), rR = rechne({ ...V, reform: true, wpJaz: a0.jaz, wpStrom: a0.preis }), r = V.reform ? rR : rH;
-  $("r_txt").textContent = V.reform ? "Vorschlag aus dem Buch, kein geltendes Recht: CO₂-Preis 100 € ab 2028 bis 300 € ab 2040 (das Geld fließt als Klimageld zurück, hier nicht eingerechnet). Strom 5 % Mehrwertsteuer, Gas und Öl 50 %, Wartung 5 %. Wärmepumpe ohne Mehrwertsteuer, zinsloser Kredit über 20 Jahre (30 oder 40, wenn die längere Lebensdauer nachgewiesen ist), die ersten 3 ohne Tilgung. Einbau, Dämmung und Fenster bezahlt der Staat gegen einen Anteil am Hauswert, den du über 40 Jahre ablöst. Dafür entfällt die heutige Förderung." : "Heutige Förderung, Mehrwertsteuer 19 % auf alles, CO₂-Preis wie nach heutigem Recht erwartet, Kauf über einen Bankkredit.";
+  $("r_txt").textContent = V.reform ? "Vorschlag aus dem Buch, kein geltendes Recht: CO₂-Preis 100 € ab 2028 bis 300 € ab 2040 (das Geld fließt als Klimageld zurück, hier nicht eingerechnet). Strom 5 % Mehrwertsteuer, Gas und Öl 50 %, Wartung 5 %. Wärmepumpe ohne Mehrwertsteuer, zinsloser Kredit über 20 Jahre (30 oder 40, wenn die längere Lebensdauer nachgewiesen ist), die ersten 3 ohne Tilgung. Einbau, Dämmung und Fenster bezahlt der Staat gegen einen Anteil am Hauswert, den du über 40 Jahre ablöst, bei Dämmung so lange, wie sie hält (einstellbar unter „Dämmung: Kosten und U-Werte“). Dafür entfällt die heutige Förderung." : "Heutige Förderung, Mehrwertsteuer 19 % auf alles, CO₂-Preis wie nach heutigem Recht erwartet, Kauf über einen Bankkredit.";
   const hrRow = (n, k) => { const d = rR.tot[k] - rH.tot[k]; return `<tr><td>${n}</td><td>${eur(rH.tot[k])}</td><td>${eur(rR.tot[k])}</td><td class="${d <= 0 ? "gut" : "schlecht"}">${d <= 0 ? "−" : "+"}${eur(Math.abs(d))}</td></tr>`; };
   $("hr").innerHTML = `<h3>Recht heute gegen die Reform, über ${fmt(V.dauer)} Jahre</h3><div class="tbl"><table><thead><tr><th></th><th>heute</th><th>Reform</th><th>±</th></tr></thead><tbody>${hrRow("Wärmepumpe", "wp")}${hrRow("Gasheizung", "gas")}${hrRow("Ölheizung", "oel")}</tbody></table></div>`;
   $("co2txt").textContent = "CO₂-Preis: " + PFAD[pfadVon(V)].txt;
@@ -731,7 +750,7 @@ $("presets").querySelectorAll(".chip").forEach(b => b.onclick = () => {
   syncF(); run();
 });
 function syncF() { Object.values(FELDER).flat().forEach(f => { const el = $("i_" + f.k); if (el && document.activeElement !== el) el.value = V[f.k]; }); }
-$("reset").onclick = () => { Object.assign(V, JSON.parse(JSON.stringify(V0))); Object.assign(DV, JSON.parse(JSON.stringify(DV0))); $("d_bj").value = DV.bj; $("d_fl").value = DV.fl; ["mWand", "mDach", "mFen", "mKel"].forEach(k => $("d_" + k).checked = DV[k]); $("d_hk").checked = DV.hk; dSchaetze(); syncF(); run(); };
+$("reset").onclick = () => { Object.assign(V, JSON.parse(JSON.stringify(V0))); Object.assign(DV, JSON.parse(JSON.stringify(DV0))); $("d_bj").value = DV.bj; $("d_fl").value = DV.fl; ["mWand", "mDach", "mFen", "mKel"].forEach(k => $("d_" + k).checked = DV[k]); $("d_hk").checked = DV.hk; window.dSync && dSync(); dSchaetze(); syncF(); run(); };
 let TAB = "t_verl";
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { TAB = b.dataset.tab; zeigeTab(); if (TAB === "t_verl") run(); });
 function zeigeTab() { document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-pressed", b.dataset.tab === TAB)); ["t_verl", "t_tk", "t_daemm", "t_hr", "t_ref"].forEach(id => $(id).hidden = id !== TAB); }
@@ -742,7 +761,7 @@ document.querySelectorAll(".col-more details").forEach(d => {
 });
 // Angaben merken (nur wenn eingeschaltet)
 try { const pf = window.Profil && Profil.laden("heizung"); if (pf) {
-  if (pf.eigene) { Object.keys(V0).forEach(k => { if (pf.eigene[k] !== undefined) V[k] = pf.eigene[k]; }); if (pf.eigene._dv) { Object.assign(DV, pf.eigene._dv); $("d_bj").value = DV.bj; $("d_fl").value = DV.fl; ["mWand", "mDach", "mFen", "mKel"].forEach(k => $("d_" + k).checked = DV[k]); $("d_hk").checked = DV.hk; dSchaetze(); } syncF(); }
+  if (pf.eigene) { Object.keys(V0).forEach(k => { if (pf.eigene[k] !== undefined) V[k] = pf.eigene[k]; }); if (pf.eigene._dv) { Object.assign(DV, pf.eigene._dv); $("d_bj").value = DV.bj; $("d_fl").value = DV.fl; ["mWand", "mDach", "mFen", "mKel"].forEach(k => $("d_" + k).checked = DV[k]); $("d_hk").checked = DV.hk; window.dSync && dSync(); dSchaetze(); } syncF(); }
   const plz = (pf.eigene && pf.eigene.plz) || pf.gemeinsam.plz;
   if (plz && !new URLSearchParams(location.search).get("plz")) { const el = $("i_plz"); if (el) { el.value = plz; el.dispatchEvent(new Event("input")); } }
 } } catch (e) {}
