@@ -23,10 +23,11 @@
     + `typisches meteorologisches Jahr aus PVGIS 5.3 der Europäischen Kommission, Strahlung SARAH-3 und Wetter ERA5 2005 bis 2023, © Europäische Union, CC BY 4.0. `
     + `Gerechnet für den größten Ort des Bereichs, Koordinaten von GeoNames (CC BY 4.0). Zeit von UTC auf MEZ umgerechnet.`;
   // Eingabefeld: ruft beimLaden(plz) auf, sobald fünf Ziffern da sind; merkt sich die PLZ im Link (?plz=)
-  function feld(box, beimLaden, text) {
+  // info: Erklärung hinter dem Info-Knopf am Feld (braucht info.js)
+  function feld(box, beimLaden, text, info) {
     if (!document.getElementById("plzstil")) document.head.insertAdjacentHTML("beforeend", '<style id="plzstil">.plzfeld{grid-column:1/-1}.plzfeld .in{max-width:12em}.plzfeld small{white-space:normal!important;overflow:visible!important}</style>');
     const d = document.createElement("div"); d.className = "f plzfeld";
-    d.innerHTML = `<label for="i_plz">Postleitzahl</label><div class="in"><input id="i_plz" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" placeholder="z. B. 80331"></div><small id="plz_status">${text || "Lädt das Wetter für deinen Ort."}</small>`;
+    d.innerHTML = `<label for="i_plz"${info ? ` data-info="${info.replace(/"/g, "&quot;")}"` : ""}>Postleitzahl</label><div class="in"><input id="i_plz" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" placeholder="z. B. 80331"></div><small id="plz_status">${text || "Lädt das Wetter für deinen Ort."}</small>`;
     box.prepend(d);
     const el = d.querySelector("input"), st = d.querySelector("small");
     let zuletzt = "";

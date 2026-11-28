@@ -162,9 +162,12 @@ h1,h2,h3{break-after:avoid}
 .chip { font: 600 13.5px var(--body); border: 1px solid var(--line); background: var(--field); color: var(--fg); border-radius: 999px; padding: 5px 12px; cursor: pointer }
 .chip:hover { border-color: var(--ev) } .chip[aria-pressed="true"] { background: var(--ev); border-color: var(--ev); color: #fff }
 select#paar, select#karte { width: 100%; font: 600 14.5px var(--body); color: var(--fg); background: var(--field); border: 1px solid var(--line); border-radius: 7px; padding: 7px 8px }
+.pe { display: grid; grid-template-columns: auto minmax(0,1.3fr) minmax(0,1fr); gap: 4px 8px; align-items: center; margin-top: 6px; font-size: 13px; color: var(--muted) }
+.pe label { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap } .pe i { width: 9px; height: 9px; border-radius: 2px; display: inline-block }
+.pe span { display: flex; align-items: center; gap: 4px; white-space: nowrap } .pe input { width: 100%; min-width: 0; padding: 4px 6px; font: 600 13.5px var(--body); color: var(--fg); background: var(--inbg, transparent); border: 1px solid var(--line); border-radius: 6px; text-align: right }
 .pair { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted) }
-.pair .q { flex-basis: 100%; font-size: 11.5px } .pair span { display: inline-flex; align-items: center; gap: 5px } .pair i { width: 9px; height: 9px; border-radius: 2px; display: inline-block }
-.sl { display: grid; grid-template-columns: 92px minmax(0,1fr) 74px; gap: 8px; align-items: center; font-size: 13.5px; color: var(--muted) }
+.pair .q { flex-basis: 100%; font-size: 11.5px; display: block !important } .pair span { display: inline-flex; align-items: center; gap: 5px } .pair i { width: 9px; height: 9px; border-radius: 2px; display: inline-block }
+.sl { display: grid; grid-template-columns: 92px minmax(0,1fr) minmax(74px,auto); gap: 8px; align-items: center; font-size: 13.5px; color: var(--muted) }
 .sl > :first-child { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap }
 .sl output { text-align: right }
 .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block } .dot.h { background: var(--ev) } .dot.f { background: #6aa9d8 } .dot.w { background: #b9a24a }
@@ -232,11 +235,15 @@ tr.pk { cursor: pointer } tr.pk:hover td { background: var(--hl) } tr.pk.sel td 
       <div class="blk">
         <label class="blkT" for="paar" data-info="Beliebte E-Autos (Neuzulassungen Jan. bis Okt. 2026, beim Firmenwagen das Dienstwagen-Ranking 2026) mit dem Verbrenner, den man stattdessen kaufen würde. Preise, Verbrauch und Kosten sind Richtwerte der gängigen Ausstattung; alles lässt sich rechts unter „Genauer einstellen“ ändern. Alle Paare im Vergleich: Reiter „Alle Autopaare“.">Autopaar</label>
         <select id="paar"></select>
+        <div class="pe" id="pairEdit">
+          <label for="pe_ePreis"><i style="background:var(--ev)"></i>Elektroauto</label><span><input id="pe_ePreis" type="number" inputmode="decimal" step="100" min="0" aria-label="Preis Elektroauto"> €</span><span><input id="pe_eVerb" type="number" inputmode="decimal" step="0.1" min="0" aria-label="Verbrauch Elektroauto"> kWh</span>
+          <label for="pe_iPreis"><i style="background:var(--ice)"></i>Verbrenner</label><span><input id="pe_iPreis" type="number" inputmode="decimal" step="100" min="0" aria-label="Preis Verbrenner"> €</span><span><input id="pe_iVerb" type="number" inputmode="decimal" step="0.1" min="0" aria-label="Verbrauch Verbrenner"> l</span>
+        </div>
         <div class="pair" id="pairInfo"></div>
       </div>
       <div class="blk">
-        <div class="sl"><label for="s_km" data-info="Wie viele Kilometer du im Jahr fährst. Durchschnitt in Deutschland: rund 13.000 km.">Kilometer</label><input type="range" id="s_km" min="3000" max="50000" step="500"><output id="o_km"></output></div>
-        <div class="sl"><label for="s_jahre" data-info="Wie lange du das Auto fährst, bis zum Verschrotten oder Verkauf. Der Rechner rechnet ohne Restwert. Beim Firmenwagen: wie lange die Firma das Auto hält.">Jahre</label><input type="range" id="s_jahre" min="3" max="20" step="1"><output id="o_jahre"></output></div>
+        <div class="sl"><label for="s_km" data-info="Wie viele Kilometer du im Jahr fährst. Durchschnitt in Deutschland: rund 13.000 km.">Fahrleistung</label><input type="range" id="s_km" min="3000" max="50000" step="500"><output id="o_km"></output></div>
+        <div class="sl"><label for="s_jahre" data-info="Wie lange du das Auto fährst, bis zum Verschrotten oder Verkauf. Am Ende zieht der Rechner den Restwert ab. Beim Firmenwagen: wie lange die Firma das Auto hält.">Jahre</label><input type="range" id="s_jahre" min="3" max="20" step="1"><output id="o_jahre"></output></div>
       </div>
       <div class="blk">
         <div class="blkT" data-info="Wo du lädst. Zu Hause an der eigenen Wallbox oder Steckdose, bei der Firma, und unterwegs an öffentlichen Säulen. Laden beim Arbeitgeber ist für dich steuerfrei (§ 3 Nr. 46 EStG).">Wo wird geladen?</div>
@@ -270,6 +277,7 @@ tr.pk { cursor: pointer } tr.pk:hover td { background: var(--hl) } tr.pk.sel td 
       <div class="tab" id="t_verlauf">
         <h3 class="cumT" id="cumT"></h3>
         <div class="chart" id="cum"></div>
+        <p class="note" id="cumN"></p>
       </div>
       <div class="tab tbl" id="t_100" hidden><table id="t100"></table></div>
       <div class="tab" id="t_dwTab" hidden>
@@ -280,7 +288,7 @@ tr.pk { cursor: pointer } tr.pk:hover td { background: var(--hl) } tr.pk.sel td 
         <p class="note">Mit deinen Kilometern, Jahren und Ladeorten gerechnet. Klick auf eine Zeile übernimmt das Paar.</p>
         <div class="tbl"><table id="t_paar"></table></div>
       </div>
-      <div class="tab" id="t_reform" hidden><div id="zumSteuer"></div></div>
+      <div class="tab" id="t_reform" hidden><div id="kmaBox"></div><div id="zumSteuer"></div></div>
     </section>
 
     <!-- 3. Genauer einstellen -->
@@ -313,6 +321,8 @@ tr.pk { cursor: pointer } tr.pk:hover td { background: var(--hl) } tr.pk.sel td 
 <div class="sitehinweis" role="note"><p><b>Prototyp, noch nicht unabhängig geprüft.</b> Dieser Rechner ist ein vereinfachtes Modell zum Buch „Wir können uns die Zukunft leisten“. Die Ergebnisse sind Größenordnungen, können Fehler enthalten und ersetzen keine ärztliche, Steuer-, Rechts-, Finanz- oder Energieberatung. Alle Angaben ohne Gewähr. <a href="../impressum.html#haftung">Haftungsausschluss</a></p></div>
 <footer style="max-width:1180px;margin:24px auto 0;font-size:14px;color:var(--muted)"><p>Der Rechner läuft im Browser. Deine Angaben bleiben auf deinem Gerät und werden nur gemerkt, wenn du das links einschaltest. <a href="../">Startseite</a> · <a href="../steuerrechner/">Steuerrechner</a> · <a href="../eauto-rechner/">E-Auto-Rechner</a> · <a href="../heizungsrechner/">Heizungsrechner</a> · <a href="../energie-rechner/">Energie-Rechner</a> · <a href="../buch/">Buch online lesen</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p></footer>
 <script src="../profil.js"></script>
+<script src="../methode.js"></script>
+<script src="../wirtschaft.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const fmt = (v, d = 0) => (+v).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -323,6 +333,7 @@ const V0 = {
   ePreis: 36900, eVerb: 15.5, eVerlust: 10, eHaus: 0.37, eOff: 0.515, eAnteil: 80, eFirmaAnteil: 0, eFirmaPreis: 0, eGrund: 0, eVers: 550, eWart: 180, eSteuerNach: 50, eWallbox: 0,
   modus: "privat", methode: "pausch", entf: 25, fahrten: 180, satz: 43, agLaden: "nein", erstatt: 0, dJahre: 4, iKraft: "benzin", thg: 300, thgBis: 2030,
   paar: "id3", karte: "aral1",
+  zins: 3.8, infl: 2, steig: 2, iWv: 16, eWv: 19, arbKm: 0,   // Zins, Inflation, Energiepreise (gemeinsam für alle Rechner, wirtschaft.js); Wertverlust je Jahr
 };
 const V = { ...V0 };
 // Autopaare: beliebte E-Autos (KBA Jan.–Okt. 2026) und der Verbrenner, den man stattdessen kaufen würde.
@@ -371,9 +382,9 @@ const PRESETS = {
 };
 const F = (k, lbl, u, step, sub, sel) => ({ k, lbl, u, step, sub, sel });
 const FELDER = {
-  allg: [F("kaufjahr", "Kaufjahr", "", 1, "Bei Firmenwagen 2025: Grenze 100.000 € erst ab 1.7.2025.")],
-  g_ice: [F("iPreis", "Anschaffung", "€", 100, "Listenpreis der gängigen Ausstattung, ohne Rabatt."), F("iVerb", "Verbrauch", "l/100 km", 0.1), F("iKraft", "Kraftstoff", "", 0, "", [["benzin", "Benzin"], ["diesel", "Diesel"]]), F("iSprit", "Spritpreis heute", "€/l", 0.01, "ADAC-Schnitt 8.11.2026: Super E10 2,00 €, Diesel 2,24 €. Der CO₂-Preis darin steigt mit dem Emissionshandel."), F("iSteuer", "Kfz-Steuer", "€/Jahr", 10, "Nach Hubraum und CO₂-Ausstoß."), F("iVers", "Versicherung", "€/Jahr", 10), F("iWart", "Wartung und Reparaturen", "€/Jahr", 10)],
-  g_ev: [F("ePreis", "Anschaffung", "€", 100, "Listenpreis der gängigen Ausstattung, ohne Rabatt."), F("eVerb", "Verbrauch (Herstellerangabe)", "kWh/100 km", 0.1, "Im Winter rund 15 bis 25 % mehr."),
+  allg: [F("kaufjahr", "Kaufjahr", "", 1, "Bei Firmenwagen 2025: Grenze 100.000 € erst ab 1.7.2025."), F("arbKm", "Davon Arbeitsweg", "km/Jahr", 500, "Nur für den Vorschlag aus dem Buch: Auf dem Weg zur Arbeit kostet die Kilometerabgabe nie mehr als heute die Steuer auf Benzin (7,44 ct je kWh). Was darüber liegt, kommt nach der Meldung des Arbeitgebers mit der Jahresrechnung zurück.")],
+  g_ice: [F("iPreis", "Anschaffung", "€", 100, "Listenpreis der gängigen Ausstattung, ohne Rabatt."), F("iWv", "Wertverlust im Jahr", "%", 1, "Für den Restwert am Ende. Vorgabe: Verbrenner 16 %, Elektroauto 19 % im Jahr (ohne Inflation). Angelehnt an die DAT-Restwerte für drei Jahre alte Autos, September 2026: Benziner 59 %, Diesel 58 %, Elektroauto 52 % des Listenpreises. Ältere Autos verlieren langsamer, darum etwas weniger als in den ersten drei Jahren. Gebrauchtpreise schwanken stark."), F("iVerb", "Verbrauch", "l/100 km", 0.1), F("iKraft", "Kraftstoff", "", 0, "", [["benzin", "Benzin"], ["diesel", "Diesel"]]), F("iSprit", "Spritpreis heute", "€/l", 0.01, "ADAC-Schnitt 8.11.2026: Super E10 2,00 €, Diesel 2,24 €. Der CO₂-Preis darin steigt mit dem Emissionshandel."), F("iSteuer", "Kfz-Steuer", "€/Jahr", 10, "Nach Hubraum und CO₂-Ausstoß."), F("iVers", "Versicherung", "€/Jahr", 10), F("iWart", "Wartung und Reparaturen", "€/Jahr", 10)],
+  g_ev: [F("ePreis", "Anschaffung", "€", 100, "Listenpreis der gängigen Ausstattung, ohne Rabatt."), F("eWv", "Wertverlust im Jahr", "%", 1, "Für den Restwert am Ende. Vorgabe: Verbrenner 16 %, Elektroauto 19 % im Jahr (ohne Inflation). Angelehnt an die DAT-Restwerte für drei Jahre alte Autos, September 2026: Benziner 59 %, Diesel 58 %, Elektroauto 52 % des Listenpreises. Ältere Autos verlieren langsamer, darum etwas weniger als in den ersten drei Jahren. Gebrauchtpreise schwanken stark."), F("eVerb", "Verbrauch (Herstellerangabe)", "kWh/100 km", 0.1, "Im Winter rund 15 bis 25 % mehr."),
     F("eVers", "Versicherung", "€/Jahr", 10), F("eWart", "Wartung und Reparaturen", "€/Jahr", 10, "Weniger Verschleißteile: kein Ölwechsel, Bremsen halten länger."), F("eSteuerNach", "Kfz-Steuer nach der Befreiung", "€/Jahr", 5, "Nach Gewicht, halbiert; meist 30 bis 100 €."), F("thg", "THG-Prämie", "€/Jahr", 10, "2026 meist 300 bis 380 €; wie lange sie so hoch bleibt, ist offen. Beim Firmenwagen bekommt sie der Halter."), F("thgBis", "THG-Prämie bis einschließlich", "", 1, "Jahr; danach ohne Prämie gerechnet.")],
   g_lad: [F("eOff", "Strom unterwegs", "€/kWh", 0.01, "Kommt aus der Ladekarte; hier eintragen, wenn du „Eigener Preis“ gewählt hast."), F("eGrund", "Grundgebühr Ladekarte", "€/Jahr", 1), F("eVerlust", "Ladeverluste", "%", 1, "Typisch 10 bis 15 %."), F("eWallbox", "Wallbox (einmalig)", "€", 100, "0, wenn schon vorhanden.")],
   dw: [F("methode", "Arbeitsweg", "", 0, "", [["pausch", "0,03 % pauschal"], ["einzel", "0,002 % je Fahrt"]]), F("entf", "Entfernung zur Arbeit (einfach)", "km", 1), F("fahrten", "Fahrten zur Arbeit im Jahr", "", 1, "Nur bei 0,002 % je Fahrt, höchstens 180."),
@@ -385,50 +396,76 @@ const CO2P = [[2026, 60], [2027, 65], [2028, 60], [2030, 70], [2035, 100], [2040
 const co2Preis = j => { const p = CO2P; if (j <= p[0][0]) return p[0][1]; for (let i = 1; i < p.length; i++) if (j <= p[i][0]) { const [a, pa] = p[i - 1], [b, pb] = p[i]; return pa + (pb - pa) * (j - a) / (b - a); } return p.at(-1)[1]; };
 const KG_L = { benzin: 2.37, diesel: 2.65 };   // kg CO₂ je Liter
 // Rechenkern (privat: Gesamtkosten des Halters)
+// Wirtschaftlichkeit (Kapitalwertmethode): Kauf heute, laufende Kosten Jahr für Jahr mit Preissteigerung, alles mit dem Zins auf heute abgezinst,
+// am Ende der Restwert (Wertverlust je Jahr, Gebrauchtwagenpreise steigen mit der Inflation), ebenfalls abgezinst. Ergebnis in Euro von heute.
 function rechne(v) {
+  const z = (v.zins ?? 0) / 100, inf = (v.infl ?? 0) / 100, st = (v.steig ?? 0) / 100;
   const lebKm = v.km * v.jahre;
-  const iEnergie = v.iVerb / 100 * v.iSprit;                                         // €/km
+  const iEnergie = v.iVerb / 100 * v.iSprit;                                         // €/km heute
   const wegA = Math.max(0, 1 - v.eAnteil / 100 - (v.eFirmaAnteil || 0) / 100);
   const ePreisMix = v.eAnteil / 100 * v.eHaus + (v.eFirmaAnteil || 0) / 100 * (v.eFirmaPreis || 0) + wegA * v.eOff;
-  const eEnergie = v.eVerb * (1 + v.eVerlust / 100) / 100 * ePreisMix;                 // €/km
+  const eEnergie = v.eVerb * (1 + v.eVerlust / 100) / 100 * ePreisMix;                 // €/km heute
   const befreitBis = v.kaufjahr <= 2030 ? Math.min(v.kaufjahr + 9, 2035) : v.kaufjahr - 1; // letztes steuerfreies Jahr
+  const T = { kauf: [v.iPreis, v.ePreis + v.eWallbox], en: [0, 0], vers: [0, 0], wart: [0, 0], steuer: [0, 0], co2: [0, 0], thg: [0, 0], k: [0, 0], rest: [0, 0] };
   const jahre = [];
   let i = v.iPreis, e = v.ePreis + v.eWallbox;
   jahre.push({ j: 0, i, e });
   for (let n = 1; n <= v.jahre; n++) {
-    const kj = v.kaufjahr + n - 1;
+    const kj = v.kaufjahr + n - 1, d = Math.pow(1 + z, -n), fE = Math.pow(1 + st, n - 1), fI = Math.pow(1 + inf, n - 1), fK = Math.pow(1 + inf, kj - 2025);
     const eSt = kj > befreitBis ? v.eSteuerNach : 0;
     const spritCO2 = v.iVerb / 100 * KG_L[v.iKraft || "benzin"] / 1000 * (v.reform ? co2Reform(kj) - co2Preis(2026) : co2Preis(kj) - co2Preis(v.kaufjahr)) * (v.reform ? 1.5 : 1.19);   // €/km mehr als heute
     const thg = kj <= v.thgBis ? v.thg : 0;
-    i += v.iSteuer + v.iVers + v.iWart + v.km * (iEnergie + spritCO2);
-    e += eSt + v.eVers + v.eWart + v.km * eEnergie + (v.eGrund || 0) - thg;
-    jahre.push({ j: n, i, e, eSt, sC: v.km * spritCO2, thg });
+    const mitK = v.reform && !v.ohneKma, dP = v.reform && v.iKraft === "diesel" && kj >= KMA.dieselAb ? KMA.dieselMehr * 1.5 * v.iVerb / 100 * v.km * fE : 0,
+      kI = ((mitK ? kmAbgabe(v, kj, "i") * fK : 0) + dP) * d, kE = (mitK ? kmAbgabe(v, kj, "e") * fK : 0) * d;   // Abgabe in Preisen von 2025
+    const c = {
+      en: [v.km * iEnergie * fE * d, (v.km * eEnergie * fE + (v.eGrund || 0) * fE) * d], vers: [v.iVers * fI * d, v.eVers * fI * d], wart: [v.iWart * fI * d, v.eWart * fI * d],
+      steuer: [v.iSteuer * d, eSt * d], co2: [v.km * spritCO2 * d, 0], thg: [0, -thg * d], k: [kI, kE], rest: [0, 0] };
+    if (n === v.jahre) { const g = Math.pow(1 + inf, n) * d; c.rest = [-v.iPreis * Math.pow(1 - (v.iWv ?? 0) / 100, n) * g, -v.ePreis * Math.pow(1 - (v.eWv ?? 0) / 100, n) * g]; }
+    for (const k in c) { T[k][0] += c[k][0]; T[k][1] += c[k][1]; i += c[k][0]; e += c[k][1]; }
+    jahre.push({ j: n, i, e, eSt, sC: c.co2[0], thg, kI, kE, rI: -c.rest[0], rE: -c.rest[1] });
   }
-  const eStSum = jahre.slice(1).reduce((a, r) => a + r.eSt, 0), sCSum = jahre.slice(1).reduce((a, r) => a + r.sC, 0), thgSum = jahre.slice(1).reduce((a, r) => a + r.thg, 0);
   const teile = {
-    Anschaffung: [v.iPreis, v.ePreis + v.eWallbox],
-    "Sprit oder Strom": [lebKm * iEnergie, lebKm * eEnergie + v.jahre * (v.eGrund || 0)],
-    Versicherung: [v.jahre * v.iVers, v.jahre * v.eVers],
-    "Wartung und Reparaturen": [v.jahre * v.iWart, v.jahre * v.eWart],
-    "Kfz-Steuer": [v.jahre * v.iSteuer, eStSum],
-    "Steigender CO₂-Preis im Sprit": [sCSum, 0],
-    "THG-Prämie": [0, -thgSum],
+    Anschaffung: T.kauf, "Sprit oder Strom": T.en, Versicherung: T.vers, "Wartung und Reparaturen": T.wart, "Kfz-Steuer": T.steuer,
+    "Steigender CO₂-Preis im Sprit": T.co2, "THG-Prämie": T.thg,
   };
+  if (v.reform) teile[v.ohneKma ? "Ende des Dieselprivilegs" : "Kilometerabgabe (Vorschlag)"] = T.k;
+  teile["Restwert am Ende"] = T.rest;
   // Break-even: erster Zeitpunkt, an dem die aufsummierten Kosten des E-Autos unter denen des Verbrenners liegen
   let be = null;
   if (jahre[0].e <= jahre[0].i) be = 0;
   else for (let n = 1; n < jahre.length; n++) if (jahre[n].e <= jahre[n].i) {
     const a = jahre[n - 1], b = jahre[n], t = (a.e - a.i) / ((a.e - a.i) - (b.e - b.i)); be = n - 1 + t; break;
   }
-  return { lebKm, iEnergie, eEnergie, ePreisMix, jahre, teile, iTCO: jahre.at(-1).i, eTCO: jahre.at(-1).e, be, befreitBis };
+  return { lebKm, iEnergie, eEnergie, ePreisMix, jahre, teile, iTCO: jahre.at(-1).i, eTCO: jahre.at(-1).e, be, befreitBis, rest: [-T.rest[0], -T.rest[1]] };
 }
 // Vorschlag aus dem Buch (Entwurf): Auto, Sprit, Wallbox 50 % MwSt, Strom 5 % ohne Stromsteuer und Umlagen, Werkstatt 5 %,
 // MwSt auf die ersten 10.000 € eines neuen E-Autos zurück (bis 5.000 €), CO₂-Preispfad 100 € 2028 bis 300 € 2040, zinsloses Darlehen (hier ohne Zinsen ohnehin)
 const CO2R = [[2026, 60], [2027, 65], [2028, 100], [2030, 150], [2035, 200], [2040, 300]];
 const co2Reform = j => { const p = CO2R; if (j <= p[0][0]) return p[0][1]; for (let i = 1; i < p.length; i++) if (j <= p[i][0]) { const [a, pa] = p[i - 1], [b, pb] = p[i]; return pa + (pb - pa) * (j - a) / (b - a); } return p.at(-1)[1]; };
+// Kilometerabgabe (Vorschlag aus dem Buch, Straßenfonds Fassung B, Paket A, Buch Version 40, staat-v40.json satz_ct_kwh), nur die Zahlen in KMA tauschen.
+// Abgabe = Satz je kWh × Verbrauch laut Hersteller × km, alles real in Preisen von 2025. Beim Verbrenner wird die Energiesteuer des eigenen Verbrauchs angerechnet.
+// Übergang: Autos mit Erstzulassung vor 2028 zahlen 2030 25 % ihres Betrags, jedes Jahr 10 Punkte mehr, ab 2038 voll. Satz nach 2050 gleich.
+const KMA = { start: 2030, satz: [21.62, 19.59, 18.70, 18.19, 18.37, 18.70, 19.16, 19.69, 20.49, 21.59, 22.73, 24.39, 26.06, 27.87, 29.65, 31.22, 32.38, 33.26, 33.95, 34.47, 34.86],   // ct je kWh (wie Steuerrechner KM_SATZ, Stand 24.11.2026: ab 2041 mit Gesundheitsaufschlag), 2030 bis 2050, Paket A: Grundsatz + d + v2
+  aufschlag: 4, deckel: 7.44,                            // Verkehrspaket 24.11.2026: 4 ct je kWh für alle Pkw ab 2030 (ohne Anrechnung, ohne Übergang); Arbeitsweg höchstens 7,44 ct je kWh (Gutschrift)
+  kwhL: { benzin: 8.86, diesel: 9.9 }, est: 0.6545,     // kWh je Liter; Energiesteuer €/l, mit der Reform ab 2028 auch für Diesel
+  dieselAb: 2028, dieselMehr: 0.6545 - 0.4704,           // Ende des Dieselprivilegs: Energiesteuer auf Diesel wie Benzin, netto €/l
+  ueVor: 2028, ue0: 0.25, ueSchritt: 0.10 };
+const kmaSatz = j => j < KMA.start ? 0 : KMA.satz[Math.min(j - KMA.start, KMA.satz.length - 1)] / 100;   // ohne Verkehrsaufschlag
+// Wie der Steuerrechner (kmAbgabe dort): Satz mit Anrechnung der Energiesteuer und Übergang, dazu der Verkehrsaufschlag voll;
+// auf dem Arbeitsweg (v.arbKm) kostet die Abgabe je kWh höchstens KMA.deckel, der Rest kommt als Gutschrift zurück.
+function kmAbgabe(v, j, art, teil) {   // € im Jahr j, art "e" oder "i"; teil "gut" = nur die Gutschrift, sonst Abgabe nach Gutschrift
+  const s = kmaSatz(j); if (!s) return 0;
+  const a = KMA.aufschlag / 100, d = KMA.deckel / 100, f = v.kaufjahr < KMA.ueVor ? Math.max(0, Math.min(1, KMA.ue0 + KMA.ueSchritt * (j - KMA.start))) : 1;
+  const kwh = art === "e" ? v.eVerb / 100 : v.iVerb / 100 * KMA.kwhL[v.iKraft || "benzin"], est = art === "e" ? 0 : v.iVerb / 100 * KMA.est;
+  const jeKm = Math.max(0, s * kwh - est) * f + a * kwh;
+  const arb = Math.min(v.km, v.modus === "dienst" ? 0 : (v.arbKm || 0)), gut = Math.max(0, jeKm - Math.max(0, Math.min(s + a, d) * kwh - est)) * arb;
+  return teil === "gut" ? gut : jeKm * v.km - gut;
+}
+// Erstattung beim neuen E-Auto (Entscheidung Tomas 28.11.2026): bis Kauf 2030 voll 5.000 €, dann je Jahr 1.000 € weniger, ab 2035 nichts mehr
+const eErstattung = kj => Math.max(0, Math.min(5000, 5000 - 1000 * (kj - 2030)));
 function reformV(v) {
   const f = 1.5 / 1.19, st = x => Math.max(0, (x / 1.19 - 0.0205 - 0.0295) * 1.05), d = 1.05 / 1.19;
-  return { ...v, reform: true, iPreis: v.iPreis * f, ePreis: Math.max(0, v.ePreis * f - 5000), eWallbox: v.eWallbox * f,
+  return { ...v, reform: true, iPreis: v.iPreis * f, ePreis: Math.max(0, v.ePreis * f - eErstattung(v.kaufjahr)), eWallbox: v.eWallbox * f,
     iSprit: v.iSprit * f, eHaus: st(v.eHaus), eOff: st(v.eOff), eFirmaPreis: st(v.eFirmaPreis || 0), iWart: v.iWart * d, eWart: v.eWart * d };
 }
 // Dienstwagen: geldwerter Vorteil nach § 6 Abs. 1 Nr. 4 und § 8 Abs. 2 EStG
@@ -460,13 +497,15 @@ addEventListener("resize", () => { if (cumR) drawCum(cumR); });
 function drawCum(r) {
   cumR = r;
   const W = Math.max(340, Math.min(640, Math.round($("cum").clientWidth || 560))), H = W < 500 ? 280 : 260, L = 50, R = W < 500 ? 104 : 130, T = 12, B = 28;
-  const all = r.jahre.flatMap(x => [x.i, x.e]), max = Math.max(...all);
-  const step = Math.pow(10, Math.floor(Math.log10(max))) * (max / Math.pow(10, Math.floor(Math.log10(max))) > 5 ? 2 : 1);
-  const ymax = Math.ceil(max / step) * step;
+  // Achse vom kleinsten bis zum größten Wert, rund 6 Linien, damit die Kurven die ganze Höhe nutzen
+  const all = r.jahre.flatMap(x => [x.i, x.e]), max = Math.max(...all), min = Math.min(...all);
+  const roh = Math.max(1, (max - min) / 6), p10 = Math.pow(10, Math.floor(Math.log10(roh))), m = roh / p10;
+  const step = p10 * (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10);
+  const ymin = Math.max(0, Math.floor(min / step) * step), ymax = Math.ceil(max / step) * step;
   const n = r.jahre.length - 1;
-  const x = j => L + (W - L - R) * j / n, y = v => T + (H - T - B) * (1 - v / ymax);
+  const x = j => L + (W - L - R) * j / n, y = v => T + (H - T - B) * (1 - (v - ymin) / (ymax - ymin || 1));
   let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Aufsummierte Kosten über die Jahre">`;
-  for (let v = 0; v <= ymax; v += step) s += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${fmt(v / 1000)} T€</text>`;
+  for (let v = ymin; v <= ymax + 1e-6; v += step) s += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${fmt(v / 1000, step < 1000 ? 1 : 0)} T€</text>`;
   const tick = n > 12 ? 3 : n > 6 ? 2 : 1;
   for (let j = 0; j <= n; j += tick) s += `<text x="${x(j)}" y="${H - 8}" text-anchor="middle">${j === 0 ? "Kauf" : W < 500 && j % (tick * 2) ? "" : j + ". J."}</text>`;
   const p = (k, c) => `<path d="${r.jahre.map((q, j) => (j ? "L" : "M") + x(j).toFixed(1) + " " + y(q[k]).toFixed(1)).join(" ")}" fill="none" stroke="var(--${c})" stroke-width="2.5" stroke-linejoin="round"/>`;
@@ -474,6 +513,7 @@ function drawCum(r) {
   const last = r.jahre[n];
   s += endLabels([{ t: "Verbrenner", v: eur(last.i), c: "ice", y: y(last.i), y0: y(last.i) }, { t: "Elektroauto", v: eur(last.e), c: "ev", y: y(last.e), y0: y(last.e) }], x(n), T + 10, H - B);
   const sp = last.i - last.e;
+  $("cumN").textContent = `In Euro von heute: Sprit und Strom werden jedes Jahr ${fmt(V.steig, 1)} % teurer, Versicherung und Wartung steigen mit ${fmt(V.infl, 1)} % Inflation, alles mit ${fmt(V.zins, 1)} % Zins abgezinst. Am Ende ist der Restwert abgezogen: Verbrenner ${eur(r.rest[0])}, Elektroauto ${eur(r.rest[1])}.`;
   $("cumT").textContent = sp > 0 ? `Nach ${fmt(n)} Jahren spart das Elektroauto ${eur(sp)}${r.be > 0 ? `, bezahlt nach ${fmt(r.be, 1)} Jahren` : ""}` : `Nach ${fmt(n)} Jahren ist der Verbrenner ${eur(-sp)} günstiger`;
   if (r.be && r.be > 0) {
     const j0 = Math.floor(r.be), a = r.jahre[j0], b = r.jahre[Math.min(n, j0 + 1)], t = r.be - j0, v = a.i + (b.i - a.i) * t;
@@ -500,7 +540,7 @@ function feld(f) {
                     : `<input id="i_${f.k}" type="number" inputmode="decimal" step="${f.step}" min="0">`;
   d.innerHTML = `<label for="i_${f.k}"${f.sub ? ` data-info="${f.sub.replace(/"/g, "&quot;")}"` : ""}>${f.lbl}</label><div class="in">${ctl}${f.u ? `<span class="u">${f.u}</span>` : ""}</div>`;
   const el = d.querySelector("input,select");
-  el.addEventListener("input", () => { V[f.k] = f.sel ? el.value : (+el.value || 0); if (f.k === "eOff") V.karte = "eigen"; run(); });
+  el.addEventListener("input", () => { V[f.k] = f.sel ? el.value : (+el.value || 0); if (f.k === "eOff") V.karte = "eigen"; if (["iPreis", "ePreis", "iVerb", "eVerb"].includes(f.k) && V.paar !== "eigen") { V.paar = "eigen"; $("paar").value = "eigen"; } run(); });
   return d;
 }
 Object.entries(FELDER).forEach(([box, fs]) => fs.forEach(f => $(box).append(feld(f))));
@@ -513,7 +553,7 @@ function paarListe() { return AUTOS.filter(a => V.modus === "dienst" ? a.firma :
 function fuellePaare() {
   const g = {}; paarListe().forEach(a => (g[a.kl] = g[a.kl] || []).push(a));
   $("paar").innerHTML = Object.keys(KL).filter(k => g[k]).map(k => `<optgroup label="${KL[k][0]}">${g[k].map(a => `<option value="${a.id}">${a.e[0]} oder ${a.i[0]}</option>`).join("")}</optgroup>`).join("")
-    + `<option value="eigen">Eigene Werte (rechts eintragen)</option>`;
+    + `<option value="eigen">Eigene Autos eintragen</option>`;
   if (V.paar !== "eigen" && !paarListe().some(a => a.id === V.paar)) waehlePaar(paarListe()[0].id, false);
   $("paar").value = V.paar;
 }
@@ -523,11 +563,15 @@ function paarWerte(a) {
 }
 function waehlePaar(id, neu = true) { V.paar = id; const a = AUTOS.find(x => x.id === id); if (a) Object.assign(V, paarWerte(a)); if (neu) run(); }
 $("paar").onchange = e => waehlePaar(e.target.value);
+// Eigene Preise und Verbräuche direkt unter dem Autopaar: aus dem Paar wird „Eigene Autos“
+["ePreis", "eVerb", "iPreis", "iVerb"].forEach(k => $("pe_" + k).addEventListener("input", e => {
+  const x = parseFloat(String(e.target.value).replace(",", ".")); if (!isFinite(x)) return;
+  V[k] = x; if (V.paar !== "eigen") { V.paar = "eigen"; $("paar").value = "eigen"; } run(); }));
 $("karte").innerHTML = Object.entries(KARTEN).map(([k, c]) => `<option value="${k}">${c[0]}${c[1] != null ? ` · ${fmt((c[1] + c[2]) / 2 * 100)} ct${c[3] ? ` + ${fmt(c[3], 2)} €/Monat` : ""}` : ""}</option>`).join("");
 function waehleKarte(k) { V.karte = k; const c = KARTEN[k]; if (c[1] != null) { V.eOff = Math.round((c[1] + c[2]) / 2 * 1000) / 1000; V.eGrund = Math.round(c[3] * 12); } }
 $("karte").onchange = e => { waehleKarte(e.target.value); run(); };
 // Schieber
-const SL = { km: ["s_km", v => fmt(v) + " km"], jahre: ["s_jahre", v => fmt(v) + " Jahre"] };
+const SL = { km: ["s_km", v => fmt(v) + " km/Jahr"], jahre: ["s_jahre", v => fmt(v) + " Jahre"] };
 Object.entries(SL).forEach(([k, [id]]) => $(id).addEventListener("input", e => { V[k] = +e.target.value; run(); }));
 $("s_haus").addEventListener("input", e => { V.eAnteil = +e.target.value; if (V.eAnteil + V.eFirmaAnteil > 100) V.eFirmaAnteil = 100 - V.eAnteil; run(); });
 $("s_firma").addEventListener("input", e => { V.eFirmaAnteil = +e.target.value; if (V.eAnteil + V.eFirmaAnteil > 100) V.eAnteil = 100 - V.eFirmaAnteil; run(); });
@@ -569,7 +613,7 @@ function run() {
   // Eingaben spiegeln
   ALLE.forEach(f => { const el = $("i_" + f.k); if (el && document.activeElement !== el) el.value = typeof V[f.k] === "number" ? +(+V[f.k]).toFixed(3) : V[f.k]; });
   ["eHaus", "eFirmaPreis"].forEach(k => { const el = $("q_" + k); if (document.activeElement !== el) el.value = V[k]; });
-  $("s_km").value = V.km; $("o_km").textContent = fmt(V.km) + " km";
+  $("s_km").value = V.km; $("o_km").textContent = fmt(V.km) + " km/Jahr";
   $("s_jahre").value = V.jahre; $("o_jahre").textContent = fmt(V.jahre) + " Jahre";
   const weg = Math.max(0, 100 - V.eAnteil - V.eFirmaAnteil);
   $("s_haus").value = V.eAnteil; $("o_haus").textContent = V.eAnteil + " %";
@@ -579,7 +623,8 @@ function run() {
   $("paar").value = V.paar; $("karte").value = V.karte;
   $("l_eFirma").textContent = dienst ? "Firmen-Wallbox" : "Strom bei der Firma";
   const a = AUTOS.find(x => x.id === V.paar);
-  $("pairInfo").innerHTML = a ? `<span><i style="background:var(--ev)"></i>${eur(V.ePreis)} · ${fmt(V.eVerb, 1)} kWh</span><span><i style="background:var(--ice)"></i>${eur(V.iPreis)} · ${fmt(V.iVerb, 1)} l ${V.iKraft === "diesel" ? "Diesel" : "Benzin"}</span><span class="q">${a.q ? `E-Auto-Preis: <a href="${QUELLE[a.q][1]}" target="_blank" rel="noopener">${QUELLE[a.q][0]}</a>; sonst Richtwerte` : "Richtwerte, noch nicht einzeln geprüft"}</span>` : "";
+  ["ePreis", "eVerb", "iPreis", "iVerb"].forEach(k => { const el = $("pe_" + k); if (document.activeElement !== el) el.value = V[k]; });
+  $("pairInfo").innerHTML = a ? `<span class="q">${a.q ? `E-Auto-Preis: <a href="${QUELLE[a.q][1]}" target="_blank" rel="noopener">${QUELLE[a.q][0]}</a>; sonst Richtwerte` : "Richtwerte, noch nicht einzeln geprüft"}</span>` : `<span class="q">Eigene Werte. Versicherung, Wartung und mehr unter „Genauer einstellen“.</span>`;
   $("d_dw").hidden = !dienst; $("tabDw").hidden = !dienst; $("tabReform").hidden = dienst;
 
   const r = rechne(V);
@@ -592,9 +637,18 @@ function run() {
   if (dienst) { const g = gv(V), m = V.dJahre * 12, sp = (g.stI - g.stE - g.stromE) * m;
     txt = `<span class="vk">Für dich als Fahrer:</span> Mit dem E-Auto hast du <b>${eur(Math.abs(sp / m))} im Monat ${sp >= 0 ? "mehr" : "weniger"} netto</b>, über ${fmt(V.dJahre)} Jahre ${eur(Math.abs(sp))}.<br><span class="vk">Für die Firma:</span> ` + txt; }
   $("verdict").innerHTML = txt;
-  if (window.ZumSteuerrechner && !dienst) { const rr = rechne(reformV(V));
+  if (!dienst) { const rv = reformV(V), rr = rechne(rv), J = [2030, 2035, 2040, 2045, 2050].filter(j => j >= V.kaufjahr && j < V.kaufjahr + V.jahre);
+    const sk = rr.teile["Kilometerabgabe (Vorschlag)"] || [0, 0], kr = (V.iKraft || "benzin") === "diesel" ? "Diesel" : "Benziner";
+    $("kmaBox").innerHTML = `<h3 data-info="Vorschlag aus dem Buch: Ab 2030 zahlen alle Pkw eine Abgabe je Kilometer, nach dem Verbrauch laut Hersteller in kWh. Beim Verbrenner wird die Energiesteuer im Sprit angerechnet, er zahlt nur den Betrag darüber. Autos mit Erstzulassung vor 2028 zahlen 2030 erst 25 % davon, jedes Jahr 10 Punkte mehr, ab 2038 voll. Dazu kommen 4 ct je kWh Verkehrsaufschlag für alle. Auf dem Arbeitsweg kostet die Abgabe nie mehr als heute die Steuer auf Benzin, der Rest kommt als Gutschrift zurück. Diesel zahlt ab 2028 die Energiesteuer von Benzin. Das Geld geht in einen Straßenfonds. Stand: Verkehrspaket vom 24.11.2026.">Kilometerabgabe mit der Reform (Entwurf)</h3>`
+      + (J.length ? `<div class="tbl"><table><thead><tr><th>Jahr</th><th>Satz je kWh</th><th>E-Auto</th><th>${kr}, über der Energiesteuer${kr === "Diesel" ? " (mit Ende des Dieselprivilegs)" : ""}</th></tr></thead><tbody>`
+        + J.map(j => `<tr><td>${j}</td><td>${fmt(kmaSatz(j) * 100 + KMA.aufschlag, 1)} ct</td><td>${eur(kmAbgabe(rv, j, "e"))}</td><td>${eur(kmAbgabe(rv, j, "i") + (rv.iKraft === "diesel" ? KMA.dieselMehr * 1.5 * rv.iVerb / 100 * rv.km : 0))}</td></tr>`).join("")
+        + `<tr class="sum"><td>${fmt(V.jahre)} Jahre zusammen, in Euro von heute</td><td></td><td>${eur(sk[1])}</td><td>${eur(sk[0])}</td></tr></tbody></table></div>`
+        : `<p class="note">In deinen ${fmt(V.jahre)} Jahren ab ${V.kaufjahr} fällt noch keine Kilometerabgabe an, sie beginnt 2030.</p>`)
+      + `<p class="note">Bei ${fmt(V.km)} km im Jahr${V.kaufjahr < KMA.ueVor ? ", Auto vor 2028 zugelassen, mit Übergang" : ""}. Satz mit 4 ct Verkehrsaufschlag.${V.arbKm > 0 ? ` Gutschrift für ${fmt(Math.min(V.arbKm, V.km))} km Arbeitsweg schon abgezogen.` : " Fährst du zur Arbeit, trag den Arbeitsweg unter „Kaufjahr“ ein: dort gibt es eine Gutschrift."} Der Kasten unten rechnet ohne sie, weil der Steuerrechner sie als eigene Zeile führt.</p>`;
+  } else if ($("kmaBox")) $("kmaBox").innerHTML = "";
+  if (window.ZumSteuerrechner && !dienst) { const rr = rechne({ ...reformV(V), ohneKma: true });   // ohne Kilometerabgabe: der Steuerrechner führt sie als eigene Zeile
     ZumSteuerrechner.zeige($("zumSteuer"), { quelle: "E-Auto-Rechner", was: "E-Auto statt Verbrenner", heute: diff / V.jahre, reform: (rr.iTCO - rr.eTCO) / V.jahre,
-      reformText: "Auto und Sprit 50 % Mehrwertsteuer, Mehrwertsteuer auf die ersten 10.000 € des E-Autos zurück, Strom 5 % ohne Umlagen, CO₂-Preispfad des Buchs, zinsloses Darlehen." }); }
+      reformText: "Auto und Sprit 50 % Mehrwertsteuer, Mehrwertsteuer auf die ersten 10.000 € des E-Autos zurück (bis Kauf 2030, danach je Jahr 1.000 € weniger, ab 2035 nichts), Strom 5 % ohne Umlagen, CO₂-Preispfad des Buchs, zinsloses Darlehen. Die Kilometerabgabe steht im Steuerrechner als eigene Zeile." }); }
   else if ($("zumSteuer")) $("zumSteuer").innerHTML = "";
   const tile = (k, v, s, c) => `<div class="tile"><span class="k">${c ? `<i style="background:var(--${c})"></i>` : ""}${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
   $("tiles").innerHTML = tile("Verbrenner gesamt", eur(r.iTCO), `${fmt(r.iTCO / r.lebKm * 100, 1)} € je 100 km`, "ice")
@@ -625,6 +679,33 @@ function run() {
   if (window.Profil) Profil.merken("eauto", V, ["km"]);
 }
 
+/* Gemeinsame Annahmen zur Wirtschaftlichkeit (Zins, Inflation, Energiepreise), gelten für alle Rechner */
+{ const setzeW = w => { V.zins = w.zins; V.infl = w.infl; V.steig = w.steig; }; setzeW(Wirtschaft.an(document.querySelector(".col-more"), w => { setzeW(w); run(); }));
+  const _rW = run; run = function () { setzeW(Wirtschaft.werte()); return _rW.apply(this, arguments); }; }
+/* So wird gerechnet: Annahmen, mit den Werten, die gerade gelten */
+Methode.an($("verdict"), () => { const v = V, weg = Math.max(0, 100 - v.eAnteil - (v.eFirmaAnteil || 0)), ct = x => fmt(x * 100, 1) + " ct"; return [
+  ["Was verglichen wird", [
+    `<b>Alle Kosten</b> über ${fmt(v.jahre)} Jahre und ${fmt(v.km)} km im Jahr: Kaufpreis, Sprit oder Strom, Versicherung, Wartung, Kfz-Steuer, steigender CO₂-Preis im Sprit, abzüglich THG-Prämie.`,
+    `<b>Strom:</b> ${fmt(v.eVerb, 1)} kWh je 100 km plus ${fmt(v.eVerlust)} % Ladeverluste. ${fmt(v.eAnteil)} % zu Hause für ${ct(v.eHaus)}${v.eFirmaAnteil ? `, ${fmt(v.eFirmaAnteil)} % bei der Firma für ${ct(v.eFirmaPreis)}` : ""}, ${fmt(weg)} % unterwegs für ${ct(v.eOff)} je kWh.`,
+    `<b>Sprit:</b> ${fmt(v.iVerb, 1)} Liter je 100 km für ${fmt(v.iSprit, 2)} € je Liter.`,
+    v.modus === "dienst" && `<b>Firmenwagen:</b> privat versteuert mit 1 % des Listenpreises im Monat beim Verbrenner, 0,25 % beim E-Auto bis 100.000 € Listenpreis, dazu der Arbeitsweg.`]],
+  ["Annahmen zur Wirtschaftlichkeit", [
+    `<b>CO₂-Preis:</b> steigt im Sprit zusätzlich mit dem EU-Emissionshandel (eigene Erwartung: 70 € je Tonne 2030, 150 € 2040).`,
+    `<b>Wirtschaftlichkeitsrechnung:</b> Der Kauf zählt heute. Alle späteren Kosten werden mit <b>${fmt(v.zins, 1)} % Zins</b> auf ihren heutigen Wert abgezinst (Kapitalwertmethode). Der Zins entspricht dem, was Unternehmen im Euroraum im Schnitt für neue Kredite zahlen (EZB, August 2026: 3,77 %).`,
+    `<b>Preissteigerung:</b> Sprit und Strom ${fmt(v.steig, 1)} % im Jahr, Versicherung und Wartung ${fmt(v.infl, 1)} % (Inflation wie im Buch).`,
+    `<b>Restwert:</b> Am Ende wird abgezogen, was das Auto dann noch wert ist. Der Wertverlust liegt beim Verbrenner bei ${fmt(v.iWv)} %, beim Elektroauto bei ${fmt(v.eWv)} % im Jahr (angelehnt an die DAT-Restwerte vom September 2026: nach drei Jahren Benziner 59 %, Diesel 58 %, Elektroauto 52 % des Listenpreises; der Abstand war im November 2025 noch fast doppelt so groß, Gebrauchtpreise schwanken stark). Gebrauchtwagenpreise steigen mit der Inflation.`,
+    `<b>Kfz-Steuer:</b> E-Autos mit Zulassung bis 2030 sind bis Ende 2035 befreit, höchstens zehn Jahre.`,
+    `<b>THG-Prämie:</b> ${eur(v.thg)} im Jahr bis ${v.thgBis}.`]],
+  ["Mit der Reform (Vorschlag aus dem Buch)", [
+    `Auto und Sprit 50 % Mehrwertsteuer, Strom 5 % ohne Stromsteuer und Umlagen, CO₂-Preis 150 € je Tonne 2030 und 300 € ab 2040.`,
+    `<b>Neues E-Auto:</b> Die Mehrwertsteuer auf die ersten 10.000 € gibt es zurück: bis Kauf 2030 bis zu 5.000 €, danach jedes Jahr 1.000 € weniger, ab 2035 nichts mehr. Bei Kauf ${v.kaufjahr}: ${eur(eErstattung(v.kaufjahr))}.`,
+    `<b>Kilometerabgabe ab 2030</b> für alle Pkw, nach dem Verbrauch laut Hersteller: ${fmt(kmaSatz(2030) * 100, 1)} ct je kWh 2030, ${fmt(kmaSatz(2040) * 100, 1)} ct 2040, ${fmt(kmaSatz(2050) * 100, 1)} ct 2050 (ab 2041 mit Gesundheitsaufschlag). Beim Verbrenner wird die Energiesteuer angerechnet. Dazu kommen ${fmt(KMA.aufschlag)} ct je kWh Verkehrsaufschlag für alle Pkw.`,
+    `<b>Arbeitsweg:</b> Dort kostet die Abgabe je kWh nie mehr als heute die Steuer auf Benzin (${fmt(KMA.deckel, 2)} ct). Den Rest gibt es als Gutschrift mit der Jahresrechnung${v.arbKm > 0 ? `, hier für ${fmt(Math.min(v.arbKm, v.km))} km im Jahr` : ""}.`,
+    `<b>Übergang:</b> Autos mit Erstzulassung vor 2028 zahlen 2030 erst 25 %, jedes Jahr 10 Punkte mehr, ab 2038 voll.`,
+    v.iKraft === "diesel" && `<b>Diesel:</b> Ab 2028 gilt die Energiesteuer von Benzin (Ende des Dieselprivilegs), rund 28 Cent je Liter mehr mit Mehrwertsteuer. Das ist bei der Abgabe eingerechnet.`,
+    `Stand: Verkehrspaket vom 24.11.2026, Sätze wie im Steuerrechner.`]],
+]; }, "So wird gerechnet");
+{ const _rM = run; run = function () { const r = _rM.apply(this, arguments); Methode.neu(); return r; }; }
 fuellePresets(); fuellePaare(); if (!new URLSearchParams(location.search).has("eOff") && V.karte !== "eigen") waehleKarte(V.karte);
 if (window.Profil) Profil.leiste($("profil"), { onEin: () => Profil.merken("eauto", V, ["km"]), onLoeschen: () => {} });
 setzeModus(V.modus);

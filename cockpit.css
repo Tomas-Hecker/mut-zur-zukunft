@@ -17,7 +17,7 @@
 .col-in select, select#paar, select#karte { width: 100%; font: 600 14.5px var(--body); color: var(--fg); background: var(--field); border: 1px solid var(--line); border-radius: 7px; padding: 7px 8px }
 .pair { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted) }
 .pair .q { flex-basis: 100%; font-size: 11.5px } .pair span { display: inline-flex; align-items: center; gap: 5px } .pair i { width: 9px; height: 9px; border-radius: 2px; display: inline-block }
-.sl { display: grid; grid-template-columns: 92px minmax(0,1fr) 74px; gap: 8px; align-items: center; font-size: 13.5px; color: var(--muted) }
+.sl { display: grid; grid-template-columns: 92px minmax(0,1fr) minmax(74px,auto); gap: 8px; align-items: center; font-size: 13.5px; color: var(--muted) }
 .sl > :first-child { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap }
 .sl output { text-align: right }
 .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block } .dot.h { background: var(--acc) } .dot.f { background: #6aa9d8 } .dot.w { background: #b9a24a }
