@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Tomas 28.11.2026: Erstattung beim neuen Elektroauto läuft nach Plan aus, 5.000 € bis zu Käufen 2030,
-dann jedes Jahr 1.000 € weniger, ab 2035 nichts mehr. Nur Texte; die Beträge (AutoStufeS, AutoStufeL)
-kommen mit dem nächsten Lauf der Mikrosimulation."""
-import sys
+dann jedes Jahr 1.000 € weniger, ab 2035 nichts mehr. Rechnung: Ersparnis gegen den bisherigen Pfad (Start 3,7 Mrd. €, linear bis 2043 auf 0) Jahr für Jahr aus
+rechenmodell-mikrosim/eauto-2026-11-28/eauto-auslauf-kette.json (zusammen 11 Mrd. €), Zeile EAuslauf im Saldo."""
+import sys, json
 P = 'steuerrechner/index.html'
 s = open(P, encoding='utf-8').read()
 if 'ab 2035 nichts mehr' in s:
@@ -19,5 +19,14 @@ rep('"Die Erstattung beim Kauf eines neuen Elektroautos sinkt in Stufen, je nach
 rep('"Ab 80 % Elektroautos unter den neuen Autos im Vorjahr entfällt die Erstattung ganz;', '"Ab 2035 entfällt die Erstattung ganz;')
 rep('das Darlehen für das Auto endet ab 80 %;', 'das Darlehen für das Auto endet ab 2035;')
 rep('Annahme: Am Start gilt die Stufe 40 bis unter 50 %, drei Viertel der Erstattung, 3,7 statt 4,9 Mrd. € im Jahr.',
-    'Annahme bis zum nächsten Lauf der Mikrosimulation: am Start drei Viertel der Erstattung, 3,7 statt 4,9 Mrd. € im Jahr.')
+    'Annahme: am Start kaufen so viele ein Elektroauto, dass drei Viertel der vollen Erstattung anfallen, 3,7 statt 4,9 Mrd. € im Jahr, so bis 2030; 2031 2,9, 2032 2,2, 2033 1,5, 2034 0,7 Mrd. €, ab 2035 nichts.')
+ea = json.load(open('/mnt/project-files/rechenmodell-mikrosim/eauto-2026-11-28/eauto-auslauf-kette.json'))['ersparnis_gegen_bisher_mrd']
+ea = {k: v for k, v in ea.items() if k.isdigit()}
+rep('function verkehrJ(k) {',
+    '// Tomas 28.11.2026: E-Auto-Erstattung bis 2030 voll, dann je Jahr 1.000 € weniger, ab 2035 null; Ersparnis gegen den bisherigen Pfad\n'
+    'const EA_PFAD = ' + json.dumps(ea, separators=(',', ':')) + ';\n'
+    'function eautoJ(k) { const j = A.Prognose.ReformStart - 1 + k; return EA_PFAD[j] ?? 0; }\n'
+    'function verkehrJ(k) {')
+rep('im dritten rund 57 Mrd.', 'im dritten rund 58 Mrd.', 2)   # 2030: -57,1 - 0,49
+rep('+ verkehrJ(y) + erdJ(y);', '+ verkehrJ(y) + erdJ(y) + eautoJ(y);')
 open(P, 'w', encoding='utf-8').write(s); print('ok')
