@@ -541,7 +541,7 @@ function kosten(HL, A, P) {
   const netto = pos.reduce((s, p) => s + p.sum, 0);
   const zuschlag = netto * 0.10, mwst = (netto + zuschlag) * 0.19;
   const grp = {}; for (const p of pos) grp[p.gr] = (grp[p.gr] || 0) + p.sum;
-  return { pos, netto, zuschlag, mwst, brutto: netto + zuschlag + mwst, grp, hk: (grp[G4] || 0) };
+  return { pos, netto, zuschlag, mwst, brutto: netto + zuschlag + mwst, grp, hk: (grp[G4] || 0), bau: ((grp[G2] || 0) + (grp[G4] || 0)) * 1.10 };
 }
 
 const quelle = q => q.replace(/^S$/, "Schätzung").replace(/^S /, "Schätzung ").replace(/\bR (?=L\d|KG)/g, "Referenzprojekt ");
@@ -555,6 +555,7 @@ function foerderung(brutto) {
 }
 const annu = (P, z, N) => P <= 0 ? 0 : z <= 0 ? P / N : P * z / (1 - Math.pow(1 + z, -N));
 const mittel = (g, N) => g === 0 ? 1 : (Math.pow(1 + g, N) - 1) / (g * N);   // mittlerer Preisfaktor über N Jahre
+const LEB_BAU = 50;
 function wirtschaft(W, K) {
   const f = S.fin, N = Math.max(1, Math.round(num(f.jahre, 20))), z = num(f.zins, 3.5) / 100, gF = num(f.steigF, 3) / 100, gS = num(f.steigS, 1.5) / 100;
   const oel = S.anl.traeger === "oel", eta = num(S.alt.nutz, 90) / 100;
@@ -565,7 +566,10 @@ function wirtschaft(W, K) {
     const sP = reform ? reformStrom(num(S.wp.strom, 0.27)) : num(S.wp.strom, 0.27);
     const foe = reform ? { satz: 0, betrag: 0, max: 0 } : foerderung(K.brutto);
     const invWp = reform ? (K.netto + K.zuschlag) : K.brutto - foe.betrag;
-    const kWp = reform ? invWp / N : annu(invWp, z, N);   // Reform: zinsloser Kredit, ohne Mehrwertsteuer
+    // Reform: Technik zinslos über die Laufzeit; Heizkörper und Leitungen über 50 Jahre, so lange, wie sie halten:
+    // selbst genutzt als Anteil am Hauswert (wächst mit dem Hauswert, 2 % im Jahr), vermietet als zinsloser Kredit, den der Vermieter umlegt
+    const bau = reform ? Math.min(K.bau, invWp) : 0;
+    const kWp = reform ? (invWp - bau) / N + bau / LEB_BAU * (f.selbst ? mittel(0.02, N) : 1) : annu(invWp, z, N);
     const kGas = annu(num(S.alt.neu, 12000), z, N);
     const wp = { inv: invWp, kap: kWp, energie: W.strom * sP * mittel(gS, N), grund: num(S.wp.grund, 120) * (reform ? RF.strom : 1), wart: num(S.wp.wart, 200) * (reform ? RF.dienst : 1), preis: sP };
     const fo = { inv: num(S.alt.neu, 12000), kap: kGas, energie: brennstoff * fosP * mittel(gF, N), grund: oel ? 0 : num(S.alt.grund, 180) * (reform ? RF.fossil : 1), wart: num(S.alt.wart, 300) * (reform ? RF.dienst : 1), preis: fosP };
@@ -1042,7 +1046,7 @@ function bericht() {
   <tr><td>Energie</td><td class="z">${eur(h.wp.energie)}</td><td class="z">${eur(h.fo.energie)}</td><td class="z">${eur(rf.wp.energie)}</td><td class="z">${eur(rf.fo.energie)}</td></tr>
   <tr><td>Grundpreis, Wartung</td><td class="z">${eur(h.wp.grund + h.wp.wart)}</td><td class="z">${eur(h.fo.grund + h.fo.wart)}</td><td class="z">${eur(rf.wp.grund + rf.wp.wart)}</td><td class="z">${eur(rf.fo.grund + rf.fo.wart)}</td></tr>
   <tr class="sum"><td>Summe</td><td class="z">${eur(h.wp.jahr)}</td><td class="z">${eur(h.fo.jahr)}</td><td class="z">${eur(rf.wp.jahr)}</td><td class="z">${eur(rf.fo.jahr)}</td></tr></tbody></table>
-  <p class="muted">Heute: Förderung ${fmt(h.foe.satz * 100)} % auf höchstens ${eur(h.foe.max)}, Kredit ${fmt(S.fin.zins, 1)} %, Strom ${fmt(h.sP * 100, 1)} ct/kWh, ${alt} ${E.oel ? fmt(h.fosP * 1000) + " ct/l" : fmt(h.fosP * 100, 1) + " ct/kWh"}; Preissteigerung ${fmt(S.fin.steigF, 1)} % (${alt}) und ${fmt(S.fin.steigS, 1)} % (Strom) im Jahr. Reform (Buch „Mut zur Zukunft“): Strom mit 5 % Mehrwertsteuer ohne Stromsteuer und Umlagen, ${alt} mit 50 %, Sanierung ohne Mehrwertsteuer, zinsloser Kredit, keine Förderung.</p>
+  <p class="muted">Heute: Förderung ${fmt(h.foe.satz * 100)} % auf höchstens ${eur(h.foe.max)}, Kredit ${fmt(S.fin.zins, 1)} %, Strom ${fmt(h.sP * 100, 1)} ct/kWh, ${alt} ${E.oel ? fmt(h.fosP * 1000) + " ct/l" : fmt(h.fosP * 100, 1) + " ct/kWh"}; Preissteigerung ${fmt(S.fin.steigF, 1)} % (${alt}) und ${fmt(S.fin.steigS, 1)} % (Strom) im Jahr. Reform (Buch „Mut zur Zukunft“): Strom mit 5 % Mehrwertsteuer ohne Stromsteuer und Umlagen, ${alt} mit 50 %, Sanierung ohne Mehrwertsteuer, zinsloser Kredit für die Technik, Heizkörper und Leitungen über 50 Jahre (selbst genutzt als Anteil am Hauswert, vermietet als zinsloser Kredit, den der Vermieter auf die Miete umlegt, ohne dass die Warmmiete steigt), keine Förderung.</p>
   <h3>7 Was im Angebot stehen sollte</h3>
   <ul>
     <li>Luft-Wasser-Wärmepumpe mit mindestens ${fmt(P.p, 1)} kW Heizleistung bei ${fmt(S.te)} °C Außentemperatur und ${fmt(A.vl)} °C Vorlauf (Datenblatt nach EN 14825 beilegen), natürliches Kältemittel, Schallleistung und Abstand zur Grundstücksgrenze.</li>
