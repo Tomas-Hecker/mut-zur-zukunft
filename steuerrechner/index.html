@@ -796,12 +796,12 @@ h1,h2,h3{break-after:avoid}
           <div class="field"><label for="s_zt">Zuschuss heute für die Heizung, %</label><input id="s_zt" type="number" min="0" max="80" step="1"><span class="hint">KfW 458 für Vermieter: 30 %</span></div>
           <div class="field"><label for="s_zb">Zuschuss heute für Dämmung und Fenster, %</label><input id="s_zb" type="number" min="0" max="50" step="1"><span class="hint">BEG Einzelmaßnahme: 15 %</span></div>
           <div class="field"><label for="s_mat">Anteil Material an Dämmung und Fenstern, %</label><input id="s_mat" type="number" min="0" max="100" step="5"><span class="hint">Material ohne Mehrwertsteuer, auf die Arbeit 5 %</span></div>
-          <div class="field"><label for="s_erh">Anteil Erhaltung, %</label><input id="s_erh" type="number" min="0" max="100" step="5"><span class="hint">was ohnehin fällig war, darf nicht auf die Miete</span></div>
+          <div class="field"><label for="s_erh">Anteil Erhaltung, %</label><input id="s_erh" type="number" min="0" max="100" step="5"><span class="hint">heutiges Recht: was ohnehin fällig war, darf nicht auf die Miete; in der Reform pauschal 15 % der Raten</span></div>
           <div class="field"><label for="s_zins">Zins des Bankkredits heute, %</label><input id="s_zins" type="number" min="0" max="10" step="0.1"><span class="hint">über 20 Jahre</span></div>
           <div class="field"><label for="s_wst">Wertsteigerung des Hauses im Jahr, %</label><input id="s_wst" type="number" min="-3" max="8" step="0.5"></div>
           <div class="field"><label for="s_kuehl">Zusätzlich kühlen: Klimageräte, Kosten</label><input id="s_kuehl" type="number" min="0" step="1000"><span class="hint">Komfort im Sommer, nicht in der Rechnung oben</span></div>
           <div class="field wide"><label for="s_lang">Laufzeit des zinslosen Kredits für die Wärmepumpe</label><select id="s_lang"><option value="33">30 Jahre, die ersten 3 ohne Tilgung</option><option value="43">40 Jahre, die ersten 3 ohne Tilgung: Auslegung auf 40 Jahre nachgewiesen, 2 Jahre überwacht</option></select><span class="hint">länger nur mit Nachweis: Der Hersteller belegt die Lebensdauer für Verdichter und Lager, ein unabhängiges Institut bestätigt das; der Anlagenbauer stellt die Regelung auf lange Laufzeiten ein (Haus und Warmwasserspeicher als Puffer) und überwacht sie</span></div>
-            <label class="check field wide"><input id="s_abl" type="checkbox"> Vermieter löst den Anteil am Hauswert ab, Dämmung über 50 Jahre, Fenster über 40 (dann darf die Miete um ein Fünfzigstel, bei Fenstern ein Vierzigstel des Betrags im Jahr steigen)</label>
+            <label class="check field wide"><input id="s_abl" type="checkbox"> Vermieter löst den Anteil am Hauswert ab, Dämmung über 50 Jahre, Fenster über 40 (jedes Jahr ein Fünfzigstel, bei Fenstern ein Vierzigstel des ursprünglichen Betrags; es zählt bei der Aufteilung mit)</label>
           </div>
         </details>
         <p class="note">Rechtsstand 2026. Gerechnet für das ganze Haus und für eine durchschnittliche Wohnung. Ohne Einkommensteuer, ohne steigenden CO₂-Preis und ohne Solarstrom vom Dach. Die Werte aus dem Baujahr sind grobe Schätzungen; ein Energieberater rechnet genauer.</p>
@@ -2939,7 +2939,7 @@ const SAN = {
   MwStStrom: 0.05, MwStGas: 0.50, MwStDienst: 0.05, LaufT: 33, TilgFrei: 3, LaufB: 50, LaufF: 40, LaufH: 50, HalbJ: 30, RateSteig: 0.02,   // Raten steigen jedes Jahr um 2 % (Tomas 28.11.2026)
   WpEinbau: 0.4,
   // Betriebskosten im Jahr mit Mehrwertsteuer, je Haus und je Wohnung, eigene Schätzung: Gas oder Öl mit Grundpreis, Wartung und Schornsteinfeger; Wärmepumpe mit Zähler und Wartung
-  BkFossil: 300, BkFossilW: 45, BkWp: 200, BkWpW: 20, DeckelAb: 2027, DeckelJahre: 8,
+  BkFossil: 300, BkFossilW: 45, BkWp: 200, BkWpW: 20, DeckelAb: 2027, DeckelJahre: 8, ErhReform: 0.15,
   // Gebäude: grobe Schätzung, geeicht auf rund 180 kWh je m² für ein Mietshaus der 1960er-Jahre
   HGT: 52, Gewinne: 20, WW: 15, Kessel: 0.85, Luft: 0.7, Hoehe: 2.5, WBalt: 0.10, WBneu: 0.05,
   Ziel: { uw: 0.20, ud: 0.14, uf: 0.95, uk: 0.25 },
@@ -3053,14 +3053,15 @@ function sanRechne(v) {
   for (let t = 1; t <= J; t++) {
     const q = qJ(jahr + t - 1), tT = t > SAN.TilgFrei && restT > 1e-6 ? tilgT : 0, tH = restH > 1e-6 ? tilgH : 0, inf = Math.pow(1 + g, t - 1);
     zinsR += (restT + restH) * A.ZinsStart / inf; restT -= tT * Math.pow(1 + g, Math.max(0, t - 1 - SAN.TilgFrei)) * (tT > 0); restH -= tH * inf;   // Bestand in Euro des Jahres
-    const eT = mE1 - q * ue1, w0R = km + mE0 - q * ue0 + bkR(bk0), abl = v.abl ? ablJ * Math.pow(1 + w, t) : 0;
+    const eT = mE1 - q * ue1, w0R = km + mE0 - q * ue0 + bkR(bk0), abl = v.abl ? ablJ : 0;   // ursprünglicher Betrag, in heutigem Geld gleich
     const spart = w0R - (km + eT + bkR(bk1)), vOhne = -tT - tH - abl + (c0 - cS) * fG + q * (ue0 - ue1);
-    basis.push({ t, q, tT, tH, eT, w0R, abl, spart, vOhne });
+    const vTeil = vOhne + SAN.ErhReform * (tT + tH);   // Erhaltung: 15 % der Raten trägt der Vermieter allein
+    basis.push({ t, q, tT, tH, eT, w0R, abl, spart, vOhne, vTeil });
   }
   const mw = k => basis.reduce((a, b) => a + b[k], 0) / J;
-  const gut = Math.max(0, -S), gleich = (mw("spart") - mw("vOhne")) / 2;
+  const gleich = (mw("spart") - mw("vTeil")) / 2;
   // negativ: der Vermieter gewinnt schon ohne Aufschlag mehr (Deckel, CO₂-Anteil), dann schreibt er dem Mieter den Unterschied gut
-  const U = Math.min(gleich, Math.max(0, S), deckel);
+  const A0 = Math.min(gleich, S, deckel), U = Math.max(0, A0), gut = Math.max(0, -A0);
   const rows = basis.map(b => {
     const umlR = U;
     return { t: b.t, w0: km + e0 - c0 + bk0, w0R: b.w0R, wH: km + uH + eH - cS + bk1, wR: km + umlR + b.eT + bkR(bk1) - gut, umlR, gut, eT: b.eT, tilg: b.tT + b.tH,
@@ -3180,7 +3181,7 @@ function updateSan() {
     + z("Zuschuss", sEur(r.ZT + r.ZB), "–")
     + z("Finanziert über", r.K > 0 ? `Bankkredit ${sEur(r.K)}<small>${fmt(v.zins, 1)} % über 20 Jahre</small>` : "–", `${kred ? "zinsloser Kredit: " + kred : ""}${r.Bn > 0 ? `<small>Anteil am Hauswert ${sEur(r.Bn)} für ${[r.fen > 0 ? "Fenster" : "", r.bau > 0 ? "Dämmung" : ""].filter(Boolean).join(", ")}, ${pct(r.anteil)} des Hauses</small>` : ""}`)
     + z("Zinsen und Tilgung im Jahr", sEur(-r.ann), `${sEur(-(r1.tilg))} in Jahr 1 bis ${SAN.TilgFrei}<small>${sEur(-(r4.tilg))} ab Jahr ${SAN.TilgFrei + 1}${v.abl && r.Bn > 0 ? `, dazu Ablösen ${sEur(-r1.abl)} im ersten Jahr` : ""}</small>`)
-    + z("Mehr Miete im Jahr", sPlus(r.uH), `${sPlus(r1.umlR)} jedes Jahr<small>so viel, dass Mieter und Vermieter gleich viel gewinnen, höchstens die Ersparnis der Mieter bei der Umstellung (${sPlus(r.S)} im Jahr); ist er negativ, schreibt der Vermieter ihn gut${r1.gut > 0 ? `; Gutschrift ${sEur(r1.gut)} im Jahr` : ""}${r.q0 > 0 && r.ue0 > 0 ? `; über dem Deckel trug er bei der Umstellung ${pct(r.q0, 0)}, ab 2035 alles; was er davon durch die Sanierung spart, gehört ihm` : ""}</small>`)
+    + z("Mehr Miete im Jahr", sPlus(r.uH), `${sPlus(r1.umlR)} jedes Jahr<small>so viel, dass Mieter und Vermieter gleich viel gewinnen, höchstens die Ersparnis der Mieter bei der Umstellung (${sPlus(r.S)} im Jahr); 15 % der Raten zählen als Erhaltung und trägt der Vermieter allein; fehlt dem Mieter etwas, schreibt der Vermieter es gut${r1.gut > 0 ? `; Gutschrift ${sEur(r1.gut)} im Jahr` : ""}${r.q0 > 0 && r.ue0 > 0 ? `; über dem Deckel trug er bei der Umstellung ${pct(r.q0, 0)}, ab 2035 alles; was er davon durch die Sanierung spart, gehört ihm` : ""}</small>`)
     + `<tr class="sum"><td>Bleibt über 20 Jahre</td><td>${sPlus(sH)}</td><td>${sPlus(sR)}</td></tr>`
     + z("Danach", r.uH > 0 ? `Kredit bezahlt, ${sPlus(r.uH)} Miete im Jahr laufen weiter` : "–", `${(r.Tn + r.Hn > 0 ? `Die zinslosen Kredite laufen weiter, ${r.Tn > 0 ? "für die Wärmepumpe bis Jahr " + r.LT : ""}${r.Tn > 0 && r.Hn > 0 ? ", " : ""}${r.Hn > 0 ? "für Heizkörper und Rohre bis Jahr " + SAN.LaufH : ""}; der Aufschlag endet mit der Tilgung` : "–")}${r.Bn > 0 && !v.abl ? `<small>Anteil des Staates in 20 Jahren rund ${sEur(r.anteilJ)}, fällig erst bei Verkauf oder Erbe</small>` : ""}`)
     + `</tbody>`;
