@@ -29,7 +29,12 @@ def kopf(titel, beschr):
             '<link rel="stylesheet" href="../buch/buch.css">\n</head>\n<body class="buch">\n'
             f'<header class="top" id="top"><div class="wrap">{logo}{nav}</div></header>\n')
 
+# Buchanker, die sich mit einer neuen Satzdatei geändert haben
+ANKER_NEU = {'#auch-fuer-hallen-schulen-und-kliniken': '#hallen-schulen-und-kliniken-heute-zu-teuer-mit-der-reform-ma'}
+
 def relativ(s):
+    for a, b in ANKER_NEU.items():
+        s = s.replace('stelle.html' + a + '"', 'stelle.html' + b + '"')
     s = s.replace('href="' + BASIS + 'vertiefung/', 'href="')
     s = s.replace('href="' + BASIS, 'href="../')
     # Links auf die eigene Seite öffnen nicht in einem neuen Fenster

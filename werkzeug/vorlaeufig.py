@@ -6,7 +6,7 @@ import re
 HINWEIS = ('<p class="vorlaeufig" role="note"><b>Vorläufig:</b> Die Zahlen in diesem Abschnitt werden gerade neu geprüft. '
            'Großwärmepumpen und eine neue Wärmeverteilung mit größeren Heizkörpern kosten in großen Gebäuden '
            'wohl deutlich mehr als hier gerechnet. Die geprüften Zahlen folgen.</p>')
-STELLEN = {'buch/kapitel-5.html': 'auch-fuer-hallen-schulen-und-kliniken', 'buch/anhang-b.html': 'grosse-gebaeude-die-annahmen'}
+STELLEN = {}
 for f, anker in STELLEN.items():
     s = open(f, encoding='utf-8').read()
     if 'class="vorlaeufig"' in s and anker in s.split('class="vorlaeufig"')[0][-400:]:
