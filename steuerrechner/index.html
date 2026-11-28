@@ -790,6 +790,7 @@ h1,h2,h3{break-after:avoid}
           <summary>Weitere Angaben: Jahr, Zuschuss, Zinsen, Erhaltung, Ablösen</summary>
           <div class="fields">
           <div class="field"><label for="s_jahr">Jahr der Umstellung</label><input id="s_jahr" type="number" min="2028" max="2070" step="1"><span class="hint">Deckel für die Heizkosten: über dem Deckel trägt der Vermieter 2028 ein Achtel, ab 2035 alles</span></div>
+          <div class="field"><label for="s_pm">Mittlerer Strompreis aller Haushalte, Cent je kWh</label><input id="s_pm" type="number" min="0" step="0.5"><span class="hint">für den Deckel: Wärme mal diesem Preis, geteilt durch 3; kommt jedes Jahr aus der amtlichen Statistik</span></div>
           <label class="check field wide"><input id="s_ausn" type="checkbox"> Ausnahme vom Deckel: Der Vermieter kann rechtlich oder tatsächlich nicht wechseln, etwa im Denkmal, bei Anschlusszwang für Fernwärme oder wenn die Eigentümergemeinschaft entscheidet</label>
           <div class="field"><label for="s_einb">Davon Einbau, Rohre und Leitungen der Wärmepumpe, %</label><input id="s_einb" type="number" min="0" max="100" step="5"><span class="hint">im Mietshaus mit Heizkörpern und Rohren zinslos über 50 Jahre</span></div>
           <div class="field"><label for="s_zt">Zuschuss heute für die Heizung, %</label><input id="s_zt" type="number" min="0" max="80" step="1"><span class="hint">KfW 458 für Vermieter: 30 %</span></div>
@@ -2961,10 +2962,10 @@ const SAN_BSP = [
     v: { bj: 1918, g: 2, n: 4, fl: 400, miete: 8, wert: 1000000, trg: "gas", pg: 12, einb: 0, ausn: 1, mWp: 1, mFen: 0, mWand: 0, mDach: 0, mKel: 0 },
     fest: { tech: 82500, hk: 100000, fen: 0, bau: 0, vor: 240, nach: 215, jaz: 3.5, ps: 28 } },
 ];
-const SAN_F = ["jahr", "einb", "g", "n", "fl", "miete", "wert", "pg", "tech", "hk", "fen", "bau", "uw", "ud", "uf", "uk", "vor", "nach", "jaz", "ps", "zt", "zb", "mat", "erh", "zins", "wst", "kuehl"];
+const SAN_F = ["jahr", "pm", "einb", "g", "n", "fl", "miete", "wert", "pg", "tech", "hk", "fen", "bau", "uw", "ud", "uf", "uk", "vor", "nach", "jaz", "ps", "zt", "zb", "mat", "erh", "zins", "wst", "kuehl"];
 const SAN_M = ["mWp", "mFen", "mWand", "mDach", "mKel"];
 const SAN_AUTO = ["uw", "ud", "uf", "uk", "vor", "nach", "jaz", "tech", "hk", "fen", "bau"];
-const SAN_STD = { jahr: 2028, lang: 33, kuehl: 0, einb: 40, ps: 27, zt: 30, zb: 15, mat: 50, erh: 0, zins: 3.5, wst: 2, abl: 0 };
+const SAN_STD = { jahr: 2028, pm: 28, lang: 33, kuehl: 0, einb: 40, ps: 27, zt: 30, zb: 15, mat: 50, erh: 0, zins: 3.5, wst: 2, abl: 0 };
 let sanAktiv = 0; const sanHand = new Set();
 
 function sanGeo(v) {   // Flächen aus Wohnfläche und Geschossen, Haus frei stehend
@@ -3024,12 +3025,12 @@ function sanRechne(v) {
   const eH = kwhStrom * v.ps / 100 + kwhGas * v.pg / 100;
   const eR = kwhStrom * v.ps / 100 * fS + kwhGas * v.pg / 100 * fG;
   // Reform: Deckel für die Heizkosten. Der Mieter zahlt für die Wärme höchstens Wärme × mittlerer Strompreis / 3 (hier der Wärmepumpentarif mit 5 %);
-  // den Teil darüber trägt bei der bestehenden Heizung der Vermieter, 2028 ein Achtel, ab 2035 ganz
+  // pm: mittlerer Strompreis aller Haushalte, amtlich festgestellt; den Teil darüber trägt bei der bestehenden Heizung der Vermieter, 2028 ein Achtel, ab 2035 ganz
   const jahr = clamp(Math.round(v.jahr || 2028), 2028, 2070), qJ = j => v.ausn ? 0 : clamp((j - SAN.DeckelAb) / SAN.DeckelJahre, 0, 1);   // Ausnahme: Denkmal, Anschlusszwang, Wärmenetzgebiet, Eigentümergemeinschaft
-  const pm = v.ps / 100 * fS, cap0 = fl * v.vor * SAN.Kessel * pm / 3, cap1 = fl * v.nach * pm / 3;
+  const pm = (v.pm || 28) / 100, cap0 = fl * v.vor * SAN.Kessel * pm / 3, cap1 = fl * v.nach * pm / 3;
   const mE0 = e0R - c0 * fG, ue0 = Math.max(0, mE0 - cap0), mE1 = eR - cS * fG, ue1 = wp ? 0 : Math.max(0, mE1 - cap1);
   // Vergleich einmal bei der Umstellung: was der Mieter vorher nach dem Deckel zahlt und was danach, jeweils mit Grundpreis, Wartung und Zählern
-  const q0 = qJ(jahr), vorM = mE0 - q0 * ue0 + bkR(bk0), nachM = mE1 - q0 * ue1 + bkR(bk1), S = wp ? vorM - nachM : 0;
+  const q0 = qJ(jahr), vorM = mE0 - q0 * ue0 + bkR(bk0), nachM = mE1 - q0 * ue1 + bkR(bk1), S = vorM - nachM;
   // Reform: Wärmepumpe zinslos über 30 Jahre, die ersten 3 ohne Tilgung; Einbau, Heizkörper und Rohre im Mietshaus zinslos über 50 Jahre;
   // Fenster und Dämmung als Anteil am Hauswert, abgelöst nach der Lebensdauer (Fenster 40, Dämmung 50 Jahre)
   const mix = mat + (1 - mat) * (1 + SAN.MwStDienst);
@@ -3041,22 +3042,30 @@ function sanRechne(v) {
   // Bank heute: Annuität über 20 Jahre
   const K = Math.max(0, hz + hue - ZT - ZB), i = v.zins / 100;
   const ann = K > 0 ? (i > 0 ? K * i / (1 - Math.pow(1 + i, -J)) : K / J) : 0;
-  const rows = []; let zinsR = 0, restT = Tn, restH = Hn;
+  // Aufteilung (Tomas 28.11.2026): Mieter und Vermieter gewinnen gleich viel. Der Vermieter schlägt einen festen Betrag im Jahr auf,
+  // so dass im Schnitt der 20 Jahre beide gleich viel gegenüber dem Haus gewinnen, das mit der Reform bei der alten Heizung bleibt;
+  // höchstens die Ersparnis des Mieters bei der Umstellung, die Warmmiete steigt also nie; was dazu fehlt, schreibt er gut
+  const basis = []; let zinsR = 0, restT = Tn, restH = Hn;
   for (let t = 1; t <= J; t++) {
     const q = qJ(jahr + t - 1), tT = t > SAN.TilgFrei && restT > 1e-6 ? tilgT : 0, tH = restH > 1e-6 ? tilgH : 0;
     zinsR += (restT + restH) * A.ZinsStart; restT -= tT; restH -= tH;
-    const til = (tT + tH) * (1 - erh), umlT = wp ? Math.min(til, Math.max(0, S)) : 0;
-    const halb = wp && t <= SAN.HalbJ ? 0.5 * Math.max(0, S - umlT) : 0, gut = wp ? Math.max(0, -S) : 0;
-    const umlR = Math.min(umlT + halb + uBr, deckel);
-    const eT = mE1 - q * ue1, w0R = km + mE0 - q * ue0 + bkR(bk0);
-    const abl = v.abl ? ablJ * Math.pow(1 + w, t) : 0;
-    rows.push({ t, w0: km + e0 - c0 + bk0, w0R, wH: km + uH + eH - cS + bk1, wR: km + umlR + eT + bkR(bk1) - gut, umlR, umlT, halb, gut, eT, tilg: tT + tH,
-      vH: uH - ann + c0 - cS, vR: umlR - tT - tH - abl - gut + (c0 - cS) * fG + q * ue0 - q * ue1, abl });
+    const eT = mE1 - q * ue1, w0R = km + mE0 - q * ue0 + bkR(bk0), abl = v.abl ? ablJ * Math.pow(1 + w, t) : 0;
+    const spart = w0R - (km + eT + bkR(bk1)), vOhne = -tT - tH - abl + (c0 - cS) * fG + q * (ue0 - ue1);
+    basis.push({ t, q, tT, tH, eT, w0R, abl, spart, vOhne });
   }
+  const mw = k => basis.reduce((a, b) => a + b[k], 0) / J;
+  const gut = Math.max(0, -S), gleich = (mw("spart") - mw("vOhne")) / 2;
+  // negativ: der Vermieter gewinnt schon ohne Aufschlag mehr (Deckel, CO₂-Anteil), dann schreibt er dem Mieter den Unterschied gut
+  const U = Math.min(gleich, Math.max(0, S), deckel);
+  const rows = basis.map(b => {
+    const umlR = U;
+    return { t: b.t, w0: km + e0 - c0 + bk0, w0R: b.w0R, wH: km + uH + eH - cS + bk1, wR: km + umlR + b.eT + bkR(bk1) - gut, umlR, gut, eT: b.eT, tilg: b.tT + b.tH,
+      vH: uH - ann + c0 - cS, vR: umlR - gut + b.vOhne, abl: b.abl };
+  });
   const sum = k => rows.reduce((a, r) => a + r[k], 0);
   const mwstH = (hz + hue) * m / (1 + m), mwstR = (fen + bau) / (1 + m) * (1 - mat) * SAN.MwStDienst;
   return { LT, c0, cS, fG, w0R: sum("w0R") / J, n, fl, km, tech, hk, fen, bau, ZT, ZB, uT, uB, uH, satzT, deckel, e0, e0R, eH, eR, kwhStrom, kwhGas, Tn, Hn, Fn, Bn, BnF, BnB, tilgT, tilgH, tilgF, uBr, anteil, K, ann, zinsR, rows, sum, wp,
-    jahr, S, q0, ue0, mE0, bk0, bk1, bkR,
+    jahr, S, U, gleich, q0, ue0, mE0, bk0, bk1, bkR,
     mwstH, mwstR, mwstStromH: kwhStrom * v.ps / 100 * m / (1 + m), mwstStromR: kwhStrom * v.ps / 100 * fS * SAN.MwStStrom / (1 + SAN.MwStStrom),
     staatH: mwstH - ZT - ZB, staatR: mwstR - zinsR, anteilJ: Bn * Math.pow(1 + w, J), ablSum: sum("abl") };
 }
@@ -3070,7 +3079,7 @@ function sanLese() {
 }
 function sanSetze(b) {
   const v = Object.assign({}, SAN_STD, b.v);
-  ["jahr", "einb", "g", "n", "fl", "miete", "wert", "pg", "ps", "zt", "zb", "mat", "erh", "zins", "wst"].forEach(k => $("s_" + k).value = v[k]);
+  ["jahr", "pm", "einb", "g", "n", "fl", "miete", "wert", "pg", "ps", "zt", "zb", "mat", "erh", "zins", "wst"].forEach(k => $("s_" + k).value = v[k]);
   SAN_M.forEach(k => $("s_" + k).checked = !!v[k]);
   $("s_bj").value = v.bj; $("s_trg").value = v.trg; $("s_abl").checked = !!v.abl; $("s_lang").value = String(v.lang || SAN.LaufT); $("s_ausn").checked = !!v.ausn;
   sanHand.clear();
@@ -3129,7 +3138,7 @@ function updateSan() {
     + `<tr class="sum"><td>Warmmiete</td><td>${sEur(r1.w0 / M)}</td><td>${sEur(r1.wH / M)}</td><td>${sEur(r1.wR / M)}</td><td>${sEur(r4.wR / M)}</td></tr>`
     + z("Gegenüber heute ohne Sanierung", "", sPlus((r1.wH - r1.w0) / M), sPlus((r1.wR - r1.w0) / M), sPlus((r4.wR - r4.w0) / M))
     + z(`Gegenüber dem Haus, das mit der Reform bei ${traeger} bleibt`, "", "", sPlus((r1.wR - r.w0R) / M), sPlus((r4.wR - r.w0R) / M))
-    + z("Nach 20 Jahren", "", r.uH > 0 ? "Aufschlag bleibt" : "–", "", r1.umlR > 0 ? `Aufschlag läuft${r.Hn > 0 ? " höchstens bis Jahr " + SAN.LaufH : r.Tn > 0 ? " höchstens bis Jahr " + r.LT : ""}${r1.halb > 0 ? ", die Hälfte der Ersparnis bis Jahr " + SAN.HalbJ : ""}${r.uBr > 0 ? ", fürs Ablösen bis Jahr " + (r.BnB > 0 ? SAN.LaufB : SAN.LaufF) : ""}` : "kein Aufschlag")
+    + z("Nach 20 Jahren", "", r.uH > 0 ? "Aufschlag bleibt" : "–", "", r1.umlR > 0 ? `Aufschlag bleibt gleich, solange die zinslosen Kredite laufen${r.Hn > 0 ? " (bis Jahr " + SAN.LaufH + ")" : r.Tn > 0 ? " (bis Jahr " + r.LT + ")" : ""}` : "kein Aufschlag")
     + `</tbody>`;
   // Grafik: was der Mieter im Monat mehr oder weniger zahlt als heute ohne Sanierung, Schnitt der 20 Jahre
   {
@@ -3157,7 +3166,7 @@ function updateSan() {
     $("s_chartT").textContent = verlust && vR >= 0 ? `Heute verliert der Vermieter ${sEur(-vH)} im Jahr und saniert nicht. Mit der Reform lohnt es sich für ihn (${sPlus(vR)} im Jahr), ${mT}`
       : `Mit der Reform: ${mT}, der Vermieter ${vR >= 0 ? "behält" : "verliert"} ${sEur(Math.abs(vR))} im Jahr${dH > 0.5 ? `; heute zahlt der Mieter ${sEur(dH)} mehr` : ""}`;
     $("s_legend").innerHTML = "";
-    $("s_chartNote").textContent = `Warmmiete ${N > 1 ? `einer Wohnung mit ${fmt(qm)} m² ` : ""}im Schnitt der 20 Jahre, verglichen mit heute ohne Sanierung (${sEur(basis)} im Monat). Nach heutigem Recht bleibt der Aufschlag auf Dauer. Mit der Reform legt der Vermieter nur die Tilgung der zinslosen Kredite um, höchstens die Ersparnis des Mieters bei den Heizkosten, verglichen einmal bei der Umstellung ${r.jahr} mit Deckel, Grundpreis und Wartung.`;
+    $("s_chartNote").textContent = `Warmmiete ${N > 1 ? `einer Wohnung mit ${fmt(qm)} m² ` : ""}im Schnitt der 20 Jahre, verglichen mit heute ohne Sanierung (${sEur(basis)} im Monat). Nach heutigem Recht bleibt der Aufschlag auf Dauer. Mit der Reform schlägt der Vermieter einen festen Betrag auf, so dass Mieter und Vermieter gleich viel gewinnen, höchstens die Ersparnis des Mieters bei den Heizkosten, verglichen einmal bei der Umstellung ${r.jahr} mit Deckel, Grundpreis und Wartung.`;
   }
   // Vermieter
   const sH = r.sum("vH"), sR = r.sum("vR");
@@ -3167,7 +3176,7 @@ function updateSan() {
     + z("Zuschuss", sEur(r.ZT + r.ZB), "–")
     + z("Finanziert über", r.K > 0 ? `Bankkredit ${sEur(r.K)}<small>${fmt(v.zins, 1)} % über 20 Jahre</small>` : "–", `${kred ? "zinsloser Kredit: " + kred : ""}${r.Bn > 0 ? `<small>Anteil am Hauswert ${sEur(r.Bn)} für ${[r.fen > 0 ? "Fenster" : "", r.bau > 0 ? "Dämmung" : ""].filter(Boolean).join(", ")}, ${pct(r.anteil)} des Hauses</small>` : ""}`)
     + z("Zinsen und Tilgung im Jahr", sEur(-r.ann), `${sEur(-(r1.tilg))} in Jahr 1 bis ${SAN.TilgFrei}<small>${sEur(-(r4.tilg))} ab Jahr ${SAN.TilgFrei + 1}${v.abl && r.Bn > 0 ? `, dazu Ablösen ${sEur(-r1.abl)} im ersten Jahr` : ""}</small>`)
-    + z("Mehr Miete im Jahr", sPlus(r.uH), `${sPlus(r1.umlR)} in Jahr 1 bis ${SAN.TilgFrei}<small>${sPlus(r4.umlR)} ab Jahr ${SAN.TilgFrei + 1}: die Tilgung, höchstens die Ersparnis der Mieter (${sPlus(r.S)} im Jahr), dazu ${SAN.HalbJ} Jahre die Hälfte der übrigen Ersparnis${r1.gut > 0 ? `; Gutschrift ${sEur(r1.gut)} im Jahr` : ""}${r.q0 > 0 && r.ue0 > 0 ? `; über dem Deckel trug er bei der Umstellung ${pct(r.q0, 0)}, ab 2035 alles; was er davon durch die Sanierung spart, gehört ihm` : ""}</small>`)
+    + z("Mehr Miete im Jahr", sPlus(r.uH), `${sPlus(r1.umlR)} jedes Jahr<small>so viel, dass Mieter und Vermieter gleich viel gewinnen, höchstens die Ersparnis der Mieter bei der Umstellung (${sPlus(r.S)} im Jahr); ist er negativ, schreibt der Vermieter ihn gut${r1.gut > 0 ? `; Gutschrift ${sEur(r1.gut)} im Jahr` : ""}${r.q0 > 0 && r.ue0 > 0 ? `; über dem Deckel trug er bei der Umstellung ${pct(r.q0, 0)}, ab 2035 alles; was er davon durch die Sanierung spart, gehört ihm` : ""}</small>`)
     + `<tr class="sum"><td>Bleibt über 20 Jahre</td><td>${sPlus(sH)}</td><td>${sPlus(sR)}</td></tr>`
     + z("Danach", r.uH > 0 ? `Kredit bezahlt, ${sPlus(r.uH)} Miete im Jahr laufen weiter` : "–", `${(r.Tn + r.Hn > 0 ? `Die zinslosen Kredite laufen weiter, ${r.Tn > 0 ? "für die Wärmepumpe bis Jahr " + r.LT : ""}${r.Tn > 0 && r.Hn > 0 ? ", " : ""}${r.Hn > 0 ? "für Heizkörper und Rohre bis Jahr " + SAN.LaufH : ""}; der Aufschlag endet mit der Tilgung` : "–")}${r.Bn > 0 && !v.abl ? `<small>Anteil des Staates in 20 Jahren rund ${sEur(r.anteilJ)}, fällig erst bei Verkauf oder Erbe</small>` : ""}`)
     + `</tbody>`;
@@ -3180,7 +3189,7 @@ function updateSan() {
     + (r.wp ? z("Mehrwertsteuer auf den Heizstrom im Jahr", sPlus(r.mwstStromH), sPlus(r.mwstStromR)) : "")
     + `</tbody>`;
   const kue = v.kuehl > 0 ? `<b>Kühlen:</b> Klimageräte für ${sEur(v.kuehl)} sind nicht in der Rechnung oben. Sie heizen nicht billiger, sondern kühlen im Sommer: ein Gewinn an Komfort, der etwas kosten darf. Über 20 Jahre verteilt sind das rund ${sEur(v.kuehl / 240 / Math.max(1, Math.round(v.n)))} je Wohnung im Monat, plus Strom fürs Kühlen. ` : "";
-  $("s_note").innerHTML = kue + `Heute: ${pct(r.satzT, 0)} der Heizungskosten nach Abzug des Zuschusses im Jahr (§ 559e BGB, ohne Zuschuss 8 % nach § 559 BGB), höchstens ${fmt(SAN.KappungHz, 2)} € je m² im Monat, dazu 8 % der Kosten für Dämmung und Fenster nach Abzug des Zuschusses, zusammen höchstens ${fmt(v.miete < SAN.KappungGrenze ? SAN.KappungKlein : SAN.Kappung)} € je m² (§ 559 Abs. 3a BGB). Der Aufschlag bleibt auf Dauer. Zuschuss nach KfW 458 und BEG, förderfähig für die erste Wohnung ${eur(SAN.CapH1)} (Heizung) und ${eur(SAN.CapB1)} (Hülle), ${eur(SAN.Cap2)} für die zweite bis sechste und ${eur(SAN.Cap7)} ab der siebten. Reform: Die Wärmepumpe ohne Einbau bezahlt ein zinsloser Kredit über 30 Jahre, die ersten 3 ohne Tilgung. Rund 40 % für Einbau, Rohre und Leitungen und die Heizkörper laufen im Mietshaus über einen zinslosen Kredit über 50 Jahre, Fenster und Dämmung über den Anteil am Hauswert. Umgelegt wird die Tilgung, höchstens die Ersparnis des Mieters bei den Heizkosten; von der übrigen Ersparnis darf der Vermieter 30 Jahre lang die Hälfte aufschlagen, und was zur gleichen Warmmiete fehlt, schreibt er gut. Verglichen wird einmal bei der Umstellung, ausgehend von dem, was der Mieter nach dem Deckel für die Heizkosten zahlt (Wärme × Strompreis / 3, gerechnet mit dem Wärmepumpentarif), mit Grundpreis, Wartung, Zähler und Schornsteinfeger auf beiden Seiten (geschätzt im Jahr ${eur(SAN.BkFossil)} und ${eur(SAN.BkFossilW)} je Wohnung mit ${traeger}, ${eur(SAN.BkWp)} und ${eur(SAN.BkWpW)} je Wohnung mit Wärmepumpe). Die Grenze von 0,50 € je m² für Heizungen entfällt, die von 3 € je m² gilt weiter. Mehrwertsteuer auf Strom 5 %, auf ${traeger} 50 %: Ohne Sanierung kostete das Heizen mit der Reform ${sEur((r.e0R - r.c0 * r.fG) / M)} statt ${sEur((r.e0 - r.c0) / M)} im Monat. Vom CO₂-Preis (${eur(SAN.CO2Preis)} je Tonne) trägt der Vermieter je nach Verbrauch bis zu 95 % (CO2KostAufG); spart die Sanierung CO₂, spart er diesen Anteil. Energiepreise bleiben gleich, die Einkommensteuer ist nicht gerechnet. Regeln: <a class="ql" href="https://tomas-hecker.github.io/mut-zur-zukunft/buch/kapitel-5.html#waermepumpe-mit-zinslosem-kredit-miete-mit-inflationsgrenze" target="_blank" rel="noopener">Kapitel 5</a>, Werte: <a href="#quellen">Annahmen und Quellen</a>.`;
+  $("s_note").innerHTML = kue + `Heute: ${pct(r.satzT, 0)} der Heizungskosten nach Abzug des Zuschusses im Jahr (§ 559e BGB, ohne Zuschuss 8 % nach § 559 BGB), höchstens ${fmt(SAN.KappungHz, 2)} € je m² im Monat, dazu 8 % der Kosten für Dämmung und Fenster nach Abzug des Zuschusses, zusammen höchstens ${fmt(v.miete < SAN.KappungGrenze ? SAN.KappungKlein : SAN.Kappung)} € je m² (§ 559 Abs. 3a BGB). Der Aufschlag bleibt auf Dauer. Zuschuss nach KfW 458 und BEG, förderfähig für die erste Wohnung ${eur(SAN.CapH1)} (Heizung) und ${eur(SAN.CapB1)} (Hülle), ${eur(SAN.Cap2)} für die zweite bis sechste und ${eur(SAN.Cap7)} ab der siebten. Reform: Die Wärmepumpe ohne Einbau bezahlt ein zinsloser Kredit über 30 Jahre, die ersten 3 ohne Tilgung. Rund 40 % für Einbau, Rohre und Leitungen und die Heizkörper laufen im Mietshaus über einen zinslosen Kredit über 50 Jahre, Fenster und Dämmung über den Anteil am Hauswert. Der Vermieter schlägt einen festen Betrag auf, so dass Mieter und Vermieter im Schnitt der 20 Jahre gleich viel gewinnen, gegenüber dem Haus, das mit der Reform bei der alten Heizung bleibt; Tilgung, Ablösen, CO₂-Anteil und Deckel sind darin gezählt. Höchstens schlägt er die Ersparnis des Mieters auf, die Warmmiete steigt also nie, und was zur gleichen Warmmiete fehlt, schreibt er gut. Gewinnt der Vermieter schon ohne Aufschlag mehr, etwa weil er den Teil über dem Deckel nicht mehr trägt, schreibt er dem Mieter den Unterschied gut. Verglichen wird einmal bei der Umstellung, ausgehend von dem, was der Mieter nach dem Deckel für die Heizkosten zahlt (Wärme × mittlerer Strompreis aller Haushalte / 3, jedes Jahr amtlich festgestellt), mit Grundpreis, Wartung, Zähler und Schornsteinfeger auf beiden Seiten (geschätzt im Jahr ${eur(SAN.BkFossil)} und ${eur(SAN.BkFossilW)} je Wohnung mit ${traeger}, ${eur(SAN.BkWp)} und ${eur(SAN.BkWpW)} je Wohnung mit Wärmepumpe). Die Grenze von 0,50 € je m² für Heizungen entfällt, die von 3 € je m² gilt weiter. Mehrwertsteuer auf Strom 5 %, auf ${traeger} 50 %: Ohne Sanierung kostete das Heizen mit der Reform ${sEur((r.e0R - r.c0 * r.fG) / M)} statt ${sEur((r.e0 - r.c0) / M)} im Monat. Vom CO₂-Preis (${eur(SAN.CO2Preis)} je Tonne) trägt der Vermieter je nach Verbrauch bis zu 95 % (CO2KostAufG); spart die Sanierung CO₂, spart er diesen Anteil. Energiepreise bleiben gleich, die Einkommensteuer ist nicht gerechnet. Regeln: <a class="ql" href="https://tomas-hecker.github.io/mut-zur-zukunft/buch/kapitel-5.html#waermepumpe-mit-zinslosem-kredit-miete-mit-inflationsgrenze" target="_blank" rel="noopener">Kapitel 5</a>, Werte: <a href="#quellen">Annahmen und Quellen</a>.`;
   postHeight();
 }
 $("sanForm").addEventListener("input", e => {
